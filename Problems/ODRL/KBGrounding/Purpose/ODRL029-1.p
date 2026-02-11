@@ -4,7 +4,7 @@
 % Problem  : isNoneOf conflict: commercialResearch ∈ {commercialPurpose}
 % Version  : DPV000-0.ax, ODRL000-0.ax, GROUND000-1.ax v0.5
 % Expected : Theorem
-% Source   : Mustafa & Sutcliffe, DEXA 2026
+% Source   : Mustafa & Sutcliffe,  2026
 % Notes    : Policy: purpose isNoneOf {commercialPurpose}
 %            Request: purpose eq commercialResearch
 %            commercialResearch ⊑ commercialPurpose → excluded by isNoneOf

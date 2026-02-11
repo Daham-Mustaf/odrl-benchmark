@@ -4,7 +4,7 @@
 % Problem  : isNoneOf compatible: nonCommercialResearch ∉ {commercialPurpose}
 % Version  : DPV000-0.ax, ODRL000-0.ax, GROUND000-1.ax v0.5
 % Expected : Theorem
-% Source   : Mustafa & Sutcliffe, DEXA 2026
+% Source   : Mustafa & Sutcliffe,  2026
 % Notes    : Policy: purpose isNoneOf {commercialPurpose}
 %            Request: purpose eq nonCommercialResearch
 %            nonCommercialResearch ⊄ commercialPurpose (DPV disjointness)

@@ -4,7 +4,7 @@
 % Problem  : Cross-dataspace diagnosis: purpose is the blocking operand
 % Version  : GEO000-0.ax, DPV000-0.ax, ODRL000-0.ax, GROUND000-1.ax
 % Expected : Theorem
-% Source   : Mustafa & Sutcliffe, DEXA 2026
+% Source   : Mustafa & Sutcliffe,  2026
 % Notes    : Same setup as ODRL031-1.
 %            After conjunction fails, we diagnose which operand blocks.
 %            Conjecture: purpose pair has empty intersection.

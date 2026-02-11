@@ -1,7 +1,7 @@
 # TPTP-ODRL Benchmark Suite
 
 **Grounding ODRL Constraints: Knowledge-Based Conflict Detection Across Dataspaces**
-Mustafa, D. & Sutcliffe, G. · DEXA 2026
+Mustafa, D. & Sutcliffe, G. 
 
 ---
 
@@ -11,7 +11,7 @@ The W3C Open Digital Rights Language (ODRL) is the standard policy language for 
 
 **The problem:** ODRL's set-based operators (`isA`, `isPartOf`, `isAnyOf`, `isAllOf`, `isNoneOf`) require domain knowledge to evaluate. For example, does `spatial isPartOf europe` conflict with `spatial eq bavaria`? The answer depends on knowing that `partOf(bavaria, germany)` and `partOf(germany, europe)` — facts external to ODRL itself.
 
-**Our contribution:** A denotational semantics for ODRL constraints, parameterised by domain knowledge bases (KBs), that enables automated conflict detection. This benchmark suite formalises the framework in first-order logic (FOL) and validates it using the Vampire theorem prover.
+**Our contribution:** A denotational semantics for ODRL constraints, parameterised by domain knowledge bases (KBs), that enables automated conflict detection. This benchmark suite formalises the framework in first-order logic (FOL) and validates it using both the Vampire theorem prover (TPTP) and Z3 SMT solver (SMT-LIB2), demonstrating prover-independence across 20 benchmarks with 100% verdict agreement.
 
 ---
 
@@ -293,13 +293,61 @@ All problems fall within the **EPR (Effectively Propositional / Bernays–Schön
 | ODRL028-1 | isNoneOf | purpose isNoneOf {commPurpose} | eq nonCommResearch | Theorem | Compatible | Negation + disjointness |
 | ODRL029-1 | isNoneOf | purpose isNoneOf {commPurpose} | eq commResearch | Theorem | Conflict | Negation catches subclass |
 
-### 5.3 Verdict Distribution
+### 5.3 Cross-Dataspace — 4 problems
+
+Validates the paper's core claim: policies with MULTIPLE constraints spanning different domains. Zero Layer 2 changes needed — existing denotation rules handle any number of constraints.
+
+**Conjunctive semantics:** Overall compatible iff ALL operand pairs overlap independently.
+
+| Problem | Spatial pair | Purpose pair | SZS | Verdict | What it tests |
+|:---:|---|---|:---:|:---:|---|
+| ODRL030-1 | isPartOf europe / eq france | isA R&D / eq academicResearch | Theorem | Compatible | Both dimensions align |
+| ODRL031-1 | isPartOf europe / eq bavaria | isA nonCommPurpose / eq advertising | CounterSat | Unknown | Purpose blocks conjunction |
+| ODRL032-1 | — | isA nonCommPurpose / eq advertising | Theorem | Conflict | Diagnostic: isolate blocking operand |
+| ODRL033-1 | isPartOf france / eq bavaria | isA nonCommPurpose / eq scientificResearch | CounterSat | Unknown | Double Unknown — worst case |
+
+**Diagnostic workflow (ODRL031 → ODRL032):** Test overall conjunction → fails. Test per-operand → purpose pair returns Conflict (advertising ⊄ nonCommercialPurpose). This models the ODRL-SA diagnostic pipeline.
+
+### 5.4 Verdict Distribution
 
 | Verdict | Count | Mechanism |
 |---|:---:|---|
-| Compatible (Theorem) | 8 | Existential witness found |
-| Conflict (Theorem) | 4 | Negated existential — contradiction via bidirectional rules |
-| Unknown (CounterSat) | 4 | KB incomplete — open-world |
+| Compatible (Theorem) | 9 | Existential witness found |
+| Conflict (Theorem) | 5 | Negated existential — contradiction via bidirectional rules |
+| Unknown (CounterSat) | 6 | KB incomplete — open-world |
+
+### 5.5 Multi-Prover Comparison (Vampire vs Z3)
+
+All 20 problems encoded in both TPTP (Vampire) and SMT-LIB2 (Z3). **100% verdict agreement.**
+
+| Problem | Vampire (SZS) | Time | Z3 (SMT) | Time |
+|:---:|:---:|---:|:---:|---:|
+| ODRL010-1 | Theorem | 0.01s | unsat | 0.10s |
+| ODRL011-1 | Theorem | 0.01s | unsat | 0.06s |
+| ODRL012-1 | Theorem | 0.02s | unsat | 0.06s |
+| ODRL013-1 | Theorem | 0.003s | unsat | 0.05s |
+| ODRL014-1 | Theorem | 0.02s | unsat | 0.06s |
+| ODRL015-1 | CounterSat | 0.02s | sat | 0.07s |
+| ODRL020-1 | Theorem | 0.02s | unsat | 0.06s |
+| ODRL021-1 | CounterSat | 0.02s | sat | 0.10s |
+| ODRL022-1 | Theorem | 0.02s | unsat | 0.06s |
+| ODRL023-1 | Theorem | 0.003s | unsat | 0.05s |
+| ODRL024-1 | Theorem | 0.02s | unsat | 0.06s |
+| ODRL025-1 | CounterSat | 0.004s | sat | 0.10s |
+| ODRL026-1 | Theorem | 0.02s | unsat | 0.05s |
+| ODRL027-1 | CounterSat | 0.003s | sat | 0.10s |
+| ODRL028-1 | Theorem | 0.002s | unsat | 0.05s |
+| ODRL029-1 | Theorem | 0.002s | unsat | 0.05s |
+| ODRL030-1 | Theorem | 0.014s | unsat | 0.09s |
+| ODRL031-1 | CounterSat | 0.013s | sat | 0.17s |
+| ODRL032-1 | Theorem | 0.012s | unsat | 0.05s |
+| ODRL033-1 | CounterSat | 0.016s | sat | 0.21s |
+
+**Key observations:**
+- Vampire is ~3–10× faster (EPR fragment specialisation, AVATAR splitting)
+- Z3 `sat` results (Unknown verdicts) take 2–4× longer than `unsat` — model construction vs refutation
+- Cross-dataspace problems (030–033) are the hardest for both provers
+- Framework is prover-independent: semantic correctness does not depend on the reasoning engine
 
 ---
 
@@ -308,6 +356,7 @@ All problems fall within the **EPR (Effectively Propositional / Bernays–Schön
 ```
 tptp-odrl/
 ├── README.md                                  ← this file
+├── generate_smtlib.py                         SMT-LIB2 generator + Z3 runner
 ├── Problems/ODRL/
 │   ├── Axioms/
 │   │   ├── Layer0-DomainKB/
@@ -318,11 +367,20 @@ tptp-odrl/
 │   │   │   └── ODRL000-0.ax                   constraint structure, operators
 │   │   └── Layer2-Grounding/
 │   │       └── GROUND000-1.ax                 denotation semantics v0.5
-│   └── KBGrounding/
+│   ├── KBGrounding/
+│   │   ├── Spatial/
+│   │   │   └── ODRL010-1.p … ODRL015-1.p     6 spatial problems
+│   │   ├── Purpose/
+│   │   │   └── ODRL020-1.p … ODRL029-1.p     10 purpose problems
+│   │   └── CrossDataspace/
+│   │       └── ODRL030-1.p … ODRL033-1.p     4 cross-dataspace problems
+│   └── SMT-LIB/
 │       ├── Spatial/
-│       │   ├── ODRL010-1.p … ODRL015-1.p     6 spatial problems
-│       └── Purpose/
-│           ├── ODRL020-1.p … ODRL029-1.p     10 purpose problems
+│       │   └── ODRL010-1.smt2 … ODRL015-1.smt2
+│       ├── Purpose/
+│       │   └── ODRL020-1.smt2 … ODRL029-1.smt2
+│       └── CrossDataspace/
+│           └── ODRL030-1.smt2 … ODRL033-1.smt2
 └── Solutions/
     └── ODRL0xx-1.proof                        saved Vampire output
 ```
@@ -330,6 +388,8 @@ tptp-odrl/
 ---
 
 ## 7. Running the Benchmarks
+
+### TPTP (Vampire)
 
 ```bash
 cd Problems/ODRL
@@ -342,11 +402,26 @@ Batch run with SZS extraction:
 
 ```bash
 cd Problems/ODRL
-for f in KBGrounding/Spatial/*.p KBGrounding/Purpose/*.p; do
+for f in KBGrounding/Spatial/*.p KBGrounding/Purpose/*.p KBGrounding/CrossDataspace/*.p; do
     result=$(vampire --time_limit 10 "$f" 2>&1 | grep "SZS status")
     echo "$(basename $f): $result"
 done
 ```
+
+### SMT-LIB (Z3)
+
+```bash
+z3 Problems/ODRL/SMT-LIB/Spatial/ODRL012-1.smt2    # single problem
+```
+
+Generate all SMT-LIB files and run Z3 comparison:
+
+```bash
+python3 generate_smtlib.py --run          # Z3 only
+python3 generate_smtlib.py --run --cvc5   # Z3 + CVC5 (if installed)
+```
+
+The generator script produces self-contained `.smt2` files (no includes — all axioms inlined) and prints a comparison table with expected vs actual results.
 
 ---
 
@@ -398,6 +473,8 @@ This distinction must be explicitly documented in the paper. The TPTP suite coul
 | 0.3.1 | Removed isAnyOf only-if (Skolem explosion fix) | — |
 | 0.4.0 | Added isAllOf only-if | ODRL026–027 |
 | 0.5.0 | Added isNoneOf only-if | ODRL028–029 |
+| 0.6.0 | No Layer 2 changes — cross-dataspace | ODRL030–033 |
+| 0.7.0 | SMT-LIB2 parallel encoding (generate_smtlib.py) | 20 .smt2 files |
 
 ---
 
@@ -409,20 +486,39 @@ This distinction must be explicitly documented in the paper. The TPTP suite coul
 - [x] Layer 2 — Grounding bridge: eq, isA, isPartOf, isAnyOf, isAllOf, isNoneOf
 - [x] Spatial domain — 6 problems (Compatible, Conflict, Unknown)
 - [x] Purpose domain — 10 problems (all operators validated)
+- [x] Cross-dataspace alignment — 4 problems (conjunction, diagnosis, double-Unknown)
+- [x] SMT-LIB2 parallel encoding — 20 .smt2 files, Z3 validated (100% agreement)
 - [ ] `neq` operator encoding
 - [ ] `GROUND000-0.ax` — flat (standard ODRL) variant
-- [ ] SMT-LIB parallel encoding (Z3/CVC5 comparison)
-- [ ] Cross-dataspace alignment problems
-- [ ] Multi-prover comparison table (Vampire, E, SPASS, iProver)
+- [ ] Multi-prover extension (E, SPASS, iProver, CVC5)
 
 ---
 
 ## 12. Prover Details
 
-All results obtained with:
+### Vampire (TPTP)
 
 ```
 Vampire 5.0.0 (Release build, commit 55c27f5 on 2025-09-09)
 Linked with Z3 4.14.0.0
 CASC mode with automatic EPR detection
 ```
+
+Typical performance: 0.002–0.022s (single-domain), 0.012–0.016s (cross-dataspace), 8MB peak memory. All problems in EPR fragment.
+
+### Z3 (SMT-LIB2)
+
+```
+Z3 4.15.4.0
+Logic: UF (uninterpreted functions, single sort Entity)
+```
+
+Typical performance: 0.05–0.10s (unsat), 0.07–0.21s (sat). Z3 is ~3–10× slower than Vampire on these problems due to Vampire's EPR specialisation and AVATAR clause splitting. Z3 `sat` results take longer because model construction requires exhaustive search.
+
+### Translation Notes (TPTP ↔ SMT-LIB)
+
+The SMT-LIB encoding differs structurally from TPTP in two ways:
+
+1. **No include mechanism.** SMT-LIB has no `include()` — all axioms are inlined. The `generate_smtlib.py` script assembles files from modular components matching the four-layer architecture.
+
+2. **Modular grounding rules.** DPV-only problems (ODRL020–029) do not declare `partOf`. In TPTP, unused predicates are harmless. In SMT-LIB, referencing undeclared functions is a parse error. The generator splits grounding rules into taxonomic-only and mereological-only variants, selecting per-problem based on required KBs.

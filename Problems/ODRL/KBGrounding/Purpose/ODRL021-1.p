@@ -4,7 +4,7 @@
 % Problem  : Taxonomic Unknown: scientificResearch ⊄ nonCommercialPurpose
 % Version  : DPV000-0.ax, ODRL000-0.ax, GROUND000-1.ax
 % Expected : CounterSatisfiable
-% Source   : Mustafa & Sutcliffe, DEXA 2026
+% Source   : Mustafa & Sutcliffe,  2026
 % Notes    : Policy: purpose isA nonCommercialPurpose
 %            Request: purpose eq scientificResearch
 %            scientificResearch is under researchAndDevelopment,

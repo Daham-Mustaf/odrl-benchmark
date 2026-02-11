@@ -4,7 +4,7 @@
 % Problem  : Cross-dataspace blocked: spatial OK but purpose conflicts
 % Version  : GEO000-0.ax, DPV000-0.ax, ODRL000-0.ax, GROUND000-1.ax
 % Expected : CounterSatisfiable
-% Source   : Mustafa & Sutcliffe, DEXA 2026
+% Source   : Mustafa & Sutcliffe,  2026
 % Notes    : Policy A (Dataspace 1): spatial isPartOf europe
 %                                     AND purpose isA nonCommercialPurpose
 %            Request B (Dataspace 2): spatial eq bavaria

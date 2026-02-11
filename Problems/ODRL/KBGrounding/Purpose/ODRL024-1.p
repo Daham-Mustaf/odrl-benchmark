@@ -4,7 +4,7 @@
 % Problem  : isAnyOf compatible: advertising in {nonCommercialPurpose, marketing}
 % Version  : DPV000-0.ax, ODRL000-0.ax, GROUND000-1.ax v0.3
 % Expected : Theorem
-% Source   : Mustafa & Sutcliffe, DEXA 2026
+% Source   : Mustafa & Sutcliffe,  2026
 % Notes    : Policy: purpose isAnyOf {nonCommercialPurpose, marketing}
 %            Request: purpose eq advertising
 %            advertising ⊑ marketing → in union → compatible.

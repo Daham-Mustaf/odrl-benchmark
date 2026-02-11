@@ -4,7 +4,7 @@
 % Problem  : Taxonomic compatibility: nonCommercialResearch isA nonCommercialPurpose
 % Version  : DPV000-0.ax, ODRL000-0.ax, GROUND000-1.ax
 % Expected : Theorem
-% Source   : Mustafa & Sutcliffe, DEXA 2026
+% Source   : Mustafa & Sutcliffe,  2026
 % Notes    : Policy: purpose isA nonCommercialPurpose
 %            Request: purpose eq nonCommercialResearch
 %            nonCommercialResearch ⊑ nonCommercialPurpose (in DPV)

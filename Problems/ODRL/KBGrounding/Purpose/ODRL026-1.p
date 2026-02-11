@@ -4,7 +4,7 @@
 % Problem  : isAllOf compatible: commercialResearch in R&D ∩ commercialPurpose
 % Version  : DPV000-0.ax, ODRL000-0.ax, GROUND000-1.ax v0.4
 % Expected : Theorem
-% Source   : Mustafa & Sutcliffe, DEXA 2026
+% Source   : Mustafa & Sutcliffe,  2026
 % Notes    : Policy: purpose isAllOf {researchAndDevelopment, commercialPurpose}
 %            Request: purpose eq commercialResearch
 %            commercialResearch ⊑ both via DAG multi-parent → compatible.

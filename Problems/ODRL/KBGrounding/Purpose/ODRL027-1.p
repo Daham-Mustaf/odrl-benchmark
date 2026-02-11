@@ -4,7 +4,7 @@
 % Problem  : isAllOf Unknown: scientificResearch not in R&D ∩ nonCommercialPurpose
 % Version  : DPV000-0.ax, ODRL000-0.ax, GROUND000-1.ax v0.4
 % Expected : CounterSatisfiable
-% Source   : Mustafa & Sutcliffe, DEXA 2026
+% Source   : Mustafa & Sutcliffe,  2026
 % Notes    : Policy: purpose isAllOf {researchAndDevelopment, nonCommercialPurpose}
 %            Request: purpose eq scientificResearch
 %            scientificResearch ⊑ researchAndDevelopment but
