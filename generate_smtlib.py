@@ -15,7 +15,7 @@ import sys
 import time
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-SMT_DIR = os.path.join(BASE, "Problems/ODRL/SMT-LIB")
+SMT_DIR = os.path.join(BASE, "SMT/ODRL/KBGrounding")
 
 # ============================================================
 # Layer 0: Domain Knowledge Bases
@@ -446,7 +446,7 @@ add("ODRL029-1", "Purpose",
 
 CROSS_GROUNDING = [GROUND_EQ, GROUND_ISPARTOF, GROUND_ISA]
 
-add("ODRL030-1", "CrossDataspace",
+add("ODRL030-1", "CrossKB",
     "Cross-DS compatible: spatial + purpose both align",
     [GEO_KB, DPV_KB], CROSS_GROUNDING,
     "(declare-const c1 Entity)\n(declare-const c2 Entity)\n(declare-const c3 Entity)\n(declare-const c4 Entity)",
@@ -457,7 +457,7 @@ add("ODRL030-1", "CrossDataspace",
     conjecture_cross_compatible("c1", "c2", "c3", "c4"),
     "unsat", "Theorem")
 
-add("ODRL031-1", "CrossDataspace",
+add("ODRL031-1", "CrossKB",
     "Cross-DS blocked: spatial OK, purpose conflicts",
     [GEO_KB, DPV_KB], CROSS_GROUNDING,
     "(declare-const c1 Entity)\n(declare-const c2 Entity)\n(declare-const c3 Entity)\n(declare-const c4 Entity)",
@@ -468,7 +468,7 @@ add("ODRL031-1", "CrossDataspace",
     conjecture_cross_compatible("c1", "c2", "c3", "c4"),
     "sat", "CounterSatisfiable")
 
-add("ODRL032-1", "CrossDataspace",
+add("ODRL032-1", "CrossKB",
     "Cross-DS diagnosis: purpose is the blocking operand",
     [GEO_KB, DPV_KB], CROSS_GROUNDING,
     "(declare-const c3 Entity)\n(declare-const c4 Entity)",
@@ -477,7 +477,7 @@ add("ODRL032-1", "CrossDataspace",
     conjecture_conflict("c3", "c4"),
     "unsat", "Theorem")
 
-add("ODRL033-1", "CrossDataspace",
+add("ODRL033-1", "CrossKB",
     "Cross-DS double Unknown: both dimensions undecidable",
     [GEO_KB, DPV_KB], CROSS_GROUNDING,
     "(declare-const c1 Entity)\n(declare-const c2 Entity)\n(declare-const c3 Entity)\n(declare-const c4 Entity)",

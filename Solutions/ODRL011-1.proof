@@ -1,0 +1,21 @@
+% Running in auto input_syntax mode. Trying TPTP
+% Refutation found. Thanks to Tanya!
+% SZS status Theorem for ODRL011-1
+% SZS output start Proof for ODRL011-1
+7. ~partOf(germany,france) [input(axiom)]
+8. ~partOf(germany,france) [input(conjecture)]
+9. ~~partOf(germany,france) [negated conjecture 8]
+10. partOf(germany,france) [flattening 9]
+19. ~partOf(germany,france) [cnf transformation 7]
+20. partOf(germany,france) [cnf transformation 10]
+21. $false [subsumption resolution 19,20]
+% SZS output end Proof for ODRL011-1
+% ------------------------------
+% Version: Vampire 5.0.0 (Release build, commit 55c27f5 on 2025-09-09 16:15:20 +0100)
+% Linked with Z3 4.14.0.0 3c47fd96cf5645d0c42b2c819d9e9a84380aa721 NOTFOUND
+% Termination reason: Refutation
+
+% Time elapsed: 0.017 s
+% Peak memory usage: 7 MB
+% ------------------------------
+% ------------------------------
