@@ -1,0 +1,169 @@
+% Running in auto input_syntax mode. Trying TPTP
+% SZS status CounterSatisfiable for ODRL015-1
+% SZS output start Saturation.
+cnf(u137,axiom,
+    ~has_operator(c1,eq)).
+
+cnf(u141,axiom,
+    in_denotation(france,c1)).
+
+cnf(u149,axiom,
+    in_denotation(bavaria,c2)).
+
+cnf(u158,negated_conjecture,
+    ~has_value(c2,X0) | sK0 = X0).
+
+cnf(u165,axiom,
+    ~has_operator(c2,isPartOf)).
+
+cnf(u179,axiom,
+    ~partOf(X0,france) | in_denotation(X0,c1)).
+
+cnf(u194,negated_conjecture,
+    ~has_operator(c1,isA)).
+
+cnf(u207,negated_conjecture,
+    ~has_operator(c2,isA)).
+
+cnf(u222,axiom,
+    ~has_value(c2,X0) | bavaria = X0).
+
+cnf(u232,negated_conjecture,
+    ~has_value(c1,X1) | partOf(bavaria,X1)).
+
+cnf(u251,axiom,
+    ~has_value(c1,X1) | partOf(france,X1)).
+
+cnf(u100,axiom,
+    partOf(france,europe)).
+
+cnf(u112,axiom,
+    ~in_denotation(X3,X0) | ~mereological(X1) | ~has_value(X0,X2) | ~has_operator(X0,isPartOf) | ~has_operand(X0,X1) | partOf(X3,X2)).
+
+cnf(u105,axiom,
+    mereological(spatial)).
+
+cnf(u102,axiom,
+    partOf(bavaria,germany)).
+
+cnf(u114,axiom,
+    has_operand(c1,spatial)).
+
+cnf(u237,negated_conjecture,
+    partOf(bavaria,france)).
+
+cnf(u107,axiom,
+    taxonomic(language)).
+
+cnf(u124,axiom,
+    ~partOf(X0,france) | partOf(X0,europe)).
+
+cnf(u117,axiom,
+    has_operand(c2,spatial)).
+
+cnf(u98,axiom,
+    partOf(X0,X0)).
+
+cnf(u240,negated_conjecture,
+    ~partOf(X0,bavaria) | partOf(X0,france)).
+
+cnf(u126,axiom,
+    ~partOf(X0,bavaria) | partOf(X0,germany)).
+
+cnf(u119,axiom,
+    has_value(c2,bavaria)).
+
+cnf(u101,axiom,
+    partOf(germany,europe)).
+
+cnf(u120,negated_conjecture,
+    in_denotation(sK0,c1)).
+
+cnf(u113,axiom,
+    ~in_denotation(X3,X0) | ~taxonomic(X1) | ~has_value(X0,X2) | ~has_operator(X0,isA) | ~has_operand(X0,X1) | subClassOf(X3,X2)).
+
+cnf(u110,axiom,
+    ~subClassOf(X3,X2) | in_denotation(X3,X0) | ~taxonomic(X1) | ~has_value(X0,X2) | ~has_operator(X0,isA) | ~has_operand(X0,X1)).
+
+cnf(u103,axiom,
+    ~partOf(france,germany)).
+
+cnf(u122,axiom,
+    ~has_value(X0,X3) | in_denotation(X3,X0) | ~has_operator(X0,eq) | ~has_operand(X0,X1)).
+
+cnf(u115,axiom,
+    has_operator(c1,isPartOf)).
+
+cnf(u104,axiom,
+    ~partOf(germany,france)).
+
+cnf(u236,axiom,
+    partOf(bavaria,europe)).
+
+cnf(u125,axiom,
+    ~partOf(X0,germany) | partOf(X0,europe)).
+
+cnf(u106,axiom,
+    taxonomic(purpose)).
+
+cnf(u99,axiom,
+    ~partOf(X1,X2) | partOf(X0,X2) | ~partOf(X0,X1)).
+
+cnf(u116,axiom,
+    has_value(c1,france)).
+
+cnf(u109,axiom,
+    ~has_value(X0,X2) | ~partOf(X3,X2) | ~mereological(X1) | in_denotation(X3,X0) | ~has_operator(X0,isPartOf) | ~has_operand(X0,X1)).
+
+cnf(u181,negated_conjecture,
+    bavaria = sK0).
+
+cnf(u121,negated_conjecture,
+    in_denotation(sK0,c2)).
+
+cnf(u118,axiom,
+    has_operator(c2,eq)).
+
+cnf(u111,axiom,
+    ~in_denotation(X3,X0) | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1) | X2 = X3).
+
+cnf(u253,axiom,
+    ~partOf(X0,bavaria) | partOf(X0,europe)).
+
+cnf(u183,negated_conjecture,
+    in_denotation(bavaria,c1)).
+
+% SZS output end Saturation.
+% SZS output start Definitions and Model Updates.
+for all inputs,
+    define comparison_operator(X0) := $true
+for all inputs,
+    define set_operator(X0) := $true
+for all inputs,
+    define permission(X0) := $true
+for all inputs,
+    define has_constraint(X0,X1) := $true
+for all inputs,
+    define policy(X0) := $true
+for all inputs,
+    define prohibition(X0) := $false
+for all inputs,
+    define obligation(X0) := $false
+for all inputs,
+    define has_asset(X0,X1) := $false
+for all inputs,
+    define constraint(X0) := $true
+for all inputs,
+    define same_operand(X0,X1) := $true
+for all inputs,
+    define verdict(X0,X1,X2) := $true
+% SZS output end Definitions and Model Updates.
+% ------------------------------
+% Version: Vampire 5.0.0 (Release build, commit 55c27f5 on 2025-09-09 16:15:20 +0100)
+% Linked with Z3 4.14.0.0 3c47fd96cf5645d0c42b2c819d9e9a84380aa721 NOTFOUND
+% Termination reason: Satisfiable
+
+% Time elapsed: 0.021 s
+% Peak memory usage: 8 MB
+% ------------------------------
+% ------------------------------

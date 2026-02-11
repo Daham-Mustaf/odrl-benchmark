@@ -1,0 +1,34 @@
+%--------------------------------------------------------------------------
+% File     : GEO000-0.ax : TPTP v0.1.0
+% Domain   : Geography (GeoNames)
+% Axioms   : European spatial containment — minimal fragment
+% Source   : GeoNames ontology (geonames.org), feature code A.PCLI
+% Version  : 0.1.0
+% Scope    : 4 concepts (europe, france, germany, bavaria)
+% Relation : partOf/2 — mereological containment (preorder)
+% CWA      : No. Open-domain FOL. Finite concept set (paper
+%            Def. 2) is external to this encoding.
+% Status   : Layer 0 — FROZEN for Phase 1
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Paper    : Grounding ODRL Constraints ()
+%--------------------------------------------------------------------------
+
+% --- partOf: reflexive, transitive ---
+
+fof(part_of_reflexive, axiom,
+    ![X]: partOf(X, X)).
+
+fof(part_of_transitive, axiom,
+    ![X,Y,Z]: ((partOf(X, Y) & partOf(Y, Z)) => partOf(X, Z))).
+
+% --- Base containment facts ---
+
+fof(geo_france,  axiom, partOf(france, europe)).
+fof(geo_germany, axiom, partOf(germany, europe)).
+fof(geo_bavaria, axiom, partOf(bavaria, germany)).
+
+% --- Negative facts (for conflict tests) ---
+
+fof(geo_fr_not_de, axiom, ~partOf(france, germany)).
+fof(geo_de_not_fr, axiom, ~partOf(germany, france)).
+%--------------------------------------------------------------------------

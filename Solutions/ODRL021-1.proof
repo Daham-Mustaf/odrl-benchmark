@@ -1,0 +1,247 @@
+% Running in auto input_syntax mode. Trying TPTP
+% SZS status CounterSatisfiable for ODRL021-1
+% SZS output start Saturation.
+cnf(u166,axiom,
+    ~has_operator(c1,eq)).
+
+cnf(u170,axiom,
+    in_denotation(nonCommercialPurpose,c1)).
+
+cnf(u178,axiom,
+    in_denotation(scientificResearch,c2)).
+
+cnf(u187,axiom,
+    ~has_value(c2,X0) | scientificResearch = X0).
+
+cnf(u194,axiom,
+    ~has_operator(c2,isA)).
+
+cnf(u208,axiom,
+    ~subClassOf(X0,nonCommercialPurpose) | in_denotation(X0,c1)).
+
+cnf(u214,axiom,
+    ~has_operator(c2,isPartOf)).
+
+cnf(u259,axiom,
+    ~has_operator(c1,isPartOf)).
+
+cnf(u270,axiom,
+    ~has_value(c1,X1) | subClassOf(nonCommercialPurpose,X1)).
+
+cnf(u278,axiom,
+    ~has_value(c1,X1) | subClassOf(nonCommercialResearch,X1)).
+
+cnf(u123,axiom,
+    ~subClassOf(marketing,nonCommercialPurpose)).
+
+cnf(u112,axiom,
+    subClassOf(marketing,purpose)).
+
+cnf(u146,axiom,
+    ~subClassOf(X0,marketing) | subClassOf(X0,purpose)).
+
+cnf(u139,axiom,
+    has_value(c2,scientificResearch)).
+
+cnf(u239,axiom,
+    ~subClassOf(X0,scientificResearch) | subClassOf(X0,purpose)).
+
+cnf(u228,axiom,
+    subClassOf(nonCommercialResearch,purpose)).
+
+cnf(u124,axiom,
+    ~subClassOf(advertising,nonCommercialPurpose)).
+
+cnf(u117,axiom,
+    subClassOf(commercialResearch,commercialPurpose)).
+
+cnf(u151,axiom,
+    ~subClassOf(X0,nonCommercialResearch) | subClassOf(X0,researchAndDevelopment)).
+
+cnf(u140,negated_conjecture,
+    ~in_denotation(X0,c2) | ~in_denotation(X0,c1)).
+
+cnf(u133,axiom,
+    ~in_denotation(X3,X0) | ~taxonomic(X1) | ~has_value(X0,X2) | ~has_operator(X0,isA) | ~has_operand(X0,X1) | subClassOf(X3,X2)).
+
+cnf(u120,axiom,
+    subClassOf(directMarketing,marketing)).
+
+cnf(u113,axiom,
+    subClassOf(academicResearch,researchAndDevelopment)).
+
+cnf(u235,axiom,
+    ~subClassOf(X0,academicResearch) | subClassOf(X0,purpose)).
+
+cnf(u154,axiom,
+    ~subClassOf(X0,directMarketing) | subClassOf(X0,marketing)).
+
+cnf(u110,axiom,
+    subClassOf(nonCommercialPurpose,purpose)).
+
+cnf(u147,axiom,
+    ~subClassOf(X0,academicResearch) | subClassOf(X0,researchAndDevelopment)).
+
+cnf(u136,axiom,
+    has_value(c1,nonCommercialPurpose)).
+
+cnf(u129,axiom,
+    ~partOf(X3,X2) | in_denotation(X3,X0) | ~mereological(X1) | ~has_value(X0,X2) | ~has_operator(X0,isPartOf) | ~has_operand(X0,X1)).
+
+cnf(u229,axiom,
+    ~subClassOf(X0,nonCommercialResearch) | subClassOf(X0,purpose)).
+
+cnf(u125,axiom,
+    mereological(spatial)).
+
+cnf(u148,axiom,
+    ~subClassOf(X0,scientificResearch) | subClassOf(X0,researchAndDevelopment)).
+
+cnf(u141,axiom,
+    ~has_value(X0,X3) | in_denotation(X3,X0) | ~has_operator(X0,eq) | ~has_operand(X0,X1)).
+
+cnf(u243,axiom,
+    ~subClassOf(X0,directMarketing) | subClassOf(X0,purpose)).
+
+cnf(u232,axiom,
+    subClassOf(scientificResearch,purpose)).
+
+cnf(u121,axiom,
+    ~subClassOf(commercialPurpose,nonCommercialPurpose)).
+
+cnf(u118,axiom,
+    subClassOf(nonCommercialResearch,nonCommercialPurpose)).
+
+cnf(u111,axiom,
+    subClassOf(researchAndDevelopment,purpose)).
+
+cnf(u144,axiom,
+    ~subClassOf(X0,nonCommercialPurpose) | subClassOf(X0,purpose)).
+
+cnf(u137,axiom,
+    has_operand(c2,purpose)).
+
+cnf(u134,axiom,
+    has_operand(c1,purpose)).
+
+cnf(u114,axiom,
+    subClassOf(scientificResearch,researchAndDevelopment)).
+
+cnf(u237,axiom,
+    subClassOf(advertising,purpose)).
+
+cnf(u107,axiom,
+    subClassOf(X0,X0)).
+
+cnf(u156,axiom,
+    subClassOf(commercialResearch,purpose)).
+
+cnf(u149,axiom,
+    ~subClassOf(X0,commercialResearch) | subClassOf(X0,researchAndDevelopment)).
+
+cnf(u130,axiom,
+    ~has_value(X0,X2) | ~subClassOf(X3,X2) | ~taxonomic(X1) | in_denotation(X3,X0) | ~has_operator(X0,isA) | ~has_operand(X0,X1)).
+
+cnf(u223,axiom,
+    ~subClassOf(X0,commercialResearch) | subClassOf(X0,purpose)).
+
+cnf(u251,axiom,
+    in_denotation(nonCommercialResearch,c1)).
+
+cnf(u152,axiom,
+    ~subClassOf(X0,nonCommercialResearch) | subClassOf(X0,nonCommercialPurpose)).
+
+cnf(u126,axiom,
+    taxonomic(purpose)).
+
+cnf(u119,axiom,
+    subClassOf(advertising,marketing)).
+
+cnf(u108,axiom,
+    ~subClassOf(X1,X2) | subClassOf(X0,X2) | ~subClassOf(X0,X1)).
+
+cnf(u145,axiom,
+    ~subClassOf(X0,researchAndDevelopment) | subClassOf(X0,purpose)).
+
+cnf(u135,axiom,
+    has_operator(c1,isA)).
+
+cnf(u182,negated_conjecture,
+    ~in_denotation(scientificResearch,c1)).
+
+cnf(u122,axiom,
+    ~subClassOf(nonCommercialPurpose,commercialPurpose)).
+
+cnf(u115,axiom,
+    subClassOf(commercialResearch,researchAndDevelopment)).
+
+cnf(u138,axiom,
+    has_operator(c2,eq)).
+
+cnf(u131,axiom,
+    ~in_denotation(X3,X0) | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1) | X2 = X3).
+
+cnf(u241,axiom,
+    ~subClassOf(X0,advertising) | subClassOf(X0,purpose)).
+
+cnf(u127,axiom,
+    taxonomic(language)).
+
+cnf(u153,axiom,
+    ~subClassOf(X0,advertising) | subClassOf(X0,marketing)).
+
+cnf(u150,axiom,
+    ~subClassOf(X0,commercialResearch) | subClassOf(X0,commercialPurpose)).
+
+cnf(u238,axiom,
+    subClassOf(directMarketing,purpose)).
+
+cnf(u231,axiom,
+    subClassOf(academicResearch,purpose)).
+
+cnf(u116,axiom,
+    subClassOf(nonCommercialResearch,researchAndDevelopment)).
+
+cnf(u109,axiom,
+    subClassOf(commercialPurpose,purpose)).
+
+cnf(u143,axiom,
+    ~subClassOf(X0,commercialPurpose) | subClassOf(X0,purpose)).
+
+cnf(u132,axiom,
+    ~in_denotation(X3,X0) | ~mereological(X1) | ~has_value(X0,X2) | ~has_operator(X0,isPartOf) | ~has_operand(X0,X1) | partOf(X3,X2)).
+
+% SZS output end Saturation.
+% SZS output start Definitions and Model Updates.
+for all inputs,
+    define comparison_operator(X0) := $true
+for all inputs,
+    define set_operator(X0) := $true
+for all inputs,
+    define permission(X0) := $true
+for all inputs,
+    define has_constraint(X0,X1) := $true
+for all inputs,
+    define policy(X0) := $true
+for all inputs,
+    define prohibition(X0) := $false
+for all inputs,
+    define obligation(X0) := $false
+for all inputs,
+    define has_asset(X0,X1) := $false
+for all inputs,
+    define constraint(X0) := $true
+for all inputs,
+    define same_operand(X0,X1) := $true
+for all inputs,
+    define verdict(X0,X1,X2) := $true
+% SZS output end Definitions and Model Updates.
+% ------------------------------
+% Version: Vampire 5.0.0 (Release build, commit 55c27f5 on 2025-09-09 16:15:20 +0100)
+% Linked with Z3 4.14.0.0 3c47fd96cf5645d0c42b2c819d9e9a84380aa721 NOTFOUND
+% Termination reason: Satisfiable
+
+% Time elapsed: 0.002 s
+% Peak memory usage: 8 MB
+% ------------------------------
+% ------------------------------

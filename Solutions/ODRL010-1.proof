@@ -1,0 +1,66 @@
+% Running in auto input_syntax mode. Trying TPTP
+% Detected 'Essentially Bernays–Schönfinkel–Ramsey OR Essentially ground' problem, will run a specialized EPR schedule (with support for satisfiability detection).
+% WARNING: time unlimited strategy and instruction limiting not in place - attempting to translate instructions to time
+% % WARNING: option sil not known.
+% % WARNING: option i not known.
+% ott+21_1_fs=off:lcm=predicate:random_seed=1686415410:av=off:fsr=off_1 on ODRL010-1 for (1ds)
+% Solution written to "/var/folders/65/nwm00w4x0nq2vdcb_f_gsc9r0000gn/T/vampire-proof-90317"
+% Refutation found. Thanks to Tanya!
+% SZS status Theorem for ODRL010-1
+% SZS output start Proof for ODRL010-1
+fof(f20,plain,(
+  $false),
+  inference(resolution,[],[f18,f14])).
+fof(f14,plain,(
+  ~partOf(bavaria,europe)),
+  inference(cnf_transformation,[],[f7])).
+fof(f7,plain,(
+  ~partOf(bavaria,europe)),
+  inference(flattening,[],[f6])).
+fof(f6,negated_conjecture,(
+  ~partOf(bavaria,europe)),
+  inference(negated_conjecture,[status(cth)],[f5])).
+fof(f5,conjecture,(
+  partOf(bavaria,europe)),
+  file('Problems/ODRL/KBGrounding/Spatial/ODRL010-1.p',unknown)).
+fof(f18,plain,(
+  partOf(bavaria,europe)),
+  inference(resolution,[],[f16,f13])).
+fof(f13,plain,(
+  partOf(germany,europe)),
+  inference(cnf_transformation,[],[f4])).
+fof(f4,axiom,(
+  partOf(germany,europe)),
+  file('Problems/ODRL/KBGrounding/Spatial/ODRL010-1.p',unknown)).
+fof(f16,plain,(
+  ( ! [X0] : (~partOf(germany,X0) | partOf(bavaria,X0)) )),
+  inference(resolution,[],[f10,f12])).
+fof(f12,plain,(
+  partOf(bavaria,germany)),
+  inference(cnf_transformation,[],[f3])).
+fof(f3,axiom,(
+  partOf(bavaria,germany)),
+  file('Problems/ODRL/KBGrounding/Spatial/ODRL010-1.p',unknown)).
+fof(f10,plain,(
+  ( ! [X2,X0,X1] : (~partOf(X0,X1) | ~partOf(X1,X2) | partOf(X0,X2)) )),
+  inference(cnf_transformation,[],[f9])).
+fof(f9,plain,(
+  ! [X0,X1,X2] : (partOf(X0,X2) | ~partOf(X1,X2) | ~partOf(X0,X1))),
+  inference(flattening,[],[f8])).
+fof(f8,plain,(
+  ! [X0,X1,X2] : (partOf(X0,X2) | (~partOf(X1,X2) | ~partOf(X0,X1)))),
+  inference(ennf_transformation,[],[f1])).
+fof(f1,axiom,(
+  ! [X0,X1,X2] : ((partOf(X1,X2) & partOf(X0,X1)) => partOf(X0,X2))),
+  file('Problems/ODRL/KBGrounding/Spatial/ODRL010-1.p',unknown)).
+% SZS output end Proof for ODRL010-1
+% ------------------------------
+% Version: Vampire 5.0.0 (Release build, commit 55c27f5 on 2025-09-09 16:15:20 +0100)
+% Linked with Z3 4.14.0.0 3c47fd96cf5645d0c42b2c819d9e9a84380aa721 NOTFOUND
+% Termination reason: Refutation
+
+% Time elapsed: 0.009 s
+% Peak memory usage: 5 MB
+% ------------------------------
+% ------------------------------
+% Success in time 0.023 s

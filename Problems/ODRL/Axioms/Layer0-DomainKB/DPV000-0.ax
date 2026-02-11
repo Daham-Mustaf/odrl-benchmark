@@ -1,0 +1,57 @@
+%--------------------------------------------------------------------------
+% File     : DPV000-0.ax : TPTP v0.1.0
+% Domain   : Data Privacy Vocabulary (W3C DPV v2.2)
+% Axioms   : Purpose taxonomy — minimal fragment (DAG)
+% Source   : w3c.github.io/dpv (skos:broader → subClassOf)
+% Scope    : 10 concepts, multi-parent DAG
+% Relation : subClassOf/2 — taxonomic subsumption (preorder)
+% Note     : Open-domain FOL. ScientificResearch is NOT under
+%            NonCommercialPurpose in official DPV — it is under
+%            ResearchAndDevelopment only. DAG, not tree.
+% Status   : Layer 0 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% --- subClassOf: reflexive, transitive ---
+
+fof(sub_class_reflexive, axiom,
+    ![X]: subClassOf(X, X)).
+
+fof(sub_class_transitive, axiom,
+    ![X,Y,Z]: ((subClassOf(X, Y) & subClassOf(Y, Z)) => subClassOf(X, Z))).
+
+% --- Top-level purposes ---
+
+fof(dpv_commercial,     axiom, subClassOf(commercialPurpose, purpose)).
+fof(dpv_noncommercial,  axiom, subClassOf(nonCommercialPurpose, purpose)).
+fof(dpv_rnd,            axiom, subClassOf(researchAndDevelopment, purpose)).
+fof(dpv_marketing,      axiom, subClassOf(marketing, purpose)).
+
+% --- ResearchAndDevelopment children ---
+
+fof(dpv_academic,        axiom, subClassOf(academicResearch, researchAndDevelopment)).
+fof(dpv_scientific,      axiom, subClassOf(scientificResearch, researchAndDevelopment)).
+fof(dpv_comm_research,   axiom, subClassOf(commercialResearch, researchAndDevelopment)).
+fof(dpv_noncomm_research,axiom, subClassOf(nonCommercialResearch, researchAndDevelopment)).
+
+% --- Multi-parent (DAG) ---
+
+fof(dpv_comm_research_comm,       axiom, subClassOf(commercialResearch, commercialPurpose)).
+fof(dpv_noncomm_research_noncomm, axiom, subClassOf(nonCommercialResearch, nonCommercialPurpose)).
+
+% --- Marketing children ---
+
+fof(dpv_advertising, axiom, subClassOf(advertising, marketing)).
+fof(dpv_direct,      axiom, subClassOf(directMarketing, marketing)).
+
+% --- Disjointness ---
+
+fof(dpv_comm_not_noncomm,       axiom, ~subClassOf(commercialPurpose, nonCommercialPurpose)).
+fof(dpv_noncomm_not_comm,       axiom, ~subClassOf(nonCommercialPurpose, commercialPurpose)).
+fof(dpv_marketing_not_noncomm,  axiom, ~subClassOf(marketing, nonCommercialPurpose)).
+fof(dpv_advertising_not_noncomm,axiom, ~subClassOf(advertising, nonCommercialPurpose)).
+%--------------------------------------------------------------------------
+
+% --- Leaf-level disjointness (for isNoneOf operator tests) ---
+
+fof(dpv_noncomm_research_not_comm, axiom, ~subClassOf(nonCommercialResearch, commercialPurpose)).

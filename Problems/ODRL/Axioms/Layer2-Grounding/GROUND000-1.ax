@@ -1,0 +1,103 @@
+%--------------------------------------------------------------------------
+% File     : GROUND000-1.ax : TPTP v0.1.0
+% Domain   : ODRL Policy Conflict Detection
+% Axioms   : Semantic grounding — hierarchical (transitive closure)
+% Source   : Paper Def. 3 (Denotation), Def. 6 (Conflict)
+% Version  : 0.5.0
+% Variant  : Hierarchical extension (NOT flat ODRL-standard)
+% Note     : Bidirectional rules for eq, isA, isPartOf.
+%            isAnyOf: if-direction only (only-if Skolem explosion).
+%            isAllOf: only-if only (if needs grounded conjunction).
+%            isNoneOf: only-if only (if needs grounded negation).
+%            Set operator if-directions encoded per-problem.
+% Status   : Layer 2 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% === eq: exact match (all domains) ===
+
+fof(denotation_eq, axiom,
+    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, eq) & has_value(C, V)
+                   & X = V)
+        => in_denotation(X, C))).
+
+fof(denotation_eq_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, eq) & has_value(C, V))
+        => X = V)).
+
+% === isPartOf: mereological containment ===
+
+fof(denotation_isPartOf, axiom,
+    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isPartOf) & has_value(C, V)
+                   & mereological(L) & partOf(X, V))
+        => in_denotation(X, C))).
+
+fof(denotation_isPartOf_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, isPartOf) & has_value(C, V)
+                   & mereological(L))
+        => partOf(X, V))).
+
+% === isA: taxonomic subsumption ===
+
+fof(denotation_isA, axiom,
+    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isA) & has_value(C, V)
+                   & taxonomic(L) & subClassOf(X, V))
+        => in_denotation(X, C))).
+
+fof(denotation_isA_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, isA) & has_value(C, V)
+                   & taxonomic(L))
+        => subClassOf(X, V))).
+
+% === isAnyOf: union of downward closures (if-direction only) ===
+
+fof(denotation_isAnyOf_taxonomic, axiom,
+    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isAnyOf) & has_value(C, V)
+                   & taxonomic(L) & subClassOf(X, V))
+        => in_denotation(X, C))).
+
+fof(denotation_isAnyOf_mereological, axiom,
+    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isAnyOf) & has_value(C, V)
+                   & mereological(L) & partOf(X, V))
+        => in_denotation(X, C))).
+
+% === isAllOf: intersection (only-if direction only) ===
+
+fof(denotation_isAllOf_taxonomic_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, isAllOf) & has_value(C, V)
+                   & taxonomic(L))
+        => subClassOf(X, V))).
+
+fof(denotation_isAllOf_mereological_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, isAllOf) & has_value(C, V)
+                   & mereological(L))
+        => partOf(X, V))).
+
+% === isNoneOf: exclusion (only-if direction only) ===
+% Membership requires non-subsumption to every value.
+% Per-value necessary condition — clean, no existential.
+
+fof(denotation_isNoneOf_taxonomic_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, isNoneOf) & has_value(C, V)
+                   & taxonomic(L))
+        => ~subClassOf(X, V))).
+
+fof(denotation_isNoneOf_mereological_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, isNoneOf) & has_value(C, V)
+                   & mereological(L))
+        => ~partOf(X, V))).
+
+% === Verdict: compatibility (paper Def. 6) ===
+
+fof(verdict_compatible, axiom,
+    ![C1,C2]: ((same_operand(C1, C2)
+                & ?[X]: (in_denotation(X, C1) & in_denotation(X, C2)))
+        => verdict(C1, C2, compatible))).
+%--------------------------------------------------------------------------

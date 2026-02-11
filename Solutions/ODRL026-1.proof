@@ -1,0 +1,60 @@
+% Running in auto input_syntax mode. Trying TPTP
+% Refutation found. Thanks to Tanya!
+% SZS status Theorem for ODRL026-1
+% SZS output start Proof for ODRL026-1
+9. subClassOf(commercialResearch,researchAndDevelopment) [input(axiom)]
+11. subClassOf(commercialResearch,commercialPurpose) [input(axiom)]
+28. taxonomic(purpose) [input(axiom)]
+39. ! [X5,X6,X8,X0] : ((X0 = X8 & has_value(X5,X8) & has_operator(X5,eq) & has_operand(X5,X6)) => in_denotation(X0,X5)) [input(axiom)]
+55. ! [X0] : ((taxonomic(purpose) & subClassOf(X0,commercialPurpose) & subClassOf(X0,researchAndDevelopment)) => in_denotation(X0,c1)) [input(axiom)]
+57. has_operand(c2,purpose) [input(axiom)]
+58. has_operator(c2,eq) [input(axiom)]
+59. has_value(c2,commercialResearch) [input(axiom)]
+60. ? [X0] : (in_denotation(X0,c2) & in_denotation(X0,c1)) [input(conjecture)]
+61. ~? [X0] : (in_denotation(X0,c2) & in_denotation(X0,c1)) [negated conjecture 60]
+71. ! [X0,X1,X2,X3] : ((X2 = X3 & has_value(X0,X2) & has_operator(X0,eq) & has_operand(X0,X1)) => in_denotation(X3,X0)) [rectify 39]
+104. ! [X0,X1,X2,X3] : (in_denotation(X3,X0) | (X2 != X3 | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1))) [ennf transformation 71]
+105. ! [X0,X1,X2,X3] : (in_denotation(X3,X0) | X2 != X3 | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1)) [flattening 104]
+124. ! [X0] : (in_denotation(X0,c1) | (~taxonomic(purpose) | ~subClassOf(X0,commercialPurpose) | ~subClassOf(X0,researchAndDevelopment))) [ennf transformation 55]
+125. ! [X0] : (in_denotation(X0,c1) | ~taxonomic(purpose) | ~subClassOf(X0,commercialPurpose) | ~subClassOf(X0,researchAndDevelopment)) [flattening 124]
+126. ! [X0] : (~in_denotation(X0,c2) | ~in_denotation(X0,c1)) [ennf transformation 61]
+135. subClassOf(commercialResearch,researchAndDevelopment) [cnf transformation 9]
+137. subClassOf(commercialResearch,commercialPurpose) [cnf transformation 11]
+146. taxonomic(purpose) [cnf transformation 28]
+148. in_denotation(X3,X0) | X2 != X3 | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1) [cnf transformation 105]
+162. in_denotation(X0,c1) | ~taxonomic(purpose) | ~subClassOf(X0,commercialPurpose) | ~subClassOf(X0,researchAndDevelopment) [cnf transformation 125]
+163. has_operand(c2,purpose) [cnf transformation 57]
+164. has_operator(c2,eq) [cnf transformation 58]
+165. has_value(c2,commercialResearch) [cnf transformation 59]
+166. ~in_denotation(X0,c2) | ~in_denotation(X0,c1) [cnf transformation 126]
+167. ~has_value(X0,X3) | in_denotation(X3,X0) | ~has_operator(X0,eq) | ~has_operand(X0,X1) [equality resolution 148]
+169. 1 <=> taxonomic(purpose) [avatar definition]
+173. 2 <=> ! [X0] : (in_denotation(X0,c1) | ~subClassOf(X0,researchAndDevelopment) | ~subClassOf(X0,commercialPurpose)) [avatar definition]
+174. ~subClassOf(X0,researchAndDevelopment) | in_denotation(X0,c1) | ~subClassOf(X0,commercialPurpose) <- (2) [avatar component clause 173]
+175. ~1 | 2 [avatar split clause 162,173,169]
+176. 1 [avatar split clause 146,169]
+193. in_denotation(commercialResearch,c1) | ~subClassOf(commercialResearch,commercialPurpose) <- (2) [resolution 174,135]
+204. in_denotation(commercialResearch,c1) <- (2) [subsumption resolution 193,137]
+234. in_denotation(commercialResearch,c2) | ~has_operator(c2,eq) | ~has_operand(c2,X0) [resolution 167,165]
+235. in_denotation(commercialResearch,c2) | ~has_operand(c2,X0) [subsumption resolution 234,164]
+250. 14 <=> ! [X0] : ~has_operand(c2,X0) [avatar definition]
+251. ~has_operand(c2,X0) <- (14) [avatar component clause 250]
+253. 15 <=> in_denotation(commercialResearch,c2) [avatar definition]
+255. in_denotation(commercialResearch,c2) <- (15) [avatar component clause 253]
+256. 14 | 15 [avatar split clause 235,253,250]
+289. $false <- (14) [resolution 251,163]
+290. ~14 [avatar contradiction clause 289]
+316. ~in_denotation(commercialResearch,c1) <- (15) [resolution 255,166]
+332. $false <- (2, 15) [subsumption resolution 316,204]
+333. ~2 | ~15 [avatar contradiction clause 332]
+338. $false [avatar sat refutation 175,176,256,290,333]
+% SZS output end Proof for ODRL026-1
+% ------------------------------
+% Version: Vampire 5.0.0 (Release build, commit 55c27f5 on 2025-09-09 16:15:20 +0100)
+% Linked with Z3 4.14.0.0 3c47fd96cf5645d0c42b2c819d9e9a84380aa721 NOTFOUND
+% Termination reason: Refutation
+
+% Time elapsed: 0.012 s
+% Peak memory usage: 8 MB
+% ------------------------------
+% ------------------------------

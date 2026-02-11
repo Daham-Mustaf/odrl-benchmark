@@ -1,0 +1,69 @@
+% Running in auto input_syntax mode. Trying TPTP
+% Refutation found. Thanks to Tanya!
+% SZS status Theorem for ODRL012-1
+% SZS output start Proof for ODRL012-1
+3. partOf(france,europe) [input(axiom)]
+16. mereological(spatial) [input(axiom)]
+28. ! [X5,X6,X8,X0] : ((X0 = X8 & has_value(X5,X8) & has_operator(X5,eq) & has_operand(X5,X6)) => in_denotation(X0,X5)) [input(axiom)]
+29. ! [X5,X6,X8,X0] : ((partOf(X0,X8) & mereological(X6) & has_value(X5,X8) & has_operator(X5,isPartOf) & has_operand(X5,X6)) => in_denotation(X0,X5)) [input(axiom)]
+38. has_operand(c1,spatial) [input(axiom)]
+39. has_operator(c1,isPartOf) [input(axiom)]
+40. has_value(c1,europe) [input(axiom)]
+42. has_operand(c2,spatial) [input(axiom)]
+43. has_operator(c2,eq) [input(axiom)]
+44. has_value(c2,france) [input(axiom)]
+45. ? [X0] : (in_denotation(X0,c2) & in_denotation(X0,c1)) [input(conjecture)]
+46. ~? [X0] : (in_denotation(X0,c2) & in_denotation(X0,c1)) [negated conjecture 45]
+56. ! [X0,X1,X2,X3] : ((X2 = X3 & has_value(X0,X2) & has_operator(X0,eq) & has_operand(X0,X1)) => in_denotation(X3,X0)) [rectify 28]
+57. ! [X0,X1,X2,X3] : ((partOf(X3,X2) & mereological(X1) & has_value(X0,X2) & has_operator(X0,isPartOf) & has_operand(X0,X1)) => in_denotation(X3,X0)) [rectify 29]
+87. ! [X0,X1,X2,X3] : (in_denotation(X3,X0) | (X2 != X3 | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1))) [ennf transformation 56]
+88. ! [X0,X1,X2,X3] : (in_denotation(X3,X0) | X2 != X3 | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1)) [flattening 87]
+89. ! [X0,X1,X2,X3] : (in_denotation(X3,X0) | (~partOf(X3,X2) | ~mereological(X1) | ~has_value(X0,X2) | ~has_operator(X0,isPartOf) | ~has_operand(X0,X1))) [ennf transformation 57]
+90. ! [X0,X1,X2,X3] : (in_denotation(X3,X0) | ~partOf(X3,X2) | ~mereological(X1) | ~has_value(X0,X2) | ~has_operator(X0,isPartOf) | ~has_operand(X0,X1)) [flattening 89]
+99. ! [X0] : (~in_denotation(X0,c2) | ~in_denotation(X0,c1)) [ennf transformation 46]
+102. partOf(france,europe) [cnf transformation 3]
+107. mereological(spatial) [cnf transformation 16]
+110. in_denotation(X3,X0) | X2 != X3 | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1) [cnf transformation 88]
+111. ~has_value(X0,X2) | ~partOf(X3,X2) | ~mereological(X1) | in_denotation(X3,X0) | ~has_operator(X0,isPartOf) | ~has_operand(X0,X1) [cnf transformation 90]
+116. has_operand(c1,spatial) [cnf transformation 38]
+117. has_operator(c1,isPartOf) [cnf transformation 39]
+118. has_value(c1,europe) [cnf transformation 40]
+119. has_operand(c2,spatial) [cnf transformation 42]
+120. has_operator(c2,eq) [cnf transformation 43]
+121. has_value(c2,france) [cnf transformation 44]
+122. ~in_denotation(X0,c2) | ~in_denotation(X0,c1) [cnf transformation 99]
+123. ~has_value(X0,X3) | in_denotation(X3,X0) | ~has_operator(X0,eq) | ~has_operand(X0,X1) [equality resolution 110]
+129. in_denotation(france,c2) | ~has_operator(c2,eq) | ~has_operand(c2,X0) [resolution 123,121]
+130. in_denotation(france,c2) | ~has_operand(c2,X0) [subsumption resolution 129,120]
+144. 4 <=> ! [X0] : ~has_operand(c2,X0) [avatar definition]
+145. ~has_operand(c2,X0) <- (4) [avatar component clause 144]
+147. 5 <=> in_denotation(france,c2) [avatar definition]
+149. in_denotation(france,c2) <- (5) [avatar component clause 147]
+150. 4 | 5 [avatar split clause 130,147,144]
+151. $false <- (4) [resolution 145,119]
+152. ~4 [avatar contradiction clause 151]
+153. ~partOf(X0,europe) | ~mereological(X1) | in_denotation(X0,c1) | ~has_operator(c1,isPartOf) | ~has_operand(c1,X1) [resolution 111,118]
+166. ~partOf(X0,europe) | ~mereological(X1) | in_denotation(X0,c1) | ~has_operand(c1,X1) [subsumption resolution 153,117]
+168. 9 <=> ! [X1] : (~mereological(X1) | ~has_operand(c1,X1)) [avatar definition]
+169. ~has_operand(c1,X1) | ~mereological(X1) <- (9) [avatar component clause 168]
+171. 10 <=> ! [X0] : (~partOf(X0,europe) | in_denotation(X0,c1)) [avatar definition]
+172. ~partOf(X0,europe) | in_denotation(X0,c1) <- (10) [avatar component clause 171]
+173. 9 | 10 [avatar split clause 166,171,168]
+174. ~in_denotation(france,c1) <- (5) [resolution 149,122]
+194. ~mereological(spatial) <- (9) [resolution 169,116]
+195. $false <- (9) [subsumption resolution 194,107]
+196. ~9 [avatar contradiction clause 195]
+203. in_denotation(france,c1) <- (10) [resolution 172,102]
+206. $false <- (5, 10) [subsumption resolution 203,174]
+207. ~5 | ~10 [avatar contradiction clause 206]
+209. $false [avatar sat refutation 150,152,173,196,207]
+% SZS output end Proof for ODRL012-1
+% ------------------------------
+% Version: Vampire 5.0.0 (Release build, commit 55c27f5 on 2025-09-09 16:15:20 +0100)
+% Linked with Z3 4.14.0.0 3c47fd96cf5645d0c42b2c819d9e9a84380aa721 NOTFOUND
+% Termination reason: Refutation
+
+% Time elapsed: 0.011 s
+% Peak memory usage: 8 MB
+% ------------------------------
+% ------------------------------

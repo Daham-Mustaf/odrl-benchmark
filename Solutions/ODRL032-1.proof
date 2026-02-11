@@ -1,0 +1,73 @@
+% Running in auto input_syntax mode. Trying TPTP
+% Refutation found. Thanks to Tanya!
+% SZS status Theorem for ODRL032-1
+% SZS output start Proof for ODRL032-1
+25. ~subClassOf(advertising,nonCommercialPurpose) [input(axiom)]
+36. taxonomic(purpose) [input(axiom)]
+48. ! [X5,X6,X8,X0] : ((has_value(X5,X8) & has_operator(X5,eq) & has_operand(X5,X6) & in_denotation(X0,X5)) => X0 = X8) [input(axiom)]
+52. ! [X5,X6,X8,X0] : ((taxonomic(X6) & has_value(X5,X8) & has_operator(X5,isA) & has_operand(X5,X6) & in_denotation(X0,X5)) => subClassOf(X0,X8)) [input(axiom)]
+61. has_operand(c3,purpose) [input(axiom)]
+62. has_operator(c3,isA) [input(axiom)]
+63. has_value(c3,nonCommercialPurpose) [input(axiom)]
+65. has_operand(c4,purpose) [input(axiom)]
+66. has_operator(c4,eq) [input(axiom)]
+67. has_value(c4,advertising) [input(axiom)]
+68. ~? [X1] : (in_denotation(X1,c4) & in_denotation(X1,c3)) [input(conjecture)]
+69. ~~? [X1] : (in_denotation(X1,c4) & in_denotation(X1,c3)) [negated conjecture 68]
+80. ! [X0,X1,X2,X3] : ((has_value(X0,X2) & has_operator(X0,eq) & has_operand(X0,X1) & in_denotation(X3,X0)) => X2 = X3) [rectify 48]
+84. ! [X0,X1,X2,X3] : ((taxonomic(X1) & has_value(X0,X2) & has_operator(X0,isA) & has_operand(X0,X1) & in_denotation(X3,X0)) => subClassOf(X3,X2)) [rectify 52]
+92. ~~? [X0] : (in_denotation(X0,c4) & in_denotation(X0,c3)) [rectify 69]
+93. ? [X0] : (in_denotation(X0,c4) & in_denotation(X0,c3)) [flattening 92]
+120. ! [X0,X1,X2,X3] : (X2 = X3 | (~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1) | ~in_denotation(X3,X0))) [ennf transformation 80]
+121. ! [X0,X1,X2,X3] : (X2 = X3 | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1) | ~in_denotation(X3,X0)) [flattening 120]
+128. ! [X0,X1,X2,X3] : (subClassOf(X3,X2) | (~taxonomic(X1) | ~has_value(X0,X2) | ~has_operator(X0,isA) | ~has_operand(X0,X1) | ~in_denotation(X3,X0))) [ennf transformation 84]
+129. ! [X0,X1,X2,X3] : (subClassOf(X3,X2) | ~taxonomic(X1) | ~has_value(X0,X2) | ~has_operator(X0,isA) | ~has_operand(X0,X1) | ~in_denotation(X3,X0)) [flattening 128]
+142. ? [X0] : (in_denotation(X0,c4) & in_denotation(X0,c3)) => (in_denotation(sK0,c4) & in_denotation(sK0,c3)) [choice axiom]
+143. in_denotation(sK0,c4) & in_denotation(sK0,c3) [skolemisation 93,142]
+168. ~subClassOf(advertising,nonCommercialPurpose) [cnf transformation 25]
+171. taxonomic(purpose) [cnf transformation 36]
+174. ~in_denotation(X3,X0) | ~has_value(X0,X2) | ~has_operator(X0,eq) | ~has_operand(X0,X1) | X2 = X3 [cnf transformation 121]
+178. ~in_denotation(X3,X0) | ~taxonomic(X1) | ~has_value(X0,X2) | ~has_operator(X0,isA) | ~has_operand(X0,X1) | subClassOf(X3,X2) [cnf transformation 129]
+185. has_operand(c3,purpose) [cnf transformation 61]
+186. has_operator(c3,isA) [cnf transformation 62]
+187. has_value(c3,nonCommercialPurpose) [cnf transformation 63]
+188. has_operand(c4,purpose) [cnf transformation 65]
+189. has_operator(c4,eq) [cnf transformation 66]
+190. has_value(c4,advertising) [cnf transformation 67]
+191. in_denotation(sK0,c3) [cnf transformation 143]
+192. in_denotation(sK0,c4) [cnf transformation 143]
+230. 4 <=> ! [X0] : ~has_operand(c4,X0) [avatar definition]
+231. ~has_operand(c4,X0) <- (4) [avatar component clause 230]
+238. ~has_value(c4,X0) | ~has_operator(c4,eq) | ~has_operand(c4,X1) | sK0 = X0 [resolution 174,192]
+239. $false <- (4) [resolution 231,188]
+240. ~4 [avatar contradiction clause 239]
+241. ~has_value(c4,X0) | ~has_operand(c4,X1) | sK0 = X0 [subsumption resolution 238,189]
+243. 6 <=> ! [X0] : (~has_value(c4,X0) | sK0 = X0) [avatar definition]
+244. ~has_value(c4,X0) | sK0 = X0 <- (6) [avatar component clause 243]
+245. 4 | 6 [avatar split clause 241,243,230]
+270. advertising = sK0 <- (6) [resolution 244,190]
+290. 16 <=> ! [X1] : (~taxonomic(X1) | ~has_operand(c3,X1)) [avatar definition]
+291. ~has_operand(c3,X1) | ~taxonomic(X1) <- (16) [avatar component clause 290]
+298. ~taxonomic(X0) | ~has_value(c3,X1) | ~has_operator(c3,isA) | ~has_operand(c3,X0) | subClassOf(sK0,X1) [resolution 178,191]
+380. ~taxonomic(purpose) <- (16) [resolution 291,185]
+381. $false <- (16) [subsumption resolution 380,171]
+382. ~16 [avatar contradiction clause 381]
+384. ~taxonomic(X0) | ~has_value(c3,X1) | ~has_operand(c3,X0) | subClassOf(sK0,X1) [subsumption resolution 298,186]
+386. 29 <=> ! [X1] : (~has_value(c3,X1) | subClassOf(advertising,X1)) [avatar definition]
+387. ~has_value(c3,X1) | subClassOf(advertising,X1) <- (29) [avatar component clause 386]
+389. subClassOf(advertising,X1) | ~taxonomic(X0) | ~has_value(c3,X1) | ~has_operand(c3,X0) <- (6) [forward demodulation 384,270]
+390. 16 | 29 | ~6 [avatar split clause 389,243,386,290]
+391. subClassOf(advertising,nonCommercialPurpose) <- (29) [resolution 387,187]
+392. $false <- (29) [subsumption resolution 391,168]
+393. ~29 [avatar contradiction clause 392]
+394. $false [avatar sat refutation 240,245,382,390,393]
+% SZS output end Proof for ODRL032-1
+% ------------------------------
+% Version: Vampire 5.0.0 (Release build, commit 55c27f5 on 2025-09-09 16:15:20 +0100)
+% Linked with Z3 4.14.0.0 3c47fd96cf5645d0c42b2c819d9e9a84380aa721 NOTFOUND
+% Termination reason: Refutation
+
+% Time elapsed: 0.004 s
+% Peak memory usage: 8 MB
+% ------------------------------
+% ------------------------------
