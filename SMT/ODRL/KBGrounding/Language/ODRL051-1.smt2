@@ -1,53 +1,45 @@
-; ODRL023-1.smt2 — Cross-branch conflict: advertising ⊄ nonCommPurpose
+; ODRL051-1.smt2 — Language conflict: fr ⊄ de (cross-branch disjoint)
 ; Expected: unsat (SZS: Theorem)
 
 (set-logic UF)
 (declare-sort Entity 0)
 
-; === Layer 0: DPV Purpose Taxonomy (DAG) ===
+; === Layer 0: BCP 47 Language Tags ===
 (declare-fun subClassOf (Entity Entity) Bool)
-(declare-const purpose_top Entity)
-(declare-const commercialPurpose Entity)
-(declare-const nonCommercialPurpose Entity)
-(declare-const researchAndDevelopment Entity)
-(declare-const marketing Entity)
-(declare-const academicResearch Entity)
-(declare-const scientificResearch Entity)
-(declare-const commercialResearch Entity)
-(declare-const nonCommercialResearch Entity)
-(declare-const advertising Entity)
-(declare-const directMarketing Entity)
+(declare-const de Entity)
+(declare-const de_AT Entity)
+(declare-const de_CH Entity)
+(declare-const en Entity)
+(declare-const en_US Entity)
+(declare-const en_GB Entity)
+(declare-const fr Entity)
+(declare-const ar Entity)
+(declare-const arb Entity)
+(declare-const arz Entity)
 
 (assert (forall ((x Entity)) (subClassOf x x)))
 (assert (forall ((x Entity) (y Entity) (z Entity))
     (=> (and (subClassOf x y) (subClassOf y z)) (subClassOf x z))))
 
-; Top-level
-(assert (subClassOf commercialPurpose purpose_top))
-(assert (subClassOf nonCommercialPurpose purpose_top))
-(assert (subClassOf researchAndDevelopment purpose_top))
-(assert (subClassOf marketing purpose_top))
+(assert (subClassOf de_AT de))
+(assert (subClassOf de_CH de))
+(assert (subClassOf en_US en))
+(assert (subClassOf en_GB en))
+(assert (subClassOf arb ar))
+(assert (subClassOf arz ar))
 
-; R&D children
-(assert (subClassOf academicResearch researchAndDevelopment))
-(assert (subClassOf scientificResearch researchAndDevelopment))
-(assert (subClassOf commercialResearch researchAndDevelopment))
-(assert (subClassOf nonCommercialResearch researchAndDevelopment))
-
-; Multi-parent (DAG)
-(assert (subClassOf commercialResearch commercialPurpose))
-(assert (subClassOf nonCommercialResearch nonCommercialPurpose))
-
-; Marketing children
-(assert (subClassOf advertising marketing))
-(assert (subClassOf directMarketing marketing))
-
-; Disjointness
-(assert (not (subClassOf commercialPurpose nonCommercialPurpose)))
-(assert (not (subClassOf nonCommercialPurpose commercialPurpose)))
-(assert (not (subClassOf marketing nonCommercialPurpose)))
-(assert (not (subClassOf advertising nonCommercialPurpose)))
-(assert (not (subClassOf nonCommercialResearch commercialPurpose)))
+(assert (not (subClassOf de en)))
+(assert (not (subClassOf en de)))
+(assert (not (subClassOf de fr)))
+(assert (not (subClassOf fr de)))
+(assert (not (subClassOf en fr)))
+(assert (not (subClassOf fr en)))
+(assert (not (subClassOf de ar)))
+(assert (not (subClassOf ar de)))
+(assert (not (subClassOf en ar)))
+(assert (not (subClassOf ar en)))
+(assert (not (subClassOf fr ar)))
+(assert (not (subClassOf ar fr)))
 
 ; === Layer 1: ODRL Core ===
 (declare-fun has_operand (Entity Entity) Bool)
@@ -90,15 +82,15 @@
         (subClassOf x v))))
 
 
-; === Problem: ODRL023-1 ===
+; === Problem: ODRL051-1 ===
 (declare-const c1 Entity)
 (declare-const c2 Entity)
-(assert (has_operand c1 purpose))
+(assert (has_operand c1 language))
 (assert (has_operator c1 op_isA))
-(assert (has_value c1 nonCommercialPurpose))
-(assert (has_operand c2 purpose))
+(assert (has_value c1 de))
+(assert (has_operand c2 language))
 (assert (has_operator c2 op_eq))
-(assert (has_value c2 advertising))
+(assert (has_value c2 fr))
 
 (assert (exists ((x Entity))
     (and (in_denotation x c1) (in_denotation x c2))))

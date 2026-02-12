@@ -1,5 +1,5 @@
-; ODRL021-1.smt2 — Taxonomic Unknown: scientificResearch ⊄ nonCommPurpose
-; Expected: sat (SZS: CounterSatisfiable)
+; ODRL045-2.smt2 — ATTACK RESOLUTION: isNoneOf + enriched KB — false Unknown fixed
+; Expected: unsat (SZS: Theorem)
 
 (set-logic UF)
 (declare-sort Entity 0)
@@ -49,6 +49,9 @@
 (assert (not (subClassOf advertising nonCommercialPurpose)))
 (assert (not (subClassOf nonCommercialResearch commercialPurpose)))
 
+; === KB ENRICHMENT: missing negative fact ===
+(assert (not (subClassOf scientificResearch commercialPurpose)))
+
 ; === Layer 1: ODRL Core ===
 (declare-fun has_operand (Entity Entity) Bool)
 (declare-fun has_operator (Entity Entity) Bool)
@@ -79,23 +82,22 @@
     (=> (and (in_denotation x c) (has_operand c l) (has_operator c op_eq) (has_value c v))
         (= x v))))
 
-; --- isA: bidirectional ---
-(assert (forall ((c Entity) (l Entity) (v Entity) (x Entity))
-    (=> (and (has_operand c l) (has_operator c op_isA) (has_value c v)
-             (taxonomic l) (subClassOf x v))
-        (in_denotation x c))))
+; --- isNoneOf: only-if (taxonomic) ---
 (assert (forall ((c Entity) (l Entity) (v Entity) (x Entity))
     (=> (and (in_denotation x c) (has_operand c l)
-             (has_operator c op_isA) (has_value c v) (taxonomic l))
-        (subClassOf x v))))
+             (has_operator c op_isNoneOf) (has_value c v) (taxonomic l))
+        (not (subClassOf x v)))))
 
 
-; === Problem: ODRL021-1 ===
+; === Problem: ODRL045-2 ===
 (declare-const c1 Entity)
 (declare-const c2 Entity)
 (assert (has_operand c1 purpose))
-(assert (has_operator c1 op_isA))
-(assert (has_value c1 nonCommercialPurpose))
+(assert (has_operator c1 op_isNoneOf))
+(assert (has_value c1 commercialPurpose))
+(assert (forall ((x Entity))
+    (=> (and (not (subClassOf x commercialPurpose)) (taxonomic purpose))
+        (in_denotation x c1))))
 (assert (has_operand c2 purpose))
 (assert (has_operator c2 op_eq))
 (assert (has_value c2 scientificResearch))

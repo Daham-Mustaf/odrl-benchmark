@@ -91,6 +91,85 @@ DPV_KB = """\
 (assert (not (subClassOf nonCommercialResearch commercialPurpose)))
 """
 
+# Language constants + facts (no subClassOf declaration — for use with DPV_KB)
+LNG_KB_FACTS = """\
+; === Layer 0: BCP 47 Language Tags (facts only) ===
+(declare-const de Entity)
+(declare-const de_AT Entity)
+(declare-const de_CH Entity)
+(declare-const en Entity)
+(declare-const en_US Entity)
+(declare-const en_GB Entity)
+(declare-const fr Entity)
+(declare-const ar Entity)
+(declare-const arb Entity)
+(declare-const arz Entity)
+
+; German variants
+(assert (subClassOf de_AT de))
+(assert (subClassOf de_CH de))
+; English variants
+(assert (subClassOf en_US en))
+(assert (subClassOf en_GB en))
+; Arabic macrolanguage
+(assert (subClassOf arb ar))
+(assert (subClassOf arz ar))
+
+; Cross-branch disjointness
+(assert (not (subClassOf de en)))
+(assert (not (subClassOf en de)))
+(assert (not (subClassOf de fr)))
+(assert (not (subClassOf fr de)))
+(assert (not (subClassOf en fr)))
+(assert (not (subClassOf fr en)))
+(assert (not (subClassOf de ar)))
+(assert (not (subClassOf ar de)))
+(assert (not (subClassOf en ar)))
+(assert (not (subClassOf ar en)))
+(assert (not (subClassOf fr ar)))
+(assert (not (subClassOf ar fr)))
+"""
+
+# Standalone LNG KB (includes subClassOf declaration for language-only problems)
+LNG_KB = """\
+; === Layer 0: BCP 47 Language Tags ===
+(declare-fun subClassOf (Entity Entity) Bool)
+(declare-const de Entity)
+(declare-const de_AT Entity)
+(declare-const de_CH Entity)
+(declare-const en Entity)
+(declare-const en_US Entity)
+(declare-const en_GB Entity)
+(declare-const fr Entity)
+(declare-const ar Entity)
+(declare-const arb Entity)
+(declare-const arz Entity)
+
+(assert (forall ((x Entity)) (subClassOf x x)))
+(assert (forall ((x Entity) (y Entity) (z Entity))
+    (=> (and (subClassOf x y) (subClassOf y z)) (subClassOf x z))))
+
+(assert (subClassOf de_AT de))
+(assert (subClassOf de_CH de))
+(assert (subClassOf en_US en))
+(assert (subClassOf en_GB en))
+(assert (subClassOf arb ar))
+(assert (subClassOf arz ar))
+
+(assert (not (subClassOf de en)))
+(assert (not (subClassOf en de)))
+(assert (not (subClassOf de fr)))
+(assert (not (subClassOf fr de)))
+(assert (not (subClassOf en fr)))
+(assert (not (subClassOf fr en)))
+(assert (not (subClassOf de ar)))
+(assert (not (subClassOf ar de)))
+(assert (not (subClassOf en ar)))
+(assert (not (subClassOf ar en)))
+(assert (not (subClassOf fr ar)))
+(assert (not (subClassOf ar fr)))
+"""
+
 # ============================================================
 # Layer 1: ODRL Core structure
 # ============================================================
@@ -113,8 +192,10 @@ LAYER1 = """\
 (declare-fun taxonomic (Entity) Bool)
 (declare-const spatial Entity)
 (declare-const purpose Entity)
+(declare-const language Entity)
 (assert (mereological spatial))
 (assert (taxonomic purpose))
+(assert (taxonomic language))
 """
 
 # ============================================================
@@ -237,25 +318,35 @@ def conjecture_cross_compatible(c1, c2, c3, c4):
     (exists ((x Entity)) (and (in_denotation x {c1}) (in_denotation x {c2})))
     (exists ((y Entity)) (and (in_denotation y {c3}) (in_denotation y {c4}))))))"""
 
-def conjecture_cross_conflict_purpose(c3, c4):
-    """Same as single conflict but for purpose pair."""
-    return conjecture_conflict(c3, c4)
+def conjecture_triple_compatible(c1, c2, c3, c4, c5, c6):
+    """Negated three-operand compatibility."""
+    return f"""(assert (not (and
+    (exists ((x Entity)) (and (in_denotation x {c1}) (in_denotation x {c2})))
+    (exists ((y Entity)) (and (in_denotation y {c3}) (in_denotation y {c4})))
+    (exists ((z Entity)) (and (in_denotation z {c5}) (in_denotation z {c6}))))))"""
 
 # isAllOf if-direction (grounded per-problem)
-def isallof_if_taxonomic(cname, values):
+def isallof_if_taxonomic(cname, values, operand="purpose"):
     """Grounded isAllOf if-direction for specific values."""
     conj = " ".join(f"(subClassOf x {v})" for v in values)
     return f"""(assert (forall ((x Entity))
-    (=> (and {conj} (taxonomic purpose))
+    (=> (and {conj} (taxonomic {operand}))
         (in_denotation x {cname}))))"""
 
 # isNoneOf if-direction (grounded per-problem)
-def isnoneof_if_taxonomic(cname, values):
+def isnoneof_if_taxonomic(cname, values, operand="purpose"):
     """Grounded isNoneOf if-direction for specific values."""
     conj = " ".join(f"(not (subClassOf x {v}))" for v in values)
     return f"""(assert (forall ((x Entity))
-    (=> (and {conj} (taxonomic purpose))
+    (=> (and {conj} (taxonomic {operand}))
         (in_denotation x {cname}))))"""
+
+# isAnyOf only-if (grounded disjunction per-problem — for conflict proofs)
+def isanyof_onlyif_taxonomic(cname, values):
+    """Grounded isAnyOf only-if: in_denotation → subClassOf to SOME value."""
+    disj = " ".join(f"(subClassOf x {v})" for v in values)
+    return f"""(assert (forall ((x Entity))
+    (=> (in_denotation x {cname}) (or {disj}))))"""
 
 
 # ============================================================
@@ -487,6 +578,172 @@ add("ODRL033-1", "CrossKB",
     constraint("c4", "purpose", "op_eq", "scientificResearch"),
     conjecture_cross_compatible("c1", "c2", "c3", "c4"),
     "sat", "CounterSatisfiable")
+
+# --- Adversarial: attack tests ---
+
+# ATK-1: Reflexive self-overlap (eq X vs eq X)
+add("ODRL040-1", "Adversarial",
+    "ATTACK: Reflexive self-overlap (eq X vs eq X)",
+    [DPV_KB], [GROUND_EQ],
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint("c1", "purpose", "op_eq", "academicResearch") + "\n" +
+    constraint("c2", "purpose", "op_eq", "academicResearch"),
+    conjecture_compatible("c1", "c2"),
+    "unsat", "Theorem")
+
+# ATK-2: Cross-operator composition (isA × isAnyOf)
+add("ODRL041-1", "Adversarial",
+    "ATTACK: Cross-operator overlap (isA vs isAnyOf)",
+    [DPV_KB], [GROUND_EQ, GROUND_ISA, GROUND_ISANYOF_TAX],
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint("c1", "purpose", "op_isA", "researchAndDevelopment") + "\n" +
+    constraint_multi_value("c2", "purpose", "op_isAnyOf",
+                           ["commercialPurpose", "marketing"]),
+    conjecture_compatible("c1", "c2"),
+    "unsat", "Theorem")
+
+# ATK-3: isNoneOf vs isA — forced contradiction via only-if composition
+add("ODRL042-1", "Adversarial",
+    "ATTACK: isNoneOf vs isA — forced contradiction",
+    [DPV_KB], [GROUND_EQ, GROUND_ISA, GROUND_ISNONEOF_TAX_ONLY],
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint("c1", "purpose", "op_isA", "researchAndDevelopment") + "\n" +
+    constraint("c2", "purpose", "op_isNoneOf", "researchAndDevelopment"),
+    conjecture_conflict("c1", "c2"),
+    "unsat", "Theorem")
+
+# ATK-4: Phantom entity via impossible isAllOf
+add("ODRL043-1", "Adversarial",
+    "ATTACK: Phantom entity — impossible isAllOf intersection",
+    [DPV_KB], [GROUND_EQ, GROUND_ISALLOF_TAX_ONLY],
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint_multi_value("c1", "purpose", "op_isAllOf",
+                           ["commercialPurpose", "nonCommercialPurpose"]) + "\n" +
+    isallof_if_taxonomic("c1", ["commercialPurpose", "nonCommercialPurpose"]) + "\n" +
+    constraint("c2", "purpose", "op_eq", "commercialResearch"),
+    conjecture_compatible("c1", "c2"),
+    "sat", "CounterSatisfiable")
+
+# ATK-5: Operand type mismatch — isPartOf on taxonomic operand
+# Need GEO_KB to declare partOf, even though the attack is about purpose
+add("ODRL044-1", "Adversarial",
+    "ATTACK: Type guard — isPartOf on taxonomic operand",
+    [GEO_KB, DPV_KB], [GROUND_EQ, GROUND_ISPARTOF],
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint("c1", "purpose", "op_isPartOf", "researchAndDevelopment") + "\n" +
+    constraint("c2", "purpose", "op_eq", "academicResearch"),
+    conjecture_compatible("c1", "c2"),
+    "sat", "CounterSatisfiable")
+
+# ATK-6a: isNoneOf + KB gap — false Unknown (missing negative fact)
+add("ODRL045-1", "Adversarial",
+    "ATTACK: isNoneOf KB gap — false Unknown (conservative)",
+    [DPV_KB], [GROUND_EQ, GROUND_ISNONEOF_TAX_ONLY],
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint("c1", "purpose", "op_isNoneOf", "commercialPurpose") + "\n" +
+    isnoneof_if_taxonomic("c1", ["commercialPurpose"]) + "\n" +
+    constraint("c2", "purpose", "op_eq", "scientificResearch"),
+    conjecture_compatible("c1", "c2"),
+    "sat", "CounterSatisfiable")
+
+# ATK-6b: Same as ATK-6a but with KB enrichment — resolves to Compatible
+DPV_KB_ENRICHED = DPV_KB + """
+; === KB ENRICHMENT: missing negative fact ===
+(assert (not (subClassOf scientificResearch commercialPurpose)))
+"""
+
+add("ODRL045-2", "Adversarial",
+    "ATTACK RESOLUTION: isNoneOf + enriched KB — false Unknown fixed",
+    [DPV_KB_ENRICHED], [GROUND_EQ, GROUND_ISNONEOF_TAX_ONLY],
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint("c1", "purpose", "op_isNoneOf", "commercialPurpose") + "\n" +
+    isnoneof_if_taxonomic("c1", ["commercialPurpose"]) + "\n" +
+    constraint("c2", "purpose", "op_eq", "scientificResearch"),
+    conjecture_compatible("c1", "c2"),
+    "unsat", "Theorem")
+
+# --- Language domain (BCP 47) ---
+
+LANGUAGE_GROUNDING = [GROUND_EQ, GROUND_ISA]
+
+# ODRL050: BSB permits German, Austrian library requests de-AT → compatible
+add("ODRL050-1", "Language",
+    "Language compatible: de_AT ⊑ de (regional refinement)",
+    [LNG_KB], LANGUAGE_GROUNDING,
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint("c1", "language", "op_isA", "de") + "\n" +
+    constraint("c2", "language", "op_eq", "de_AT"),
+    conjecture_compatible("c1", "c2"),
+    "unsat", "Theorem")
+
+# ODRL051: HK permits German, Louvre requests French → conflict
+add("ODRL051-1", "Language",
+    "Language conflict: fr ⊄ de (cross-branch disjoint)",
+    [LNG_KB], LANGUAGE_GROUNDING,
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint("c1", "language", "op_isA", "de") + "\n" +
+    constraint("c2", "language", "op_eq", "fr"),
+    conjecture_conflict("c1", "c2"),
+    "unsat", "Theorem")
+
+# ODRL052: HK permits {de, en}, Louvre requests fr → conflict (union doesn't cover)
+add("ODRL052-1", "Language",
+    "Language isAnyOf conflict: fr ∉ {de, en}↓",
+    [LNG_KB], [GROUND_EQ, GROUND_ISANYOF_TAX],
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint_multi_value("c1", "language", "op_isAnyOf", ["de", "en"]) + "\n" +
+    isanyof_onlyif_taxonomic("c1", ["de", "en"]) + "\n" +
+    constraint("c2", "language", "op_eq", "fr"),
+    conjecture_conflict("c1", "c2"),
+    "unsat", "Theorem")
+
+# ODRL053: BSB Arabic collection, Egyptian Arabic request → compatible
+add("ODRL053-1", "Language",
+    "Language compatible: arz ⊑ ar (macrolanguage)",
+    [LNG_KB], LANGUAGE_GROUNDING,
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint("c1", "language", "op_isA", "ar") + "\n" +
+    constraint("c2", "language", "op_eq", "arz"),
+    conjecture_compatible("c1", "c2"),
+    "unsat", "Theorem")
+
+# ODRL054: HK permits {de, en}, British Museum requests en_GB → compatible
+add("ODRL054-1", "Language",
+    "Language isAnyOf compatible: en_GB ⊑ en ∈ {de, en}↓",
+    [LNG_KB], [GROUND_EQ, GROUND_ISANYOF_TAX],
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)",
+    constraint_multi_value("c1", "language", "op_isAnyOf", ["de", "en"]) + "\n" +
+    constraint("c2", "language", "op_eq", "en_GB"),
+    conjecture_compatible("c1", "c2"),
+    "unsat", "Theorem")
+
+# ODRL055: Three-KB cross-dataspace (spatial + purpose + language)
+TRIPLE_GROUNDING = [GROUND_EQ, GROUND_ISPARTOF, GROUND_ISA]
+
+add("ODRL055-1", "Language",
+    "Three-KB cross-dataspace: language blocks (fr ⊄ de)",
+    [GEO_KB, DPV_KB, LNG_KB_FACTS], TRIPLE_GROUNDING,
+    "(declare-const c1 Entity)\n(declare-const c2 Entity)\n" +
+    "(declare-const c3 Entity)\n(declare-const c4 Entity)\n" +
+    "(declare-const c5 Entity)\n(declare-const c6 Entity)",
+    constraint("c1", "spatial", "op_isPartOf", "europe") + "\n" +
+    constraint("c3", "purpose", "op_isA", "nonCommercialPurpose") + "\n" +
+    constraint("c5", "language", "op_isA", "de") + "\n" +
+    constraint("c2", "spatial", "op_eq", "france") + "\n" +
+    constraint("c4", "purpose", "op_eq", "scientificResearch") + "\n" +
+    constraint("c6", "language", "op_eq", "fr"),
+    conjecture_triple_compatible("c1", "c2", "c3", "c4", "c5", "c6"),
+    "sat", "CounterSatisfiable")
+
+# ODRL056: Diagnostic — language is the blocking operand
+add("ODRL056-1", "Language",
+    "Diagnostic: language is the blocking operand (fr ⊄ de)",
+    [LNG_KB], LANGUAGE_GROUNDING,
+    "(declare-const c5 Entity)\n(declare-const c6 Entity)",
+    constraint("c5", "language", "op_isA", "de") + "\n" +
+    constraint("c6", "language", "op_eq", "fr"),
+    conjecture_conflict("c5", "c6"),
+    "unsat", "Theorem")
 
 
 # ============================================================

@@ -66,8 +66,10 @@
 (declare-fun taxonomic (Entity) Bool)
 (declare-const spatial Entity)
 (declare-const purpose Entity)
+(declare-const language Entity)
 (assert (mereological spatial))
 (assert (taxonomic purpose))
+(assert (taxonomic language))
 
 ; --- eq: bidirectional ---
 (assert (forall ((c Entity) (l Entity) (v Entity) (x Entity))

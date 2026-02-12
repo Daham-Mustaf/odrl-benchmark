@@ -1,5 +1,5 @@
-; ODRL021-1.smt2 — Taxonomic Unknown: scientificResearch ⊄ nonCommPurpose
-; Expected: sat (SZS: CounterSatisfiable)
+; ODRL042-1.smt2 — ATTACK: isNoneOf vs isA — forced contradiction
+; Expected: unsat (SZS: Theorem)
 
 (set-logic UF)
 (declare-sort Entity 0)
@@ -89,18 +89,24 @@
              (has_operator c op_isA) (has_value c v) (taxonomic l))
         (subClassOf x v))))
 
+; --- isNoneOf: only-if (taxonomic) ---
+(assert (forall ((c Entity) (l Entity) (v Entity) (x Entity))
+    (=> (and (in_denotation x c) (has_operand c l)
+             (has_operator c op_isNoneOf) (has_value c v) (taxonomic l))
+        (not (subClassOf x v)))))
 
-; === Problem: ODRL021-1 ===
+
+; === Problem: ODRL042-1 ===
 (declare-const c1 Entity)
 (declare-const c2 Entity)
 (assert (has_operand c1 purpose))
 (assert (has_operator c1 op_isA))
-(assert (has_value c1 nonCommercialPurpose))
+(assert (has_value c1 researchAndDevelopment))
 (assert (has_operand c2 purpose))
-(assert (has_operator c2 op_eq))
-(assert (has_value c2 scientificResearch))
+(assert (has_operator c2 op_isNoneOf))
+(assert (has_value c2 researchAndDevelopment))
 
-(assert (not (exists ((x Entity))
-    (and (in_denotation x c1) (in_denotation x c2)))))
+(assert (exists ((x Entity))
+    (and (in_denotation x c1) (in_denotation x c2))))
 
 (check-sat)

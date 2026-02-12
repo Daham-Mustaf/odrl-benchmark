@@ -1,8 +1,24 @@
-; ODRL021-1.smt2 — Taxonomic Unknown: scientificResearch ⊄ nonCommPurpose
+; ODRL044-1.smt2 — ATTACK: Type guard — isPartOf on taxonomic operand
 ; Expected: sat (SZS: CounterSatisfiable)
 
 (set-logic UF)
 (declare-sort Entity 0)
+
+; === Layer 0: GeoNames Spatial KB ===
+(declare-fun partOf (Entity Entity) Bool)
+(declare-const europe Entity)
+(declare-const france Entity)
+(declare-const germany Entity)
+(declare-const bavaria Entity)
+
+(assert (forall ((x Entity)) (partOf x x)))
+(assert (forall ((x Entity) (y Entity) (z Entity))
+    (=> (and (partOf x y) (partOf y z)) (partOf x z))))
+(assert (partOf france europe))
+(assert (partOf germany europe))
+(assert (partOf bavaria germany))
+(assert (not (partOf germany france)))
+(assert (not (partOf france germany)))
 
 ; === Layer 0: DPV Purpose Taxonomy (DAG) ===
 (declare-fun subClassOf (Entity Entity) Bool)
@@ -79,26 +95,26 @@
     (=> (and (in_denotation x c) (has_operand c l) (has_operator c op_eq) (has_value c v))
         (= x v))))
 
-; --- isA: bidirectional ---
+; --- isPartOf: bidirectional ---
 (assert (forall ((c Entity) (l Entity) (v Entity) (x Entity))
-    (=> (and (has_operand c l) (has_operator c op_isA) (has_value c v)
-             (taxonomic l) (subClassOf x v))
+    (=> (and (has_operand c l) (has_operator c op_isPartOf) (has_value c v)
+             (mereological l) (partOf x v))
         (in_denotation x c))))
 (assert (forall ((c Entity) (l Entity) (v Entity) (x Entity))
     (=> (and (in_denotation x c) (has_operand c l)
-             (has_operator c op_isA) (has_value c v) (taxonomic l))
-        (subClassOf x v))))
+             (has_operator c op_isPartOf) (has_value c v) (mereological l))
+        (partOf x v))))
 
 
-; === Problem: ODRL021-1 ===
+; === Problem: ODRL044-1 ===
 (declare-const c1 Entity)
 (declare-const c2 Entity)
 (assert (has_operand c1 purpose))
-(assert (has_operator c1 op_isA))
-(assert (has_value c1 nonCommercialPurpose))
+(assert (has_operator c1 op_isPartOf))
+(assert (has_value c1 researchAndDevelopment))
 (assert (has_operand c2 purpose))
 (assert (has_operator c2 op_eq))
-(assert (has_value c2 scientificResearch))
+(assert (has_value c2 academicResearch))
 
 (assert (not (exists ((x Entity))
     (and (in_denotation x c1) (in_denotation x c2)))))
