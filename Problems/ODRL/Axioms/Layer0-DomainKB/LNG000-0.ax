@@ -1,0 +1,57 @@
+%--------------------------------------------------------------------------
+% File     : LNG000-0.ax : TPTP-ODRL Benchmark
+% Domain   : BCP 47 Language Tags (subset)
+% Axioms   : Taxonomic KB for odrl:language operand
+% Source   : IETF BCP 47 (RFC 5646) / ISO 639-3 macrolanguages
+% Version  : 0.1.0
+%
+% Modeling : BCP 47 subtag refinement as taxonomic subsumption.
+%            de-AT refines de → subClassOf(de_AT, de).
+%            ISO 639-3 macrolanguages: ar ⊃ {arb, arz}.
+%            Underscores replace hyphens (TPTP identifier syntax).
+%
+% Concepts : 10 language tags
+%   Primary:  de, en, fr, ar
+%   Regional: de_AT (Austrian German), de_CH (Swiss German),
+%             en_US (American English), en_GB (British English)
+%   Macro:    arb (Standard Arabic), arz (Egyptian Arabic)
+%
+% Relation : subClassOf (subtag ⊑ primary)
+% Negatives: primary-level cross-branch disjointness (12 facts)
+%--------------------------------------------------------------------------
+
+% === Structural axioms (shared with DPV000-0.ax) ===
+
+fof(subclass_refl, axiom, ![X]: subClassOf(X, X)).
+
+fof(subclass_trans, axiom,
+    ![X,Y,Z]: ((subClassOf(X, Y) & subClassOf(Y, Z))
+        => subClassOf(X, Z))).
+
+% === BCP 47 refinement hierarchy ===
+
+fof(de_at_sub_de, axiom, subClassOf(de_AT, de)).
+fof(de_ch_sub_de, axiom, subClassOf(de_CH, de)).
+
+fof(en_us_sub_en, axiom, subClassOf(en_US, en)).
+fof(en_gb_sub_en, axiom, subClassOf(en_GB, en)).
+
+fof(arb_sub_ar, axiom, subClassOf(arb, ar)).
+fof(arz_sub_ar, axiom, subClassOf(arz, ar)).
+
+% === Cross-branch disjointness (primary level) ===
+
+fof(neg_de_en, axiom, ~subClassOf(de, en)).
+fof(neg_en_de, axiom, ~subClassOf(en, de)).
+fof(neg_de_fr, axiom, ~subClassOf(de, fr)).
+fof(neg_fr_de, axiom, ~subClassOf(fr, de)).
+fof(neg_en_fr, axiom, ~subClassOf(en, fr)).
+fof(neg_fr_en, axiom, ~subClassOf(fr, en)).
+fof(neg_de_ar, axiom, ~subClassOf(de, ar)).
+fof(neg_ar_de, axiom, ~subClassOf(ar, de)).
+fof(neg_en_ar, axiom, ~subClassOf(en, ar)).
+fof(neg_ar_en, axiom, ~subClassOf(ar, en)).
+fof(neg_fr_ar, axiom, ~subClassOf(fr, ar)).
+fof(neg_ar_fr, axiom, ~subClassOf(ar, fr)).
+
+%--------------------------------------------------------------------------
