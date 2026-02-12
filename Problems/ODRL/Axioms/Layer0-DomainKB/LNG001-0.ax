@@ -1,0 +1,43 @@
+%--------------------------------------------------------------------------
+% File     : LNG001-0.ax : TPTP-ODRL Language KB (ISO 639-3)
+% Domain   : Language identification
+% Source   : ISO 639-3 individual language codes
+% Note     : Three-letter codes per ISO 639-3. No regional variants
+%            (BCP 47 subtags like de-AT have no ISO 639-3 counterpart).
+%            This KB models a dataspace that uses ISO 639-3 exclusively.
+%
+% Parallel : LNG000-0.ax (BCP 47, includes regional variants)
+% Concepts : 6 (vs 10 in BCP 47 — 4 regional variants missing)
+%
+% Hierarchy:
+%   ara ─┬─ arb  (Standard Arabic)
+%        └─ arz  (Egyptian Arabic)
+%   deu         (German, no subtags)
+%   eng         (English, no subtags)
+%   fra         (French, no subtags)
+%--------------------------------------------------------------------------
+
+% === Structural axioms ===
+fof(refl,  axiom, ![X]: subClassOf(X, X)).
+fof(trans, axiom, ![X,Y,Z]: ((subClassOf(X,Y) & subClassOf(Y,Z)) => subClassOf(X,Z))).
+
+% === Positive: macrolanguage containment ===
+fof(arb_ara, axiom, subClassOf(arb, ara)).
+fof(arz_ara, axiom, subClassOf(arz, ara)).
+
+% === Negative: cross-branch disjointness (primary level) ===
+% 6 pairs from {deu, eng, fra, ara}
+fof(neg_deu_eng, axiom, ~subClassOf(deu, eng)).
+fof(neg_eng_deu, axiom, ~subClassOf(eng, deu)).
+fof(neg_deu_fra, axiom, ~subClassOf(deu, fra)).
+fof(neg_fra_deu, axiom, ~subClassOf(fra, deu)).
+fof(neg_deu_ara, axiom, ~subClassOf(deu, ara)).
+fof(neg_ara_deu, axiom, ~subClassOf(ara, deu)).
+fof(neg_eng_fra, axiom, ~subClassOf(eng, fra)).
+fof(neg_fra_eng, axiom, ~subClassOf(fra, eng)).
+fof(neg_eng_ara, axiom, ~subClassOf(eng, ara)).
+fof(neg_ara_eng, axiom, ~subClassOf(ara, eng)).
+fof(neg_fra_ara, axiom, ~subClassOf(fra, ara)).
+fof(neg_ara_fra, axiom, ~subClassOf(ara, fra)).
+
+%--------------------------------------------------------------------------
