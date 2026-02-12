@@ -1,0 +1,45 @@
+%--------------------------------------------------------------------------
+% File     : DPV001-0.ax : TPTP-ODRL Purpose KB (GDPR Art. 6 based)
+% Domain   : Data processing purpose classification
+% Source   : Simplified taxonomy derived from GDPR Article 6 legal bases
+% Note     : Coarser than W3C DPV. No marketing subtypes (advertising,
+%            directMarketing). No academicResearch. This KB models a
+%            dataspace that classifies purposes by GDPR legal bases only.
+%
+% Parallel : DPV000-0.ax (W3C DPV, full hierarchy with 10 concepts)
+% Concepts : 6 (vs 10 in W3C DPV — 4 leaf concepts missing)
+%
+% Hierarchy:
+%   zweck (purpose)
+%   ├── kommerziellerZweck (commercialPurpose)
+%   │   └── kommerzielleForschung (commercialResearch)
+%   ├── nichtKommerziellerZweck (nonCommercialPurpose)
+%   │   └── nichtKommerzielleForschung (nonCommercialResearch)
+%   └── forschungUndEntwicklung (researchAndDevelopment)
+%       ├── kommerzielleForschung (commercialResearch)
+%       └── nichtKommerzielleForschung (nonCommercialResearch)
+%
+% Missing vs DPV: marketing, advertising, directMarketing,
+%                 scientificResearch, academicResearch
+%--------------------------------------------------------------------------
+
+% === Structural axioms ===
+fof(refl,  axiom, ![X]: subClassOf(X, X)).
+fof(trans, axiom, ![X,Y,Z]: ((subClassOf(X,Y) & subClassOf(Y,Z)) => subClassOf(X,Z))).
+
+% === Positive: taxonomy edges ===
+fof(komm_zweck,     axiom, subClassOf(kommerziellerZweck, zweck)).
+fof(nkomm_zweck,    axiom, subClassOf(nichtKommerziellerZweck, zweck)).
+fof(fue_zweck,      axiom, subClassOf(forschungUndEntwicklung, zweck)).
+fof(kommf_komm,     axiom, subClassOf(kommerzielleForschung, kommerziellerZweck)).
+fof(kommf_fue,      axiom, subClassOf(kommerzielleForschung, forschungUndEntwicklung)).
+fof(nkommf_nkomm,   axiom, subClassOf(nichtKommerzielleForschung, nichtKommerziellerZweck)).
+fof(nkommf_fue,     axiom, subClassOf(nichtKommerzielleForschung, forschungUndEntwicklung)).
+
+% === Negative: commercial ⊥ non-commercial ===
+fof(neg_komm_nkomm, axiom, ~subClassOf(kommerziellerZweck, nichtKommerziellerZweck)).
+fof(neg_nkomm_komm, axiom, ~subClassOf(nichtKommerziellerZweck, kommerziellerZweck)).
+fof(neg_kommf_nkomm, axiom, ~subClassOf(kommerzielleForschung, nichtKommerziellerZweck)).
+fof(neg_nkommf_komm, axiom, ~subClassOf(nichtKommerzielleForschung, kommerziellerZweck)).
+
+%--------------------------------------------------------------------------

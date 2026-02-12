@@ -1,0 +1,29 @@
+%--------------------------------------------------------------------------
+% File     : GEO001-0.ax : TPTP-ODRL Spatial KB (ISO 3166)
+% Domain   : Geospatial containment
+% Source   : ISO 3166-1 country codes + UN M.49 regional groupings
+% Note     : Three-letter country codes per ISO 3166-1 alpha-3.
+%            No sub-national regions (ISO 3166-2 not included).
+%            This KB models a dataspace that uses ISO 3166 exclusively.
+%
+% Parallel : GEO000-0.ax (GeoNames, includes sub-national regions)
+% Concepts : 3 (vs 4 in GeoNames — bavaria missing)
+%
+% Hierarchy:
+%   eur ─┬─ deu  (Germany, ISO 3166-1: DEU)
+%        └─ fra  (France, ISO 3166-1: FRA)
+%--------------------------------------------------------------------------
+
+% === Structural axioms ===
+fof(refl,  axiom, ![X]: partOf(X, X)).
+fof(trans, axiom, ![X,Y,Z]: ((partOf(X,Y) & partOf(Y,Z)) => partOf(X,Z))).
+
+% === Positive: country-in-region containment ===
+fof(deu_eur, axiom, partOf(deu, eur)).
+fof(fra_eur, axiom, partOf(fra, eur)).
+
+% === Negative: cross-branch disjointness ===
+fof(neg_deu_fra, axiom, ~partOf(deu, fra)).
+fof(neg_fra_deu, axiom, ~partOf(fra, deu)).
+
+%--------------------------------------------------------------------------
