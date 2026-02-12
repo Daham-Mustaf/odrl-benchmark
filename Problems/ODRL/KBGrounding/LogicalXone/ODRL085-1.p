@@ -5,8 +5,8 @@
 % Status   : Theorem
 %
 % xone(isA commercialPurpose, isA nonCommercialPurpose) vs eq nonCommRes
-%   nonCommRes ⊑ nonCommPurpose ✓ (branch 2)
-%   nonCommRes ⊄ commercialPurpose ✓ (explicit in KB)
+%   nonCommRes ⊑ nonCommPurpose  (branch 2)
+%   nonCommRes ⊄ commercialPurpose (explicit in KB)
 %   Exactly one branch holds → Compatible
 %--------------------------------------------------------------------------
 

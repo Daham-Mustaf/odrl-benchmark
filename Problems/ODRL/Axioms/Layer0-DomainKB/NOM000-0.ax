@@ -1,0 +1,20 @@
+%--------------------------------------------------------------------------
+% File     : NOM000-0.ax : TPTP v0.1.0
+% Domain   : ODRL Policy Conflict Detection
+% Axioms   : Nominal KB — Delivery Channels (flat, identity only)
+% Source   : Extension benchmarks (Mustafa & Sutcliffe, 2026)
+% Scope    : 4 concepts, no hierarchy — identity relation only
+% Relation : none (nominal domain: ≤ = =)
+% Status   : Layer 0 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% --- All concepts are distinct (UNA) ---
+fof(nom_email_neq_api,       axiom, email != api).
+fof(nom_email_neq_ftp,       axiom, email != ftp).
+fof(nom_email_neq_streaming, axiom, email != streaming).
+fof(nom_api_neq_ftp,         axiom, api != ftp).
+fof(nom_api_neq_streaming,   axiom, api != streaming).
+fof(nom_ftp_neq_streaming,   axiom, ftp != streaming).
+
+%--------------------------------------------------------------------------

@@ -1,16 +1,16 @@
 %--------------------------------------------------------------------------
-% File     : ODRL000-0.ax : TPTP v0.1.0
+% File     : ODRL000-0.ax : TPTP v0.2.0
 % Domain   : ODRL Policy Conflict Detection
 % Axioms   : ODRL constraint structure and policy types
 % Source   : W3C ODRL Recommendation (Iannella 2018)
-% Version  : 0.1.0
-% Paper    : Def. 1 (Constraint), policy composition
+% Version  : 0.2.0
+% Paper    : Def. 1 (Constraint), Def. 2 (KB), policy composition
+% Change   : v0.2.0 — added nominal/1 domain classification (Def. 2)
 % Status   : Layer 1 — NOT YET FROZEN
 % Authors  : Mustafa, D. & Sutcliffe, G.
 %--------------------------------------------------------------------------
 
 % --- Operator classification ---
-
 fof(op_eq,        axiom, comparison_operator(eq)).
 fof(op_neq,       axiom, comparison_operator(neq)).
 fof(op_isA,       axiom, set_operator(isA)).
@@ -20,20 +20,21 @@ fof(op_isNoneOf,  axiom, set_operator(isNoneOf)).
 fof(op_isAnyOf,   axiom, set_operator(isAnyOf)).
 fof(op_isAllOf,   axiom, set_operator(isAllOf)).
 
-% --- Left operand domain classification (paper Table 2) ---
-
+% --- Left operand domain classification (paper Def. 2, Table 2) ---
+%     Taxonomic:    ≤ = ⊑ (class subsumption)
+%     Mereological: ≤ = ⪯ (part-whole containment)
+%     Nominal:      ≤ = = (identity only)
 fof(lo_spatial,   axiom, mereological(spatial)).
 fof(lo_purpose,   axiom, taxonomic(purpose)).
 fof(lo_language,  axiom, taxonomic(language)).
+fof(lo_channel,   axiom, nominal(channel)).
 
 % --- Policy typing (reverse implication) ---
-
 fof(permission_is_policy,  axiom, ![P]: (permission(P)  => policy(P))).
 fof(prohibition_is_policy, axiom, ![P]: (prohibition(P) => policy(P))).
 fof(obligation_is_policy,  axiom, ![P]: (obligation(P)  => policy(P))).
 
 % --- Structural relations (no existential forcing) ---
-
 fof(has_asset_policy,       axiom, ![P,A]:  (has_asset(P, A)      => policy(P))).
 fof(has_constraint_policy,  axiom, ![P,C]:  (has_constraint(P, C) => policy(P))).
 fof(has_operand_constraint, axiom, ![C,L]:  (has_operand(C, L)    => constraint(C))).
@@ -41,8 +42,8 @@ fof(has_operator_constraint,axiom, ![C,Op]: (has_operator(C, Op)  => constraint(
 fof(has_value_constraint,   axiom, ![C,V]:  (has_value(C, V)      => constraint(C))).
 
 % --- Same-operand pairing (scope for conflict detection) ---
-
 fof(same_operand_def, axiom,
     ![C1,C2,L]: ((has_operand(C1, L) & has_operand(C2, L))
         => same_operand(C1, C2))).
+
 %--------------------------------------------------------------------------

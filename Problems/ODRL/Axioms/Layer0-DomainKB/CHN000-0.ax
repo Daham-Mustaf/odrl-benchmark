@@ -1,0 +1,31 @@
+%--------------------------------------------------------------------------
+% File     : CHN000-0.ax : TPTP v0.1.0
+% Domain   : ODRL Policy Conflict Detection
+% Axioms   : Chain KB — depth-5 linear taxonomy
+% Source   : Extension benchmarks (Mustafa & Sutcliffe, 2026)
+% Scope    : 5 concepts in a linear chain: A ⊑ B ⊑ C ⊑ D ⊑ E
+% Relation : subClassOf/2 — taxonomic subsumption (preorder)
+% Note     : Tests transitive closure over long chains.
+% Status   : Layer 0 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% --- subClassOf: reflexive, transitive ---
+fof(sub_class_reflexive, axiom,
+    ![X]: subClassOf(X, X)).
+fof(sub_class_transitive, axiom,
+    ![X,Y,Z]: ((subClassOf(X, Y) & subClassOf(Y, Z)) => subClassOf(X, Z))).
+
+% --- Chain: A ⊑ B ⊑ C ⊑ D ⊑ E ---
+fof(chain_a_b, axiom, subClassOf(chainA, chainB)).
+fof(chain_b_c, axiom, subClassOf(chainB, chainC)).
+fof(chain_c_d, axiom, subClassOf(chainC, chainD)).
+fof(chain_d_e, axiom, subClassOf(chainD, chainE)).
+
+% --- Negative axioms: no upward subsumption ---
+fof(chain_not_e_d, axiom, ~subClassOf(chainE, chainD)).
+fof(chain_not_d_c, axiom, ~subClassOf(chainD, chainC)).
+fof(chain_not_c_b, axiom, ~subClassOf(chainC, chainB)).
+fof(chain_not_b_a, axiom, ~subClassOf(chainB, chainA)).
+
+%--------------------------------------------------------------------------

@@ -1,21 +1,32 @@
 %--------------------------------------------------------------------------
-% File     : GROUND000-1.ax : TPTP v0.1.0
+% File     : GROUND000-1.ax : TPTP v0.2.0
 % Domain   : ODRL Policy Conflict Detection
-% Axioms   : Semantic grounding — hierarchical (transitive closure)
+% Axioms   : Semantic grounding — denotation rules for all operators
 % Source   : Paper Def. 3 (Denotation), Def. 6 (Conflict)
-% Version  : 0.5.0
-% Variant  : Hierarchical extension (NOT flat ODRL-standard)
-% Note     : Bidirectional rules for eq, isA, isPartOf.
-%            isAnyOf: if-direction only (only-if Skolem explosion).
-%            isAllOf: only-if only (if needs grounded conjunction).
-%            isNoneOf: only-if only (if needs grounded negation).
-%            Set operator if-directions encoded per-problem.
+% Version  : 0.2.0
+% Change   : v0.2.0 — added neq (bidir), hasPart (bidir),
+%            nominal-domain isA/isAnyOf/isNoneOf rules.
+%
+% Encoding strategy per operator:
+%   eq       : bidirectional (if + only-if)
+%   neq      : bidirectional (if + only-if)
+%   isPartOf : bidirectional (if + only-if)
+%   hasPart  : bidirectional (if + only-if)
+%   isA      : bidirectional — taxonomic + nominal variants
+%   isAnyOf  : if-direction only (only-if causes Skolem explosion)
+%   isAllOf  : only-if only (if needs grounded conjunction)
+%   isNoneOf : only-if only (if needs grounded negation)
+%
+%   Set operator if-directions are encoded per-problem where needed.
+%
 % Status   : Layer 2 — NOT YET FROZEN
 % Authors  : Mustafa, D. & Sutcliffe, G.
 %--------------------------------------------------------------------------
 
-% === eq: exact match (all domains) ===
-
+% ==========================================================================
+% eq: exact match — all domains (Def. 3, Eq. 1)
+% ⟦ℓ eq v⟧ = {g}
+% ==========================================================================
 fof(denotation_eq, axiom,
     ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, eq) & has_value(C, V)
                    & X = V)
@@ -26,8 +37,24 @@ fof(denotation_eq_only, axiom,
                    & has_operator(C, eq) & has_value(C, V))
         => X = V)).
 
-% === isPartOf: mereological containment ===
+% ==========================================================================
+% neq: complement — all domains (Def. 3, Eq. 2)
+% ⟦ℓ neq v⟧ = C \ {g}
+% ==========================================================================
+fof(denotation_neq, axiom,
+    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, neq) & has_value(C, V)
+                   & X != V)
+        => in_denotation(X, C))).
 
+fof(denotation_neq_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, neq) & has_value(C, V))
+        => X != V)).
+
+% ==========================================================================
+% isPartOf: mereological downward closure (Def. 3, Eq. 4)
+% ⟦ℓ isPartOf v⟧ = {x ∈ C | x ⪯ g}
+% ==========================================================================
 fof(denotation_isPartOf, axiom,
     ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isPartOf) & has_value(C, V)
                    & mereological(L) & partOf(X, V))
@@ -39,8 +66,25 @@ fof(denotation_isPartOf_only, axiom,
                    & mereological(L))
         => partOf(X, V))).
 
-% === isA: taxonomic subsumption ===
+% ==========================================================================
+% hasPart: mereological upward closure (Def. 3, Eq. 5)
+% ⟦ℓ hasPart v⟧ = {x ∈ C | g ⪯ x}
+% ==========================================================================
+fof(denotation_hasPart, axiom,
+    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, hasPart) & has_value(C, V)
+                   & mereological(L) & partOf(V, X))
+        => in_denotation(X, C))).
 
+fof(denotation_hasPart_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, hasPart) & has_value(C, V)
+                   & mereological(L))
+        => partOf(V, X))).
+
+% ==========================================================================
+% isA: taxonomic subsumption (Def. 3, Eq. 3)
+% ⟦ℓ isA v⟧ = {x ∈ C | x ⊑ g}
+% ==========================================================================
 fof(denotation_isA, axiom,
     ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isA) & has_value(C, V)
                    & taxonomic(L) & subClassOf(X, V))
@@ -52,8 +96,24 @@ fof(denotation_isA_only, axiom,
                    & taxonomic(L))
         => subClassOf(X, V))).
 
-% === isAnyOf: union of downward closures (if-direction only) ===
+% --- isA under nominal domain: degenerates to identity (≤ = =) ---
+% ⟦ℓ isA v⟧ = {g}  when ≤ is identity
+fof(denotation_isA_nominal, axiom,
+    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isA) & has_value(C, V)
+                   & nominal(L) & X = V)
+        => in_denotation(X, C))).
 
+fof(denotation_isA_nominal_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, isA) & has_value(C, V)
+                   & nominal(L))
+        => X = V)).
+
+% ==========================================================================
+% isAnyOf: union of downward closures (Def. 3, Eq. 6)
+% ⟦ℓ isAnyOf {v₁,…,vₙ}⟧ = ⋃ᵢ {x ∈ C | x ≤ gᵢ}
+% If-direction only; only-if encoded per-problem (Skolem explosion).
+% ==========================================================================
 fof(denotation_isAnyOf_taxonomic, axiom,
     ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isAnyOf) & has_value(C, V)
                    & taxonomic(L) & subClassOf(X, V))
@@ -64,8 +124,17 @@ fof(denotation_isAnyOf_mereological, axiom,
                    & mereological(L) & partOf(X, V))
         => in_denotation(X, C))).
 
-% === isAllOf: intersection (only-if direction only) ===
+% --- isAnyOf under nominal: union of singletons = membership ---
+fof(denotation_isAnyOf_nominal, axiom,
+    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isAnyOf) & has_value(C, V)
+                   & nominal(L) & X = V)
+        => in_denotation(X, C))).
 
+% ==========================================================================
+% isAllOf: intersection of downward closures (Def. 3, Eq. 7)
+% ⟦ℓ isAllOf {v₁,…,vₙ}⟧ = {x ∈ C | ∀i: x ≤ gᵢ}
+% Only-if direction only; if-direction encoded per-problem.
+% ==========================================================================
 fof(denotation_isAllOf_taxonomic_only, axiom,
     ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
                    & has_operator(C, isAllOf) & has_value(C, V)
@@ -78,10 +147,12 @@ fof(denotation_isAllOf_mereological_only, axiom,
                    & mereological(L))
         => partOf(X, V))).
 
-% === isNoneOf: exclusion (only-if direction only) ===
-% Membership requires non-subsumption to every value.
+% ==========================================================================
+% isNoneOf: exclusion — complement of union (Def. 3, Eq. 8)
+% ⟦ℓ isNoneOf {v₁,…,vₙ}⟧ = C \ ⋃ᵢ {x ∈ C | x ≤ gᵢ}
+% Only-if direction only; if-direction encoded per-problem.
 % Per-value necessary condition — clean, no existential.
-
+% ==========================================================================
 fof(denotation_isNoneOf_taxonomic_only, axiom,
     ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
                    & has_operator(C, isNoneOf) & has_value(C, V)
@@ -94,10 +165,19 @@ fof(denotation_isNoneOf_mereological_only, axiom,
                    & mereological(L))
         => ~partOf(X, V))).
 
-% === Verdict: compatibility (paper Def. 6) ===
+% --- isNoneOf under nominal: x ≠ any listed value ---
+fof(denotation_isNoneOf_nominal_only, axiom,
+    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
+                   & has_operator(C, isNoneOf) & has_value(C, V)
+                   & nominal(L))
+        => X != V)).
 
+% ==========================================================================
+% Verdict: compatibility (paper Def. 6)
+% ==========================================================================
 fof(verdict_compatible, axiom,
     ![C1,C2]: ((same_operand(C1, C2)
                 & ?[X]: (in_denotation(X, C1) & in_denotation(X, C2)))
         => verdict(C1, C2, compatible))).
+
 %--------------------------------------------------------------------------

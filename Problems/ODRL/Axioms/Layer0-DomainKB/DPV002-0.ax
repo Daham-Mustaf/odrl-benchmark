@@ -1,0 +1,44 @@
+%--------------------------------------------------------------------------
+% File     : DPV002-0.ax : TPTP v0.1.0
+% Domain   : Data Privacy Vocabulary (W3C DPV v2.2)
+% Axioms   : DPV Unique Name Assumption — same-level distinctness
+% Source   : Extension benchmarks (Mustafa & Sutcliffe, 2026)
+% Scope    : Pairwise distinctness for all 11 DPV concepts
+% Depends  : DPV000-0.ax
+% Note     : Required for neq operator (complement denotation
+%            depends on knowing concepts are distinct).
+%            Split into top-level and leaf-level groups.
+% Status   : Layer 0 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% --- Top-level pairwise distinctness ---
+fof(dpv_una_top_comm,     axiom, purpose != commercialPurpose).
+fof(dpv_una_top_noncomm,  axiom, purpose != nonCommercialPurpose).
+fof(dpv_una_top_rnd,      axiom, purpose != researchAndDevelopment).
+fof(dpv_una_top_mkt,      axiom, purpose != marketing).
+fof(dpv_una_comm_noncomm, axiom, commercialPurpose != nonCommercialPurpose).
+fof(dpv_una_comm_rnd,     axiom, commercialPurpose != researchAndDevelopment).
+fof(dpv_una_comm_mkt,     axiom, commercialPurpose != marketing).
+fof(dpv_una_noncomm_rnd,  axiom, nonCommercialPurpose != researchAndDevelopment).
+fof(dpv_una_noncomm_mkt,  axiom, nonCommercialPurpose != marketing).
+fof(dpv_una_rnd_mkt,      axiom, researchAndDevelopment != marketing).
+
+% --- Leaf-level pairwise distinctness ---
+fof(dpv_una_acad_sci,     axiom, academicResearch != scientificResearch).
+fof(dpv_una_acad_commr,   axiom, academicResearch != commercialResearch).
+fof(dpv_una_acad_ncr,     axiom, academicResearch != nonCommercialResearch).
+fof(dpv_una_acad_adv,     axiom, academicResearch != advertising).
+fof(dpv_una_acad_dm,      axiom, academicResearch != directMarketing).
+fof(dpv_una_sci_commr,    axiom, scientificResearch != commercialResearch).
+fof(dpv_una_sci_ncr,      axiom, scientificResearch != nonCommercialResearch).
+fof(dpv_una_sci_adv,      axiom, scientificResearch != advertising).
+fof(dpv_una_sci_dm,       axiom, scientificResearch != directMarketing).
+fof(dpv_una_commr_ncr,    axiom, commercialResearch != nonCommercialResearch).
+fof(dpv_una_commr_adv,    axiom, commercialResearch != advertising).
+fof(dpv_una_commr_dm,     axiom, commercialResearch != directMarketing).
+fof(dpv_una_ncr_adv,      axiom, nonCommercialResearch != advertising).
+fof(dpv_una_ncr_dm,       axiom, nonCommercialResearch != directMarketing).
+fof(dpv_una_adv_dm,       axiom, advertising != directMarketing).
+
+%--------------------------------------------------------------------------

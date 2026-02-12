@@ -1,0 +1,37 @@
+%--------------------------------------------------------------------------
+% File     : GEO002-0.ax : TPTP v0.1.0
+% Domain   : ODRL Policy Conflict Detection
+% Axioms   : GeoNames — Unique Name Assumption + negative hasPart
+% Source   : Extension benchmarks (Mustafa & Sutcliffe, 2026)
+% Scope    : Pairwise distinctness for 4 GeoNames concepts +
+%            negative partOf axioms for upward closure (hasPart).
+% Depends  : GEO000-0.ax
+% Note     : Required for hasPart Conflict verdicts. Without negative
+%            partOf axioms, the prover cannot prove upward closure
+%            excludes certain concepts.
+% Status   : Layer 0 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% --- Pairwise distinctness (UNA) ---
+fof(geo_una_eu_fr,  axiom, europe != france).
+fof(geo_una_eu_de,  axiom, europe != germany).
+fof(geo_una_eu_bav, axiom, europe != bavaria).
+fof(geo_una_fr_de,  axiom, france != germany).
+fof(geo_una_fr_bav, axiom, france != bavaria).
+fof(geo_una_de_bav, axiom, germany != bavaria).
+
+% --- Negative partOf: upward closure exclusions ---
+% europe is NOT partOf any sub-region
+fof(geo_eu_not_in_fr,  axiom, ~partOf(europe, france)).
+fof(geo_eu_not_in_de,  axiom, ~partOf(europe, germany)).
+fof(geo_eu_not_in_bav, axiom, ~partOf(europe, bavaria)).
+
+% germany is NOT partOf bavaria (downward only)
+fof(geo_de_not_in_bav, axiom, ~partOf(germany, bavaria)).
+
+% cross-branch exclusions
+fof(geo_fr_not_in_bav, axiom, ~partOf(france, bavaria)).
+fof(geo_bav_not_in_fr, axiom, ~partOf(bavaria, france)).
+
+%--------------------------------------------------------------------------

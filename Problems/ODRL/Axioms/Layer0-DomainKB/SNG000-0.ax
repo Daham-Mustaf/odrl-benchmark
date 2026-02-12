@@ -1,0 +1,24 @@
+%--------------------------------------------------------------------------
+% File     : SNG000-0.ax : TPTP v0.1.0
+% Domain   : ODRL Policy Conflict Detection
+% Axioms   : Single-concept KB — |C| = 1
+% Source   : Extension benchmarks (Mustafa & Sutcliffe, 2026)
+% Scope    : 1 concept with domain closure axiom
+% Relation : subClassOf/2 — taxonomic subsumption (preorder)
+% Note     : Domain closure forces all entities to equal singleton.
+%            Tests edge cases: neq produces ∅, isNoneOf produces ∅.
+% Status   : Layer 0 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% --- subClassOf: reflexive, transitive ---
+fof(sub_class_reflexive, axiom,
+    ![X]: subClassOf(X, X)).
+fof(sub_class_transitive, axiom,
+    ![X,Y,Z]: ((subClassOf(X, Y) & subClassOf(Y, Z)) => subClassOf(X, Z))).
+
+% --- Domain closure: only singleton exists ---
+fof(domain_closure, axiom,
+    ![X]: (X = singleton)).
+
+%--------------------------------------------------------------------------
