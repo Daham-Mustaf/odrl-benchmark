@@ -44,37 +44,48 @@
   ┌─────────────────────────────────────────────────────────────┐
   │                                                             │
   │  c1: spatial isPartOf europe                                │
-  │      KB = GeoNames:  europe ──⪯── germany ──⪯── bavaria    │
+  │      KB = GeoNames:  europe ──⪯── germany ──⪯── bavaria     │
   │                         └──⪯── france                       │
   │                                                             │
-  │      ⟦c1⟧ = {x ∈ C | x ⪯ europe}                          │
+  │      ⟦c1⟧ = {x ∈ C | x ⪯ europe}                             │
   │           = {europe, germany, france, bavaria}              │
   │                                                             │
   │  c4: spatial eq france                                      │
-  │      ⟦c4⟧ = {france}                                       │
+  │      ⟦c4⟧ = {france}                                        │
   │                                                             │
   │  c2: purpose isA nonCommercial                              │
-  │      KB = W3C DPV:  nonComm ──⊑── nonCommRes               │
+  │      KB = W3C DPV:  nonComm ──⊑── nonCommRes                │
   │                     commercial ──⊑── commRes                │
   │                     research ──⊑── nonCommRes               │
   │                              └──⊑── commRes                 │
   │                                                             │
-  │      ⟦c2⟧ = {x | x ⊑ nonComm} = {nonComm, nonCommRes}     │
+  │      ⟦c2⟧ = {x | x ⊑ nonComm} = {nonComm, nonCommRes}       │
   │                                                             │
   │  c5: purpose eq scientificRes                               │
   │      KB silent on scientificRes ⊑ nonComm ?                 │
   │      γ(scientificRes) maps, but position unclear            │
-  │      ⟦c5⟧ = {scientificRes}  ... but is it ⊑ nonComm?      │
+  │      ⟦c5⟧ = {scientificRes}  ... but is it ⊑ nonComm?       │
   │                                                             │
   │  c3: language isA de                                        │
-  │      KB = BCP 47:  de ──⊑── de-AT, de-CH                   │
-  │      ⟦c3⟧ = {de, de-AT, de-CH}                             │
+  │      KB = BCP 47:  de ──⊑── de-AT, de-CH                    │
+  │      ⟦c3⟧ = {de, de-AT, de-CH}                              │
   │                                                             │
   │  c6: language eq fr                                         │
-  │      ⟦c6⟧ = {fr}                                           │
+  │      ⟦c6⟧ = {fr}                                             │
   │                                                             │
-  │  UNGROUNDED VALUE?  γ(v) = ⊥  →  ⟦c⟧ = ⊤ (indeterminate)  │
+  │  UNGROUNDED VALUE?  γ(v) = ⊥  →  ⟦c⟧ = ⊤ (indeterminate)    │
   └─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+  ┌───────────────────────────────────────────────────────────┐
+  │  INTUITION                                                │
+  │                                                           │
+  │  A denotation answers: "who satisfies me?"                │
+  │  Conflict detection asks: "does anyone satisfy BOTH?"     │
+  │                                                           │
+  │  The move from D to C is just asking whether two          │
+  │  "who satisfies me?" answers share a member.              │
+  └───────────────────────────────────────────────────────────┘
                               │
                               ▼
 ═══════════════════════════════════════════════════════════════════════════
@@ -160,14 +171,14 @@
   │    ╱     ╲       │            │    ╱     ╲       │
   │ germany  france  │───α───────▶│ germany  france  │
   │    │             │            │                  │
-  │ bavaria          │───α──▶ ⊥   │  (no bavaria)   │
+  │ bavaria          │───α──▶ ⊥   │  (no bavaria)    │
   └──────────────────┘            └──────────────────┘
 
   Alignment α: order-preserving injection (Def. 6)
   ┌───────────────────────────────────────────────────────┐
-  │  x ≤_A y  ↔  α(x) ≤_B α(y)   (biconditional!)      │
+  │  x ≤_A y  ↔  α(x) ≤_B α(y)   (biconditional!)         │
   │                                                       │
-  │  Injective: distinct concepts stay distinct            │
+  │  Injective: distinct concepts stay distinct           │
   │  Partial: α(bavaria) = ⊥  (no counterpart)            │
   └───────────────────────────────────────────────────────┘
 
@@ -178,10 +189,10 @@
   │                   preserved                           │
   │                                                       │
   │  Unmapped concept ─────────▶ UNKNOWN                  │
-  │                   degrades     (never false Conflict)  │
+  │                   degrades    (never false Conflict)  │
   │                                                       │
   │  Safety: alignment can only WEAKEN toward Unknown     │
-  │          never FABRICATE conflicts                     │
+  │          never FABRICATE conflicts                    │
   │                                                       │
   └───────────────────────────────────────────────────────┘
 
@@ -206,13 +217,13 @@
   DESIGN TIME                           RUNTIME
   (concepts)                            (concrete values)
   ┌─────────────┐                       ┌─────────────────┐
-  │ Analyze:    │                       │ Request arrives: │
-  │ c1 vs c2   │                       │ ω(spatial)=FR    │
-  │             │                       │ ω(purpose)=sci   │
-  │ Verdict:    │                       │ ω(language)=fr   │
-  │ CONFLICT    │──── guarantees ──────▶│                   │
-  │             │                       │ No ω can satisfy │
-  │             │                       │ both c1 and c2   │
+  │ Analyze:    │                       │ Request arrives:│
+  │ c1 vs c2    │                       │ ω(spatial)=FR   │
+  │             │                       │ ω(purpose)=sci  │
+  │ Verdict:    │                       │ ω(language)=fr  │
+  │ CONFLICT    │──── guarantees ──────▶│                 │
+  │             │                       │ No ω can satisfy│
+  │             │                       │ both c1 and c2  │
   └─────────────┘                       └─────────────────┘
 
   Thm 2: verdict(c1,c2) = Conflict  →  ¬∃ω: (ω ⊨ c1 ∧ ω ⊨ c2)
@@ -229,11 +240,11 @@
   │                                                              │
   │  Encoding: EPR fragment (decidable!)                         │
   │                                                              │
-  │  TPTP format ──▶ Vampire (superposition) ──▶ SZS status     │
+  │  TPTP format ──▶ Vampire (superposition) ──▶ SZS status      │
   │       │                                          │           │
   │       │         154 problems                     │ 100%      │
   │       │                                          │ agree     │
-  │  SMT-LIB ─────▶ Z3 (DPLL(T)) ────────────▶ sat/unsat       │
+  │  SMT-LIB ─────▶ Z3 (DPLL(T)) ────────────▶ sat/unsat         │
   │                                                              │
   │  Verdict mapping:                                            │
   │  ┌────────────┬────────────────┬───────────┐                 │
@@ -243,8 +254,8 @@
   │  └────────────┴────────────────┴───────────┘                 │
   │                                                              │
   │  Bidirectional denotation rules:                             │
-  │  IF-direction:  KB facts → in_denotation  (proves compat)   │
-  │  ONLY-IF:       in_denotation → KB facts  (proves conflict) │
+  │  IF-direction:  KB facts → in_denotation  (proves compat)    │
+  │  ONLY-IF:       in_denotation → KB facts  (proves conflict)  │
   │  Both needed — neither alone suffices!                       │
   │                                                              │
   └──────────────────────────────────────────────────────────────┘
