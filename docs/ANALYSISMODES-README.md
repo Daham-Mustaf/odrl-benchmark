@@ -6,13 +6,13 @@ Three policy analysis capabilities from one denotation-intersection engine.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    verdict_of / subsumption_verdict          │
-│                    (same machinery, same soundness)          │
+│                    verdict_of / subsumption_verdict         │
+│                    (same machinery, same soundness)         │
 ├───────────────────┬───────────────────┬─────────────────────┤
 │ Mode 1            │ Mode 2            │ Mode 3              │
 │ Self-Contradiction│ Redundancy        │ Refinement          │
 │                   │                   │                     │
-│ ⟦c1⟧ ∩ ⟦c2⟧ = ∅  │ ⟦c1⟧ ⊆ ⟦c2⟧?     │ ⟦down⟧ ⊆ ⟦up⟧?     │
+│ ⟦c1⟧ ∩ ⟦c2⟧ = ∅    │ ⟦c1⟧ ⊆ ⟦c2⟧?       │ ⟦down⟧ ⊆ ⟦up⟧?        │
 │ within one policy │ one implies other │ DSSC supply chain   │
 │                   │                   │                     │
 │ unsat → Conflict  │ unsat → Confirmed │ unsat → Valid       │
