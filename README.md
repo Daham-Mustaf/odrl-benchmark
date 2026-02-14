@@ -24,6 +24,11 @@ Layer 1   ODRL Core           ODRL000-0.ax                     Constraint struct
 Layer 2   Grounding Bridge    GROUND000-1.ax                   Denotation semantics
 Layer 3   Problems            ODRL0xx-1.p / .smt2              Conjectures
 ```
+```
+Layer 0: DPV000-0.ax     →  Raw KB facts       →  subClassOf(X, Y), partOf(X, Y)
+Layer 1: ODRL000-0.ax    →  ODRL vocabulary     →  has_operand, has_operator, same_operand
+Layer 2: GROUND000-1.ax  →  Denotation bridge   →  connects operators TO KB relations
+```
 
 A higher layer never modifies a lower one.
 

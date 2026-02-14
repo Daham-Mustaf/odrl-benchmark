@@ -1,0 +1,78 @@
+%--------------------------------------------------------------------------
+% File     : ALIGN001-0.ax : TPTP v0.2.0
+% Domain   : Cross-dataspace vocabulary alignment
+% Axioms   : Purpose alignment: DPV (KB_A) → GDPR (KB_B)
+% Source   : Constructed for killer benchmark ODRL210+
+% Version  : 0.2.0
+% Note     : This file documents the alignment mapping α_purpose.
+%            The alignment is applied at PROBLEM CONSTRUCTION TIME:
+%            aligned problems include KB_B axioms with mapped values.
+%            This file is NOT included at runtime — it serves as
+%            formal documentation for Def 7 (Alignment).
+%
+%   Def 7 requirements:
+%     α: C_A → C_B ∪ {⊥}    (partial, injective, order-preserving)
+%
+%   MAPPING (5 mapped, 4 unmapped):
+%     α(purpose)                = purpose       (root)
+%     α(commercialPurpose)      = legitimateInterest
+%     α(nonCommercialPurpose)   = consent
+%     α(marketing)              = legitimateInterest  ← VIOLATES injectivity
+%                                                      ... so we use:
+%     α(marketing)              = ⊥             (unmapped)
+%     α(scientificResearch)     = ⊥             (unmapped — no GDPR equivalent)
+%     α(researchAndDevelopment) = ⊥             (unmapped — entire branch absent)
+%     α(academicResearch)       = publicInterest
+%     α(advertising)            = ⊥             (unmapped)
+%
+%   CORRECTED MAPPING (injective, 5 mapped, 4 unmapped):
+%     purpose                → purpose               ✓ (identity)
+%     commercialPurpose      → legitimateInterest     ✓
+%     nonCommercialPurpose   → consent                ✓
+%     academicResearch       → publicInterest         ✓
+%     commercialResearch     → legitimateInterest     ← same as commercial
+%                                                       ... so:
+%     commercialResearch     → ⊥                     ✓
+%
+%   FINAL MAPPING (injective):
+%     MAPPED (5):
+%       purpose              → purpose
+%       commercialPurpose    → legitimateInterest
+%       nonCommercialPurpose → consent
+%       academicResearch     → publicInterest
+%       nonCommercialResearch→ vitalInterest
+%
+%     UNMAPPED (6): α = ⊥
+%       researchAndDevelopment, scientificResearch,
+%       commercialResearch, marketing, advertising, directMarketing
+%
+%   ORDER PRESERVATION CHECK:
+%     subClassOf(commercialPurpose, purpose) ✓
+%       → subClassOf(legitimateInterest, purpose) ✓ [gdpr_legitimate]
+%     subClassOf(nonCommercialPurpose, purpose) ✓
+%       → subClassOf(consent, purpose) ✓ [gdpr_consent]
+%     subClassOf(academicResearch, researchAndDevelopment)
+%       → α(R&D) = ⊥, so this edge is NOT required to be preserved ✓
+%
+%   CRITICAL FOR DEF 8:
+%     ⟦isNoneOf{commercial}⟧_A contains scientificResearch (if enriched).
+%     α(scientificResearch) = ⊥  →  ⟦c⟧ ⊄ dom(α)  →  α̂(c) = ⊤
+%     This triggers the strengthened Def 8 (Unknown instead of false Conflict).
+%
+% Status   : Documentation only — NOT included at runtime
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+% The following predicates formalize the alignment for documentation.
+% They are NOT used by any denotation rule.
+fof(align_purpose,      axiom, aligned_to(purpose, purpose)).
+fof(align_commercial,   axiom, aligned_to(commercialPurpose, legitimateInterest)).
+fof(align_noncommercial,axiom, aligned_to(nonCommercialPurpose, consent)).
+fof(align_academic,     axiom, aligned_to(academicResearch, publicInterest)).
+fof(align_noncommres,   axiom, aligned_to(nonCommercialResearch, vitalInterest)).
+fof(unmap_rnd,          axiom, unmapped(researchAndDevelopment)).
+fof(unmap_scientific,   axiom, unmapped(scientificResearch)).
+fof(unmap_commres,      axiom, unmapped(commercialResearch)).
+fof(unmap_marketing,    axiom, unmapped(marketing)).
+fof(unmap_advertising,  axiom, unmapped(advertising)).
+fof(unmap_directmkt,    axiom, unmapped(directMarketing)).
+%--------------------------------------------------------------------------

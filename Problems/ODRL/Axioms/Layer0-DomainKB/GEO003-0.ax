@@ -1,0 +1,59 @@
+%--------------------------------------------------------------------------
+% File     : GEO003-0.ax : TPTP v0.2.0
+% Domain   : Geography (GeoNames)
+% Axioms   : Extended European spatial containment — depth 4
+% Source   : Simplified spatial hierarchy for benchmark purposes
+%            (countries from GeoNames, regions synthetic)
+% Version  : 0.2.0
+% Scope    : 9 concepts, depth 4 (world > europe > westernEurope > france > paris)
+% Relation : partOf/2 — mereological containment (preorder)
+% Note     : Extends GEO000-0.ax with WesternEurope, EasternEurope,
+%            Paris, Austria, Asia. For killer benchmark ODRL210+.
+% Status   : Layer 0 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+% --- partOf: reflexive, transitive ---
+fof(part_of_reflexive, axiom,
+    ![X]: partOf(X, X)).
+fof(part_of_transitive, axiom,
+    ![X,Y,Z]: ((partOf(X, Y) & partOf(Y, Z)) => partOf(X, Z))).
+% --- Depth 1: continents under world ---
+fof(geo_europe_world,  axiom, partOf(europe, world)).
+fof(geo_asia_world,    axiom, partOf(asia, world)).
+% --- Depth 2: regions under europe ---
+fof(geo_weurope_europe,  axiom, partOf(westernEurope, europe)).
+fof(geo_eeurope_europe,  axiom, partOf(easternEurope, europe)).
+% --- Depth 3: countries under westernEurope ---
+fof(geo_france_weurope,   axiom, partOf(france, westernEurope)).
+fof(geo_germany_weurope,  axiom, partOf(germany, westernEurope)).
+fof(geo_austria_weurope,  axiom, partOf(austria, westernEurope)).
+% --- Depth 4: city under france ---
+fof(geo_paris_france,     axiom, partOf(paris, france)).
+% --- Negative facts: sibling disjointness ---
+% Continents
+fof(geo_europe_not_asia,    axiom, ~partOf(europe, asia)).
+fof(geo_asia_not_europe,    axiom, ~partOf(asia, europe)).
+% Regions
+fof(geo_we_not_ee,          axiom, ~partOf(westernEurope, easternEurope)).
+fof(geo_ee_not_we,          axiom, ~partOf(easternEurope, westernEurope)).
+% Countries (siblings under westernEurope)
+fof(geo_fr_not_de,          axiom, ~partOf(france, germany)).
+fof(geo_de_not_fr,          axiom, ~partOf(germany, france)).
+fof(geo_fr_not_at,          axiom, ~partOf(france, austria)).
+fof(geo_at_not_fr,          axiom, ~partOf(austria, france)).
+fof(geo_de_not_at,          axiom, ~partOf(germany, austria)).
+fof(geo_at_not_de,          axiom, ~partOf(austria, germany)).
+% Countries not under easternEurope
+fof(geo_fr_not_ee,          axiom, ~partOf(france, easternEurope)).
+fof(geo_de_not_ee,          axiom, ~partOf(germany, easternEurope)).
+fof(geo_at_not_ee,          axiom, ~partOf(austria, easternEurope)).
+% Countries not under asia
+fof(geo_fr_not_asia,        axiom, ~partOf(france, asia)).
+fof(geo_de_not_asia,        axiom, ~partOf(germany, asia)).
+% UNA for countries (needed for eq conflict tests)
+fof(una_fr_de,  axiom, france != germany).
+fof(una_fr_at,  axiom, france != austria).
+fof(una_de_at,  axiom, germany != austria).
+fof(una_fr_pa,  axiom, france != paris).
+fof(una_de_pa,  axiom, germany != paris).
+%--------------------------------------------------------------------------

@@ -1,0 +1,4 @@
+session ODRL_Grounding = HOL +
+  description "Machine-verified meta-theorems for ODRL semantic grounding framework"
+  theories
+    ODRL_Grounding

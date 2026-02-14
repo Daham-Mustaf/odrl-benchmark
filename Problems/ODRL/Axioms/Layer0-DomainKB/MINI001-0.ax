@@ -1,0 +1,31 @@
+%--------------------------------------------------------------------------
+% File     : MINI001-0.ax : TPTP v0.2.0
+% Domain   : Minimal KB for cross-dataspace alignment test
+% Axioms   : KB_B — 2 concepts {a', b'} with disjointness
+% Source   : Constructed for killer benchmark ODRL212
+% Version  : 0.2.0
+% Scope    : 2 concepts, depth 1 (flat)
+% Relation : subClassOf/2 — taxonomic subsumption (preorder)
+% Note     : This is the IMPOVERISHED target KB in a cross-dataspace
+%            alignment scenario. KB_A has {root, a, b, d} but KB_B only
+%            sees {a', b'}. Concepts root, d are unmapped.
+%            This KB deliberately lacks a root concept and d-equivalent.
+%            The alignment α maps: a ↦ a', b ↦ b', root ↦ ⊥, d ↦ ⊥.
+% Status   : Layer 0 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+% --- subClassOf: reflexive, transitive ---
+fof(sub_class_reflexive, axiom,
+    ![X]: subClassOf(X, X)).
+fof(sub_class_transitive, axiom,
+    ![X,Y,Z]: ((subClassOf(X, Y) & subClassOf(Y, Z)) => subClassOf(X, Z))).
+% --- KB_B concepts: just aPrime and bPrime ---
+% No hierarchy — both are leaf-level, mutually disjoint.
+% --- Disjointness ---
+fof(mini_a_not_b,  axiom, ~subClassOf(aPrime, bPrime)).
+fof(mini_b_not_a,  axiom, ~subClassOf(bPrime, aPrime)).
+% --- UNA ---
+fof(una_a_b,       axiom, aPrime != bPrime).
+% --- Domain classification (needed for denotation rules) ---
+fof(lo_ell, axiom, taxonomic(ell)).
+%--------------------------------------------------------------------------

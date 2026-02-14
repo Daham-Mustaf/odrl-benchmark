@@ -1,0 +1,45 @@
+%--------------------------------------------------------------------------
+% File     : MINI000-0.ax : TPTP v0.2.0
+% Domain   : Minimal KB for cross-dataspace alignment test
+% Axioms   : KB_A — 4 concepts {root, a, b, d} all siblings disjoint
+% Source   : Constructed for killer benchmark ODRL212
+% Version  : 0.2.0
+% Scope    : 4 concepts, depth 1 (root > {a, b, d})
+% Relation : subClassOf/2 — taxonomic subsumption (preorder)
+% Note     : This is the RICH source KB. The alignment maps a ↦ a',
+%            b ↦ b', and loses root and d (unmapped).
+%            Concept d is the critical witness: it satisfies both
+%            isNoneOf{a} and isNoneOf{b} in KB_A, but d ∉ dom(α).
+% Status   : Layer 0 — NOT YET FROZEN
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+% --- subClassOf: reflexive, transitive ---
+fof(sub_class_reflexive, axiom,
+    ![X]: subClassOf(X, X)).
+fof(sub_class_transitive, axiom,
+    ![X,Y,Z]: ((subClassOf(X, Y) & subClassOf(Y, Z)) => subClassOf(X, Z))).
+% --- Hierarchy: root > a, b, d ---
+fof(mini_a_root, axiom, subClassOf(a, root)).
+fof(mini_b_root, axiom, subClassOf(b, root)).
+fof(mini_d_root, axiom, subClassOf(d, root)).
+% --- Sibling disjointness (pairwise) ---
+fof(mini_a_not_b, axiom, ~subClassOf(a, b)).
+fof(mini_b_not_a, axiom, ~subClassOf(b, a)).
+fof(mini_a_not_d, axiom, ~subClassOf(a, d)).
+fof(mini_d_not_a, axiom, ~subClassOf(d, a)).
+fof(mini_b_not_d, axiom, ~subClassOf(b, d)).
+fof(mini_d_not_b, axiom, ~subClassOf(d, b)).
+% --- Root is not under any child ---
+fof(mini_root_not_a, axiom, ~subClassOf(root, a)).
+fof(mini_root_not_b, axiom, ~subClassOf(root, b)).
+fof(mini_root_not_d, axiom, ~subClassOf(root, d)).
+% --- UNA ---
+fof(una_a_b,    axiom, a != b).
+fof(una_a_d,    axiom, a != d).
+fof(una_b_d,    axiom, b != d).
+fof(una_root_a, axiom, root != a).
+fof(una_root_b, axiom, root != b).
+fof(una_root_d, axiom, root != d).
+% --- Domain classification ---
+fof(lo_ell, axiom, taxonomic(ell)).
+%--------------------------------------------------------------------------

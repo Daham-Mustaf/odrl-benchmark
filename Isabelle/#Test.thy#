@@ -1,0 +1,234 @@
+theory Test imports Main begin
+
+(* ============================================================ *)
+(* FROM ODRL POLICY TO ISABELLE — step by step                  *)
+(* ============================================================ *)
+
+
+(* ===== EXAMPLE 1: Purpose conflict ===== *)
+
+(* STEP 1: Two ODRL policies in JSON-LD *)
+
+(* Policy A (permission):
+   {
+     "@type": "odrl:Permission",
+     "odrl:action": "odrl:use",
+     "odrl:constraint": {
+       "odrl:leftOperand": "odrl:purpose",
+       "odrl:operator": "odrl:isA",
+       "odrl:rightOperand": "dpv:ServiceProvision"
+     }
+   }
+
+   Policy B (prohibition):
+   {
+     "@type": "odrl:Prohibition",
+     "odrl:action": "odrl:use",
+     "odrl:constraint": {
+       "odrl:leftOperand": "odrl:purpose",
+       "odrl:operator": "odrl:isA",
+       "odrl:rightOperand": "dpv:AcademicResearch"
+     }
+   }
+*)
+
+(* STEP 2: Extract constraints *)
+(* c1 = (purpose, isA, dpv:ServiceProvision) *)
+(* c2 = (purpose, isA, dpv:AcademicResearch) *)
+
+(* STEP 3: Look up KB *)
+(* KB_purpose from DPV:
+     dpv:Purpose
+       ├── dpv:ServiceProvision
+       │     └── dpv:Marketing
+       └── dpv:AcademicResearch
+             └── dpv:ScientificResearch
+*)
+
+(* STEP 4: Ground values *)
+(* γ(dpv:ServiceProvision) = ServiceProvision  ✓ *)
+(* γ(dpv:AcademicResearch) = AcademicResearch  ✓ *)
+
+(* STEP 5: Compute denotations *)
+(* ⟦c1⟧ = {x ∈ C | x ≤ ServiceProvision}     *)
+(*       = {ServiceProvision, Marketing}        *)
+(* ⟦c2⟧ = {x ∈ C | x ≤ AcademicResearch}     *)
+(*       = {AcademicResearch, ScientificResearch} *)
+
+(* STEP 6: Intersect *)
+(* ⟦c1⟧ ∩ ⟦c2⟧ = {} → Conflict *)
+
+lemma "{ServiceProvision, Marketing} 
+     ∩ {AcademicResearch, ScientificResearch} = {}"
+  by simp
+
+
+(* ===== EXAMPLE 2: Spatial compatible ===== *)
+
+(* Policy C (permission):
+   {
+     "@type": "odrl:Permission",
+     "odrl:action": "odrl:distribute",
+     "odrl:constraint": {
+       "odrl:leftOperand": "odrl:spatial",
+       "odrl:operator": "odrl:isPartOf",
+       "odrl:rightOperand": "gn:Europe"
+     }
+   }
+
+   Policy D (prohibition):
+   {
+     "@type": "odrl:Prohibition",
+     "odrl:action": "odrl:distribute",
+     "odrl:constraint": {
+       "odrl:leftOperand": "odrl:spatial",
+       "odrl:operator": "odrl:isPartOf",
+       "odrl:rightOperand": "gn:France"
+     }
+   }
+*)
+
+(* c3 = (spatial, isPartOf, gn:Europe) *)
+(* c4 = (spatial, isPartOf, gn:France) *)
+
+(* KB_spatial from GeoNames (mereological ≤ = ⪯):
+     gn:Europe
+       ├── gn:France
+       │     ├── gn:Paris
+       │     └── gn:Lyon
+       └── gn:Germany
+             └── gn:Berlin
+*)
+
+(* γ(gn:Europe) = Europe  ✓ *)
+(* γ(gn:France) = France  ✓ *)
+
+(* ⟦c3⟧ = {x | x ⪯ Europe} = {Europe, France, Paris, Lyon, Germany, Berlin} *)
+(* ⟦c4⟧ = {x | x ⪯ France} = {France, Paris, Lyon}                         *)
+
+(* ⟦c3⟧ ∩ ⟦c4⟧ = {France, Paris, Lyon} ≠ {} → Compatible *)
+
+lemma "{Europe, France, Paris, Lyon, Germany, Berlin} 
+     ∩ {France, Paris, Lyon} ≠ {}"
+  by simp
+
+
+(* ===== EXAMPLE 3: Language with eq operator ===== *)
+
+(* Policy E:
+   {
+     "odrl:constraint": {
+       "odrl:leftOperand": "odrl:language",
+       "odrl:operator": "odrl:eq",
+       "odrl:rightOperand": "iso639:deu"
+     }
+   }
+
+   Policy F:
+   {
+     "odrl:constraint": {
+       "odrl:leftOperand": "odrl:language",
+       "odrl:operator": "odrl:eq",
+       "odrl:rightOperand": "iso639:fra"
+     }
+   }
+*)
+
+(* c5 = (language, eq, iso639:deu) *)
+(* c6 = (language, eq, iso639:fra) *)
+
+(* eq operator: ⟦ℓ eq v⟧ = {g} *)
+(* ⟦c5⟧ = {German} *)
+(* ⟦c6⟧ = {French} *)
+
+(* {German} ∩ {French} = {} → Conflict *)
+
+lemma "{German} ∩ {French} = {}"
+  by simp
+
+
+(* ===== EXAMPLE 4: isA vs eq — mixed operators ===== *)
+
+(* Policy G:
+   {
+     "odrl:constraint": {
+       "odrl:leftOperand": "odrl:language",
+       "odrl:operator": "odrl:isA",
+       "odrl:rightOperand": "iso639:gem"
+     }
+   }
+
+   Policy H:
+   {
+     "odrl:constraint": {
+       "odrl:leftOperand": "odrl:language",
+       "odrl:operator": "odrl:eq",
+       "odrl:rightOperand": "iso639:deu"
+     }
+   }
+*)
+
+(* c7 = (language, isA, iso639:gem)  — gem = Germanic *)
+(* c8 = (language, eq,  iso639:deu)  — deu = German   *)
+
+(* KB_language from ISO 639:
+     Language
+       ├── gem (Germanic)
+       │     ├── deu (German)
+       │     └── eng (English)
+       └── roa (Romance)
+             └── fra (French)
+*)
+
+(* ⟦c7⟧ = {x | x ≤ gem} = {Germanic, German, English} *)
+(* ⟦c8⟧ = {deu}          = {German}                     *)
+
+(* {Germanic, German, English} ∩ {German} = {German} ≠ {} → Compatible *)
+
+lemma "{Germanic, German, English} ∩ {German} ≠ {}"
+  by simp
+
+
+(* ===== EXAMPLE 5: Unknown — ungrounded value ===== *)
+
+(* Policy I:
+   {
+     "odrl:constraint": {
+       "odrl:leftOperand": "odrl:purpose",
+       "odrl:operator": "odrl:isA",
+       "odrl:rightOperand": "ex:MyCustomPurpose"
+     }
+   }
+*)
+
+(* c9 = (purpose, isA, ex:MyCustomPurpose) *)
+(* γ(ex:MyCustomPurpose) = ⊥  — not in DPV, unknown concept *)
+(* ⟦c9⟧ = ⊤ *)
+
+(* Any constraint vs ⊤ → Unknown *)
+(* We need the datatype to show this: *)
+
+datatype D = Classical "string set" | Top
+datatype V = Conflict | Compatible | Unknown
+
+fun verdict :: "D ⇒ D ⇒ V" where
+  "verdict (Classical s1) (Classical s2) =
+     (if s1 ∩ s2 = {} then Conflict else Compatible)"
+| "verdict _ _ = Unknown"
+
+(* c1 vs c9: grounded vs ungrounded → Unknown *)
+lemma "verdict (Classical {''ServiceProvision'', ''Marketing''}) Top = Unknown"
+  by simp
+
+(* c1 vs c2: both grounded, no overlap → Conflict *)
+lemma "verdict (Classical {''ServiceProvision'', ''Marketing''}) 
+              (Classical {''AcademicResearch'', ''ScientificResearch''}) = Conflict"
+  by simp
+
+(* c3 vs c4: both grounded, overlap → Compatible *)
+lemma "verdict (Classical {''France'', ''Paris'', ''Lyon''}) 
+              (Classical {''Europe'', ''France'', ''Paris'', ''Lyon'', ''Germany'', ''Berlin''}) 
+       = Compatible"
+  by simp
+
+end
