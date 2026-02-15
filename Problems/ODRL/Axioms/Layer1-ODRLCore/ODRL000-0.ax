@@ -58,6 +58,11 @@ fof(disj_downward, axiom,
 fof(disj_order_consistency, axiom,
     ![X,Y]: (leq(X, Y) => ~disjoint(X, Y))).
 
+% Contrapositive of disj_order_consistency (Lemma 1)
+% Helps Vampire derive ~leq from disjoint for isNoneOf proofs.
+fof(disj_implies_not_leq, axiom,
+    ![X,Y]: (disjoint(X, Y) => ~leq(X, Y))).
+    
 % ===================================================================
 % PART D: Denotation rules — bidirectional (Definition 3)
 %
