@@ -2,8 +2,8 @@
 % File     : ODRL100-1.p : TPTP v0.1.0.
 % Domain   : ODRL Policy Conflict Detection
 % Problem  : Note 1 — DAG Multi-Parent Contradiction (Naive)
-% Expected : ContradictoryAxioms
-% Verdict  : Inconsistent
+% Expected : Theorem
+% Verdict  : ContradictoryAxioms
 % Paper    : Note 1 — DAG Multi-Parent Contradiction (Naive)
 %
 % ODRL Policy (Conceptual):

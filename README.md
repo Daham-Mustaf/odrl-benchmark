@@ -21,8 +21,7 @@ automated conflict detection. Each constraint maps to a *denotation*
 intersection testing under a three-valued verdict: **Conflict**,
 **Compatible**, or **Unknown**.
 
-48 problems encoded in TPTP FOF. Vampire solves 46/48 (2 timeout, 0 wrong).
-
+96 problems encoded in TPTP FOF. Vampire solves 88/96 (8 timeout, 0 wrong).
 ---
 
 ## 2. Architecture: Two-Layer Stack
@@ -187,8 +186,19 @@ This eliminates C(n,2) pairwise distinctness axioms per KB:
 | **Total** | | **8,396** |
 
 ---
+---
+## 6.5 Advanced Suite (Categories 9–14, ODRL100–153)
+28 additional problems for comprehensive ATP evaluation:
+- **Cat 9**: DAG Multi-Parent (100–105, 6) — Note 1 validation + ablation
+- **Cat 10**: Nested Set Operators (110–114, 5) — isAllOf/isAnyOf/isNoneOf interaction
+- **Cat 11**: Quantifier Stress (120–123, 4) — ∀∃ alternation patterns
+- **Cat 12**: Large Composition (130–132, 3) — 3-operand AND, 5-way existential
+- **Cat 13**: Edge Cases (140–145, 6) — Degenerate KBs, reflexivity, tautologies
+- **Cat 14**: Multi-Hop Alignment (150–153, 4) — 3-KB chain: GEO→ISO→SYNTH
 
-## 7. Benchmark Problems (48)
+Generated separately via `gen_advanced_suite.py` for TPTP library submission.
+
+## 7. Benchmark Problems (96 total)
 
 ### 7.1 Basic Operators (010–019, 10 problems)
 
@@ -263,6 +273,20 @@ Uses both GEO (spatial) and DPV (purpose) KBs per problem.
 | 065 | Non-subsuming cross-operator | Non-subsuming | GEO |
 | 066–068 | Partial overlap (various depths) | Partial | GEO |
 | 069 | Full overlap | Full | GEO |
+
+### 7.7 Advanced Suite (100–153, 28 problems)
+See `gen_advanced_suite.py --summary` for full listing.
+
+### 7.8 Combined Results
+| Status | Count | % |
+|--------|:-----:|:-:|
+| ✓ Theorem (correct) | 88 | 91.7% |
+| ⏱ Timeout (60s) | 8 | 8.3% |
+| ✗ Wrong answer | 0 | 0% |
+| **Total** | **96** | |
+
+Expected timeouts: ODRL060 (universal), ODRL085/088/089 (ablation),
+ODRL130 (3-operand), ODRL145/152 (unknown verdicts), ODRL058 (split pending).
 
 ### 7.7 Results Summary
 

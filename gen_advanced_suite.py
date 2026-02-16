@@ -2,7 +2,7 @@
 """
 gen_advanced_suite.py — Generate TPTP Problems: Categories 9–14.
 
-Produces 28 .p files testing advanced reasoning patterns for ODRL
+Produces 32 .p files testing advanced reasoning patterns for ODRL
 policy conflict detection in European data spaces.
 
 Categories:
@@ -11,14 +11,15 @@ Categories:
   11 — Quantifier Stress (ODRL120–123)       ∀∃ alternation patterns
   12 — Large-Scale Composition (ODRL130–132) Multi-operand AND / 5-way ∃
   13 — Edge Cases & Adversarial (ODRL140–145) Degenerate / pathological KBs
-  14 — Multi-Hop Alignment (ODRL150–153)     3-KB chain: GEO→ISO→SYNTH
+  14 — Multi-Hop Alignment (ODRL150–157)     2–3 hop, up to 4 dataspaces
 
 Usage:
-    uv run python gen_advanced_suite.py --outdir Problems/ODRL
+  
     uv run python gen_advanced_suite.py --outdir Problems/ODRL          # normal
     uv run python gen_advanced_suite.py --outdir Problems/ODRL --flip   # CounterSat→Theorem
     uv run python gen_advanced_suite.py --summary                       # table only
     uv run python gen_advanced_suite.py --dry-run                       # preview
+
 
 Authors: Mustafa, D. & Sutcliffe, G.
 """
@@ -220,6 +221,32 @@ fof(align_iso_synth_1, axiom, align(europe, euZone)).
 fof(align_iso_synth_2, axiom, align(dE, zoneWest)).
 fof(align_iso_synth_3, axiom, align(pL, zoneEast))."""
 
+# ─── COMP KB: compliance tiers, no native disjointness (for 3-hop) ────────
+COMP_KB_NO_DISJ = """\
+% --- Compliance KB (COMP) — NO native disjointness ---
+% 4th dataspace: GDPR compliance tier classification.
+% Concepts align to SYNTH (regulatory zones) but have no sibling disjointness.
+% Disjointness must be derived through 3-hop alignment: GEO → ISO → SYNTH → COMP.
+fof(comp_root, axiom, concept(complianceScope)).
+fof(comp_c1, axiom, concept(gdprFull)).
+fof(comp_c2, axiom, concept(gdprPartial)).
+
+fof(comp_leq1, axiom, leq(gdprFull, complianceScope)).
+fof(comp_leq2, axiom, leq(gdprPartial, complianceScope)).
+fof(comp_refl1, axiom, leq(complianceScope, complianceScope)).
+fof(comp_refl2, axiom, leq(gdprFull, gdprFull)).
+fof(comp_refl3, axiom, leq(gdprPartial, gdprPartial)).
+
+% NO disjoint axiom — must come from 3-hop alignment
+fof(comp_una, axiom, $distinct(complianceScope, gdprFull, gdprPartial))."""
+
+# ─── Alignment: SYNTH → COMP ─────────────────────────────────────────────
+ALIGN_SYNTH_COMP = """\
+% Alignment: SYNTH (regulatory zones) → COMP (compliance tiers)
+fof(align_synth_comp_1, axiom, align(euZone, complianceScope)).
+fof(align_synth_comp_2, axiom, align(zoneWest, gdprFull)).
+fof(align_synth_comp_3, axiom, align(zoneEast, gdprPartial))."""
+
 # ─── Minimal KB (single concept) ─────────────────────────────────────────
 MINIMAL_KB_FRAGMENT = """\
 % --- Minimal KB: single concept "universe" ---
@@ -232,7 +259,7 @@ fof(min_refl, axiom, leq(universe, universe))."""
 # Paper Note 1 — DAG-safe sibling disjointness generation
 # ═══════════════════════════════════════════════════════════════════════════
 
-P("ODRL100-1.p", "Theorem", "ContradictoryAxioms",
+P("ODRL100-1.p", "ContradictoryAxioms", "Inconsistent",
   "Note 1 — DAG Multi-Parent Contradiction (Naive)", "Medium",
   "(No ODRL policy — KB consistency test)\n"
   "%   Tests: naive sibling disjointness on DAG taxonomy causes ⊥.",
@@ -650,8 +677,10 @@ P("ODRL145-1.p", "CounterSatisfiable", "Unknown",
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# CATEGORY 14: MULTI-HOP ALIGNMENT (ODRL150–153)
-# Tests alignment composition: GEO → ISO → SYNTH (3-KB chain)
+# CATEGORY 14: MULTI-HOP ALIGNMENT (ODRL150–157)
+# Tests alignment composition: GEO → ISO → SYNTH → COMP (up to 4-KB chain)
+#   2-hop (ODRL150–153): GEO → ISO → SYNTH
+#   3-hop (ODRL154–157): GEO → ISO → SYNTH → COMP
 # ═══════════════════════════════════════════════════════════════════════════
 
 P("ODRL150-1.p", "CounterSatisfiable", "Conflict",
@@ -713,6 +742,73 @@ P("ODRL153-1.p", "Theorem", "Conflict",
   "fof(odrl153, conjecture, disjoint(dE, pL)).",
   inc=("GEO", "ISO", "ALIGN_DATA", "ODRL", "ALIGN_THEORY"),
   pl="Intermediate: hop 1 derives disjoint(dE, pL)")
+
+# ─── 3-Hop: GEO → ISO → SYNTH → COMP (4 dataspaces) ─────────────────────
+
+# Combined inline axioms for the full 4-KB chain
+_4KB_EXTRA = (SYNTH_KB_NO_DISJ + "\n" + ALIGN_ISO_SYNTH + "\n" +
+              COMP_KB_NO_DISJ + "\n" + ALIGN_SYNTH_COMP)
+
+P("ODRL154-1.p", "CounterSatisfiable", "Conflict",
+  "Proposition 2 (3-hop) — 4-Dataspace Alignment Conflict", "Very Hard",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "comp:gdprFull")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "comp:gdprPartial")]),
+  "3-hop alignment chain: GEO → ISO → SYNTH → COMP\n"
+  "%   GEO: disj(wE,eE) → disj_downward → disj(de,pl)\n"
+  "%   Hop 1: align(de,dE) + align(pl,pL) → disj(dE,pL)\n"
+  "%   Hop 2: align(dE,zoneWest) + align(pL,zoneEast) → disj(zoneWest,zoneEast)\n"
+  "%   Hop 3: align(zoneWest,gdprFull) + align(zoneEast,gdprPartial)\n"
+  "%          → disj(gdprFull, gdprPartial)\n"
+  "%   → ⟦isPartOf(gdprFull)⟧ ∩ ⟦isPartOf(gdprPartial)⟧ = ∅ → Conflict",
+  "fof(odrl154, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, gdprFull, isPartOf)\n"
+  "          & in_denotation(X, gdprPartial, isPartOf) )).",
+  flip_conj=
+  "fof(odrl154, conjecture,\n"
+  "    ![X]: ~( in_denotation(X, gdprFull, isPartOf)\n"
+  "           & in_denotation(X, gdprPartial, isPartOf) )).",
+  extra=_4KB_EXTRA,
+  inc=("GEO", "ISO", "ALIGN_DATA", "ODRL", "ALIGN_THEORY"),
+  pl="3-hop alignment: GEO→ISO→SYNTH→COMP conflict detection")
+
+P("ODRL155-1.p", "Theorem", "Compatible",
+  "Proposition 2 (3-hop) — 4-Dataspace Compatible", "Medium",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "comp:complianceScope")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "eq", "comp:gdprFull")]),
+  "isPartOf(complianceScope) ∩ eq(gdprFull) → Compatible\n"
+  "%   Witness: gdprFull (leq(gdprFull, complianceScope) ∧ gdprFull = gdprFull)\n"
+  "%   Tests: compatibility query in 4-KB context with 3 alignment bridges.",
+  "fof(odrl155, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, complianceScope, isPartOf)\n"
+  "          & in_denotation(X, gdprFull, eq) )).",
+  extra=_4KB_EXTRA,
+  inc=("GEO", "ISO", "ALIGN_DATA", "ODRL", "ALIGN_THEORY"),
+  pl="3-hop compatible: isPartOf(complianceScope) ∩ eq(gdprFull) ≠ ∅")
+
+P("ODRL156-1.p", "CounterSatisfiable", "Unknown",
+  "3-Hop Ablation — COMP Alone Cannot Detect Conflict", "Hard",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "comp:gdprFull")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "comp:gdprPartial")]),
+  "Same query as ODRL154 but WITHOUT GEO/ISO/SYNTH/alignment.\n"
+  "%   COMP has no disjoint axioms → prover cannot derive disj(gdprFull, gdprPartial).\n"
+  "%   → Unknown (expected timeout).",
+  "fof(odrl156, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, gdprFull, isPartOf)\n"
+  "          & in_denotation(X, gdprPartial, isPartOf) )).",
+  extra=COMP_KB_NO_DISJ,
+  inc=("ODRL",),
+  pl="Ablation: COMP alone → Unknown (no disjointness)")
+
+P("ODRL157-1.p", "Theorem", "Conflict",
+  "3-Hop Intermediate — Hop 2 Result as Prerequisite", "Hard",
+  "(Proves hop 2 intermediate: disj(zoneWest, zoneEast) for ODRL154 hop 3)",
+  "2-hop alignment: GEO → ISO → SYNTH\n"
+  "%   disj(wE,eE) → disj(de,pl) → disj(dE,pL) → disj(zoneWest,zoneEast)\n"
+  "%   Tests: hop 2 result that feeds into ODRL154.",
+  "fof(odrl157, conjecture, disjoint(zoneWest, zoneEast)).",
+  extra=SYNTH_KB_NO_DISJ + "\n" + ALIGN_ISO_SYNTH,
+  inc=("GEO", "ISO", "ALIGN_DATA", "ODRL", "ALIGN_THEORY"),
+  pl="Intermediate: hop 2 derives disjoint(zoneWest, zoneEast)")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
