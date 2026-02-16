@@ -12,7 +12,7 @@
 | File | Generator | Status | Action |
 |------|-----------|--------|--------|
 | `GEO000-0.ax` | `gen_layer0_geo.py --scope europe --sibling-disjointness --no-una` | ⬜ Regenerate | Run with `--no-una`, verify axiom count (~430) |
-| `DPV000-0.ax` | `gen_layer0_kb.py --no-una` (NO `--sibling-disjointness`) | ⬜ Regenerate | Hierarchy only, no disjointness. Verified consistent ✅ |
+| `DPV000-0.ax` | `gen_layer0_kb.py --no-una` (NO `--sibling-disjointness`) | ⬜ Regenerate | Hierarchy only, no disjointness. Verified consistent  |
 | `LANG000-0.ax` | `gen_layer0_lang.py --sibling-disjointness --base-disjointness --no-una` | ⬜ Regenerate | Run with `--no-una`, verify axiom count (~445) |
 
 **After regeneration, verify ALL three are consistent:**
@@ -34,7 +34,7 @@ done
 
 | File | Status | Action |
 |------|--------|--------|
-| `ODRL000-0.ax` | ✅ Exists | Verify: leq_refl, leq_trans, leq_antisym, disj_sym, disj_downward, disj_irrefl |
+| `ODRL000-0.ax` | Exists | Verify: leq_refl, leq_trans, leq_antisym, disj_sym, disj_downward, disj_irrefl |
 
 ### Layer 2: Grounding (if used)
 
@@ -46,7 +46,7 @@ done
 
 ## 2. Geoff's Three Questions — Responses
 
-### Q1: CounterSatisfiable conflation ✅ RESOLVED
+### Q1: CounterSatisfiable conflation  RESOLVED
 
 **Geoff said:** THM, CSA, CTH exist. ATP systems don't claim CTH — user negates conjecture.
 
@@ -56,7 +56,7 @@ done
 
 **Action:** Keep both encodings. Default = prover (all Theorem). Document in headers.
 
-### Q2: UNA vs disjointness ✅ RESOLVED
+### Q2: UNA vs disjointness  RESOLVED
 
 **Geoff said:** Use `$distinct(a,b,c,...)` built-in. Good ATP systems know it.
 
@@ -68,7 +68,7 @@ done
 
 ⬜ Check: Do composition problems 040-047 need DPV distinctness?
 
-### Q3: Composition encoding ✅ RESOLVED
+### Q3: Composition encoding  RESOLVED
 
 **Geoff said:** Let's do tests. Single conjecture if easy enough, split if too hard.
 
@@ -106,12 +106,12 @@ These include BOTH GEO + DPV. The DPV dimension tests purpose reasoning.
 
 | # | Spatial | Purpose | Verdict | Issue |
 |---|---------|---------|---------|-------|
-| 040 | Compatible | Compatible | AND-Compatible | ⬜ Purpose: isA(R&D) ∩ isA(AcademicRes) — needs leq only ✅ |
+| 040 | Compatible | Compatible | AND-Compatible | ⬜ Purpose: isA(R&D) ∩ isA(AcademicRes) — needs leq only  |
 | 041 | Compatible | **Conflict** | AND-Conflict | 🔴 Purpose: isA(AcadRes) ∩ isA(Marketing) — needs disjointness! |
-| 042 | Conflict | Compatible | OR-Compatible | ⬜ Purpose compatible saves it ✅ |
+| 042 | Conflict | Compatible | OR-Compatible | ⬜ Purpose compatible saves it  |
 | 043 | Conflict | **Conflict** | OR-Conflict | 🔴 Purpose: isA(AcadRes) ∩ isA(Marketing) — needs disjointness! |
-| 045 | Conflict | Compatible | XONE-Compatible | ⬜ Purpose compatible, spatial conflict proven ✅ |
-| 046 | Compatible | Compatible | XONE-Unknown | ⬜ Both compatible, needs witness ✅ |
+| 045 | Conflict | Compatible | XONE-Compatible | ⬜ Purpose compatible, spatial conflict proven  |
+| 046 | Compatible | Compatible | XONE-Unknown | ⬜ Both compatible, needs witness  |
 | 047 | Conflict | **Conflict** | XONE-Conflict | 🔴 Purpose: isA(AcadRes) ∩ isA(Marketing) — needs disjointness! |
 
 **Problems 041, 043, 047 need DPV disjointness to prove purpose conflict.**
