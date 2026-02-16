@@ -1,0 +1,34 @@
+%--------------------------------------------------------------------------
+% File     : ALIGN-GEO-ISO.ax : TPTP v0.1.0.
+% Domain   : KB Alignment — Curated GEO to ISO 3166-1
+% Axioms   : Order-preserving alignment (Definition 8)
+% Version  : Partial alignment (countries + root only)
+% English  : Maps curated GEO (GEO000-0.ax) to ISO 3166 (ISO3166-0.ax).
+%            18 concepts unmapped (partial — granularity mismatch).
+%            Tests Proposition 2: verdict preservation under alignment.
+% Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025), §3.3
+% Names    : ALIGN-GEO-ISO.ax
+% Status   : Layer 0+ — Alignment Bridge
+% Syntax   : Number of formulae    :     6 (    6 unt;   0 def)
+%            Number of predicates   :     1 (   1 usr;   0 prp; 2-2 aty)
+% Ontology : Predicate: align/2 — alignment function α: C_A → C_B
+% Stats    : 6 alignment pairs (partial — 6 of 24 concepts)
+% Date     : 2026-02-16
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% ─── Alignment Axioms (Definition 8: α: C_A → C_B) ────────────────────
+% align(X_geo, Y_iso3166): curated GEO concept X maps to ISO 3166 concept Y.
+% Partial: countries + root map; sub-regions and sub-national do NOT.
+
+fof(align_0000, axiom, align(europe, europe)).
+fof(align_0001, axiom, align(france, fR)).
+fof(align_0002, axiom, align(germany, dE)).
+fof(align_0003, axiom, align(italy, iT)).
+fof(align_0004, axiom, align(poland, pL)).
+fof(align_0005, axiom, align(spain, eS)).
+
+%--------------------------------------------------------------------------
+% Summary: 6 alignment axioms (partial mapping)
+% Unmapped (18): westernEurope, easternEurope, southernEurope, northernEurope, ileDeFrance, provence, bavaria, northRhineWestphalia, masovia, lombardy, catalonia, paris, marseille, munich, cologne, warsaw, milan, barcelona
+%--------------------------------------------------------------------------

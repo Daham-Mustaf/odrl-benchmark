@@ -1,483 +1,128 @@
 %--------------------------------------------------------------------------
 % File     : GEO000-0.ax : TPTP v0.1.0. Released v0.1.0.
-% Domain   : UN M49 Geographic Regions — UN M49 — Europe subset
+% Domain   : Geographic Regions — Curated European Hierarchy
 % Axioms   : Containment hierarchy (mereological)
-% Version  : Generated from UN M49 standard.
-% English  : UN M49 encoded as TPTP Layer 0 mereological KB.
-%            UNA is implicit from tree + sibling disjointness.
+% Version  : Profile: curated
+% English  : Curated European geographic KB combining UN M49 regions
+%            (levels 0-2) with illustrative sub-national divisions modelled
+%            after Eurostat NUTS 2021 (levels 3-4). Designed for ODRL
+%            policy conflict test problems requiring depth-4 subsumption.
+%            UNA via $distinct — avoids clause explosion (Sutcliffe).
 % Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
 %            Automated Reasoning for ODRL Policy Conflict Detection
-% Source   : https://unstats.un.org/unsd/methodology/m49/
+% Source   : [1] https://unstats.un.org/unsd/methodology/m49/ (levels 0-2)
+%            [3] https://ec.europa.eu/eurostat/web/nuts/overview (levels 3-4)
 % Names    : GEO000-0.ax
 % Status   : Layer 0 — Domain Knowledge Base
-% Syntax   : Number of formulae    :   430 (  430 unt;   0 def)
-%            Number of atoms       :   430 (    0 equ)
+% Syntax   : Number of formulae    :    62 (   62 unt;   0 def)
+%            Number of atoms       :    62 (    0 equ)
 %            Maximal formula atoms  :     1 (   1 avg)
 %            Number of connectives  :     0 (   0   ~;   0   |;   0   &)
 %                                         (   0 <=>;   0  =>;   0  <=;   0 <~>)
 %            Maximal formula depth  :     1 (   1 avg)
 %            Maximal term depth     :     1 (   1 avg)
 %            Number of predicates   :     3 (    3 usr;   0 prp; 1-2 aty)
-%            Number of functors     :    58 (   58 usr;  58 con; 0-0 aty)
+%            Number of functors     :    24 (   24 usr;  24 con; 0-0 aty)
 %            Number of variables    :     0 (   0   !;   0   ?)
 % SPC      : FOF_EPR_RFN_NEQ
 % Comments : All formulae are ground unit clauses.
 %          : Layer 1 provides reflexivity + transitivity of leq/2.
-%          : UNA: IMPLICIT — tree + sibling disjointness (Implicit UNA Lemma).
+%          : UNA: $distinct groups by parent (Sutcliffe).
 %          : Root: europe
 % Ontology : Predicates: concept/1; leq/2; disjoint/2
-%          : Relation: leq/2 — geographic containment (paper Def. 2, ≤ = ⪯)
-% Stats    : Concepts 58 | Edges 57 | Disjoint 315 | UNA 0 | Total 430
-%          : Depth 3 | Leaves 52 | Internal 5 | Branch avg 9.5 max 16
+%          : Relation: leq/2 — geographic containment (paper Def. 2)
+% Stats    : Concepts 24 | Edges 23 | Disjoint 10 | UNA 5 | Total 62
+%          : Depth 4 | Leaves 8 | Internal 15 | Branch avg 1.4 max 4
 % Date     : 2026-02-16
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Gen      : gen_layer0_geo.py from UN M49 (Dec 2021)
+% Gen      : gen_layer0_geo.py --profile curated
 %--------------------------------------------------------------------------
 
 % ─── Concept membership (Definition 2: C) ─────────────────────────────
-fof(c_alandIslands, axiom, concept(alandIslands)).  % M49:248 Aland Islands [country]
-fof(c_albania, axiom, concept(albania)).  % M49:008 Albania [country]
-fof(c_andorra, axiom, concept(andorra)).  % M49:020 Andorra [country]
-fof(c_austria, axiom, concept(austria)).  % M49:040 Austria [country]
-fof(c_belarus, axiom, concept(belarus)).  % M49:112 Belarus [country]
-fof(c_belgium, axiom, concept(belgium)).  % M49:056 Belgium [country]
-fof(c_bosniaAndHerzegovina, axiom, concept(bosniaAndHerzegovina)).  % M49:070 Bosnia and Herzegovina [country]
-fof(c_bulgaria, axiom, concept(bulgaria)).  % M49:100 Bulgaria [country]
-fof(c_channelIslands, axiom, concept(channelIslands)).  % M49:830 Channel Islands [intermediate]
-fof(c_croatia, axiom, concept(croatia)).  % M49:191 Croatia [country]
-fof(c_czechia, axiom, concept(czechia)).  % M49:203 Czechia [country]
-fof(c_denmark, axiom, concept(denmark)).  % M49:208 Denmark [country]
-fof(c_easternEurope, axiom, concept(easternEurope)).  % M49:151 Eastern Europe [sub-region]
-fof(c_estonia, axiom, concept(estonia)).  % M49:233 Estonia [country]
-fof(c_europe, axiom, concept(europe)).  % M49:150 Europe [region]
-fof(c_faroeIslands, axiom, concept(faroeIslands)).  % M49:234 Faroe Islands [country]
-fof(c_finland, axiom, concept(finland)).  % M49:246 Finland [country]
-fof(c_france, axiom, concept(france)).  % M49:250 France [country]
-fof(c_germany, axiom, concept(germany)).  % M49:276 Germany [country]
-fof(c_gibraltar, axiom, concept(gibraltar)).  % M49:292 Gibraltar [country]
-fof(c_greece, axiom, concept(greece)).  % M49:300 Greece [country]
-fof(c_guernsey, axiom, concept(guernsey)).  % M49:831 Guernsey [country]
-fof(c_holySee, axiom, concept(holySee)).  % M49:336 Holy See [country]
-fof(c_hungary, axiom, concept(hungary)).  % M49:348 Hungary [country]
-fof(c_iceland, axiom, concept(iceland)).  % M49:352 Iceland [country]
-fof(c_ireland, axiom, concept(ireland)).  % M49:372 Ireland [country]
-fof(c_isleOfMan, axiom, concept(isleOfMan)).  % M49:833 Isle of Man [country]
-fof(c_italy, axiom, concept(italy)).  % M49:380 Italy [country]
-fof(c_jersey, axiom, concept(jersey)).  % M49:832 Jersey [country]
-fof(c_latvia, axiom, concept(latvia)).  % M49:428 Latvia [country]
-fof(c_liechtenstein, axiom, concept(liechtenstein)).  % M49:438 Liechtenstein [country]
-fof(c_lithuania, axiom, concept(lithuania)).  % M49:440 Lithuania [country]
-fof(c_luxembourg, axiom, concept(luxembourg)).  % M49:442 Luxembourg [country]
-fof(c_malta, axiom, concept(malta)).  % M49:470 Malta [country]
-fof(c_monaco, axiom, concept(monaco)).  % M49:492 Monaco [country]
-fof(c_montenegro, axiom, concept(montenegro)).  % M49:499 Montenegro [country]
-fof(c_netherlands, axiom, concept(netherlands)).  % M49:528 Netherlands [country]
-fof(c_northMacedonia, axiom, concept(northMacedonia)).  % M49:807 North Macedonia [country]
-fof(c_northernEurope, axiom, concept(northernEurope)).  % M49:154 Northern Europe [sub-region]
-fof(c_norway, axiom, concept(norway)).  % M49:578 Norway [country]
-fof(c_poland, axiom, concept(poland)).  % M49:616 Poland [country]
-fof(c_portugal, axiom, concept(portugal)).  % M49:620 Portugal [country]
-fof(c_republicOfMoldova, axiom, concept(republicOfMoldova)).  % M49:498 Republic of Moldova [country]
-fof(c_romania, axiom, concept(romania)).  % M49:642 Romania [country]
-fof(c_russianFederation, axiom, concept(russianFederation)).  % M49:643 Russian Federation [country]
-fof(c_sanMarino, axiom, concept(sanMarino)).  % M49:674 San Marino [country]
-fof(c_sark, axiom, concept(sark)).  % M49:680 Sark [country]
-fof(c_serbia, axiom, concept(serbia)).  % M49:688 Serbia [country]
-fof(c_slovakia, axiom, concept(slovakia)).  % M49:703 Slovakia [country]
-fof(c_slovenia, axiom, concept(slovenia)).  % M49:705 Slovenia [country]
-fof(c_southernEurope, axiom, concept(southernEurope)).  % M49:039 Southern Europe [sub-region]
-fof(c_spain, axiom, concept(spain)).  % M49:724 Spain [country]
-fof(c_svalbardAndJanMayenIslands, axiom, concept(svalbardAndJanMayenIslands)).  % M49:744 Svalbard and Jan Mayen Islands [country]
-fof(c_sweden, axiom, concept(sweden)).  % M49:752 Sweden [country]
-fof(c_switzerland, axiom, concept(switzerland)).  % M49:756 Switzerland [country]
-fof(c_ukraine, axiom, concept(ukraine)).  % M49:804 Ukraine [country]
-fof(c_unitedKingdom, axiom, concept(unitedKingdom)).  % M49:826 United Kingdom [country]
-fof(c_westernEurope, axiom, concept(westernEurope)).  % M49:155 Western Europe [sub-region]
+fof(c_barcelona, axiom, concept(barcelona)).  % NUTS:ES511 — Barcelona
+fof(c_bavaria, axiom, concept(bavaria)).  % NUTS:DE2 — Bavaria
+fof(c_catalonia, axiom, concept(catalonia)).  % NUTS:ES51 — Catalonia
+fof(c_cologne, axiom, concept(cologne)).  % NUTS:DEA23 — Cologne
+fof(c_easternEurope, axiom, concept(easternEurope)).  % M49:151 — Eastern Europe
+fof(c_europe, axiom, concept(europe)).  % M49:150 — Europe
+fof(c_france, axiom, concept(france)).  % M49:250 — France
+fof(c_germany, axiom, concept(germany)).  % M49:276 — Germany
+fof(c_ileDeFrance, axiom, concept(ileDeFrance)).  % NUTS:FR1 — Île-de-France
+fof(c_italy, axiom, concept(italy)).  % M49:380 — Italy
+fof(c_lombardy, axiom, concept(lombardy)).  % NUTS:ITC4 — Lombardy
+fof(c_marseille, axiom, concept(marseille)).  % NUTS:FRL04 — Marseille
+fof(c_masovia, axiom, concept(masovia)).  % NUTS:PL9 — Masovia
+fof(c_milan, axiom, concept(milan)).  % NUTS:ITC4C — Milan
+fof(c_munich, axiom, concept(munich)).  % NUTS:DE212 — Munich
+fof(c_northRhineWestphalia, axiom, concept(northRhineWestphalia)).  % NUTS:DEA — North Rhine-Westphalia
+fof(c_northernEurope, axiom, concept(northernEurope)).  % M49:154 — Northern Europe
+fof(c_paris, axiom, concept(paris)).  % NUTS:FR101 — Paris
+fof(c_poland, axiom, concept(poland)).  % M49:616 — Poland
+fof(c_provence, axiom, concept(provence)).  % NUTS:FRL — Provence-Alpes-Côte d'Azur
+fof(c_southernEurope, axiom, concept(southernEurope)).  % M49:039 — Southern Europe
+fof(c_spain, axiom, concept(spain)).  % M49:724 — Spain
+fof(c_warsaw, axiom, concept(warsaw)).  % NUTS:PL911 — Warsaw
+fof(c_westernEurope, axiom, concept(westernEurope)).  % M49:155 — Western Europe
 
-% ─── Hierarchy (Definition 2: ≤ = ⪯ containment) ──────────────────────
+% ─── Hierarchy (Definition 2: ≤ = containment) ────────────────────────
 % Only direct edges. Layer 1 provides reflexivity + transitivity.
-fof(h_0000, axiom, leq(alandIslands, northernEurope)).
-fof(h_0001, axiom, leq(albania, southernEurope)).
-fof(h_0002, axiom, leq(andorra, southernEurope)).
-fof(h_0003, axiom, leq(austria, westernEurope)).
-fof(h_0004, axiom, leq(belarus, easternEurope)).
-fof(h_0005, axiom, leq(belgium, westernEurope)).
-fof(h_0006, axiom, leq(bosniaAndHerzegovina, southernEurope)).
-fof(h_0007, axiom, leq(bulgaria, easternEurope)).
-fof(h_0008, axiom, leq(channelIslands, northernEurope)).
-fof(h_0009, axiom, leq(croatia, southernEurope)).
-fof(h_0010, axiom, leq(czechia, easternEurope)).
-fof(h_0011, axiom, leq(denmark, northernEurope)).
-fof(h_0012, axiom, leq(easternEurope, europe)).
-fof(h_0013, axiom, leq(estonia, northernEurope)).
-fof(h_0014, axiom, leq(faroeIslands, northernEurope)).
-fof(h_0015, axiom, leq(finland, northernEurope)).
-fof(h_0016, axiom, leq(france, westernEurope)).
-fof(h_0017, axiom, leq(germany, westernEurope)).
-fof(h_0018, axiom, leq(gibraltar, southernEurope)).
-fof(h_0019, axiom, leq(greece, southernEurope)).
-fof(h_0020, axiom, leq(guernsey, channelIslands)).
-fof(h_0021, axiom, leq(holySee, southernEurope)).
-fof(h_0022, axiom, leq(hungary, easternEurope)).
-fof(h_0023, axiom, leq(iceland, northernEurope)).
-fof(h_0024, axiom, leq(ireland, northernEurope)).
-fof(h_0025, axiom, leq(isleOfMan, northernEurope)).
-fof(h_0026, axiom, leq(italy, southernEurope)).
-fof(h_0027, axiom, leq(jersey, channelIslands)).
-fof(h_0028, axiom, leq(latvia, northernEurope)).
-fof(h_0029, axiom, leq(liechtenstein, westernEurope)).
-fof(h_0030, axiom, leq(lithuania, northernEurope)).
-fof(h_0031, axiom, leq(luxembourg, westernEurope)).
-fof(h_0032, axiom, leq(malta, southernEurope)).
-fof(h_0033, axiom, leq(monaco, westernEurope)).
-fof(h_0034, axiom, leq(montenegro, southernEurope)).
-fof(h_0035, axiom, leq(netherlands, westernEurope)).
-fof(h_0036, axiom, leq(northMacedonia, southernEurope)).
-fof(h_0037, axiom, leq(northernEurope, europe)).
-fof(h_0038, axiom, leq(norway, northernEurope)).
-fof(h_0039, axiom, leq(poland, easternEurope)).
-fof(h_0040, axiom, leq(portugal, southernEurope)).
-fof(h_0041, axiom, leq(republicOfMoldova, easternEurope)).
-fof(h_0042, axiom, leq(romania, easternEurope)).
-fof(h_0043, axiom, leq(russianFederation, easternEurope)).
-fof(h_0044, axiom, leq(sanMarino, southernEurope)).
-fof(h_0045, axiom, leq(sark, channelIslands)).
-fof(h_0046, axiom, leq(serbia, southernEurope)).
-fof(h_0047, axiom, leq(slovakia, easternEurope)).
-fof(h_0048, axiom, leq(slovenia, southernEurope)).
-fof(h_0049, axiom, leq(southernEurope, europe)).
-fof(h_0050, axiom, leq(spain, southernEurope)).
-fof(h_0051, axiom, leq(svalbardAndJanMayenIslands, northernEurope)).
-fof(h_0052, axiom, leq(sweden, northernEurope)).
-fof(h_0053, axiom, leq(switzerland, westernEurope)).
-fof(h_0054, axiom, leq(ukraine, easternEurope)).
-fof(h_0055, axiom, leq(unitedKingdom, northernEurope)).
-fof(h_0056, axiom, leq(westernEurope, europe)).
+fof(h_0000, axiom, leq(barcelona, catalonia)).
+fof(h_0001, axiom, leq(bavaria, germany)).
+fof(h_0002, axiom, leq(catalonia, spain)).
+fof(h_0003, axiom, leq(cologne, northRhineWestphalia)).
+fof(h_0004, axiom, leq(easternEurope, europe)).
+fof(h_0005, axiom, leq(france, westernEurope)).
+fof(h_0006, axiom, leq(germany, westernEurope)).
+fof(h_0007, axiom, leq(ileDeFrance, france)).
+fof(h_0008, axiom, leq(italy, southernEurope)).
+fof(h_0009, axiom, leq(lombardy, italy)).
+fof(h_0010, axiom, leq(marseille, provence)).
+fof(h_0011, axiom, leq(masovia, poland)).
+fof(h_0012, axiom, leq(milan, lombardy)).
+fof(h_0013, axiom, leq(munich, bavaria)).
+fof(h_0014, axiom, leq(northRhineWestphalia, germany)).
+fof(h_0015, axiom, leq(northernEurope, europe)).
+fof(h_0016, axiom, leq(paris, ileDeFrance)).
+fof(h_0017, axiom, leq(poland, easternEurope)).
+fof(h_0018, axiom, leq(provence, france)).
+fof(h_0019, axiom, leq(southernEurope, europe)).
+fof(h_0020, axiom, leq(spain, southernEurope)).
+fof(h_0021, axiom, leq(warsaw, masovia)).
+fof(h_0022, axiom, leq(westernEurope, europe)).
 
 % ─── Disjointness (Definition 2: ⊥⊥) ─────────────────────────────────
 % Sibling disjointness: children of the same parent are disjoint.
 % Derived disjointness follows from disj_downward (Layer 1).
-fof(d_0000, axiom, disjoint(alandIslands, channelIslands)).
-fof(d_0001, axiom, disjoint(alandIslands, denmark)).
-fof(d_0002, axiom, disjoint(alandIslands, estonia)).
-fof(d_0003, axiom, disjoint(alandIslands, faroeIslands)).
-fof(d_0004, axiom, disjoint(alandIslands, finland)).
-fof(d_0005, axiom, disjoint(alandIslands, iceland)).
-fof(d_0006, axiom, disjoint(alandIslands, ireland)).
-fof(d_0007, axiom, disjoint(alandIslands, isleOfMan)).
-fof(d_0008, axiom, disjoint(alandIslands, latvia)).
-fof(d_0009, axiom, disjoint(alandIslands, lithuania)).
-fof(d_0010, axiom, disjoint(alandIslands, norway)).
-fof(d_0011, axiom, disjoint(alandIslands, svalbardAndJanMayenIslands)).
-fof(d_0012, axiom, disjoint(alandIslands, sweden)).
-fof(d_0013, axiom, disjoint(alandIslands, unitedKingdom)).
-fof(d_0014, axiom, disjoint(albania, andorra)).
-fof(d_0015, axiom, disjoint(albania, bosniaAndHerzegovina)).
-fof(d_0016, axiom, disjoint(albania, croatia)).
-fof(d_0017, axiom, disjoint(albania, gibraltar)).
-fof(d_0018, axiom, disjoint(albania, greece)).
-fof(d_0019, axiom, disjoint(albania, holySee)).
-fof(d_0020, axiom, disjoint(albania, italy)).
-fof(d_0021, axiom, disjoint(albania, malta)).
-fof(d_0022, axiom, disjoint(albania, montenegro)).
-fof(d_0023, axiom, disjoint(albania, northMacedonia)).
-fof(d_0024, axiom, disjoint(albania, portugal)).
-fof(d_0025, axiom, disjoint(albania, sanMarino)).
-fof(d_0026, axiom, disjoint(albania, serbia)).
-fof(d_0027, axiom, disjoint(albania, slovenia)).
-fof(d_0028, axiom, disjoint(albania, spain)).
-fof(d_0029, axiom, disjoint(andorra, bosniaAndHerzegovina)).
-fof(d_0030, axiom, disjoint(andorra, croatia)).
-fof(d_0031, axiom, disjoint(andorra, gibraltar)).
-fof(d_0032, axiom, disjoint(andorra, greece)).
-fof(d_0033, axiom, disjoint(andorra, holySee)).
-fof(d_0034, axiom, disjoint(andorra, italy)).
-fof(d_0035, axiom, disjoint(andorra, malta)).
-fof(d_0036, axiom, disjoint(andorra, montenegro)).
-fof(d_0037, axiom, disjoint(andorra, northMacedonia)).
-fof(d_0038, axiom, disjoint(andorra, portugal)).
-fof(d_0039, axiom, disjoint(andorra, sanMarino)).
-fof(d_0040, axiom, disjoint(andorra, serbia)).
-fof(d_0041, axiom, disjoint(andorra, slovenia)).
-fof(d_0042, axiom, disjoint(andorra, spain)).
-fof(d_0043, axiom, disjoint(austria, belgium)).
-fof(d_0044, axiom, disjoint(austria, france)).
-fof(d_0045, axiom, disjoint(austria, germany)).
-fof(d_0046, axiom, disjoint(austria, liechtenstein)).
-fof(d_0047, axiom, disjoint(austria, luxembourg)).
-fof(d_0048, axiom, disjoint(austria, monaco)).
-fof(d_0049, axiom, disjoint(austria, netherlands)).
-fof(d_0050, axiom, disjoint(austria, switzerland)).
-fof(d_0051, axiom, disjoint(belarus, bulgaria)).
-fof(d_0052, axiom, disjoint(belarus, czechia)).
-fof(d_0053, axiom, disjoint(belarus, hungary)).
-fof(d_0054, axiom, disjoint(belarus, poland)).
-fof(d_0055, axiom, disjoint(belarus, republicOfMoldova)).
-fof(d_0056, axiom, disjoint(belarus, romania)).
-fof(d_0057, axiom, disjoint(belarus, russianFederation)).
-fof(d_0058, axiom, disjoint(belarus, slovakia)).
-fof(d_0059, axiom, disjoint(belarus, ukraine)).
-fof(d_0060, axiom, disjoint(belgium, france)).
-fof(d_0061, axiom, disjoint(belgium, germany)).
-fof(d_0062, axiom, disjoint(belgium, liechtenstein)).
-fof(d_0063, axiom, disjoint(belgium, luxembourg)).
-fof(d_0064, axiom, disjoint(belgium, monaco)).
-fof(d_0065, axiom, disjoint(belgium, netherlands)).
-fof(d_0066, axiom, disjoint(belgium, switzerland)).
-fof(d_0067, axiom, disjoint(bosniaAndHerzegovina, croatia)).
-fof(d_0068, axiom, disjoint(bosniaAndHerzegovina, gibraltar)).
-fof(d_0069, axiom, disjoint(bosniaAndHerzegovina, greece)).
-fof(d_0070, axiom, disjoint(bosniaAndHerzegovina, holySee)).
-fof(d_0071, axiom, disjoint(bosniaAndHerzegovina, italy)).
-fof(d_0072, axiom, disjoint(bosniaAndHerzegovina, malta)).
-fof(d_0073, axiom, disjoint(bosniaAndHerzegovina, montenegro)).
-fof(d_0074, axiom, disjoint(bosniaAndHerzegovina, northMacedonia)).
-fof(d_0075, axiom, disjoint(bosniaAndHerzegovina, portugal)).
-fof(d_0076, axiom, disjoint(bosniaAndHerzegovina, sanMarino)).
-fof(d_0077, axiom, disjoint(bosniaAndHerzegovina, serbia)).
-fof(d_0078, axiom, disjoint(bosniaAndHerzegovina, slovenia)).
-fof(d_0079, axiom, disjoint(bosniaAndHerzegovina, spain)).
-fof(d_0080, axiom, disjoint(bulgaria, czechia)).
-fof(d_0081, axiom, disjoint(bulgaria, hungary)).
-fof(d_0082, axiom, disjoint(bulgaria, poland)).
-fof(d_0083, axiom, disjoint(bulgaria, republicOfMoldova)).
-fof(d_0084, axiom, disjoint(bulgaria, romania)).
-fof(d_0085, axiom, disjoint(bulgaria, russianFederation)).
-fof(d_0086, axiom, disjoint(bulgaria, slovakia)).
-fof(d_0087, axiom, disjoint(bulgaria, ukraine)).
-fof(d_0088, axiom, disjoint(channelIslands, denmark)).
-fof(d_0089, axiom, disjoint(channelIslands, estonia)).
-fof(d_0090, axiom, disjoint(channelIslands, faroeIslands)).
-fof(d_0091, axiom, disjoint(channelIslands, finland)).
-fof(d_0092, axiom, disjoint(channelIslands, iceland)).
-fof(d_0093, axiom, disjoint(channelIslands, ireland)).
-fof(d_0094, axiom, disjoint(channelIslands, isleOfMan)).
-fof(d_0095, axiom, disjoint(channelIslands, latvia)).
-fof(d_0096, axiom, disjoint(channelIslands, lithuania)).
-fof(d_0097, axiom, disjoint(channelIslands, norway)).
-fof(d_0098, axiom, disjoint(channelIslands, svalbardAndJanMayenIslands)).
-fof(d_0099, axiom, disjoint(channelIslands, sweden)).
-fof(d_0100, axiom, disjoint(channelIslands, unitedKingdom)).
-fof(d_0101, axiom, disjoint(croatia, gibraltar)).
-fof(d_0102, axiom, disjoint(croatia, greece)).
-fof(d_0103, axiom, disjoint(croatia, holySee)).
-fof(d_0104, axiom, disjoint(croatia, italy)).
-fof(d_0105, axiom, disjoint(croatia, malta)).
-fof(d_0106, axiom, disjoint(croatia, montenegro)).
-fof(d_0107, axiom, disjoint(croatia, northMacedonia)).
-fof(d_0108, axiom, disjoint(croatia, portugal)).
-fof(d_0109, axiom, disjoint(croatia, sanMarino)).
-fof(d_0110, axiom, disjoint(croatia, serbia)).
-fof(d_0111, axiom, disjoint(croatia, slovenia)).
-fof(d_0112, axiom, disjoint(croatia, spain)).
-fof(d_0113, axiom, disjoint(czechia, hungary)).
-fof(d_0114, axiom, disjoint(czechia, poland)).
-fof(d_0115, axiom, disjoint(czechia, republicOfMoldova)).
-fof(d_0116, axiom, disjoint(czechia, romania)).
-fof(d_0117, axiom, disjoint(czechia, russianFederation)).
-fof(d_0118, axiom, disjoint(czechia, slovakia)).
-fof(d_0119, axiom, disjoint(czechia, ukraine)).
-fof(d_0120, axiom, disjoint(denmark, estonia)).
-fof(d_0121, axiom, disjoint(denmark, faroeIslands)).
-fof(d_0122, axiom, disjoint(denmark, finland)).
-fof(d_0123, axiom, disjoint(denmark, iceland)).
-fof(d_0124, axiom, disjoint(denmark, ireland)).
-fof(d_0125, axiom, disjoint(denmark, isleOfMan)).
-fof(d_0126, axiom, disjoint(denmark, latvia)).
-fof(d_0127, axiom, disjoint(denmark, lithuania)).
-fof(d_0128, axiom, disjoint(denmark, norway)).
-fof(d_0129, axiom, disjoint(denmark, svalbardAndJanMayenIslands)).
-fof(d_0130, axiom, disjoint(denmark, sweden)).
-fof(d_0131, axiom, disjoint(denmark, unitedKingdom)).
-fof(d_0132, axiom, disjoint(easternEurope, northernEurope)).
-fof(d_0133, axiom, disjoint(easternEurope, southernEurope)).
-fof(d_0134, axiom, disjoint(easternEurope, westernEurope)).
-fof(d_0135, axiom, disjoint(estonia, faroeIslands)).
-fof(d_0136, axiom, disjoint(estonia, finland)).
-fof(d_0137, axiom, disjoint(estonia, iceland)).
-fof(d_0138, axiom, disjoint(estonia, ireland)).
-fof(d_0139, axiom, disjoint(estonia, isleOfMan)).
-fof(d_0140, axiom, disjoint(estonia, latvia)).
-fof(d_0141, axiom, disjoint(estonia, lithuania)).
-fof(d_0142, axiom, disjoint(estonia, norway)).
-fof(d_0143, axiom, disjoint(estonia, svalbardAndJanMayenIslands)).
-fof(d_0144, axiom, disjoint(estonia, sweden)).
-fof(d_0145, axiom, disjoint(estonia, unitedKingdom)).
-fof(d_0146, axiom, disjoint(faroeIslands, finland)).
-fof(d_0147, axiom, disjoint(faroeIslands, iceland)).
-fof(d_0148, axiom, disjoint(faroeIslands, ireland)).
-fof(d_0149, axiom, disjoint(faroeIslands, isleOfMan)).
-fof(d_0150, axiom, disjoint(faroeIslands, latvia)).
-fof(d_0151, axiom, disjoint(faroeIslands, lithuania)).
-fof(d_0152, axiom, disjoint(faroeIslands, norway)).
-fof(d_0153, axiom, disjoint(faroeIslands, svalbardAndJanMayenIslands)).
-fof(d_0154, axiom, disjoint(faroeIslands, sweden)).
-fof(d_0155, axiom, disjoint(faroeIslands, unitedKingdom)).
-fof(d_0156, axiom, disjoint(finland, iceland)).
-fof(d_0157, axiom, disjoint(finland, ireland)).
-fof(d_0158, axiom, disjoint(finland, isleOfMan)).
-fof(d_0159, axiom, disjoint(finland, latvia)).
-fof(d_0160, axiom, disjoint(finland, lithuania)).
-fof(d_0161, axiom, disjoint(finland, norway)).
-fof(d_0162, axiom, disjoint(finland, svalbardAndJanMayenIslands)).
-fof(d_0163, axiom, disjoint(finland, sweden)).
-fof(d_0164, axiom, disjoint(finland, unitedKingdom)).
-fof(d_0165, axiom, disjoint(france, germany)).
-fof(d_0166, axiom, disjoint(france, liechtenstein)).
-fof(d_0167, axiom, disjoint(france, luxembourg)).
-fof(d_0168, axiom, disjoint(france, monaco)).
-fof(d_0169, axiom, disjoint(france, netherlands)).
-fof(d_0170, axiom, disjoint(france, switzerland)).
-fof(d_0171, axiom, disjoint(germany, liechtenstein)).
-fof(d_0172, axiom, disjoint(germany, luxembourg)).
-fof(d_0173, axiom, disjoint(germany, monaco)).
-fof(d_0174, axiom, disjoint(germany, netherlands)).
-fof(d_0175, axiom, disjoint(germany, switzerland)).
-fof(d_0176, axiom, disjoint(gibraltar, greece)).
-fof(d_0177, axiom, disjoint(gibraltar, holySee)).
-fof(d_0178, axiom, disjoint(gibraltar, italy)).
-fof(d_0179, axiom, disjoint(gibraltar, malta)).
-fof(d_0180, axiom, disjoint(gibraltar, montenegro)).
-fof(d_0181, axiom, disjoint(gibraltar, northMacedonia)).
-fof(d_0182, axiom, disjoint(gibraltar, portugal)).
-fof(d_0183, axiom, disjoint(gibraltar, sanMarino)).
-fof(d_0184, axiom, disjoint(gibraltar, serbia)).
-fof(d_0185, axiom, disjoint(gibraltar, slovenia)).
-fof(d_0186, axiom, disjoint(gibraltar, spain)).
-fof(d_0187, axiom, disjoint(greece, holySee)).
-fof(d_0188, axiom, disjoint(greece, italy)).
-fof(d_0189, axiom, disjoint(greece, malta)).
-fof(d_0190, axiom, disjoint(greece, montenegro)).
-fof(d_0191, axiom, disjoint(greece, northMacedonia)).
-fof(d_0192, axiom, disjoint(greece, portugal)).
-fof(d_0193, axiom, disjoint(greece, sanMarino)).
-fof(d_0194, axiom, disjoint(greece, serbia)).
-fof(d_0195, axiom, disjoint(greece, slovenia)).
-fof(d_0196, axiom, disjoint(greece, spain)).
-fof(d_0197, axiom, disjoint(guernsey, jersey)).
-fof(d_0198, axiom, disjoint(guernsey, sark)).
-fof(d_0199, axiom, disjoint(holySee, italy)).
-fof(d_0200, axiom, disjoint(holySee, malta)).
-fof(d_0201, axiom, disjoint(holySee, montenegro)).
-fof(d_0202, axiom, disjoint(holySee, northMacedonia)).
-fof(d_0203, axiom, disjoint(holySee, portugal)).
-fof(d_0204, axiom, disjoint(holySee, sanMarino)).
-fof(d_0205, axiom, disjoint(holySee, serbia)).
-fof(d_0206, axiom, disjoint(holySee, slovenia)).
-fof(d_0207, axiom, disjoint(holySee, spain)).
-fof(d_0208, axiom, disjoint(hungary, poland)).
-fof(d_0209, axiom, disjoint(hungary, republicOfMoldova)).
-fof(d_0210, axiom, disjoint(hungary, romania)).
-fof(d_0211, axiom, disjoint(hungary, russianFederation)).
-fof(d_0212, axiom, disjoint(hungary, slovakia)).
-fof(d_0213, axiom, disjoint(hungary, ukraine)).
-fof(d_0214, axiom, disjoint(iceland, ireland)).
-fof(d_0215, axiom, disjoint(iceland, isleOfMan)).
-fof(d_0216, axiom, disjoint(iceland, latvia)).
-fof(d_0217, axiom, disjoint(iceland, lithuania)).
-fof(d_0218, axiom, disjoint(iceland, norway)).
-fof(d_0219, axiom, disjoint(iceland, svalbardAndJanMayenIslands)).
-fof(d_0220, axiom, disjoint(iceland, sweden)).
-fof(d_0221, axiom, disjoint(iceland, unitedKingdom)).
-fof(d_0222, axiom, disjoint(ireland, isleOfMan)).
-fof(d_0223, axiom, disjoint(ireland, latvia)).
-fof(d_0224, axiom, disjoint(ireland, lithuania)).
-fof(d_0225, axiom, disjoint(ireland, norway)).
-fof(d_0226, axiom, disjoint(ireland, svalbardAndJanMayenIslands)).
-fof(d_0227, axiom, disjoint(ireland, sweden)).
-fof(d_0228, axiom, disjoint(ireland, unitedKingdom)).
-fof(d_0229, axiom, disjoint(isleOfMan, latvia)).
-fof(d_0230, axiom, disjoint(isleOfMan, lithuania)).
-fof(d_0231, axiom, disjoint(isleOfMan, norway)).
-fof(d_0232, axiom, disjoint(isleOfMan, svalbardAndJanMayenIslands)).
-fof(d_0233, axiom, disjoint(isleOfMan, sweden)).
-fof(d_0234, axiom, disjoint(isleOfMan, unitedKingdom)).
-fof(d_0235, axiom, disjoint(italy, malta)).
-fof(d_0236, axiom, disjoint(italy, montenegro)).
-fof(d_0237, axiom, disjoint(italy, northMacedonia)).
-fof(d_0238, axiom, disjoint(italy, portugal)).
-fof(d_0239, axiom, disjoint(italy, sanMarino)).
-fof(d_0240, axiom, disjoint(italy, serbia)).
-fof(d_0241, axiom, disjoint(italy, slovenia)).
-fof(d_0242, axiom, disjoint(italy, spain)).
-fof(d_0243, axiom, disjoint(jersey, sark)).
-fof(d_0244, axiom, disjoint(latvia, lithuania)).
-fof(d_0245, axiom, disjoint(latvia, norway)).
-fof(d_0246, axiom, disjoint(latvia, svalbardAndJanMayenIslands)).
-fof(d_0247, axiom, disjoint(latvia, sweden)).
-fof(d_0248, axiom, disjoint(latvia, unitedKingdom)).
-fof(d_0249, axiom, disjoint(liechtenstein, luxembourg)).
-fof(d_0250, axiom, disjoint(liechtenstein, monaco)).
-fof(d_0251, axiom, disjoint(liechtenstein, netherlands)).
-fof(d_0252, axiom, disjoint(liechtenstein, switzerland)).
-fof(d_0253, axiom, disjoint(lithuania, norway)).
-fof(d_0254, axiom, disjoint(lithuania, svalbardAndJanMayenIslands)).
-fof(d_0255, axiom, disjoint(lithuania, sweden)).
-fof(d_0256, axiom, disjoint(lithuania, unitedKingdom)).
-fof(d_0257, axiom, disjoint(luxembourg, monaco)).
-fof(d_0258, axiom, disjoint(luxembourg, netherlands)).
-fof(d_0259, axiom, disjoint(luxembourg, switzerland)).
-fof(d_0260, axiom, disjoint(malta, montenegro)).
-fof(d_0261, axiom, disjoint(malta, northMacedonia)).
-fof(d_0262, axiom, disjoint(malta, portugal)).
-fof(d_0263, axiom, disjoint(malta, sanMarino)).
-fof(d_0264, axiom, disjoint(malta, serbia)).
-fof(d_0265, axiom, disjoint(malta, slovenia)).
-fof(d_0266, axiom, disjoint(malta, spain)).
-fof(d_0267, axiom, disjoint(monaco, netherlands)).
-fof(d_0268, axiom, disjoint(monaco, switzerland)).
-fof(d_0269, axiom, disjoint(montenegro, northMacedonia)).
-fof(d_0270, axiom, disjoint(montenegro, portugal)).
-fof(d_0271, axiom, disjoint(montenegro, sanMarino)).
-fof(d_0272, axiom, disjoint(montenegro, serbia)).
-fof(d_0273, axiom, disjoint(montenegro, slovenia)).
-fof(d_0274, axiom, disjoint(montenegro, spain)).
-fof(d_0275, axiom, disjoint(netherlands, switzerland)).
-fof(d_0276, axiom, disjoint(northMacedonia, portugal)).
-fof(d_0277, axiom, disjoint(northMacedonia, sanMarino)).
-fof(d_0278, axiom, disjoint(northMacedonia, serbia)).
-fof(d_0279, axiom, disjoint(northMacedonia, slovenia)).
-fof(d_0280, axiom, disjoint(northMacedonia, spain)).
-fof(d_0281, axiom, disjoint(northernEurope, southernEurope)).
-fof(d_0282, axiom, disjoint(northernEurope, westernEurope)).
-fof(d_0283, axiom, disjoint(norway, svalbardAndJanMayenIslands)).
-fof(d_0284, axiom, disjoint(norway, sweden)).
-fof(d_0285, axiom, disjoint(norway, unitedKingdom)).
-fof(d_0286, axiom, disjoint(poland, republicOfMoldova)).
-fof(d_0287, axiom, disjoint(poland, romania)).
-fof(d_0288, axiom, disjoint(poland, russianFederation)).
-fof(d_0289, axiom, disjoint(poland, slovakia)).
-fof(d_0290, axiom, disjoint(poland, ukraine)).
-fof(d_0291, axiom, disjoint(portugal, sanMarino)).
-fof(d_0292, axiom, disjoint(portugal, serbia)).
-fof(d_0293, axiom, disjoint(portugal, slovenia)).
-fof(d_0294, axiom, disjoint(portugal, spain)).
-fof(d_0295, axiom, disjoint(republicOfMoldova, romania)).
-fof(d_0296, axiom, disjoint(republicOfMoldova, russianFederation)).
-fof(d_0297, axiom, disjoint(republicOfMoldova, slovakia)).
-fof(d_0298, axiom, disjoint(republicOfMoldova, ukraine)).
-fof(d_0299, axiom, disjoint(romania, russianFederation)).
-fof(d_0300, axiom, disjoint(romania, slovakia)).
-fof(d_0301, axiom, disjoint(romania, ukraine)).
-fof(d_0302, axiom, disjoint(russianFederation, slovakia)).
-fof(d_0303, axiom, disjoint(russianFederation, ukraine)).
-fof(d_0304, axiom, disjoint(sanMarino, serbia)).
-fof(d_0305, axiom, disjoint(sanMarino, slovenia)).
-fof(d_0306, axiom, disjoint(sanMarino, spain)).
-fof(d_0307, axiom, disjoint(serbia, slovenia)).
-fof(d_0308, axiom, disjoint(serbia, spain)).
-fof(d_0309, axiom, disjoint(slovakia, ukraine)).
-fof(d_0310, axiom, disjoint(slovenia, spain)).
-fof(d_0311, axiom, disjoint(southernEurope, westernEurope)).
-fof(d_0312, axiom, disjoint(svalbardAndJanMayenIslands, sweden)).
-fof(d_0313, axiom, disjoint(svalbardAndJanMayenIslands, unitedKingdom)).
-fof(d_0314, axiom, disjoint(sweden, unitedKingdom)).
+fof(d_0000, axiom, disjoint(bavaria, northRhineWestphalia)).
+fof(d_0001, axiom, disjoint(easternEurope, northernEurope)).
+fof(d_0002, axiom, disjoint(easternEurope, southernEurope)).
+fof(d_0003, axiom, disjoint(easternEurope, westernEurope)).
+fof(d_0004, axiom, disjoint(france, germany)).
+fof(d_0005, axiom, disjoint(ileDeFrance, provence)).
+fof(d_0006, axiom, disjoint(italy, spain)).
+fof(d_0007, axiom, disjoint(northernEurope, southernEurope)).
+fof(d_0008, axiom, disjoint(northernEurope, westernEurope)).
+fof(d_0009, axiom, disjoint(southernEurope, westernEurope)).
 
-% ─── Unique Name Assumption ───────────────────────────────────────────
-% SKIPPED (--no-una): UNA is implicit from tree structure + sibling
-% disjointness. All constants are provably distinct via:
-%   - leq antisymmetry + disj_downward + disj_irrefl
+% ─── Unique Name Assumption (via $distinct) ──────────────────────────
+% Geoff Sutcliffe recommendation: $distinct avoids clause explosion.
+
+fof(geo_distinct_europe, axiom,
+    $distinct(easternEurope, northernEurope, southernEurope, westernEurope)).
+
+fof(geo_distinct_france, axiom,
+    $distinct(ileDeFrance, provence)).
+
+fof(geo_distinct_germany, axiom,
+    $distinct(bavaria, northRhineWestphalia)).
+
+fof(geo_distinct_southernEurope, axiom,
+    $distinct(italy, spain)).
+
+fof(geo_distinct_westernEurope, axiom,
+    $distinct(france, germany)).
+
 
 %--------------------------------------------------------------------------
-% Summary: 58 concept + 57 leq + 315 disjoint + 0 UNA = 430 axioms
+% Summary: 24 concept + 23 leq + 10 disjoint + 5 UNA = 62 axioms
 %--------------------------------------------------------------------------

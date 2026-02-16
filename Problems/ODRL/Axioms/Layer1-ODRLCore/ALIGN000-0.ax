@@ -1,0 +1,144 @@
+%--------------------------------------------------------------------------
+% File     : ALIGN000-0.ax : TPTP v0.1.0. Released v0.1.0.
+% Domain   : ODRL Policy Conflict Detection — Cross-Dataspace Alignment
+% Axioms   : Alignment theory: order/disjointness preservation, injectivity,
+%            aligned denotation transfer.
+% Version  : 0.1.0 — Matches paper §3.3 (Def. 8, Lemma 3, Prop. 2).
+% English  : Generic axioms for cross-dataspace policy conflict detection.
+%            Part A encodes alignment properties (Definition 8): order
+%            preservation (biconditional on dom(α)), disjointness
+%            preservation, and injectivity.
+%            Part B encodes aligned denotation transfer (Lemma 3):
+%            when a concept's grounding maps via α, its denotation
+%            membership transfers to the target KB.
+%            Part C provides structural typing for align/2.
+%
+%            These axioms are KB-independent. Per-problem alignment
+%            data (ground align/2 facts) are loaded from Layer 0+
+%            files (e.g., ALIGN-GEO-ISO.ax).
+%
+%            Include ONLY in cross-dataspace problems (ODRL080+).
+%            Single-KB problems (ODRL010–069) should not load this file.
+%
+% Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
+%            Automated Reasoning for ODRL Policy Conflict Detection
+% Source   : [MuS25], §3.3
+% Names    : ALIGN000-0.ax
+% Status   : Layer 1 — Generic Alignment Axioms
+% Syntax   : Number of formulae    :     8 (   0 unt;   0 def)
+%            Number of atoms       :    26 (   2 equ)
+%            Maximal formula atoms  :     4 (   3 avg)
+%            Number of connectives  :    20 (   0   ~;   0   |;  12   &)
+%                                         (   0 <=>;   8  =>;   0  <=;   0 <~>)
+%            Maximal formula depth  :     4 (   3 avg)
+%            Maximal term depth     :     1 (   1 avg)
+%            Number of predicates   :     5 (   5 usr;   0 prp; 2-3 aty)
+%            Number of functors     :     0 (   0 usr;   0 con; 0-0 aty)
+%            Number of variables    :    28 (  28   !;   0   ?)
+% SPC      : FOF_EPR_RFN_SEQ
+% Comments : Simplified encoding: Both KBs share predicates leq/2,
+%          :   disjoint/2, concept/1. This works because:
+%          :   (a) Constants are disjoint across KBs (germany ≠ dE)
+%          :   (b) Alignment is partial (unmapped concepts → antecedent
+%          :       failure, no spurious conclusions)
+%          :   Formal cross-KB reasoning would use leq_A/2, leq_B/2
+%          :   but this pragmatic simplification is standard in TPTP
+%          :   benchmarks and introduces no unsoundness.
+%          : Predicates from Layer 0/1:
+%          :   concept/1, leq/2, disjoint/2, in_denotation/3
+%          : New predicate: align/2
+%          : align(X, Y) means "concept X in KB_A maps to concept Y
+%          :   in KB_B under alignment α" (Definition 8).
+%          : Ground align/2 facts come from Layer 0+ files
+%          :   (e.g., Alignment/ALIGN-GEO-ISO.ax).
+% Ontology : New predicate: align/2 — partial injective function
+%          :   α: C_A ⇀ C_B (Definition 8)
+% Stats    : Part A  5 (alignment properties)
+%          : Part B  2 (denotation transfer — derivable, kept for perf)
+%          : Part C  1 (typing)
+%          : Total   8
+% Date     : 2026-02-16
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% ─── Part A: Alignment properties (Definition 8) ────────────────────
+%
+% α: C_A ⇀ C_B is an injective partial function satisfying:
+%   (i)   x ≤_A y  ⟺  α(x) ≤_B α(y)       [order preservation]
+%   (ii)  x ⊥⊥_A y  ⟹  α(x) ⊥⊥_B α(y)    [disjointness preservation]
+%   (iii) α(x) = α(y)  ⟹  x = y             [injectivity]
+%
+% Since both KBs share the predicate namespace (leq/2, disjoint/2),
+% we assert properties that hold when both endpoints are in dom(α).
+
+% --- (i) Order preservation (forward): leq in source ⟹ leq in target ---
+fof(align_order_forward, axiom,
+    ![X,Y,Xp,Yp]: ((align(X, Xp) & align(Y, Yp) & leq(X, Y))
+        => leq(Xp, Yp))).
+
+% --- (i) Order preservation (backward): leq in target ⟹ leq in source ---
+% Necessary for conflict preservation (Prop. 2): prevents the target
+% KB from introducing subsumption absent in the source.
+fof(align_order_backward, axiom,
+    ![X,Y,Xp,Yp]: ((align(X, Xp) & align(Y, Yp) & leq(Xp, Yp))
+        => leq(X, Y))).
+
+% --- (ii) Disjointness preservation: ⊥⊥ in source ⟹ ⊥⊥ in target ---
+% One direction only (paper Def. 8): target may assert additional
+% disjointness not present in source.
+fof(align_disj_forward, axiom,
+    ![X,Y,Xp,Yp]: ((align(X, Xp) & align(Y, Yp) & disjoint(X, Y))
+        => disjoint(Xp, Yp))).
+
+% --- (iii) Injectivity: distinct source ⟹ distinct target ---
+fof(align_injective, axiom,
+    ![X,Y,Z]: ((align(X, Z) & align(Y, Z)) => (X = Y))).
+
+% --- Functionality: each source concept maps to at most one target ---
+fof(align_functional, axiom,
+    ![X,Y,Z]: ((align(X, Y) & align(X, Z)) => (Y = Z))).
+
+% ─── Part B: Aligned denotation transfer (Lemma 3) ──────────────────
+%
+% NOTE: These axioms are DERIVABLE from Part A + ODRL000-0.ax.
+% Proof sketch (for isA/isPartOf):
+%   1. in_denotation(X, G, isA)  ⟹  leq(X, G)    [den_isA_onlyif]
+%   2. align(X, Xp) & align(G, Gp) & leq(X, G)
+%        ⟹  leq(Xp, Gp)                            [align_order_forward]
+%   3. leq(Xp, Gp)  ⟹  in_denotation(Xp, Gp, isA) [den_isA_if]
+% Included as bridge axioms for Vampire performance on cross-KB
+% proofs. Can be removed if proof times are acceptable without them.
+% Derivability is verified empirically by ODRL082-1.p (which loads
+% only Part A axioms inlined and proves denotation transfer as a
+% conjecture without loading this file).
+%
+% The operator variable Op ranges over all KB-dependent operators.
+% For hierarchical operators (isA, isPartOf, hasPart), transfer
+% follows from order preservation. For eq/neq, it follows from
+% injectivity + functionality (Part A). The polymorphic encoding
+% is sound because no operator-specific semantics leak across KBs:
+% partial alignment guards (unmapped concepts → antecedent failure)
+% prevent the operator variable from being instantiated with
+% operators whose semantics don't apply in the target KB.
+
+% --- Forward transfer: denotation in source ⟹ denotation in target ---
+fof(align_denotation_forward, axiom,
+    ![X,G,Op,Xp,Gp]: ((in_denotation(X, G, Op) & align(X, Xp) & align(G, Gp))
+        => in_denotation(Xp, Gp, Op))).
+
+% --- Backward transfer: denotation in target ⟹ denotation in source ---
+% Required for completeness: if α(X) is in the target denotation,
+% then X was in the source denotation.
+fof(align_denotation_backward, axiom,
+    ![X,G,Op,Xp,Gp]: ((in_denotation(Xp, Gp, Op) & align(X, Xp) & align(G, Gp))
+        => in_denotation(X, G, Op))).
+
+% ─── Part C: Typing ──────────────────────────────────────────────────
+%
+% align/2 maps concepts to concepts.
+fof(align_typed, axiom,
+    ![X,Y]: (align(X, Y) => (concept(X) & concept(Y)))).
+
+%--------------------------------------------------------------------------
+% Summary: 5 alignment + 2 denotation transfer + 1 typing = 8 axioms
+%--------------------------------------------------------------------------

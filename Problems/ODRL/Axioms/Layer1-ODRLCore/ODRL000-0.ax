@@ -18,7 +18,7 @@
 % Source   : [MuS25]
 % Names    : ODRL000-0.ax
 % Status   : Layer 1 — Generic ODRL Axioms
-% Syntax   : Number of formulae    :    32 (   0 unt;   0 def)
+% Syntax   : Number of formulae    :    33 (   0 unt;   0 def)
 %            Number of atoms       :    76 (   4 equ)
 %            Maximal formula atoms  :     4 (   2 avg)
 %            Number of connectives  :    49 (   5   ~;   0   |;  11   &)
