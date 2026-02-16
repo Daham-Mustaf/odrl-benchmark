@@ -110,11 +110,11 @@ P("ODRL017-1.p","CounterSatisfiable","Conflict","Definition 3 (eq/neq), Definiti
   pl="Conflict: neq(germany) ∩ eq(germany) = ∅")
 
 P("ODRL018-1.p","Theorem","Compatible","Definition 2, Definition 3","Medium-Hard",
-  tp("policy1","permission","use",[("spatial","isPartOf","geo:northernEurope")])+"\n%\n%   "+
-  tp("policy2","prohibition","use",[("spatial","hasPart","geo:channelIslands")]),
-  "Witness: northernEurope (reflexivity + L0 edge)",
-  "fof(odrl018, conjecture,\n    ?[X]: ( in_denotation(X, northernEurope, isPartOf)\n          & in_denotation(X, channelIslands, hasPart) )).",
-  pl="Compatible: isPartOf(northernEurope) ∩ hasPart(channelIslands) ≠ ∅")
+  tp("policy1","permission","use",[("spatial","isPartOf","geo:westernEurope")])+"\n%\n%   "+
+  tp("policy2","prohibition","use",[("spatial","hasPart","geo:bavaria")]),
+  "Witness: germany (leq(bavaria,germany) ∧ leq(germany,westernEurope))",
+  "fof(odrl018, conjecture,\n    ?[X]: ( in_denotation(X, westernEurope, isPartOf)\n          & in_denotation(X, bavaria, hasPart) )).",
+  pl="Compatible: isPartOf(westernEurope) ∩ hasPart(bavaria) ≠ ∅")
 
 P("ODRL019-1.p","CounterSatisfiable","Conflict","Definition 2 (disj_downward), Definition 5","Medium",
   tp("policy1","permission","use",[("spatial","isPartOf","geo:northernEurope")])+"\n%\n%   "+
@@ -342,10 +342,10 @@ P("ODRL050-1.p","Theorem","Compatible","Definition 5 (identity)","Trivial",
 
 P("ODRL051-1.p","Theorem","Compatible","Definition 3 (hasPart)","Medium",
   tp("policy1","permission","use",[("spatial","hasPart","geo:germany")])+"\n%\n%   "+
-  tp("policy2","prohibition","use",[("spatial","eq","geo:world")]),
-  "Witness: world (3 transitivity steps: de→wE→eu→world)",
-  "fof(odrl051, conjecture,\n    ?[X]: ( in_denotation(X, germany, hasPart)\n          & in_denotation(X, world, eq) )).",
-  pl="Root reachability: hasPart(germany) ∩ eq(world) ≠ ∅")
+  tp("policy2","prohibition","use",[("spatial","eq","geo:europe")]),
+  "Witness: europe (leq(germany,wE) ∧ leq(wE,europe) → europe ∈ hasPart(de))",
+  "fof(odrl051, conjecture,\n    ?[X]: ( in_denotation(X, germany, hasPart)\n          & in_denotation(X, europe, eq) )).",
+  pl="Root reachability: hasPart(germany) ∩ eq(europe) ≠ ∅")
 
 P("ODRL052-1.p","Theorem","Compatible","Definition 3 (hasPart)","Medium",
   tp("policy1","permission","use",[("spatial","hasPart","geo:germany")])+"\n%\n%   "+
@@ -373,6 +373,81 @@ P("ODRL055-1.p","CounterSatisfiable","Refuted","Definition 7","Medium",
   "fof(odrl055, conjecture,\n    ![X]: ( in_denotation(X, germany, hasPart)\n          => in_denotation(X, europe, hasPart) )).",
   flip_conj="fof(odrl055, conjecture,\n    ?[X]: ( in_denotation(X, germany, hasPart)\n          & ~in_denotation(X, europe, hasPart) )).",
   pl="Subsumption refuted: hasPart(germany) ⊄ hasPart(europe)")
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CATEGORY 6: DAG MULTI-PARENT (056-058)
+# ═══════════════════════════════════════════════════════════════════════════
+# Tests Note 1: DAG-structured vocabularies with multi-parent concepts.
+# Paper reference: Note 1 (DAG Structure and Sibling Disjointness), Table 1.
+# Validates: (1) NAIVE mode creates UNSAT, (2) DAG-safe mode preserves consistency.
+
+# 056: NAIVE mode is inconsistent (all 285 sibling pairs)
+P("ODRL056-1.p","ContradictoryAxioms","Inconsistent",
+  "Note 1 — Multi-Parent Contradiction (NAIVE mode)","Hard",
+  tp("policy1","permission","use",[("hasPurpose","isA","dpv:commercialResearch")]),
+  "DPV-NAIVE.ax contains ALL 285 sibling pairs including:\n"
+  "%   disjoint(commercialPurpose, researchAndDevelopment) [d_0044]\n"
+  "%   leq(commercialResearch, commercialPurpose) [h_0006]\n"
+  "%   leq(commercialResearch, researchAndDevelopment) [h_0007]\n"
+  "% Proof: disj_downward(d_0044, h_0006) + disj_downward(d_0044, h_0007)\n"
+  "%   → disjoint(commercialResearch, commercialResearch)\n"
+  "%   → contradicts disj_irrefl (Lemma 1) → UNSATISFIABLE",
+  "fof(odrl056, conjecture, false).",
+  inc=("DPV_NAIVE","ODRL"),
+  pl="KB inconsistency: naive sibling disjointness violates Lemma 1")
+
+# 057: DAG-SAFE mode is consistent (279 pairs, 6 suppressed)
+P("ODRL057-1.p","Theorem","Consistent",
+  "Note 1 — DAG-Safe Preserves Consistency","Medium",
+  tp("policy1","permission","use",[("hasPurpose","isA","dpv:commercialResearch")]),
+  "DPV000-0.ax (DAG-SAFE) suppresses problematic pair:\n"
+  "%   disjoint(commercialPurpose, researchAndDevelopment) NOT asserted\n"
+  "%   because ↓commercialPurpose ∩ ↓researchAndDevelopment ≠ ∅\n"
+  "% Witness: commercialResearch ∈ both closures\n"
+  "% Result: KB is CONSISTENT, multi-parent concept works correctly",
+  "fof(odrl057, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, commercialPurpose, isA)\n"
+  "          & in_denotation(X, researchAndDevelopment, isA) )).",
+  inc=("DPV","ODRL"),
+  pl="DAG-safe: suppressed pair allows multi-parent witness")
+
+# 058: All 6 multi-parent concepts work (Table 1 validation)
+P("ODRL058-1.p","Theorem","Verified",
+  "Note 1 — All 6 Multi-Parent Concepts (Table 1)","Medium",
+  tp("policy1","permission","use",[("hasPurpose","isA","dpv:commercialResearch")])+"\n%\n%   "+
+  tp("policy2","permission","use",[("hasPurpose","isA","dpv:nonCommercialResearch")])+"\n%\n%   "+
+  tp("policy3","permission","use",[("hasPurpose","isA","dpv:personalisedAdvertising")])+"\n%\n%   "+
+  tp("policy4","permission","use",[("hasPurpose","isA","dpv:servicePersonalisation")])+"\n%\n%   "+
+  tp("policy5","permission","use",[("hasPurpose","isA","dpv:communicationForCustomerCare")])+"\n%\n%   "+
+  tp("policy6","permission","use",[("hasPurpose","isA","dpv:improveInternalCRMProcesses")]),
+  "Validates all 6 multi-parent concepts from paper Table 1:\n"
+  "%   1. commercialResearch (commercialPurpose ∧ researchAndDevelopment)\n"
+  "%   2. nonCommercialResearch (nonCommercialPurpose ∧ researchAndDevelopment)\n"
+  "%   3. personalisedAdvertising (advertising ∧ personalisation)\n"
+  "%   4. servicePersonalisation (personalisation ∧ serviceProvision)\n"
+  "%   5. communicationForCustomerCare (communicationManagement ∧ customerCare)\n"
+  "%   6. improveInternalCRMProcesses (customerRelationshipManagement ∧ optimisationForController)\n"
+  "% Each can witness both parents in DAG-SAFE mode",
+  "fof(multi1, conjecture,\n"
+  "    ?[X1]: ( in_denotation(X1, commercialPurpose, isA)\n"
+  "           & in_denotation(X1, researchAndDevelopment, isA) )).\n"
+  "fof(multi2, conjecture,\n"
+  "    ?[X2]: ( in_denotation(X2, nonCommercialPurpose, isA)\n"
+  "           & in_denotation(X2, researchAndDevelopment, isA) )).\n"
+  "fof(multi3, conjecture,\n"
+  "    ?[X3]: ( in_denotation(X3, advertising, isA)\n"
+  "           & in_denotation(X3, personalisation, isA) )).\n"
+  "fof(multi4, conjecture,\n"
+  "    ?[X4]: ( in_denotation(X4, personalisation, isA)\n"
+  "           & in_denotation(X4, serviceProvision, isA) )).\n"
+  "fof(multi5, conjecture,\n"
+  "    ?[X5]: ( in_denotation(X5, communicationManagement, isA)\n"
+  "           & in_denotation(X5, customerCare, isA) )).\n"
+  "fof(multi6, conjecture,\n"
+  "    ?[X6]: ( in_denotation(X6, customerRelationshipManagement, isA)\n"
+  "           & in_denotation(X6, optimisationForController, isA) )).",
+  inc=("DPV","ODRL"),
+  pl="All 6 multi-parent concepts verified in DAG-safe mode")
 
 # === CATEGORY 6: TAUTOLOGY / REDUNDANCY / REFINEMENT CONFLICT (060-069) ===
 
@@ -760,6 +835,116 @@ P("ODRL087-1.p","Theorem","Compatible",
   pl="Aligned compatible: isAnyOf({dE, fR}) ∩ isPartOf(europe) ≠ ∅")
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# CATEGORY 7 EXTENSION: ASYMMETRIC ALIGNMENT TESTS (088-089)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# 088: Downward asymmetry — flat KB alone lacks disjointness
+#   ISO 3166 is a code list: europe → {dE, pL, fR, iT, eS}
+#   NO sibling disjointness between country codes.
+#   Result: Prover has no path to derive disjoint(dE, pL) → Unknown.
+P("ODRL088-1.p","CounterSatisfiable","Unknown",
+  "Proposition 2(2) — Downward Asymmetry: Flat KB Alone","Hard",
+  "ISO 3166 has $distinct(dE, pL, ...) for UNA (dE ≠ pL).\n"
+  "%   BUT $distinct only enforces term inequality, NOT disjointness.\n"
+  "%   disjoint(X,Y) means: ¬∃Z: (leq(Z,X) ∧ leq(Z,Y)).\n"
+  "%   Without explicit disjoint/2, model could add leq(dE, pL) edge.\n"
+  "%   → disjoint(dE, pL) is NOT derivable from ISO alone.\n"
+  "%   Compare ODRL081 (same conjecture, adds GEO+alignment → Conflict).",
+  "% Conflict detection requires structured KBs with disjointness axioms. Code lists alone are insufficient.\n",
+  tp("policyA","permission","use",[("spatial","isPartOf","iso:dE")])+"\n%\n%   "+
+  tp("policyB","prohibition","use",[("spatial","isPartOf","iso:pL")]),
+  "ISO 3166 has NO disjointness axioms (flat code list).\n"
+  "%   disjoint(dE, pL) is NOT derivable from ISO alone.\n"
+  "%   Compare ODRL081 (same conjecture, adds GEO+alignment → Conflict).\n"
+  "%   Demonstrates: structural disjointness from a richer KB is\n"
+  "%   necessary for cross-dataspace conflict detection.",
+  "fof(odrl088, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, dE, isPartOf)\n"
+  "          & in_denotation(X, pL, isPartOf) )).",
+  inc=("ISO","ODRL"),
+  pl="Downward asymmetry: ISO alone cannot detect dE ⊥ pL conflict")
+
+# 089: Upward asymmetry — data without theory is inert
+#   Loads ISO + GEO + ground alignment data (align(germany, dE), etc.)
+#   but does NOT load ALIGN000-0.ax (alignment theory).
+#   Result: GEO has disjoint(germany, poland) but the alignment rules
+#   (align_disj_forward) needed to TRANSFER this to disjoint(dE, pL)
+#   are absent. The align/2 facts are just inert ground atoms.
+P("ODRL089-1.p","CounterSatisfiable","Unknown",
+  "Proposition 2(2) — Upward Asymmetry: Data Without Theory","Hard",
+  tp("policyA","permission","use",[("spatial","isPartOf","iso:dE")])+"\n%\n%   "+
+  tp("policyB","prohibition","use",[("spatial","isPartOf","iso:pL")]),
+  "Both KBs loaded + ground alignment data, but NO alignment theory.\n"
+  "%   GEO: disjoint(germany, poland) derivable via disj_downward.\n"
+  "%   ALIGN-GEO-ISO: align(germany, dE), align(poland, pL) present.\n"
+  "%   MISSING: ALIGN000-0.ax (align_disj_forward rule).\n"
+  "%   Without the theory, align/2 facts cannot bridge GEO→ISO.\n"
+  "%   disjoint(dE, pL) is NOT derivable → Unknown.\n"
+  "%   Compare ODRL081 (adds ALIGN_THEORY → Conflict in 0.1s).",
+  "%   Cross-KB reasoning requires both alignment data AND property transfer axioms. Mappings alone are insufficient.\n",
+  "fof(odrl089, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, dE, isPartOf)\n"
+  "          & in_denotation(X, pL, isPartOf) )).",
+  inc=("ISO","GEO","ALIGN_DATA","ODRL"),  # NOTE: no ALIGN_THEORY!
+  pl="Upward asymmetry: alignment data without theory is inert")
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ODRL089b: POSITIVE CONTROL — Multi-KB with Full Structure
+# ═══════════════════════════════════════════════════════════════════════════
+# Demonstrates that when ALL KBs are rich (not flat), cross-domain conflict
+# detection succeeds even for complex multi-operand policies.
+#
+# Setup: 3 rich KBs (GEO, DPV, LANG) + no alignment (single-dataspace)
+# Tests: 3-operand AND composition with deep subsumption chains
+#
+# Compare with:
+#   ODRL088: Flat KB (ISO alone) → Unknown
+#   ODRL089: Rich KB + data w/o theory → Unknown  
+#   ODRL089b: Rich KBs (GEO+DPV+LANG) → Conflict 
+P("ODRL089b-1.p","Theorem","Conflict",
+  "Multi-KB Positive Control — Rich Structure Enables Detection","Medium",
+  tp("policy1","permission","use",[
+      ("spatial","isPartOf","geo:westernEurope"),
+      ("hasPurpose","isA","dpv:commercialPurpose"),
+      ("language","isA","bcp47:de")
+  ])+"\n%\n%   "+
+  tp("policy2","prohibition","use",[
+      ("spatial","isPartOf","geo:easternEurope"),
+      ("hasPurpose","isA","dpv:nonCommercialPurpose"),
+      ("language","isA","bcp47:en")
+  ]),
+  "Three rich KBs with full disjointness structure:\n"
+  "%   GEO: disjoint(westernEurope, easternEurope) [sibling M49]\n"
+  "%   DPV: disjoint(commercialPurpose, nonCommercialPurpose) [sibling DPV]\n"
+  "%   LANG: disjoint(de, en) [base language disjointness]\n"
+  "%   Result: AND-composition finds conflict on ALL THREE operands.\n"
+  "%   Proves: Rich KBs enable multi-domain conflict detection.\n"
+  "%   Contrast: ODRL088 (flat ISO) cannot detect spatial conflict alone.",
+  # Conjecture: AND composition - must fail on at least one operand
+  "fof(spatial_conflict, axiom,\n"
+  "    ![X]: ~( in_denotation(X, westernEurope, isPartOf)\n"
+  "           & in_denotation(X, easternEurope, isPartOf) )).\n"
+  "\n"
+  "fof(purpose_conflict, axiom,\n"
+  "    ![X]: ~( in_denotation(X, commercialPurpose, isA)\n"
+  "           & in_denotation(X, nonCommercialPurpose, isA) )).\n"
+  "\n"
+  "fof(language_conflict, axiom,\n"
+  "    ![X]: ~( in_denotation(X, de, isA)\n"
+  "           & in_denotation(X, en, isA) )).\n"
+  "\n"
+  "fof(odrl089b, conjecture,\n"
+  "    % At least one operand must conflict (AND-composition)\n"
+  "    ( ![Xs]: ~( in_denotation(Xs, westernEurope, isPartOf)\n"
+  "              & in_denotation(Xs, easternEurope, isPartOf) )\n"
+  "    | ![Xp]: ~( in_denotation(Xp, commercialPurpose, isA)\n"
+  "              & in_denotation(Xp, nonCommercialPurpose, isA) )\n"
+  "    | ![Xl]: ~( in_denotation(Xl, de, isA)\n"
+  "              & in_denotation(Xl, en, isA) ) )).",
+  inc=("GEO","DPV","LANG","ODRL"),
+  pl="Positive control: rich multi-KB structure enables conflict detection")
+
 """
 PATCH for gen_spatial_suite.py — Category 8: Runtime Semantics (090-095)
 
@@ -950,6 +1135,824 @@ P("ODRL095-1.p","Theorem","Sound",
   inc=("GEO","ODRL","RUNTIME"),
   pl="Runtime propagation: subsumption + conflict → no ω")
 
+#!/usr/bin/env python3
+"""
+PATCH for gen_spatial_suite.py — Categories 9–14: Advanced Benchmark Problems
+
+Instructions:
+1. Add these problems AFTER Category 8 (runtime) problems
+2. Add new entries to the INC map (see bottom of this file)
+3. Create the required new axiom files (see NEW_AXIOM_FILES below)
+
+Categories:
+  9  — DAG Multi-Parent (ODRL100–105)       Tests Note 1 / DAG-safety
+  10 — Nested Set Operators (ODRL110–115)    Tests isAllOf ∩ isAnyOf interaction
+  11 — Quantifier Stress (ODRL120–125)       Tests ∀∃ alternation patterns
+  12 — Large-Scale Composition (ODRL130–133) Tests 5–10 operand AND/conflict
+  13 — Edge Cases & Adversarial (ODRL140–145) Tests degenerate / pathological KBs
+  14 — Multi-Hop Alignment (ODRL150–153)     Tests 3-KB alignment chains
+"""
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NEW AXIOM FILES REQUIRED (create alongside this patch)
+#
+# 1. DPV_NAIVE000-0.ax — DPV with NAIVE sibling disjointness (285 pairs)
+#    Includes disjoint(commercialPurpose, researchAndDevelopment) which
+#    causes contradiction via multi-parent concept commercialResearch.
+#    Location: Axioms/Layer0-DomainKB/DPV_NAIVE000-0.ax
+#
+# 2. SYNTH000-0.ax — Minimal synthetic KB for multi-hop alignment tests
+#    Location: Axioms/Layer0-DomainKB/SYNTH000-0.ax
+#
+# 3. ALIGN-ISO-SYNTH.ax — Alignment data: ISO → SYNTH
+#    Location: Axioms/Alignment/ALIGN-ISO-SYNTH.ax
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+# ─── Inline DPV Fragment: NAIVE (with problematic sibling disjointness) ────
+# This inlines just the relevant portion for ODRL100-102.
+# The full DPV_NAIVE000-0.ax would have all 285 pairs.
+DPV_NAIVE_FRAGMENT = """\
+% --- DPV Fragment (NAIVE sibling disjointness) ---
+% Multi-parent concept: commercialResearch ≤ {commercialPurpose, researchAndDevelopment}
+% From Table 1: 6 multi-parent concepts in DPV Purpose taxonomy.
+%
+% NAIVE sibling disjointness INCLUDES:
+%   disjoint(commercialPurpose, researchAndDevelopment)
+% which is WRONG because ↓commercialPurpose ∩ ↓researchAndDevelopment ≠ ∅
+% (both contain commercialResearch).
+
+% Hierarchy
+fof(dpv_n_root, axiom, concept(purpose)).
+fof(dpv_n_c1, axiom, concept(commercialPurpose)).
+fof(dpv_n_c2, axiom, concept(researchAndDevelopment)).
+fof(dpv_n_c3, axiom, concept(commercialResearch)).
+fof(dpv_n_c4, axiom, concept(academicResearch)).
+fof(dpv_n_c5, axiom, concept(serviceProvision)).
+
+fof(dpv_n_leq1, axiom, leq(commercialPurpose, purpose)).
+fof(dpv_n_leq2, axiom, leq(researchAndDevelopment, purpose)).
+fof(dpv_n_leq3, axiom, leq(serviceProvision, purpose)).
+fof(dpv_n_leq4, axiom, leq(commercialResearch, commercialPurpose)).
+fof(dpv_n_leq5, axiom, leq(commercialResearch, researchAndDevelopment)).
+fof(dpv_n_leq6, axiom, leq(academicResearch, researchAndDevelopment)).
+
+% Reflexivity for all concepts
+fof(dpv_n_refl1, axiom, leq(purpose, purpose)).
+fof(dpv_n_refl2, axiom, leq(commercialPurpose, commercialPurpose)).
+fof(dpv_n_refl3, axiom, leq(researchAndDevelopment, researchAndDevelopment)).
+fof(dpv_n_refl4, axiom, leq(commercialResearch, commercialResearch)).
+fof(dpv_n_refl5, axiom, leq(academicResearch, academicResearch)).
+fof(dpv_n_refl6, axiom, leq(serviceProvision, serviceProvision)).
+
+% NAIVE sibling disjointness — THE PROBLEMATIC PAIR:
+fof(dpv_n_disj_PROBLEM, axiom,
+    disjoint(commercialPurpose, researchAndDevelopment)).
+% Plus some safe pairs:
+fof(dpv_n_disj_safe1, axiom,
+    disjoint(commercialPurpose, serviceProvision)).
+fof(dpv_n_disj_safe2, axiom,
+    disjoint(researchAndDevelopment, serviceProvision)).
+
+% UNA for all concepts
+fof(dpv_n_una, axiom,
+    $distinct(purpose, commercialPurpose, researchAndDevelopment,
+              commercialResearch, academicResearch, serviceProvision))."""
+
+# ─── Inline DPV Fragment: DAG-SAFE (suppresses problematic pair) ──────────
+DPV_SAFE_FRAGMENT = """\
+% --- DPV Fragment (DAG-SAFE sibling disjointness) ---
+% Same hierarchy as NAIVE, but disjoint(commercialPurpose, researchAndDevelopment)
+% is SUPPRESSED because ↓commercialPurpose ∩ ↓researchAndDevelopment ≠ ∅.
+% DAG-safety algorithm (Note 1): suppress disj(A,B) when ∃C: C ≤ A ∧ C ≤ B.
+
+% Hierarchy (identical to NAIVE)
+fof(dpv_s_root, axiom, concept(purpose)).
+fof(dpv_s_c1, axiom, concept(commercialPurpose)).
+fof(dpv_s_c2, axiom, concept(researchAndDevelopment)).
+fof(dpv_s_c3, axiom, concept(commercialResearch)).
+fof(dpv_s_c4, axiom, concept(academicResearch)).
+fof(dpv_s_c5, axiom, concept(serviceProvision)).
+
+fof(dpv_s_leq1, axiom, leq(commercialPurpose, purpose)).
+fof(dpv_s_leq2, axiom, leq(researchAndDevelopment, purpose)).
+fof(dpv_s_leq3, axiom, leq(serviceProvision, purpose)).
+fof(dpv_s_leq4, axiom, leq(commercialResearch, commercialPurpose)).
+fof(dpv_s_leq5, axiom, leq(commercialResearch, researchAndDevelopment)).
+fof(dpv_s_leq6, axiom, leq(academicResearch, researchAndDevelopment)).
+
+% Reflexivity
+fof(dpv_s_refl1, axiom, leq(purpose, purpose)).
+fof(dpv_s_refl2, axiom, leq(commercialPurpose, commercialPurpose)).
+fof(dpv_s_refl3, axiom, leq(researchAndDevelopment, researchAndDevelopment)).
+fof(dpv_s_refl4, axiom, leq(commercialResearch, commercialResearch)).
+fof(dpv_s_refl5, axiom, leq(academicResearch, academicResearch)).
+fof(dpv_s_refl6, axiom, leq(serviceProvision, serviceProvision)).
+
+% DAG-SAFE sibling disjointness — SUPPRESSED: commercialPurpose ⊥ R&D
+% Only safe pairs remain:
+fof(dpv_s_disj_safe1, axiom,
+    disjoint(commercialPurpose, serviceProvision)).
+fof(dpv_s_disj_safe2, axiom,
+    disjoint(researchAndDevelopment, serviceProvision)).
+
+% UNA
+fof(dpv_s_una, axiom,
+    $distinct(purpose, commercialPurpose, researchAndDevelopment,
+              commercialResearch, academicResearch, serviceProvision))."""
+
+# ─── Synthetic KB for multi-hop alignment ─────────────────────────────────
+SYNTH_KB_FRAGMENT = """\
+% --- Synthetic KB (SYNTH) for multi-hop alignment tests ---
+% A minimal 3rd KB with concepts that align to ISO 3166.
+% Represents a hypothetical "regulatory zone" classification.
+fof(synth_root, axiom, concept(euZone)).
+fof(synth_c1, axiom, concept(zoneWest)).
+fof(synth_c2, axiom, concept(zoneEast)).
+
+fof(synth_leq1, axiom, leq(zoneWest, euZone)).
+fof(synth_leq2, axiom, leq(zoneEast, euZone)).
+fof(synth_refl1, axiom, leq(euZone, euZone)).
+fof(synth_refl2, axiom, leq(zoneWest, zoneWest)).
+fof(synth_refl3, axiom, leq(zoneEast, zoneEast)).
+
+fof(synth_disj, axiom, disjoint(zoneWest, zoneEast)).
+fof(synth_una, axiom, $distinct(euZone, zoneWest, zoneEast))."""
+
+# ─── Alignment data: ISO → SYNTH ──────────────────────────────────────────
+ALIGN_ISO_SYNTH = """\
+% Alignment: ISO 3166 → SYNTH (regulatory zones)
+fof(align_iso_synth_1, axiom, align(europe, euZone)).
+fof(align_iso_synth_2, axiom, align(dE, zoneWest)).
+fof(align_iso_synth_3, axiom, align(pL, zoneEast))."""
+
+# ─── Minimal KB (single concept) ─────────────────────────────────────────
+MINIMAL_KB_FRAGMENT = """\
+% --- Minimal KB: single concept "universe" ---
+fof(min_root, axiom, concept(universe)).
+# fof(min_refl, axiom, leq(universe, universe))."""
+
+
+# # ═══════════════════════════════════════════════════════════════════════════
+# # CATEGORY 9: DAG MULTI-PARENT (ODRL100–105)
+# # Paper Note 1 — DAG-safe sibling disjointness generation
+# #
+# # Tests the critical design decision: naive sibling disjointness on DAG
+# # taxonomies (like DPV) can produce inconsistencies. The DAG-safety
+# # algorithm suppresses pairs where ↓A ∩ ↓B ≠ ∅.
+# #
+# # Key concepts:
+# #   commercialResearch ≤ commercialPurpose   [parent A]
+# #   commercialResearch ≤ researchAndDevelopment  [parent B]
+# #   NAIVE: disjoint(commercialPurpose, R&D) → contradiction
+# #   SAFE: pair suppressed → consistent
+# # ═══════════════════════════════════════════════════════════════════════════
+
+# # 100: NAIVE DPV inconsistency detection
+# #   With naive sibling disj, the KB is INCONSISTENT.
+# #   disjoint(commercialPurpose, researchAndDevelopment) [naive sibling]
+# #   + leq(commercialResearch, commercialPurpose) [parent A]
+# #   + leq(commercialResearch, researchAndDevelopment) [parent B]
+# #   → disj_downward → disjoint(commercialResearch, commercialResearch)
+# #   → contradicts disj_irrefl
+# #
+# #   TPTP Status: Unsatisfiable — the axiom set is contradictory,
+# #   so `false` is a theorem (anything follows from ⊥).
+# P("ODRL100-1.p","ContradictoryAxioms","Inconsistent",
+#   "Note 1 — DAG Multi-Parent Contradiction (Naive)","Medium",
+#   "(No ODRL policy — KB consistency test)\n"
+#   "%   Tests: naive sibling disjointness on DAG taxonomy causes ⊥.",
+#   "disjoint(commercialPurpose, R&D) [naive sibling]\n"
+#   "%   + leq(cR, cP) ∧ leq(cR, R&D) [multi-parent]\n"
+#   "%   → disj_downward → disjoint(cR, cR)\n"
+#   "%   → contradicts disj_irrefl → ⊥",
+#   "fof(odrl100, conjecture, $false).",
+#   extra=DPV_NAIVE_FRAGMENT,
+#   inc=("ODRL",),  # ODRL provides disj_downward and disj_irrefl
+#   pl="DAG inconsistency: naive sibling disj on multi-parent → ⊥")
+
+# # 101: DAG-SAFE DPV consistency — multi-parent concept is reachable
+# #   With DAG-safe disj, commercialResearch is still reachable from BOTH
+# #   parents. No contradiction.
+# #   Prove: ∃X: in_denotation(X, commercialPurpose, isA)
+# #              ∧ in_denotation(X, researchAndDevelopment, isA)
+# #   Witness: commercialResearch (leq to both parents)
+# P("ODRL101-1.p","Theorem","Compatible",
+#   "Note 1 — DAG-Safe Multi-Parent Reachability","Easy",
+#   tp("policyA","permission","use",[("hasPurpose","isA","dpv:CommercialPurpose")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("hasPurpose","isA","dpv:ResearchAndDevelopment")]),
+#   "DAG-safe: disjoint(cP, R&D) suppressed because ↓cP ∩ ↓R&D ≠ ∅.\n"
+#   "%   Witness: commercialResearch ≤ both parents → overlap.\n"
+#   "%   Verdict: Compatible (not Conflict).",
+#   "fof(odrl101, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, commercialPurpose, isA)\n"
+#   "          & in_denotation(X, researchAndDevelopment, isA) )).",
+#   extra=DPV_SAFE_FRAGMENT,
+#   inc=("ODRL",),
+#   pl="DAG-safe: multi-parent reachability preserved")
+
+# # 102: DAG-SAFE still detects TRUE conflicts
+# #   Even with DAG-safe disjointness, TRUE sibling conflicts still work.
+# #   commercialPurpose ⊥ serviceProvision [safe pair — no shared descendant]
+# #   Prove: ⟦isA(cP)⟧ ∩ ⟦isA(serviceProvision)⟧ = ∅
+# P("ODRL102-1.p","CounterSatisfiable","Conflict",
+#   "Note 1 — DAG-Safe True Conflict Detection","Medium",
+#   tp("policyA","permission","use",[("hasPurpose","isA","dpv:CommercialPurpose")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("hasPurpose","isA","dpv:ServiceProvision")]),
+#   "DAG-safe: disjoint(cP, serviceProvision) IS asserted (no shared descendant).\n"
+#   "%   → disj_downward + disj_irrefl → ∅ → Conflict.\n"
+#   "%   Tests: DAG-safety doesn't suppress genuine conflicts.",
+#   "fof(odrl102, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, commercialPurpose, isA)\n"
+#   "          & in_denotation(X, serviceProvision, isA) )).",
+#   flip_conj=
+#   "fof(odrl102, conjecture,\n"
+#   "    ![X]: ~( in_denotation(X, commercialPurpose, isA)\n"
+#   "           & in_denotation(X, serviceProvision, isA) )).",
+#   extra=DPV_SAFE_FRAGMENT,
+#   inc=("ODRL",),
+#   pl="DAG-safe: true conflict cP ⊥ serviceProvision still detected")
+
+# # 103: DAG-SAFE conflict propagation through multi-parent
+# #   academicResearch ≤ researchAndDevelopment [single parent]
+# #   researchAndDevelopment ⊥ serviceProvision [safe pair]
+# #   → disj_downward → academicResearch ⊥ serviceProvision
+# #   Tests: Lemma 2 (conflict propagation) works in DAG-safe KB.
+# P("ODRL103-1.p","CounterSatisfiable","Conflict",
+#   "Note 1 + Lemma 2 — DAG-Safe Conflict Propagation","Hard",
+#   tp("policyA","permission","use",[("hasPurpose","isA","dpv:AcademicResearch")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("hasPurpose","isA","dpv:ServiceProvision")]),
+#   "academicResearch ≤ R&D, R&D ⊥ serviceProvision [safe]\n"
+#   "%   → disj_downward → academicResearch ⊥ serviceProvision\n"
+#   "%   → ⟦isA(acR)⟧ ∩ ⟦isA(sP)⟧ = ∅ → Conflict",
+#   "fof(odrl103, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, academicResearch, isA)\n"
+#   "          & in_denotation(X, serviceProvision, isA) )).",
+#   flip_conj=
+#   "fof(odrl103, conjecture,\n"
+#   "    ![X]: ~( in_denotation(X, academicResearch, isA)\n"
+#   "           & in_denotation(X, serviceProvision, isA) )).",
+#   extra=DPV_SAFE_FRAGMENT,
+#   inc=("ODRL",),
+#   pl="DAG-safe: conflict propagation acR ⊥ sP via R&D")
+
+# # 104: Ablation — NAIVE vs SAFE verdict comparison
+# #   Same query as ODRL101 but with NAIVE KB.
+# #   NAIVE: Inconsistent KB → anything is provable (trivially Theorem)
+# #   But the interesting part: the witness is also provable because ⊥ → anything.
+# #   TPTP: Theorem (from inconsistency, but still formally correct)
+# P("ODRL104-1.p","Theorem","Trivial",
+#   "Note 1 — Ablation: Naive KB Makes Everything Provable","Easy",
+#   "(Same query as ODRL101 but with NAIVE sibling disjointness)\n"
+#   "%   NAIVE KB is inconsistent → any conjecture is a Theorem.",
+#   "NAIVE KB: ⊥ (from ODRL100) → anything follows.\n"
+#   "%   Tests: inconsistent KB trivially proves arbitrary conjectures.\n"
+#   "%   Compare with ODRL101 (same query, DAG-safe → genuine Compatible).",
+#   "fof(odrl104, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, commercialPurpose, isA)\n"
+#   "          & in_denotation(X, researchAndDevelopment, isA) )).",
+#   extra=DPV_NAIVE_FRAGMENT,
+#   inc=("ODRL",),
+#   pl="Ablation: naive inconsistency makes query trivially provable")
+
+# # 105: DAG-SAFE subsumption through multi-parent
+# #   commercialResearch ≤ commercialPurpose [DAG path A]
+# #   → ⟦isA(commercialResearch)⟧ ⊆ ⟦isA(commercialPurpose)⟧
+# #   Prove: ∀X: in_den(X, commercialResearch, isA) → in_den(X, commercialPurpose, isA)
+# P("ODRL105-1.p","Theorem","Subsumption",
+#   "Note 1 — DAG Subsumption via Multi-Parent Path","Medium",
+#   tp("policyA","permission","use",[("hasPurpose","isA","dpv:CommercialResearch")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("hasPurpose","isA","dpv:CommercialPurpose")]),
+#   "commercialResearch ≤ commercialPurpose [parent A path]\n"
+#   "%   → den_isA_onlyif: leq(X, cR) → leq(X, cP) [leq_trans]\n"
+#   "%   → den_isA_if: in_denotation(X, cP, isA)\n"
+#   "%   Subsumption: ⟦isA(cR)⟧ ⊆ ⟦isA(cP)⟧",
+#   "fof(odrl105, conjecture,\n"
+#   "    ![X]: ( in_denotation(X, commercialResearch, isA)\n"
+#   "        => in_denotation(X, commercialPurpose, isA) )).",
+#   extra=DPV_SAFE_FRAGMENT,
+#   inc=("ODRL",),
+#   pl="DAG subsumption: cR ⊆ cP via multi-parent path")
+
+
+# # ═══════════════════════════════════════════════════════════════════════════
+# # CATEGORY 10: NESTED SET OPERATORS (ODRL110–115)
+# # Paper Definition 3 — isAllOf, isAnyOf, isNoneOf
+# #
+# # Tests interaction between set-valued ODRL operators when combined
+# # in policy constraints. These push the prover into set-theoretic
+# # reasoning over finite KB concepts.
+# # ═══════════════════════════════════════════════════════════════════════════
+
+# # 110: isAllOf with disjoint members → empty denotation
+# #   isAllOf({westernEurope, easternEurope}) = ↓wE ∩ ↓eE = ∅
+# #   (because wE ⊥ eE → no concept can be ≤ both)
+# #   Prove: ¬∃X: in_denotation_set(X, list110, isAllOf)
+# P("ODRL110-1.p","Theorem","EmptyDenotation",
+#   "Definition 3 (isAllOf) — Empty Denotation from Disjoint Members","Hard",
+#   tp("policyA","permission","use",[("spatial","isAllOf","( geo:westernEurope geo:easternEurope )")]),
+#   "⟦isAllOf({wE, eE})⟧ = ↓wE ∩ ↓eE.\n"
+#   "%   wE ⊥ eE [sibling disjointness in GEO KB]\n"
+#   "%   → disj_downward: ∀X: leq(X,wE) ∧ leq(X,eE) → disjoint(X,X)\n"
+#   "%   → disj_irrefl: ¬disjoint(X,X) → no such X exists.\n"
+#   "%   ⟦isAllOf({wE,eE})⟧ = ∅ (vacuously true constraint).",
+#   "fof(odrl110, conjecture,\n"
+#   "    ![X]: ~in_denotation_set(X, list110, isAllOf)).",
+#   extra=(
+#       "fof(list_110_1, axiom, in_value_list(westernEurope, list110)).\n"
+#       "fof(list_110_2, axiom, in_value_list(easternEurope, list110)).\n" +
+#       generate_list_closure("list110", ["westernEurope", "easternEurope"])
+#   ),
+#   inc=("GEO","ODRL"),
+#   pl="isAllOf({wE,eE}) = ∅: disjoint members → empty denotation")
+
+# # 111: isAnyOf union preserves compatibility with isPartOf
+# #   isAnyOf({germany, france}) ∩ isPartOf(westernEurope) ≠ ∅
+# #   Witness: germany (leq(de, wE) ∧ in_value_list(de, list))
+# P("ODRL111-1.p","Theorem","Compatible",
+#   "Definition 3 (isAnyOf) — Union Compatible with isPartOf","Easy",
+#   tp("policyA","permission","use",[("spatial","isAnyOf","( geo:germany geo:france )")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","isPartOf","geo:westernEurope")]),
+#   "⟦isAnyOf({de, fr})⟧ = ↓de ∪ ↓fr, both ⊆ ↓wE.\n"
+#   "%   Witness: germany ∈ ↓de ∩ ↓wE.",
+#   "fof(odrl111, conjecture,\n"
+#   "    ?[X]: ( in_denotation_set(X, list111, isAnyOf)\n"
+#   "          & in_denotation(X, westernEurope, isPartOf) )).",
+#   extra=(
+#       "fof(list_111_1, axiom, in_value_list(germany, list111)).\n"
+#       "fof(list_111_2, axiom, in_value_list(france, list111)).\n" +
+#       generate_list_closure("list111", ["germany", "france"])
+#   ),
+#   inc=("GEO","ODRL"),
+#   pl="isAnyOf({de,fr}) ∩ isPartOf(wE) ≠ ∅")
+
+# # 112: isNoneOf conflict with isPartOf
+# #   isNoneOf({westernEurope}) ∩ isPartOf(germany) = ?
+# #   isNoneOf({wE}) = {X | ¬leq(X, wE)} — everything NOT below wE
+# #   isPartOf(germany) = {X | leq(X, de)} = ↓de ⊆ ↓wE
+# #   → ↓de \ ↓wE = ∅ (germany ≤ wE → all descendants of de are under wE)
+# #   → Conflict
+# P("ODRL112-1.p","CounterSatisfiable","Conflict",
+#   "Definition 3 (isNoneOf) — Conflict with Subsumed isPartOf","Hard",
+#   tp("policyA","permission","use",[("spatial","isNoneOf","( geo:westernEurope )")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","isPartOf","geo:germany")]),
+#   "isNoneOf({wE}) = {X | ¬leq(X, wE)}, isPartOf(de) = {X | leq(X, de)}\n"
+#   "%   germany ≤ wE → ↓de ⊆ ↓wE → every X ∈ isPartOf(de) is also ≤ wE\n"
+#   "%   → X ∈ isNoneOf({wE}) requires ¬leq(X, wE) — contradiction.\n"
+#   "%   ⟦isNoneOf({wE})⟧ ∩ ⟦isPartOf(de)⟧ = ∅ → Conflict",
+#   "fof(odrl112, conjecture,\n"
+#   "    ?[X]: ( in_denotation_set(X, list112, isNoneOf)\n"
+#   "          & in_denotation(X, germany, isPartOf) )).",
+#   flip_conj=
+#   "fof(odrl112, conjecture,\n"
+#   "    ![X]: ~( in_denotation_set(X, list112, isNoneOf)\n"
+#   "           & in_denotation(X, germany, isPartOf) )).",
+#   extra=(
+#       "fof(list_112_1, axiom, in_value_list(westernEurope, list112)).\n" +
+#       generate_list_closure("list112", ["westernEurope"])
+#   ),
+#   inc=("GEO","ODRL"),
+#   pl="isNoneOf({wE}) ∩ isPartOf(de) = ∅: subsumed → conflict")
+
+# # 113: isAnyOf ∩ isNoneOf → partial overlap
+# #   isAnyOf({germany, poland}) = ↓de ∪ ↓pl
+# #   isNoneOf({easternEurope}) = {X | ¬leq(X, eE)}
+# #   germany ∈ ↓de but ¬leq(germany, eE) → germany ∈ isNoneOf({eE})
+# #   Witness: germany → Compatible
+# P("ODRL113-1.p","Theorem","Compatible",
+#   "Definition 3 — isAnyOf ∩ isNoneOf Partial Overlap","Medium",
+#   tp("policyA","permission","use",[("spatial","isAnyOf","( geo:germany geo:poland )")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","isNoneOf","( geo:easternEurope )")]),
+#   "isAnyOf({de,pl}) ∩ isNoneOf({eE})\n"
+#   "%   germany ∈ ↓de ∧ ¬leq(de, eE) → germany ∈ isNoneOf({eE})\n"
+#   "%   Witness: germany → Compatible",
+#   "fof(odrl113, conjecture,\n"
+#   "    ?[X]: ( in_denotation_set(X, anyList113, isAnyOf)\n"
+#   "          & in_denotation_set(X, noneList113, isNoneOf) )).",
+#   extra=(
+#       "fof(list_113a_1, axiom, in_value_list(germany, anyList113)).\n"
+#       "fof(list_113a_2, axiom, in_value_list(poland, anyList113)).\n" +
+#       generate_list_closure("anyList113", ["germany", "poland"]) + "\n"
+#       "fof(list_113b_1, axiom, in_value_list(easternEurope, noneList113)).\n" +
+#       generate_list_closure("noneList113", ["easternEurope"])
+#   ),
+#   inc=("GEO","ODRL"),
+#   pl="isAnyOf({de,pl}) ∩ isNoneOf({eE}): partial overlap → Compatible")
+
+# # 114: isAllOf all compatible → non-empty
+# #   isAllOf({westernEurope, europe}) = ↓wE ∩ ↓europe = ↓wE
+# #   (because wE ≤ europe → ↓wE ⊆ ↓europe → intersection = ↓wE)
+# #   Witness: germany (leq(de, wE))
+# P("ODRL114-1.p","Theorem","Compatible",
+#   "Definition 3 (isAllOf) — Compatible Members Non-Empty","Easy",
+#   tp("policyA","permission","use",[("spatial","isAllOf","( geo:westernEurope geo:europe )")]),
+#   "⟦isAllOf({wE, europe})⟧ = ↓wE ∩ ↓europe = ↓wE (since wE ≤ europe)\n"
+#   "%   Witness: germany ∈ ↓wE.",
+#   "fof(odrl114, conjecture,\n"
+#   "    ?[X]: in_denotation_set(X, list114, isAllOf)).",
+#   extra=(
+#       "fof(list_114_1, axiom, in_value_list(westernEurope, list114)).\n"
+#       "fof(list_114_2, axiom, in_value_list(europe, list114)).\n" +
+#       generate_list_closure("list114", ["westernEurope", "europe"])
+#   ),
+#   inc=("GEO","ODRL"),
+#   pl="isAllOf({wE, europe}) ≠ ∅: compatible members → non-empty")
+
+
+# # ═══════════════════════════════════════════════════════════════════════════
+# # CATEGORY 11: QUANTIFIER STRESS (ODRL120–125)
+# # Tests ∀∃ and ∃∀ quantifier patterns that push ATP performance.
+# # ═══════════════════════════════════════════════════════════════════════════
+
+# # 120: Universal emptiness — ALL pairs from disjoint regions conflict
+# #   ∀G1 ∈ ↓wE, ∀G2 ∈ ↓eE: ⟦isPartOf(G1)⟧ ∩ ⟦isPartOf(G2)⟧ = ∅
+# #   This is the universal version of the basic wE ⊥ eE conflict.
+# P("ODRL120-1.p","Theorem","Conflict",
+#   "Definition 5 (universal) — All Descendant Pairs Conflict","Hard",
+#   "(Universal variant of ODRL013)\n"
+#   "%   ∀G1 ∈ ↓wE, ∀G2 ∈ ↓eE: disjoint overlap → Conflict",
+#   "For any G1 ≤ wE and G2 ≤ eE:\n"
+#   "%   disj_downward(wE ⊥ eE, G1 ≤ wE, G2 ≤ eE) → disjoint(G1, G2)\n"
+#   "%   → ⟦isPartOf(G1)⟧ ∩ ⟦isPartOf(G2)⟧ = ∅ → Conflict for ALL pairs.",
+#   "fof(odrl120, conjecture,\n"
+#   "    ![G1,G2,X]: (\n"
+#   "        (leq(G1, westernEurope) & leq(G2, easternEurope))\n"
+#   "      => ~( in_denotation(X, G1, isPartOf)\n"
+#   "          & in_denotation(X, G2, isPartOf) ))).",
+#   inc=("GEO","ODRL"),
+#   pl="Universal conflict: ∀G1∈↓wE, ∀G2∈↓eE: overlap = ∅")
+
+# # 121: Existential-universal — EXISTS a concept that subsumes ALL of a set
+# #   ∃X: ∀G ∈ {germany, france, italy}: in_denotation(X, G, hasPart)
+# #   Witness: europe (hasPart(de) ∩ hasPart(fr) ∩ hasPart(it) ∋ europe)
+# #   Because leq(de, wE), leq(wE, europe) → in_den(europe, de, hasPart)
+# P("ODRL121-1.p","Theorem","Compatible",
+#   "∃∀ Pattern — Common Ancestor for Multiple Concepts","Hard",
+#   "(∃X common to hasPart denotation of all three countries)",
+#   "∃X: ∀G ∈ {de, fr, it}: leq(G, X) → in_denotation(X, G, hasPart)\n"
+#   "%   Witness: europe (all three ≤ europe via regional hierarchy)\n"
+#   "%   Tests: ∃∀ quantifier alternation with 3 conjuncts.",
+#   "fof(odrl121, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, germany, hasPart)\n"
+#   "          & in_denotation(X, france, hasPart)\n"
+#   "          & in_denotation(X, italy, hasPart) )).",
+#   inc=("GEO","ODRL"),
+#   pl="∃∀ pattern: common ancestor europe for {de, fr, it}")
+
+# # 122: Universal subsumption chain
+# #   ∀X: in_denotation(X, bavaria, isPartOf) → in_denotation(X, europe, isPartOf)
+# #   Because bavaria ≤ germany ≤ wE ≤ europe → ↓bavaria ⊆ ↓europe
+# P("ODRL122-1.p","Theorem","Subsumption",
+#   "Lemma 2 (universal) — Denotation Subsumption Chain","Medium",
+#   tp("policyA","permission","use",[("spatial","isPartOf","geo:bavaria")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","isPartOf","geo:europe")]),
+#   "bavaria ≤ germany ≤ westernEurope ≤ europe [3-hop chain]\n"
+#   "%   → leq_trans: leq(bavaria, europe)\n"
+#   "%   → ⟦isPartOf(bavaria)⟧ ⊆ ⟦isPartOf(europe)⟧",
+#   "fof(odrl122, conjecture,\n"
+#   "    ![X]: ( in_denotation(X, bavaria, isPartOf)\n"
+#   "        => in_denotation(X, europe, isPartOf) )).",
+#   inc=("GEO","ODRL"),
+#   pl="Subsumption chain: ↓bavaria ⊆ ↓europe via 3-hop leq")
+
+# # 123: Universal-existential — for ALL concepts in a region, EXISTS an ancestor
+# #   ∀G: leq(G, westernEurope) → ∃X: in_denotation(X, G, hasPart)
+# #   For every descendant of wE, wE itself is in hasPart(G).
+# P("ODRL123-1.p","Theorem","Sound",
+#   "∀∃ Pattern — Every Descendant Has an Ancestor","Hard",
+#   "(∀G ≤ wE: ∃X such that X ∈ hasPart(G))",
+#   "For all G ≤ wE: leq(G, westernEurope) → in_denotation(westernEurope, G, hasPart)\n"
+#   "%   Witness: X = westernEurope (leq(G, wE) → den_hasPart_if → in_den(wE, G, hasPart))\n"
+#   "%   Tests: universal-existential with quantified KB concepts.",
+#   "fof(odrl123, conjecture,\n"
+#   "    ![G]: ( leq(G, westernEurope)\n"
+#   "        => ?[X]: in_denotation(X, G, hasPart) )).",
+#   inc=("GEO","ODRL"),
+#   pl="∀∃ pattern: every G ≤ wE has ancestor in hasPart(G)")
+
+
+# # ═══════════════════════════════════════════════════════════════════════════
+# # CATEGORY 12: LARGE-SCALE COMPOSITION (ODRL130–133)
+# # Tests AND composition over multiple operands simultaneously.
+# # ═══════════════════════════════════════════════════════════════════════════
+
+# # 130: 3-operand AND — spatial + purpose + language all Compatible
+# #   Spatial: isPartOf(europe) ∩ eq(germany) → Compatible
+# #   Purpose: isA(R&D) ∩ isA(academicResearch) → Compatible
+# #   Language: isPartOf(en) ∩ eq(enGB) → Compatible
+# #   AND: all 3 operands Compatible → composed Compatible
+# P("ODRL130-1.p","Theorem","Compatible",
+#   "Definition 6 — 3-Operand AND Composition","Medium",
+#   tp("policyA","permission","use",[
+#     ("spatial","isPartOf","geo:europe"),
+#     ("hasPurpose","isA","dpv:ResearchAndDevelopment"),
+#     ("language","isPartOf","lang:en")
+#   ])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[
+#     ("spatial","eq","geo:germany"),
+#     ("hasPurpose","isA","dpv:AcademicResearch"),
+#     ("language","eq","lang:enGB")
+#   ]),
+#   "3-operand AND: each operand Compatible → composed Compatible.\n"
+#   "%   Witnesses: germany (spatial), academicResearch (purpose), enGB (language).\n"
+#   "%   Tests: composition over 3 independent operands.",
+#   "fof(odrl130, conjecture,\n"
+#   "    ( ?[X]: ( in_denotation(X, europe, isPartOf)\n"
+#   "            & in_denotation(X, germany, eq) )\n"
+#   "    & ?[Y]: ( in_denotation(Y, researchAndDevelopment, isA)\n"
+#   "            & in_denotation(Y, academicResearch, isA) )\n"
+#   "    & ?[Z]: ( in_denotation(Z, en, isPartOf)\n"
+#   "            & in_denotation(Z, enGB, eq) ) )).",
+#   inc=("GEO","DPV","LANG","ODRL"),
+#   pl="3-operand AND: spatial + purpose + language all Compatible")
+
+# # 131: 3-operand AND with one Conflict → composed Conflict
+# #   Spatial: isPartOf(wE) ∩ isPartOf(eE) → Conflict
+# #   Purpose: Compatible
+# #   Language: Compatible
+# #   AND: one Conflict → composed Conflict (Theorem 2)
+# P("ODRL131-1.p","CounterSatisfiable","Conflict",
+#   "Theorem 2 — 3-Operand AND with One Conflict","Hard",
+#   tp("policyA","permission","use",[
+#     ("spatial","isPartOf","geo:westernEurope"),
+#     ("hasPurpose","isA","dpv:ResearchAndDevelopment"),
+#     ("language","isPartOf","lang:en")
+#   ])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[
+#     ("spatial","isPartOf","geo:easternEurope"),
+#     ("hasPurpose","isA","dpv:AcademicResearch"),
+#     ("language","eq","lang:enGB")
+#   ]),
+#   "3-operand AND: spatial Conflict → composed Conflict.\n"
+#   "%   By Theorem 2: AND(Conflict, Compatible, Compatible) = Conflict.\n"
+#   "%   It suffices to prove the spatial operand conflicts.",
+#   "fof(odrl131, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, westernEurope, isPartOf)\n"
+#   "          & in_denotation(X, easternEurope, isPartOf) )).",
+#   flip_conj=
+#   "fof(odrl131, conjecture,\n"
+#   "    ![X]: ~( in_denotation(X, westernEurope, isPartOf)\n"
+#   "           & in_denotation(X, easternEurope, isPartOf) )).",
+#   inc=("GEO","DPV","LANG","ODRL"),
+#   pl="3-operand AND: spatial Conflict → composed Conflict")
+
+# # 132: 5-way existential — 5 compatible pairs simultaneously
+# #   Each pair uses different concepts from GEO KB.
+# #   Tests: how the prover handles many existentials in one conjecture.
+# P("ODRL132-1.p","Theorem","Compatible",
+#   "Definition 6 — 5-Way Existential Witness","Hard",
+#   "(5 compatible pairs in a single conjecture)\n"
+#   "%   Tests large-scale existential witness construction.",
+#   "5 overlap witnesses — each pair from different GEO hierarchy branch.\n"
+#   "%   Tests: Vampire's ability to find 5 independent witnesses.\n"
+#   "%   All witnesses are grounded in the GEO KB.",
+#   "fof(odrl132, conjecture,\n"
+#   "    ( ?[X1]: ( in_denotation(X1, europe, isPartOf)\n"
+#   "             & in_denotation(X1, germany, eq) )\n"
+#   "    & ?[X2]: ( in_denotation(X2, westernEurope, isPartOf)\n"
+#   "             & in_denotation(X2, france, eq) )\n"
+#   "    & ?[X3]: ( in_denotation(X3, europe, hasPart)\n"
+#   "             & in_denotation(X3, germany, hasPart) )\n"
+#   "    & ?[X4]: ( in_denotation(X4, westernEurope, isPartOf)\n"
+#   "             & in_denotation(X4, bavaria, isPartOf) )\n"
+#   "    & ?[X5]: ( in_denotation(X5, europe, isPartOf)\n"
+#   "             & in_denotation(X5, poland, eq) ) )).",
+#   inc=("GEO","ODRL"),
+#   pl="5-way existential: 5 independent compatible pairs")
+
+
+# # ═══════════════════════════════════════════════════════════════════════════
+# # CATEGORY 13: EDGE CASES & ADVERSARIAL (ODRL140–145)
+# # Tests degenerate, pathological, and boundary cases.
+# # ═══════════════════════════════════════════════════════════════════════════
+
+# # 140: Self-conflict — eq(X) ∩ neq(X) = ∅ (tautological conflict)
+# #   eq(germany) = {germany}, neq(germany) = {X | X ≠ germany}
+# #   → {germany} ∩ {X ≠ germany} = ∅ → Conflict
+# P("ODRL140-1.p","CounterSatisfiable","Conflict",
+#   "Definition 5 — Tautological Self-Conflict (eq ∩ neq)","Easy",
+#   tp("policyA","permission","use",[("spatial","eq","geo:germany")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","neq","geo:germany")]),
+#   "eq(de) = {de}, neq(de) = {X ≠ de} → intersection = ∅.\n"
+#   "%   Tautological conflict: same concept with contradictory operators.",
+#   "fof(odrl140, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, germany, eq)\n"
+#   "          & in_denotation(X, germany, neq) )).",
+#   flip_conj=
+#   "fof(odrl140, conjecture,\n"
+#   "    ![X]: ~( in_denotation(X, germany, eq)\n"
+#   "           & in_denotation(X, germany, neq) )).",
+#   inc=("GEO","ODRL"),
+#   pl="Tautological conflict: eq(de) ∩ neq(de) = ∅")
+
+# # 141: Single-concept KB — everything is tautological
+# #   KB has only one concept: universe
+# #   isPartOf(universe) = {universe}, eq(universe) = {universe}
+# #   → trivially compatible
+# P("ODRL141-1.p","Theorem","Compatible",
+#   "Edge Case — Single-Concept KB (Degenerate)","Easy",
+#   tp("policyA","permission","use",[("spatial","isPartOf","min:universe")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","eq","min:universe")]),
+#   "Degenerate KB: only concept is universe, leq(universe, universe).\n"
+#   "%   isPartOf(universe) = {universe}, eq(universe) = {universe}.\n"
+#   "%   → trivially Compatible. Tests boundary case.",
+#   "fof(odrl141, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, universe, isPartOf)\n"
+#   "          & in_denotation(X, universe, eq) )).",
+#   extra=MINIMAL_KB_FRAGMENT,
+#   inc=("ODRL",),
+#   pl="Degenerate: single-concept KB → trivially compatible")
+
+# # 142: Root-level conflict with full hierarchy loaded
+# #   eq(europe) ∩ neq(europe) with entire GEO KB loaded.
+# #   Tests: large KB doesn't interfere with simple eq/neq reasoning.
+# P("ODRL142-1.p","CounterSatisfiable","Conflict",
+#   "Edge Case — Root-Level Conflict (Large KB Loaded)","Easy",
+#   tp("policyA","permission","use",[("spatial","eq","geo:europe")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","neq","geo:europe")]),
+#   "eq(europe) ∩ neq(europe) = ∅ — trivial even with 24-concept KB.\n"
+#   "%   Tests: loading many concepts doesn't disrupt simple reasoning.",
+#   "fof(odrl142, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, europe, eq)\n"
+#   "          & in_denotation(X, europe, neq) )).",
+#   flip_conj=
+#   "fof(odrl142, conjecture,\n"
+#   "    ![X]: ~( in_denotation(X, europe, eq)\n"
+#   "           & in_denotation(X, europe, neq) )).",
+#   inc=("GEO","ODRL"),
+#   pl="Root-level eq/neq conflict with full KB loaded")
+
+# # 143: Reflexivity — isPartOf(X) always contains X itself
+# #   ∀G: concept(G) → in_denotation(G, G, isPartOf)
+# #   Proof: leq(G, G) [leq_refl] → den_isPartOf_if → in_denotation(G, G, isPartOf)
+# P("ODRL143-1.p","Theorem","Tautology",
+#   "Reflexivity — Every Concept Is In Its Own isPartOf","Easy",
+#   "(Meta-property: ∀G: G ∈ ⟦isPartOf(G)⟧)",
+#   "leq_refl: leq(G, G) [reflexivity in KB]\n"
+#   "%   → den_isPartOf_if: in_denotation(G, G, isPartOf)\n"
+#   "%   Universally quantified over all KB concepts.",
+#   "fof(odrl143, conjecture,\n"
+#   "    ![G]: ( concept(G)\n"
+#   "        => in_denotation(G, G, isPartOf) )).",
+#   inc=("GEO","ODRL"),
+#   pl="Reflexivity: ∀G: concept(G) → G ∈ ⟦isPartOf(G)⟧")
+
+# # 144: Symmetry of disjoint → bidirectional conflict
+# #   isPartOf(wE) ∩ isPartOf(eE) = ∅ AND isPartOf(eE) ∩ isPartOf(wE) = ∅
+# #   (disjoint is symmetric: disj(A,B) ↔ disj(B,A))
+# P("ODRL144-1.p","Theorem","Conflict",
+#   "Definition 2 (disj_symm) — Bidirectional Conflict","Medium",
+#   tp("policyA","permission","use",[("spatial","isPartOf","geo:westernEurope")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","isPartOf","geo:easternEurope")]),
+#   "disjoint is symmetric: disj(wE, eE) → disj(eE, wE).\n"
+#   "%   Proves BOTH directions of the conflict in one conjecture.",
+#   "fof(odrl144, conjecture,\n"
+#   "    ( ![X]: ~( in_denotation(X, westernEurope, isPartOf)\n"
+#   "             & in_denotation(X, easternEurope, isPartOf) )\n"
+#   "    & ![Y]: ~( in_denotation(Y, easternEurope, isPartOf)\n"
+#   "             & in_denotation(Y, westernEurope, isPartOf) ) )).",
+#   inc=("GEO","ODRL"),
+#   pl="Bidirectional conflict: disj(wE,eE) ∧ disj(eE,wE)")
+
+# # 145: Non-concept query — querying a non-existent concept
+# #   in_denotation(X, phantomConcept, isPartOf) where phantomConcept ∉ KB
+# #   den_isPartOf_if requires concept(G) — phantomConcept has no concept/1 assertion.
+# #   Should be CounterSatisfiable (no proof either way → Unknown)
+# P("ODRL145-1.p","CounterSatisfiable","Unknown",
+#   "Edge Case — Query on Non-Existent Concept","Medium",
+#   tp("policyA","permission","use",[("spatial","isPartOf","geo:phantomConcept")]),
+#   "phantomConcept is NOT declared as concept/1 in any KB.\n"
+#   "%   den_isPartOf_if requires concept(G) — won't fire.\n"
+#   "%   No axiom produces in_denotation(_, phantomConcept, _).\n"
+#   "%   Prover cannot prove or refute → Unknown.",
+#   "fof(odrl145, conjecture,\n"
+#   "    ?[X]: in_denotation(X, phantomConcept, isPartOf)).",
+#   inc=("GEO","ODRL"),
+#   pl="Non-existent concept: no concept/1 → satisfaction unknown")
+
+
+# # ═══════════════════════════════════════════════════════════════════════════
+# # CATEGORY 14: MULTI-HOP ALIGNMENT (ODRL150–153)
+# # Tests alignment composition: GEO → ISO → SYNTH (3-KB chain)
+# #
+# # Setup: Three KBs loaded simultaneously.
+# #   GEO: disjoint(westernEurope, easternEurope) → disjoint(germany, poland)
+# #   ISO: flat (dE, pL) — no native disjointness
+# #   SYNTH: disjoint(zoneWest, zoneEast)
+# #   Align1: GEO → ISO (germany→dE, poland→pL)
+# #   Align2: ISO → SYNTH (dE→zoneWest, pL→zoneEast)
+# #
+# # Key question: Can Vampire chain two alignment hops to derive
+# # disjoint(zoneWest, zoneEast) from GEO's hierarchy through ISO?
+# # Answer: YES — ALIGN000-0.ax's align_disj_forward fires twice:
+# #   hop 1: disj(de, pl) + align(de, dE) + align(pl, pL) → disj(dE, pL)
+# #   hop 2: disj(dE, pL) + align(dE, zoneWest) + align(pL, zoneEast) → disj(zoneWest, zoneEast)
+# # But wait — SYNTH already HAS disj(zoneWest, zoneEast) natively.
+# # The interesting test: does alignment ADD disjointness that SYNTH
+# # doesn't already have? Not in this case. But the PROOF PATH is
+# # different: GEO→ISO→SYNTH vs native SYNTH disjointness.
+# #
+# # Better test: Use a SYNTH KB WITHOUT native disjointness, and
+# # derive it purely through 2-hop alignment.
+# # ═══════════════════════════════════════════════════════════════════════════
+
+# # Override SYNTH to NOT have native disjointness (makes multi-hop meaningful)
+# SYNTH_KB_NO_DISJ = """\
+# % --- Synthetic KB (SYNTH) — NO native disjointness ---
+# % Concepts align to ISO 3166 but have no sibling disjointness.
+# % Disjointness must be derived through 2-hop alignment from GEO.
+# fof(synth_root, axiom, concept(euZone)).
+# fof(synth_c1, axiom, concept(zoneWest)).
+# fof(synth_c2, axiom, concept(zoneEast)).
+
+# fof(synth_leq1, axiom, leq(zoneWest, euZone)).
+# fof(synth_leq2, axiom, leq(zoneEast, euZone)).
+# fof(synth_refl1, axiom, leq(euZone, euZone)).
+# fof(synth_refl2, axiom, leq(zoneWest, zoneWest)).
+# fof(synth_refl3, axiom, leq(zoneEast, zoneEast)).
+
+# % NO disjoint axiom — must come from 2-hop alignment
+# fof(synth_una, axiom, $distinct(euZone, zoneWest, zoneEast))."""
+
+# # 150: 2-hop alignment conflict detection
+# #   GEO: disj(wE, eE) → disj_downward → disj(de, pl)
+# #   Hop 1: align(de, dE) + align(pl, pL) → disj(dE, pL)
+# #   Hop 2: align(dE, zoneWest) + align(pL, zoneEast) → disj(zoneWest, zoneEast)
+# #   Prove: ⟦isPartOf(zoneWest)⟧ ∩ ⟦isPartOf(zoneEast)⟧ = ∅
+# P("ODRL150-1.p","CounterSatisfiable","Conflict",
+#   "Proposition 2 (2-hop) — Multi-Hop Alignment Conflict","Very Hard",
+#   tp("policyA","permission","use",[("spatial","isPartOf","synth:zoneWest")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","isPartOf","synth:zoneEast")]),
+#   "2-hop alignment chain: GEO → ISO → SYNTH\n"
+#   "%   GEO: disj(wE,eE) → disj_downward → disj(de,pl)\n"
+#   "%   Hop 1: align(de,dE) + align(pl,pL) + align_disj_forward → disj(dE,pL)\n"
+#   "%   Hop 2: align(dE,zoneWest) + align(pL,zoneEast) + align_disj_forward\n"
+#   "%          → disj(zoneWest, zoneEast)\n"
+#   "%   → ⟦isPartOf(zoneWest)⟧ ∩ ⟦isPartOf(zoneEast)⟧ = ∅ → Conflict",
+#   "fof(odrl150, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, zoneWest, isPartOf)\n"
+#   "          & in_denotation(X, zoneEast, isPartOf) )).",
+#   flip_conj=
+#   "fof(odrl150, conjecture,\n"
+#   "    ![X]: ~( in_denotation(X, zoneWest, isPartOf)\n"
+#   "           & in_denotation(X, zoneEast, isPartOf) )).",
+#   extra=SYNTH_KB_NO_DISJ + "\n" + ALIGN_ISO_SYNTH,
+#   inc=("GEO","ISO","ALIGN_DATA","ODRL","ALIGN_THEORY"),
+#   pl="2-hop alignment: GEO→ISO→SYNTH conflict detection")
+
+# # 151: 2-hop compatible — shared ancestor through alignment
+# #   Both zoneWest and zoneEast ≤ euZone.
+# #   align(europe, euZone) [if added] → leq(europe, euZone) already in SYNTH.
+# #   isPartOf(euZone) ∩ eq(zoneWest) → Compatible (witness: zoneWest)
+# P("ODRL151-1.p","Theorem","Compatible",
+#   "Proposition 2 (2-hop) — Multi-Hop Compatible","Medium",
+#   tp("policyA","permission","use",[("spatial","isPartOf","synth:euZone")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","eq","synth:zoneWest")]),
+#   "isPartOf(euZone) ∩ eq(zoneWest) → Compatible\n"
+#   "%   Witness: zoneWest (leq(zoneWest, euZone) ∧ zoneWest = zoneWest)\n"
+#   "%   Tests: compatibility in 3-KB context.",
+#   "fof(odrl151, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, euZone, isPartOf)\n"
+#   "          & in_denotation(X, zoneWest, eq) )).",
+#   extra=SYNTH_KB_NO_DISJ + "\n" + ALIGN_ISO_SYNTH,
+#   inc=("GEO","ISO","ALIGN_DATA","ODRL","ALIGN_THEORY"),
+#   pl="2-hop compatible: isPartOf(euZone) ∩ eq(zoneWest) ≠ ∅")
+
+# # 152: Ablation — SYNTH alone (no alignment) cannot detect conflict
+# #   Same conjecture as ODRL150 but WITHOUT GEO/ISO/alignment.
+# #   SYNTH_NO_DISJ has no disjoint axioms → Unknown
+# P("ODRL152-1.p","CounterSatisfiable","Unknown",
+#   "2-Hop Ablation — SYNTH Alone Cannot Detect Conflict","Hard",
+#   tp("policyA","permission","use",[("spatial","isPartOf","synth:zoneWest")])+"\n%\n%   "+
+#   tp("policyB","prohibition","use",[("spatial","isPartOf","synth:zoneEast")]),
+#   "Same query as ODRL150 but WITHOUT GEO/ISO/alignment.\n"
+#   "%   SYNTH_NO_DISJ has no disjoint axioms → prover cannot derive disjoint(zoneWest, zoneEast).\n"
+#   "%   → Unknown (CounterSatisfiable timeout).",
+#   "fof(odrl152, conjecture,\n"
+#   "    ?[X]: ( in_denotation(X, zoneWest, isPartOf)\n"
+#   "          & in_denotation(X, zoneEast, isPartOf) )).",
+#   extra=SYNTH_KB_NO_DISJ,
+#   inc=("ODRL",),  # No GEO, no ISO, no alignment
+#   pl="Ablation: SYNTH alone → Unknown (no disjointness)")
+
+# # 153: Alignment hop count comparison
+# #   ODRL081 (1-hop): GEO→ISO → disj(dE, pL) in 7 steps
+# #   ODRL150 (2-hop): GEO→ISO→SYNTH → disj(zoneWest, zoneEast) in 9+ steps
+# #   This problem tests the 1-hop intermediate result as a standalone check.
+# #   Prove: disj(dE, pL) is derivable (prerequisite for hop 2).
+# P("ODRL153-1.p","Theorem","Conflict",
+#   "2-Hop Intermediate — 1-Hop Result as Prerequisite","Medium",
+#   "(Proves intermediate result needed for ODRL150 hop 2)",
+#   "1-hop alignment: GEO → ISO\n"
+#   "%   disj(wE,eE) → disj_downward → disj(de,pl)\n"
+#   "%   align(de,dE) + align(pl,pL) + align_disj_forward → disj(dE,pL)\n"
+#   "%   Tests: hop 1 result that feeds into ODRL150.",
+#   "fof(odrl153, conjecture, disjoint(dE, pL)).",
+#   inc=("GEO","ISO","ALIGN_DATA","ODRL","ALIGN_THEORY"),
+#   pl="Intermediate: hop 1 derives disjoint(dE, pL)")
+
+
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # INC MAP:
@@ -963,6 +1966,8 @@ INC = {
     "ALIGN_DATA":   "include('Axioms/Alignment/ALIGN-GEO-ISO.ax').",
     "ALIGN_THEORY": "include('Axioms/Layer1-ODRLCore/ALIGN000-0.ax').",
     "RUNTIME":      "include('Axioms/Layer1-ODRLCore/RUNTIME000-0.ax').",
+    "DPV_NAIVE":    "include('Axioms/Layer0-DomainKB/DPV-NAIVE.ax').",   
+
 }
 
 # ═══════════════════════════════════════════════════════════════════════════

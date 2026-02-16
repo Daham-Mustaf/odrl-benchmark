@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : ODRL051-1.p : TPTP v0.1.0
 % Domain   : ODRL Policy Conflict Detection
-% Problem  : Root reachability: hasPart(germany) ∩ eq(world) ≠ ∅
+% Problem  : Root reachability: hasPart(germany) ∩ eq(europe) ≠ ∅
 % Expected : Theorem
 % Verdict  : Compatible
 % Paper    : Definition 3 (hasPart)
@@ -21,10 +21,10 @@
 %       odrl:constraint [
 %         odrl:leftOperand odrl:spatial ;
 %         odrl:operator odrl:eq ;
-%         odrl:rightOperand geo:world ] ] .
+%         odrl:rightOperand geo:europe ] ] .
 %
 % Denotation analysis:
-%   Witness: world (3 transitivity steps: de→wE→eu→world)
+%   Witness: europe (leq(germany,wE) ∧ leq(wE,europe) → europe ∈ hasPart(de))
 %
 % Difficulty: Medium
 % Authors  : Mustafa, D. & Sutcliffe, G.
@@ -34,5 +34,5 @@ include('Axioms/Layer1-ODRLCore/ODRL000-0.ax').
 
 fof(odrl051, conjecture,
     ?[X]: ( in_denotation(X, germany, hasPart)
-          & in_denotation(X, world, eq) )).
+          & in_denotation(X, europe, eq) )).
 %--------------------------------------------------------------------------

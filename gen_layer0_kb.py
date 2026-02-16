@@ -15,6 +15,17 @@ Usage:
             --no-una \
             --name "W3C Data Privacy Vocabulary — Purpose taxonomy" \
             --source "https://w3id.org/dpv"
+    uv run python gen_layer0_kb.py \
+            --input data/dpv/dpv-owl.ttl \
+            --output Problems/ODRL/Axioms/Layer0-DomainKB/DPV-NAIVE.ax \
+            --namespace "https://w3id.org/dpv#" \
+            --root-class "Purpose" \
+            --domain taxonomic \
+            --sibling-disjointness \
+            --naive-sibling-disjointness \
+            --no-una \
+            --name "W3C Data Privacy Vocabulary — Purpose taxonomy" \
+            --source "https://w3id.org/dpv"
 
 Extracts:
     - rdfs:subClassOf  → leq/2
@@ -532,20 +543,21 @@ def generate_tptp(concepts, hierarchy, disjointness, iri_map,
     lines.append("%--------------------------------------------------------------------------")
     total = len(concepts_sorted) + len(hierarchy_sorted) + len(disjointness) + una_count
     lines.append(f"% Summary: {len(concepts_sorted)} concept"
-                 f" + {len(hierarchy_sorted)} leq"
-                 f" + {len(disjointness)} disjoint"
-                 f" + {una_count} UNA"
-                 f" = {total} axioms")
-    
+                f" + {len(hierarchy_sorted)} leq"
+                f" + {len(disjointness)} disjoint"
+                f" + {una_count} UNA"
+                f" = {total} axioms")
+
     if sibling_disjointness and dag_safe_mode and skipped_pairs:
         lines.append(f"% DAG-safe: suppressed {len(skipped_pairs)} sibling pairs:")
-        for c1, c2, overlap in skipped_pairs[:10]:  # Show first 10
+        for c1, c2, overlap in skipped_pairs:
             lines.append(f"%   {c1} ⊥⊥ {c2} (overlap: {', '.join(overlap)})")
-        if len(skipped_pairs) > 10:
-            lines.append(f"%   ... and {len(skipped_pairs) - 10} more")
-    
+    elif sibling_disjointness and not dag_safe_mode:
+        lines.append(f"% NAIVE mode: ALL sibling pairs asserted (including problematic ones)")
+        lines.append(f"% WARNING: This KB may be INCONSISTENT if it contains multi-parent concepts.")
+
     lines.append("%--------------------------------------------------------------------------")
-    
+        
     return "\n".join(lines)
 
 # =============================================================================
