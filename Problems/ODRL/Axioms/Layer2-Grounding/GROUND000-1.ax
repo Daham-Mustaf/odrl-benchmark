@@ -1,183 +1,239 @@
 %--------------------------------------------------------------------------
-% File     : GROUND000-1.ax : TPTP v0.2.0
+% File     : GROUND000-1.ax : TPTP v0.1.0. Released v0.1.0.
 % Domain   : ODRL Policy Conflict Detection
-% Axioms   : Semantic grounding — denotation rules for all operators
-% Source   : Paper Def. 3 (Denotation), Def. 6 (Conflict)
-% Version  : 0.2.0
-% Change   : v0.2.0 — added neq (bidir), hasPart (bidir),
-%            nominal-domain isA/isAnyOf/isNoneOf rules.
+% Axioms   : Deep embedding — constraint-object denotation encoding
+% Version  : 1.0.0 — unified leq/2, full bidirectionality, concept guards.
+% English  : Deep embedding encoding for ODRL constraint conflict
+%            detection. Constraint structure (operand, operator, value)
+%            is reified as first-order objects; the prover derives
+%            denotation membership and verdicts from the structure.
+%            Uses unified leq/2 for all semantic domains (paper Def. 2),
+%            eliminating domain-specific predicates. Compatible with
+%            any Layer 0 domain KB that exports concept/1, leq/2,
+%            disjoint/2.
+% Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
+%            Automated Reasoning for ODRL Policy Conflict Detection
+% Source   : [MuS25]
+% Names    : GROUND000-1.ax
+% Status   : Layer 1 variant — Deep Embedding Encoding
 %
-% Encoding strategy per operator:
-%   eq       : bidirectional (if + only-if)
-%   neq      : bidirectional (if + only-if)
-%   isPartOf : bidirectional (if + only-if)
-%   hasPart  : bidirectional (if + only-if)
-%   isA      : bidirectional — taxonomic + nominal variants
-%   isAnyOf  : if-direction only (only-if causes Skolem explosion)
-%   isAllOf  : only-if only (if needs grounded conjunction)
-%   isNoneOf : only-if only (if needs grounded negation)
+%            ┌──────────────────────────────────────────────────────┐
+%            │ ENCODING KEY                                        │
+%            │                                                      │
+%            │ This file is an ALTERNATIVE to ODRL000-0.ax, not    │
+%            │ a layer that stacks on it. Use ONE of:              │
+%            │   (a) L0 + ODRL000-0.ax + conjecture  (shallow)    │
+%            │   (b) L0 + GROUND000-1.ax + conjecture (deep)      │
+%            │                                                      │
+%            │ Predicate signature:                                │
+%            │   ODRL000-0.ax:  in_denotation(X, G, Op)  (3-ary)  │
+%            │   GROUND000-1.ax: in_denotation(X, C)     (2-ary)  │
+%            │   These are DIFFERENT predicates — do not mix.      │
+%            └──────────────────────────────────────────────────────┘
 %
-%   Set operator if-directions are encoded per-problem where needed.
-%
-% Status   : Layer 2 — NOT YET FROZEN
+% Syntax   : Number of formulae    :    33 (   0 unt;   0 def)
+%            Number of atoms       :   106 (   4 equ)
+%            Maximal formula atoms  :     5 (   3 avg)
+%            Number of connectives  :    78 (   5   ~;   0   |;  39   &)
+%                                         (   0 <=>;  34  =>;   0  <=;   0 <~>)
+%            Maximal formula depth  :     4 (   3 avg)
+%            Maximal term depth     :     1 (   1 avg)
+%            Number of predicates   :    16 (  16 usr;   0 prp; 1-3 aty)
+%            Number of functors     :     9 (   9 usr;   9 con; 0-0 aty)
+%            Number of variables    :    82 (  80   !;   2   ?)
+% SPC      : FOF_EPR_RFN_SEQ
+% Comments : All operators have bidirectional (IF + ONLY-IF) rules.
+%          : Set operators (isAnyOf, isAllOf, isNoneOf) use has_value/2
+%          :   as multi-valued relation: multiple has_value(C, Vi) facts
+%          :   represent the value set {v₁, ..., vₙ}.
+%          : concept(X) guards on neq, isAllOf-IF, isNoneOf-IF match
+%          :   paper Def. 3's "x ∈ C" precondition.
+%          : Domain classification (taxonomic/mereological/nominal) is
+%          :   NOT encoded as predicates. The distinction is carried by
+%          :   which leq/2 edges L0 asserts (paper Def. 2: "The framework
+%          :   requires only ≤ and ⊥⊥").
+%          : verdict/3 captures Compatible only. Conflict is tested via
+%          :   negated conjecture: ~?[X](in_denotation(X,C1) & in_denotation(X,C2))
+%          :   → SZS Theorem = Conflict, CounterSatisfiable = Compatible.
+% Ontology : From L0: concept/1, leq/2, disjoint/2
+%          : Structural: has_operand/2, has_operator/2, has_value/2,
+%          :   same_operand/2, policy/1, permission/1, prohibition/1,
+%          :   obligation/1, constraint/1, has_asset/2, has_constraint/2
+%          : Denotation: in_denotation/2
+%          : Verdict: verdict/3
+%          : Constants: eq, neq, isA, isPartOf, hasPart, isAnyOf,
+%          :   isAllOf, isNoneOf, compatible
+% Stats    : Part A  9 (structural)  | Part B  5 (KB properties)
+%          : Part C  2 (derived)     | Part D 16 (denotation)
+%          : Part E  1 (verdict)     | Total  33
+% Date     : 2026-02-15
 % Authors  : Mustafa, D. & Sutcliffe, G.
 %--------------------------------------------------------------------------
 
-% ==========================================================================
-% eq: exact match — all domains (Def. 3, Eq. 1)
-% ⟦ℓ eq v⟧ = {g}
-% ==========================================================================
-fof(denotation_eq, axiom,
-    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, eq) & has_value(C, V)
-                   & X = V)
+% ─── Part A: Structural predicates (Definition 1 — Constraint) ──────
+%
+% Shared with ODRL000-0.ax. Included here for self-containment.
+
+fof(permission_is_policy,   axiom, ![P]: (permission(P)  => policy(P))).
+fof(prohibition_is_policy,  axiom, ![P]: (prohibition(P) => policy(P))).
+fof(obligation_is_policy,   axiom, ![P]: (obligation(P)  => policy(P))).
+fof(has_asset_policy,       axiom, ![P,A]:  (has_asset(P, A)      => policy(P))).
+fof(has_constraint_policy,  axiom, ![P,C]:  (has_constraint(P, C) => policy(P))).
+fof(has_operand_constraint, axiom, ![C,L]:  (has_operand(C, L)    => constraint(C))).
+fof(has_operator_constraint,axiom, ![C,Op]: (has_operator(C, Op)  => constraint(C))).
+fof(has_value_constraint,   axiom, ![C,V]:  (has_value(C, V)      => constraint(C))).
+
+fof(same_operand_def, axiom,
+    ![C1,C2,L]: ((has_operand(C1, L) & has_operand(C2, L))
+        => same_operand(C1, C2))).
+
+% ─── Part B: KB universal properties (Definition 2) ─────────────────
+%
+% Shared with ODRL000-0.ax. ≤ is unified across all domains.
+
+fof(leq_refl, axiom,
+    ![X]: (concept(X) => leq(X, X))).
+
+fof(leq_trans, axiom,
+    ![X,Y,Z]: ((leq(X, Y) & leq(Y, Z)) => leq(X, Z))).
+
+fof(disj_sym, axiom,
+    ![X,Y]: (disjoint(X, Y) => disjoint(Y, X))).
+
+fof(disj_irrefl, axiom,
+    ![X]: ~disjoint(X, X)).
+
+fof(disj_downward, axiom,
+    ![X,Y,Xp,Yp]: ((disjoint(X, Y) & leq(Xp, X) & leq(Yp, Y))
+        => disjoint(Xp, Yp))).
+
+% ─── Part C: Disjointness–Order Consistency (Lemma 1) ───────────────
+%
+% Shared with ODRL000-0.ax. Asserted for prover performance.
+
+fof(disj_order_consistency, axiom,
+    ![X,Y]: (leq(X, Y) => ~disjoint(X, Y))).
+
+fof(disj_implies_not_leq, axiom,
+    ![X,Y]: (disjoint(X, Y) => ~leq(X, Y))).
+
+% ─── Part D: Denotation rules — deep embedding (Definition 3) ───────
+%
+% Predicate: in_denotation(X, C)
+%   "concept X is in the denotation of constraint C"
+%   where C's operator and value are extracted via has_operator/has_value.
+%
+% Encoding difference from ODRL000-0.ax (shallow):
+%   Shallow:  in_denotation(X, G, Op)   — G and Op are parameters
+%   Deep:     in_denotation(X, C)       — C is a constraint object;
+%             the prover must resolve has_operator(C, Op) and
+%             has_value(C, V) to determine membership.
+%
+% All operators have IF + ONLY-IF rules. Both directions are
+% necessary: IF enables Compatible proofs (finding witnesses),
+% ONLY-IF enables Conflict proofs (ruling out witnesses).
+
+% --- eq: ⟦ℓ eq v⟧ = {g}  (Def. 3, Eq. 1) ---
+fof(den_eq_if, axiom,
+    ![C,V,X]: ((has_operator(C, eq) & has_value(C, V) & X = V)
         => in_denotation(X, C))).
 
-fof(denotation_eq_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, eq) & has_value(C, V))
+fof(den_eq_onlyif, axiom,
+    ![C,V,X]: ((in_denotation(X, C) & has_operator(C, eq) & has_value(C, V))
         => X = V)).
 
-% ==========================================================================
-% neq: complement — all domains (Def. 3, Eq. 2)
-% ⟦ℓ neq v⟧ = C \ {g}
-% ==========================================================================
-fof(denotation_neq, axiom,
-    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, neq) & has_value(C, V)
-                   & X != V)
+% --- neq: ⟦ℓ neq v⟧ = C \ {g}  (Def. 3, Eq. 2) ---
+% concept(X) guard matches paper's "x ∈ C".
+fof(den_neq_if, axiom,
+    ![C,V,X]: ((has_operator(C, neq) & has_value(C, V)
+                & concept(X) & X != V)
         => in_denotation(X, C))).
 
-fof(denotation_neq_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, neq) & has_value(C, V))
+fof(den_neq_onlyif, axiom,
+    ![C,V,X]: ((in_denotation(X, C) & has_operator(C, neq) & has_value(C, V))
         => X != V)).
 
-% ==========================================================================
-% isPartOf: mereological downward closure (Def. 3, Eq. 4)
-% ⟦ℓ isPartOf v⟧ = {x ∈ C | x ⪯ g}
-% ==========================================================================
-fof(denotation_isPartOf, axiom,
-    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isPartOf) & has_value(C, V)
-                   & mereological(L) & partOf(X, V))
+% --- isA: ⟦ℓ isA v⟧ = {x ∈ C | x ≤ g}  (Def. 3, Eq. 3) ---
+% Works for ALL domains via unified leq/2:
+%   Taxonomic:   leq = ⊑   → downward closure under subsumption
+%   Mereological: leq = ⪯  → downward closure under containment
+%   Nominal:     leq = =   → {g} only (degenerates to eq)
+fof(den_isA_if, axiom,
+    ![C,V,X]: ((has_operator(C, isA) & has_value(C, V) & leq(X, V))
         => in_denotation(X, C))).
 
-fof(denotation_isPartOf_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, isPartOf) & has_value(C, V)
-                   & mereological(L))
-        => partOf(X, V))).
+fof(den_isA_onlyif, axiom,
+    ![C,V,X]: ((in_denotation(X, C) & has_operator(C, isA) & has_value(C, V))
+        => leq(X, V))).
 
-% ==========================================================================
-% hasPart: mereological upward closure (Def. 3, Eq. 5)
-% ⟦ℓ hasPart v⟧ = {x ∈ C | g ⪯ x}
-% ==========================================================================
-fof(denotation_hasPart, axiom,
-    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, hasPart) & has_value(C, V)
-                   & mereological(L) & partOf(V, X))
+% --- isPartOf: ⟦ℓ isPartOf v⟧ = {x ∈ C | x ≤ g}  (Def. 3, Eq. 4) ---
+% Identical to isA — distinction carried by KB's ≤ (paper §3.1 fn).
+fof(den_isPartOf_if, axiom,
+    ![C,V,X]: ((has_operator(C, isPartOf) & has_value(C, V) & leq(X, V))
         => in_denotation(X, C))).
 
-fof(denotation_hasPart_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, hasPart) & has_value(C, V)
-                   & mereological(L))
-        => partOf(V, X))).
+fof(den_isPartOf_onlyif, axiom,
+    ![C,V,X]: ((in_denotation(X, C) & has_operator(C, isPartOf) & has_value(C, V))
+        => leq(X, V))).
 
-% ==========================================================================
-% isA: taxonomic subsumption (Def. 3, Eq. 3)
-% ⟦ℓ isA v⟧ = {x ∈ C | x ⊑ g}
-% ==========================================================================
-fof(denotation_isA, axiom,
-    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isA) & has_value(C, V)
-                   & taxonomic(L) & subClassOf(X, V))
+% --- hasPart: ⟦ℓ hasPart v⟧ = {x ∈ C | g ≤ x}  (Def. 3, Eq. 5) ---
+fof(den_hasPart_if, axiom,
+    ![C,V,X]: ((has_operator(C, hasPart) & has_value(C, V) & leq(V, X))
         => in_denotation(X, C))).
 
-fof(denotation_isA_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, isA) & has_value(C, V)
-                   & taxonomic(L))
-        => subClassOf(X, V))).
+fof(den_hasPart_onlyif, axiom,
+    ![C,V,X]: ((in_denotation(X, C) & has_operator(C, hasPart) & has_value(C, V))
+        => leq(V, X))).
 
-% --- isA under nominal domain: degenerates to identity (≤ = =) ---
-% ⟦ℓ isA v⟧ = {g}  when ≤ is identity
-fof(denotation_isA_nominal, axiom,
-    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isA) & has_value(C, V)
-                   & nominal(L) & X = V)
+% --- isAnyOf: ⟦ℓ isAnyOf {v₁,...,vₙ}⟧ = ∪ᵢ {x | x ≤ gᵢ}  (Def. 3, Eq. 6) ---
+% has_value(C, V) is multi-valued: each Vᵢ asserted separately.
+% IF: if X ≤ any value, X is in denotation.
+fof(den_isAnyOf_if, axiom,
+    ![C,V,X]: ((has_operator(C, isAnyOf) & has_value(C, V) & leq(X, V))
         => in_denotation(X, C))).
 
-fof(denotation_isA_nominal_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, isA) & has_value(C, V)
-                   & nominal(L))
-        => X = V)).
+% ONLY-IF: if X is in denotation, X ≤ some value.
+fof(den_isAnyOf_onlyif, axiom,
+    ![C,X]: ((in_denotation(X, C) & has_operator(C, isAnyOf))
+        => ?[V]: (has_value(C, V) & leq(X, V)))).
 
-% ==========================================================================
-% isAnyOf: union of downward closures (Def. 3, Eq. 6)
-% ⟦ℓ isAnyOf {v₁,…,vₙ}⟧ = ⋃ᵢ {x ∈ C | x ≤ gᵢ}
-% If-direction only; only-if encoded per-problem (Skolem explosion).
-% ==========================================================================
-fof(denotation_isAnyOf_taxonomic, axiom,
-    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isAnyOf) & has_value(C, V)
-                   & taxonomic(L) & subClassOf(X, V))
+% --- isAllOf: ⟦ℓ isAllOf {v₁,...,vₙ}⟧ = {x | ∀i: x ≤ gᵢ}  (Def. 3, Eq. 7) ---
+% IF: concept(X) guard prevents vacuous truth with empty value sets.
+fof(den_isAllOf_if, axiom,
+    ![C,X]: ((has_operator(C, isAllOf) & concept(X)
+              & ![V]: (has_value(C, V) => leq(X, V)))
         => in_denotation(X, C))).
 
-fof(denotation_isAnyOf_mereological, axiom,
-    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isAnyOf) & has_value(C, V)
-                   & mereological(L) & partOf(X, V))
+% ONLY-IF: per-value — if X is in denotation, X ≤ each value.
+fof(den_isAllOf_onlyif, axiom,
+    ![C,V,X]: ((in_denotation(X, C) & has_operator(C, isAllOf) & has_value(C, V))
+        => leq(X, V))).
+
+% --- isNoneOf: ⟦ℓ isNoneOf {v₁,...,vₙ}⟧ = C \ ∪ᵢ {x | x ≤ gᵢ}  (Def. 3, Eq. 8) ---
+% IF: concept(X) guard matches paper's "x ∈ C".
+fof(den_isNoneOf_if, axiom,
+    ![C,X]: ((has_operator(C, isNoneOf) & concept(X)
+              & ![V]: (has_value(C, V) => ~leq(X, V)))
         => in_denotation(X, C))).
 
-% --- isAnyOf under nominal: union of singletons = membership ---
-fof(denotation_isAnyOf_nominal, axiom,
-    ![C,L,V,X]: ((has_operand(C, L) & has_operator(C, isAnyOf) & has_value(C, V)
-                   & nominal(L) & X = V)
-        => in_denotation(X, C))).
+% ONLY-IF: per-value — if X is in denotation, X ≤/ each value.
+fof(den_isNoneOf_onlyif, axiom,
+    ![C,V,X]: ((in_denotation(X, C) & has_operator(C, isNoneOf) & has_value(C, V))
+        => ~leq(X, V))).
 
-% ==========================================================================
-% isAllOf: intersection of downward closures (Def. 3, Eq. 7)
-% ⟦ℓ isAllOf {v₁,…,vₙ}⟧ = {x ∈ C | ∀i: x ≤ gᵢ}
-% Only-if direction only; if-direction encoded per-problem.
-% ==========================================================================
-fof(denotation_isAllOf_taxonomic_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, isAllOf) & has_value(C, V)
-                   & taxonomic(L))
-        => subClassOf(X, V))).
+% ─── Part E: Verdict (Definition 5) ─────────────────────────────────
+%
+% Compatible: denotations overlap.
+% Conflict: tested via negated conjecture (not an axiom):
+%   fof(q, conjecture, ?[X]: (in_denotation(X, c1) & in_denotation(X, c2))).
+%   SZS Theorem → Conflict | CounterSatisfiable → Compatible
 
-fof(denotation_isAllOf_mereological_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, isAllOf) & has_value(C, V)
-                   & mereological(L))
-        => partOf(X, V))).
-
-% ==========================================================================
-% isNoneOf: exclusion — complement of union (Def. 3, Eq. 8)
-% ⟦ℓ isNoneOf {v₁,…,vₙ}⟧ = C \ ⋃ᵢ {x ∈ C | x ≤ gᵢ}
-% Only-if direction only; if-direction encoded per-problem.
-% Per-value necessary condition — clean, no existential.
-% ==========================================================================
-fof(denotation_isNoneOf_taxonomic_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, isNoneOf) & has_value(C, V)
-                   & taxonomic(L))
-        => ~subClassOf(X, V))).
-
-fof(denotation_isNoneOf_mereological_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, isNoneOf) & has_value(C, V)
-                   & mereological(L))
-        => ~partOf(X, V))).
-
-% --- isNoneOf under nominal: x ≠ any listed value ---
-fof(denotation_isNoneOf_nominal_only, axiom,
-    ![C,L,V,X]: ((in_denotation(X, C) & has_operand(C, L)
-                   & has_operator(C, isNoneOf) & has_value(C, V)
-                   & nominal(L))
-        => X != V)).
-
-% ==========================================================================
-% Verdict: compatibility (paper Def. 6)
-% ==========================================================================
 fof(verdict_compatible, axiom,
     ![C1,C2]: ((same_operand(C1, C2)
                 & ?[X]: (in_denotation(X, C1) & in_denotation(X, C2)))
         => verdict(C1, C2, compatible))).
 
+%--------------------------------------------------------------------------
+% Summary: 9 structural + 5 KB + 2 derived + 16 denotation + 1 verdict
+%        = 33 axioms
 %--------------------------------------------------------------------------

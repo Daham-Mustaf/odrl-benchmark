@@ -1,19 +1,22 @@
 %--------------------------------------------------------------------------
 % File     : ODRL010-1.p : TPTP v0.1.0
 % Domain   : ODRL Policy Conflict Detection
-% Problem  : Transitive spatial containment: bavaria ⪯ europe
-% Version  : GEO000-0.ax
+% Problem  : Transitive spatial containment: germany ⪯ europe
 % Expected : Theorem
-% Source   : Mustafa & Sutcliffe, 
-% Notes    : Tests mereological transitivity (paper Def. 2).
-%            bavaria partOf germany, germany partOf europe,
-%            therefore bavaria partOf europe.
-%            This is the minimal non-trivial inference the
-%            grounding framework requires.
+% Verdict  : Valid
+% Paper    : Definition 2 (KB: leq transitivity)
+%
+% ODRL Policy (Turtle):
+%   (No ODRL policy — pure KB property test)
+%
+% Denotation analysis:
+%   leq(germany, westernEurope) ∧ leq(westernEurope, europe) ⟹ leq(germany, europe)
+%
+% Difficulty: Trivial
+% Authors  : Mustafa, D. & Sutcliffe, G.
 %--------------------------------------------------------------------------
-
 include('Axioms/Layer0-DomainKB/GEO000-0.ax').
+include('Axioms/Layer1-ODRLCore/ODRL000-0.ax').
 
-fof(odrl010_transitive_containment, conjecture,
-    partOf(bavaria, europe)).
+fof(odrl010, conjecture, leq(germany, europe)).
 %--------------------------------------------------------------------------

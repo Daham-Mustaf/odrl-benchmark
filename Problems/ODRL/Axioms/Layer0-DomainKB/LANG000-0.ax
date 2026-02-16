@@ -1,0 +1,499 @@
+%--------------------------------------------------------------------------
+% File     : LANG000-0.ax : TPTP v0.1.0. Released v0.1.0.
+% Domain   : BCP47 Language Tags — European Dataspace Languages
+% Axioms   : Language tag hierarchy (taxonomic)
+% Version  : Curated from RFC 5646 / ISO 639-1 / ISO 3166-1.
+% English  : BCP47 language tag hierarchy for ODRL policy reasoning.
+%            leq/2 represents language specialization (is-variant-of).
+%            UNA is implicit from tree + sibling/base disjointness.
+% Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
+%            Automated Reasoning for ODRL Policy Conflict Detection
+% Source   : https://www.rfc-editor.org/rfc/rfc5646 (BCP47)
+% Names    : LANG000-0.ax
+% Status   : Layer 0 — Domain Knowledge Base
+% Syntax   : Number of formulae    :   445 (  445 unt;   0 def)
+%            Number of atoms       :   445 (    0 equ)
+%            Maximal formula atoms  :     1 (   1 avg)
+%            Number of connectives  :     0 (   0   ~;   0   |;   0   &)
+%                                         (   0 <=>;   0  =>;   0  <=;   0 <~>)
+%            Maximal formula depth  :     1 (   1 avg)
+%            Maximal term depth     :     1 (   1 avg)
+%            Number of predicates   :     3 (    3 usr;   0 prp; 1-2 aty)
+%            Number of functors     :    68 (   68 usr;  68 con; 0-0 aty)
+%            Number of variables    :     0 (   0   !;   0   ?)
+% SPC      : FOF_EPR_RFN_NEQ
+% Comments : All formulae are ground unit clauses.
+%          : Layer 1 provides reflexivity + transitivity of leq/2.
+%          : UNA: IMPLICIT — tree + disjointness (Implicit UNA Lemma).
+%          : Root(s): 25 base languages (no single root)
+% Ontology : Predicates: concept/1; leq/2; disjoint/2
+%          : Relation: leq/2 — language specialization (paper Def. 2)
+% Stats    : Concepts 68 | Edges 43 | Disjoint 334 | UNA 0 | Total 445
+%          : Depth 1 | Leaves 43 | Base langs 25 | Branch avg 1.7 max 5
+% Date     : 2026-02-16
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Gen      : gen_layer0_lang.py (curated BCP47 subset)
+%--------------------------------------------------------------------------
+
+% ─── Concept membership (Definition 2: C) ─────────────────────────────
+fof(c_bg, axiom, concept(bg)).  % BCP47:bg — Bulgarian
+fof(c_bgBg, axiom, concept(bgBg)).  % BCP47:bg-BG — Bulgarian (Bulgaria)
+fof(c_cs, axiom, concept(cs)).  % BCP47:cs — Czech
+fof(c_csCz, axiom, concept(csCz)).  % BCP47:cs-CZ — Czech (Czechia)
+fof(c_da, axiom, concept(da)).  % BCP47:da — Danish
+fof(c_daDk, axiom, concept(daDk)).  % BCP47:da-DK — Danish (Denmark)
+fof(c_de, axiom, concept(de)).  % BCP47:de — German
+fof(c_deAt, axiom, concept(deAt)).  % BCP47:de-AT — German (Austria)
+fof(c_deCh, axiom, concept(deCh)).  % BCP47:de-CH — German (Switzerland)
+fof(c_deDe, axiom, concept(deDe)).  % BCP47:de-DE — German (Germany)
+fof(c_deLu, axiom, concept(deLu)).  % BCP47:de-LU — German (Luxembourg)
+fof(c_el, axiom, concept(el)).  % BCP47:el — Greek
+fof(c_elCy, axiom, concept(elCy)).  % BCP47:el-CY — Greek (Cyprus)
+fof(c_elGr, axiom, concept(elGr)).  % BCP47:el-GR — Greek (Greece)
+fof(c_en, axiom, concept(en)).  % BCP47:en — English
+fof(c_enAu, axiom, concept(enAu)).  % BCP47:en-AU — English (Australia)
+fof(c_enCa, axiom, concept(enCa)).  % BCP47:en-CA — English (Canada)
+fof(c_enGb, axiom, concept(enGb)).  % BCP47:en-GB — English (United Kingdom)
+fof(c_enIe, axiom, concept(enIe)).  % BCP47:en-IE — English (Ireland)
+fof(c_enUs, axiom, concept(enUs)).  % BCP47:en-US — English (United States)
+fof(c_es, axiom, concept(es)).  % BCP47:es — Spanish
+fof(c_esAr, axiom, concept(esAr)).  % BCP47:es-AR — Spanish (Argentina)
+fof(c_esEs, axiom, concept(esEs)).  % BCP47:es-ES — Spanish (Spain)
+fof(c_esMx, axiom, concept(esMx)).  % BCP47:es-MX — Spanish (Mexico)
+fof(c_et, axiom, concept(et)).  % BCP47:et — Estonian
+fof(c_etEe, axiom, concept(etEe)).  % BCP47:et-EE — Estonian (Estonia)
+fof(c_fi, axiom, concept(fi)).  % BCP47:fi — Finnish
+fof(c_fiFi, axiom, concept(fiFi)).  % BCP47:fi-FI — Finnish (Finland)
+fof(c_fr, axiom, concept(fr)).  % BCP47:fr — French
+fof(c_frBe, axiom, concept(frBe)).  % BCP47:fr-BE — French (Belgium)
+fof(c_frCa, axiom, concept(frCa)).  % BCP47:fr-CA — French (Canada)
+fof(c_frCh, axiom, concept(frCh)).  % BCP47:fr-CH — French (Switzerland)
+fof(c_frFr, axiom, concept(frFr)).  % BCP47:fr-FR — French (France)
+fof(c_frLu, axiom, concept(frLu)).  % BCP47:fr-LU — French (Luxembourg)
+fof(c_ga, axiom, concept(ga)).  % BCP47:ga — Irish
+fof(c_gaIe, axiom, concept(gaIe)).  % BCP47:ga-IE — Irish (Ireland)
+fof(c_hr, axiom, concept(hr)).  % BCP47:hr — Croatian
+fof(c_hrHr, axiom, concept(hrHr)).  % BCP47:hr-HR — Croatian (Croatia)
+fof(c_hu, axiom, concept(hu)).  % BCP47:hu — Hungarian
+fof(c_huHu, axiom, concept(huHu)).  % BCP47:hu-HU — Hungarian (Hungary)
+fof(c_it, axiom, concept(it)).  % BCP47:it — Italian
+fof(c_itCh, axiom, concept(itCh)).  % BCP47:it-CH — Italian (Switzerland)
+fof(c_itIt, axiom, concept(itIt)).  % BCP47:it-IT — Italian (Italy)
+fof(c_lt, axiom, concept(lt)).  % BCP47:lt — Lithuanian
+fof(c_ltLt, axiom, concept(ltLt)).  % BCP47:lt-LT — Lithuanian (Lithuania)
+fof(c_lv, axiom, concept(lv)).  % BCP47:lv — Latvian
+fof(c_lvLv, axiom, concept(lvLv)).  % BCP47:lv-LV — Latvian (Latvia)
+fof(c_mt, axiom, concept(mt)).  % BCP47:mt — Maltese
+fof(c_mtMt, axiom, concept(mtMt)).  % BCP47:mt-MT — Maltese (Malta)
+fof(c_nb, axiom, concept(nb)).  % BCP47:nb — Norwegian Bokmål
+fof(c_nbNo, axiom, concept(nbNo)).  % BCP47:nb-NO — Norwegian Bokmål (Norway)
+fof(c_nl, axiom, concept(nl)).  % BCP47:nl — Dutch
+fof(c_nlBe, axiom, concept(nlBe)).  % BCP47:nl-BE — Dutch (Belgium)
+fof(c_nlNl, axiom, concept(nlNl)).  % BCP47:nl-NL — Dutch (Netherlands)
+fof(c_pl, axiom, concept(pl)).  % BCP47:pl — Polish
+fof(c_plPl, axiom, concept(plPl)).  % BCP47:pl-PL — Polish (Poland)
+fof(c_pt, axiom, concept(pt)).  % BCP47:pt — Portuguese
+fof(c_ptBr, axiom, concept(ptBr)).  % BCP47:pt-BR — Portuguese (Brazil)
+fof(c_ptPt, axiom, concept(ptPt)).  % BCP47:pt-PT — Portuguese (Portugal)
+fof(c_ro, axiom, concept(ro)).  % BCP47:ro — Romanian
+fof(c_roRo, axiom, concept(roRo)).  % BCP47:ro-RO — Romanian (Romania)
+fof(c_sk, axiom, concept(sk)).  % BCP47:sk — Slovak
+fof(c_skSk, axiom, concept(skSk)).  % BCP47:sk-SK — Slovak (Slovakia)
+fof(c_sl, axiom, concept(sl)).  % BCP47:sl — Slovenian
+fof(c_slSi, axiom, concept(slSi)).  % BCP47:sl-SI — Slovenian (Slovenia)
+fof(c_sv, axiom, concept(sv)).  % BCP47:sv — Swedish
+fof(c_svFi, axiom, concept(svFi)).  % BCP47:sv-FI — Swedish (Finland)
+fof(c_svSe, axiom, concept(svSe)).  % BCP47:sv-SE — Swedish (Sweden)
+
+% ─── Hierarchy (Definition 2: ≤ = language specialization) ─────────────
+% leq(enUs, en) means: en-US is a regional variant of en.
+fof(h_0000, axiom, leq(bgBg, bg)).
+fof(h_0001, axiom, leq(csCz, cs)).
+fof(h_0002, axiom, leq(daDk, da)).
+fof(h_0003, axiom, leq(deAt, de)).
+fof(h_0004, axiom, leq(deCh, de)).
+fof(h_0005, axiom, leq(deDe, de)).
+fof(h_0006, axiom, leq(deLu, de)).
+fof(h_0007, axiom, leq(elCy, el)).
+fof(h_0008, axiom, leq(elGr, el)).
+fof(h_0009, axiom, leq(enAu, en)).
+fof(h_0010, axiom, leq(enCa, en)).
+fof(h_0011, axiom, leq(enGb, en)).
+fof(h_0012, axiom, leq(enIe, en)).
+fof(h_0013, axiom, leq(enUs, en)).
+fof(h_0014, axiom, leq(esAr, es)).
+fof(h_0015, axiom, leq(esEs, es)).
+fof(h_0016, axiom, leq(esMx, es)).
+fof(h_0017, axiom, leq(etEe, et)).
+fof(h_0018, axiom, leq(fiFi, fi)).
+fof(h_0019, axiom, leq(frBe, fr)).
+fof(h_0020, axiom, leq(frCa, fr)).
+fof(h_0021, axiom, leq(frCh, fr)).
+fof(h_0022, axiom, leq(frFr, fr)).
+fof(h_0023, axiom, leq(frLu, fr)).
+fof(h_0024, axiom, leq(gaIe, ga)).
+fof(h_0025, axiom, leq(hrHr, hr)).
+fof(h_0026, axiom, leq(huHu, hu)).
+fof(h_0027, axiom, leq(itCh, it)).
+fof(h_0028, axiom, leq(itIt, it)).
+fof(h_0029, axiom, leq(ltLt, lt)).
+fof(h_0030, axiom, leq(lvLv, lv)).
+fof(h_0031, axiom, leq(mtMt, mt)).
+fof(h_0032, axiom, leq(nbNo, nb)).
+fof(h_0033, axiom, leq(nlBe, nl)).
+fof(h_0034, axiom, leq(nlNl, nl)).
+fof(h_0035, axiom, leq(plPl, pl)).
+fof(h_0036, axiom, leq(ptBr, pt)).
+fof(h_0037, axiom, leq(ptPt, pt)).
+fof(h_0038, axiom, leq(roRo, ro)).
+fof(h_0039, axiom, leq(skSk, sk)).
+fof(h_0040, axiom, leq(slSi, sl)).
+fof(h_0041, axiom, leq(svFi, sv)).
+fof(h_0042, axiom, leq(svSe, sv)).
+
+% ─── Disjointness (Definition 2: ⊥⊥) ─────────────────────────────────
+% Sibling + base language disjointness.
+% Derived disjointness follows from disj_downward (Layer 1).
+fof(d_0000, axiom, disjoint(bg, cs)).
+fof(d_0001, axiom, disjoint(bg, da)).
+fof(d_0002, axiom, disjoint(bg, de)).
+fof(d_0003, axiom, disjoint(bg, el)).
+fof(d_0004, axiom, disjoint(bg, en)).
+fof(d_0005, axiom, disjoint(bg, es)).
+fof(d_0006, axiom, disjoint(bg, et)).
+fof(d_0007, axiom, disjoint(bg, fi)).
+fof(d_0008, axiom, disjoint(bg, fr)).
+fof(d_0009, axiom, disjoint(bg, ga)).
+fof(d_0010, axiom, disjoint(bg, hr)).
+fof(d_0011, axiom, disjoint(bg, hu)).
+fof(d_0012, axiom, disjoint(bg, it)).
+fof(d_0013, axiom, disjoint(bg, lt)).
+fof(d_0014, axiom, disjoint(bg, lv)).
+fof(d_0015, axiom, disjoint(bg, mt)).
+fof(d_0016, axiom, disjoint(bg, nb)).
+fof(d_0017, axiom, disjoint(bg, nl)).
+fof(d_0018, axiom, disjoint(bg, pl)).
+fof(d_0019, axiom, disjoint(bg, pt)).
+fof(d_0020, axiom, disjoint(bg, ro)).
+fof(d_0021, axiom, disjoint(bg, sk)).
+fof(d_0022, axiom, disjoint(bg, sl)).
+fof(d_0023, axiom, disjoint(bg, sv)).
+fof(d_0024, axiom, disjoint(cs, da)).
+fof(d_0025, axiom, disjoint(cs, de)).
+fof(d_0026, axiom, disjoint(cs, el)).
+fof(d_0027, axiom, disjoint(cs, en)).
+fof(d_0028, axiom, disjoint(cs, es)).
+fof(d_0029, axiom, disjoint(cs, et)).
+fof(d_0030, axiom, disjoint(cs, fi)).
+fof(d_0031, axiom, disjoint(cs, fr)).
+fof(d_0032, axiom, disjoint(cs, ga)).
+fof(d_0033, axiom, disjoint(cs, hr)).
+fof(d_0034, axiom, disjoint(cs, hu)).
+fof(d_0035, axiom, disjoint(cs, it)).
+fof(d_0036, axiom, disjoint(cs, lt)).
+fof(d_0037, axiom, disjoint(cs, lv)).
+fof(d_0038, axiom, disjoint(cs, mt)).
+fof(d_0039, axiom, disjoint(cs, nb)).
+fof(d_0040, axiom, disjoint(cs, nl)).
+fof(d_0041, axiom, disjoint(cs, pl)).
+fof(d_0042, axiom, disjoint(cs, pt)).
+fof(d_0043, axiom, disjoint(cs, ro)).
+fof(d_0044, axiom, disjoint(cs, sk)).
+fof(d_0045, axiom, disjoint(cs, sl)).
+fof(d_0046, axiom, disjoint(cs, sv)).
+fof(d_0047, axiom, disjoint(da, de)).
+fof(d_0048, axiom, disjoint(da, el)).
+fof(d_0049, axiom, disjoint(da, en)).
+fof(d_0050, axiom, disjoint(da, es)).
+fof(d_0051, axiom, disjoint(da, et)).
+fof(d_0052, axiom, disjoint(da, fi)).
+fof(d_0053, axiom, disjoint(da, fr)).
+fof(d_0054, axiom, disjoint(da, ga)).
+fof(d_0055, axiom, disjoint(da, hr)).
+fof(d_0056, axiom, disjoint(da, hu)).
+fof(d_0057, axiom, disjoint(da, it)).
+fof(d_0058, axiom, disjoint(da, lt)).
+fof(d_0059, axiom, disjoint(da, lv)).
+fof(d_0060, axiom, disjoint(da, mt)).
+fof(d_0061, axiom, disjoint(da, nb)).
+fof(d_0062, axiom, disjoint(da, nl)).
+fof(d_0063, axiom, disjoint(da, pl)).
+fof(d_0064, axiom, disjoint(da, pt)).
+fof(d_0065, axiom, disjoint(da, ro)).
+fof(d_0066, axiom, disjoint(da, sk)).
+fof(d_0067, axiom, disjoint(da, sl)).
+fof(d_0068, axiom, disjoint(da, sv)).
+fof(d_0069, axiom, disjoint(de, el)).
+fof(d_0070, axiom, disjoint(de, en)).
+fof(d_0071, axiom, disjoint(de, es)).
+fof(d_0072, axiom, disjoint(de, et)).
+fof(d_0073, axiom, disjoint(de, fi)).
+fof(d_0074, axiom, disjoint(de, fr)).
+fof(d_0075, axiom, disjoint(de, ga)).
+fof(d_0076, axiom, disjoint(de, hr)).
+fof(d_0077, axiom, disjoint(de, hu)).
+fof(d_0078, axiom, disjoint(de, it)).
+fof(d_0079, axiom, disjoint(de, lt)).
+fof(d_0080, axiom, disjoint(de, lv)).
+fof(d_0081, axiom, disjoint(de, mt)).
+fof(d_0082, axiom, disjoint(de, nb)).
+fof(d_0083, axiom, disjoint(de, nl)).
+fof(d_0084, axiom, disjoint(de, pl)).
+fof(d_0085, axiom, disjoint(de, pt)).
+fof(d_0086, axiom, disjoint(de, ro)).
+fof(d_0087, axiom, disjoint(de, sk)).
+fof(d_0088, axiom, disjoint(de, sl)).
+fof(d_0089, axiom, disjoint(de, sv)).
+fof(d_0090, axiom, disjoint(deAt, deCh)).
+fof(d_0091, axiom, disjoint(deAt, deDe)).
+fof(d_0092, axiom, disjoint(deAt, deLu)).
+fof(d_0093, axiom, disjoint(deCh, deDe)).
+fof(d_0094, axiom, disjoint(deCh, deLu)).
+fof(d_0095, axiom, disjoint(deDe, deLu)).
+fof(d_0096, axiom, disjoint(el, en)).
+fof(d_0097, axiom, disjoint(el, es)).
+fof(d_0098, axiom, disjoint(el, et)).
+fof(d_0099, axiom, disjoint(el, fi)).
+fof(d_0100, axiom, disjoint(el, fr)).
+fof(d_0101, axiom, disjoint(el, ga)).
+fof(d_0102, axiom, disjoint(el, hr)).
+fof(d_0103, axiom, disjoint(el, hu)).
+fof(d_0104, axiom, disjoint(el, it)).
+fof(d_0105, axiom, disjoint(el, lt)).
+fof(d_0106, axiom, disjoint(el, lv)).
+fof(d_0107, axiom, disjoint(el, mt)).
+fof(d_0108, axiom, disjoint(el, nb)).
+fof(d_0109, axiom, disjoint(el, nl)).
+fof(d_0110, axiom, disjoint(el, pl)).
+fof(d_0111, axiom, disjoint(el, pt)).
+fof(d_0112, axiom, disjoint(el, ro)).
+fof(d_0113, axiom, disjoint(el, sk)).
+fof(d_0114, axiom, disjoint(el, sl)).
+fof(d_0115, axiom, disjoint(el, sv)).
+fof(d_0116, axiom, disjoint(elCy, elGr)).
+fof(d_0117, axiom, disjoint(en, es)).
+fof(d_0118, axiom, disjoint(en, et)).
+fof(d_0119, axiom, disjoint(en, fi)).
+fof(d_0120, axiom, disjoint(en, fr)).
+fof(d_0121, axiom, disjoint(en, ga)).
+fof(d_0122, axiom, disjoint(en, hr)).
+fof(d_0123, axiom, disjoint(en, hu)).
+fof(d_0124, axiom, disjoint(en, it)).
+fof(d_0125, axiom, disjoint(en, lt)).
+fof(d_0126, axiom, disjoint(en, lv)).
+fof(d_0127, axiom, disjoint(en, mt)).
+fof(d_0128, axiom, disjoint(en, nb)).
+fof(d_0129, axiom, disjoint(en, nl)).
+fof(d_0130, axiom, disjoint(en, pl)).
+fof(d_0131, axiom, disjoint(en, pt)).
+fof(d_0132, axiom, disjoint(en, ro)).
+fof(d_0133, axiom, disjoint(en, sk)).
+fof(d_0134, axiom, disjoint(en, sl)).
+fof(d_0135, axiom, disjoint(en, sv)).
+fof(d_0136, axiom, disjoint(enAu, enCa)).
+fof(d_0137, axiom, disjoint(enAu, enGb)).
+fof(d_0138, axiom, disjoint(enAu, enIe)).
+fof(d_0139, axiom, disjoint(enAu, enUs)).
+fof(d_0140, axiom, disjoint(enCa, enGb)).
+fof(d_0141, axiom, disjoint(enCa, enIe)).
+fof(d_0142, axiom, disjoint(enCa, enUs)).
+fof(d_0143, axiom, disjoint(enGb, enIe)).
+fof(d_0144, axiom, disjoint(enGb, enUs)).
+fof(d_0145, axiom, disjoint(enIe, enUs)).
+fof(d_0146, axiom, disjoint(es, et)).
+fof(d_0147, axiom, disjoint(es, fi)).
+fof(d_0148, axiom, disjoint(es, fr)).
+fof(d_0149, axiom, disjoint(es, ga)).
+fof(d_0150, axiom, disjoint(es, hr)).
+fof(d_0151, axiom, disjoint(es, hu)).
+fof(d_0152, axiom, disjoint(es, it)).
+fof(d_0153, axiom, disjoint(es, lt)).
+fof(d_0154, axiom, disjoint(es, lv)).
+fof(d_0155, axiom, disjoint(es, mt)).
+fof(d_0156, axiom, disjoint(es, nb)).
+fof(d_0157, axiom, disjoint(es, nl)).
+fof(d_0158, axiom, disjoint(es, pl)).
+fof(d_0159, axiom, disjoint(es, pt)).
+fof(d_0160, axiom, disjoint(es, ro)).
+fof(d_0161, axiom, disjoint(es, sk)).
+fof(d_0162, axiom, disjoint(es, sl)).
+fof(d_0163, axiom, disjoint(es, sv)).
+fof(d_0164, axiom, disjoint(esAr, esEs)).
+fof(d_0165, axiom, disjoint(esAr, esMx)).
+fof(d_0166, axiom, disjoint(esEs, esMx)).
+fof(d_0167, axiom, disjoint(et, fi)).
+fof(d_0168, axiom, disjoint(et, fr)).
+fof(d_0169, axiom, disjoint(et, ga)).
+fof(d_0170, axiom, disjoint(et, hr)).
+fof(d_0171, axiom, disjoint(et, hu)).
+fof(d_0172, axiom, disjoint(et, it)).
+fof(d_0173, axiom, disjoint(et, lt)).
+fof(d_0174, axiom, disjoint(et, lv)).
+fof(d_0175, axiom, disjoint(et, mt)).
+fof(d_0176, axiom, disjoint(et, nb)).
+fof(d_0177, axiom, disjoint(et, nl)).
+fof(d_0178, axiom, disjoint(et, pl)).
+fof(d_0179, axiom, disjoint(et, pt)).
+fof(d_0180, axiom, disjoint(et, ro)).
+fof(d_0181, axiom, disjoint(et, sk)).
+fof(d_0182, axiom, disjoint(et, sl)).
+fof(d_0183, axiom, disjoint(et, sv)).
+fof(d_0184, axiom, disjoint(fi, fr)).
+fof(d_0185, axiom, disjoint(fi, ga)).
+fof(d_0186, axiom, disjoint(fi, hr)).
+fof(d_0187, axiom, disjoint(fi, hu)).
+fof(d_0188, axiom, disjoint(fi, it)).
+fof(d_0189, axiom, disjoint(fi, lt)).
+fof(d_0190, axiom, disjoint(fi, lv)).
+fof(d_0191, axiom, disjoint(fi, mt)).
+fof(d_0192, axiom, disjoint(fi, nb)).
+fof(d_0193, axiom, disjoint(fi, nl)).
+fof(d_0194, axiom, disjoint(fi, pl)).
+fof(d_0195, axiom, disjoint(fi, pt)).
+fof(d_0196, axiom, disjoint(fi, ro)).
+fof(d_0197, axiom, disjoint(fi, sk)).
+fof(d_0198, axiom, disjoint(fi, sl)).
+fof(d_0199, axiom, disjoint(fi, sv)).
+fof(d_0200, axiom, disjoint(fr, ga)).
+fof(d_0201, axiom, disjoint(fr, hr)).
+fof(d_0202, axiom, disjoint(fr, hu)).
+fof(d_0203, axiom, disjoint(fr, it)).
+fof(d_0204, axiom, disjoint(fr, lt)).
+fof(d_0205, axiom, disjoint(fr, lv)).
+fof(d_0206, axiom, disjoint(fr, mt)).
+fof(d_0207, axiom, disjoint(fr, nb)).
+fof(d_0208, axiom, disjoint(fr, nl)).
+fof(d_0209, axiom, disjoint(fr, pl)).
+fof(d_0210, axiom, disjoint(fr, pt)).
+fof(d_0211, axiom, disjoint(fr, ro)).
+fof(d_0212, axiom, disjoint(fr, sk)).
+fof(d_0213, axiom, disjoint(fr, sl)).
+fof(d_0214, axiom, disjoint(fr, sv)).
+fof(d_0215, axiom, disjoint(frBe, frCa)).
+fof(d_0216, axiom, disjoint(frBe, frCh)).
+fof(d_0217, axiom, disjoint(frBe, frFr)).
+fof(d_0218, axiom, disjoint(frBe, frLu)).
+fof(d_0219, axiom, disjoint(frCa, frCh)).
+fof(d_0220, axiom, disjoint(frCa, frFr)).
+fof(d_0221, axiom, disjoint(frCa, frLu)).
+fof(d_0222, axiom, disjoint(frCh, frFr)).
+fof(d_0223, axiom, disjoint(frCh, frLu)).
+fof(d_0224, axiom, disjoint(frFr, frLu)).
+fof(d_0225, axiom, disjoint(ga, hr)).
+fof(d_0226, axiom, disjoint(ga, hu)).
+fof(d_0227, axiom, disjoint(ga, it)).
+fof(d_0228, axiom, disjoint(ga, lt)).
+fof(d_0229, axiom, disjoint(ga, lv)).
+fof(d_0230, axiom, disjoint(ga, mt)).
+fof(d_0231, axiom, disjoint(ga, nb)).
+fof(d_0232, axiom, disjoint(ga, nl)).
+fof(d_0233, axiom, disjoint(ga, pl)).
+fof(d_0234, axiom, disjoint(ga, pt)).
+fof(d_0235, axiom, disjoint(ga, ro)).
+fof(d_0236, axiom, disjoint(ga, sk)).
+fof(d_0237, axiom, disjoint(ga, sl)).
+fof(d_0238, axiom, disjoint(ga, sv)).
+fof(d_0239, axiom, disjoint(hr, hu)).
+fof(d_0240, axiom, disjoint(hr, it)).
+fof(d_0241, axiom, disjoint(hr, lt)).
+fof(d_0242, axiom, disjoint(hr, lv)).
+fof(d_0243, axiom, disjoint(hr, mt)).
+fof(d_0244, axiom, disjoint(hr, nb)).
+fof(d_0245, axiom, disjoint(hr, nl)).
+fof(d_0246, axiom, disjoint(hr, pl)).
+fof(d_0247, axiom, disjoint(hr, pt)).
+fof(d_0248, axiom, disjoint(hr, ro)).
+fof(d_0249, axiom, disjoint(hr, sk)).
+fof(d_0250, axiom, disjoint(hr, sl)).
+fof(d_0251, axiom, disjoint(hr, sv)).
+fof(d_0252, axiom, disjoint(hu, it)).
+fof(d_0253, axiom, disjoint(hu, lt)).
+fof(d_0254, axiom, disjoint(hu, lv)).
+fof(d_0255, axiom, disjoint(hu, mt)).
+fof(d_0256, axiom, disjoint(hu, nb)).
+fof(d_0257, axiom, disjoint(hu, nl)).
+fof(d_0258, axiom, disjoint(hu, pl)).
+fof(d_0259, axiom, disjoint(hu, pt)).
+fof(d_0260, axiom, disjoint(hu, ro)).
+fof(d_0261, axiom, disjoint(hu, sk)).
+fof(d_0262, axiom, disjoint(hu, sl)).
+fof(d_0263, axiom, disjoint(hu, sv)).
+fof(d_0264, axiom, disjoint(it, lt)).
+fof(d_0265, axiom, disjoint(it, lv)).
+fof(d_0266, axiom, disjoint(it, mt)).
+fof(d_0267, axiom, disjoint(it, nb)).
+fof(d_0268, axiom, disjoint(it, nl)).
+fof(d_0269, axiom, disjoint(it, pl)).
+fof(d_0270, axiom, disjoint(it, pt)).
+fof(d_0271, axiom, disjoint(it, ro)).
+fof(d_0272, axiom, disjoint(it, sk)).
+fof(d_0273, axiom, disjoint(it, sl)).
+fof(d_0274, axiom, disjoint(it, sv)).
+fof(d_0275, axiom, disjoint(itCh, itIt)).
+fof(d_0276, axiom, disjoint(lt, lv)).
+fof(d_0277, axiom, disjoint(lt, mt)).
+fof(d_0278, axiom, disjoint(lt, nb)).
+fof(d_0279, axiom, disjoint(lt, nl)).
+fof(d_0280, axiom, disjoint(lt, pl)).
+fof(d_0281, axiom, disjoint(lt, pt)).
+fof(d_0282, axiom, disjoint(lt, ro)).
+fof(d_0283, axiom, disjoint(lt, sk)).
+fof(d_0284, axiom, disjoint(lt, sl)).
+fof(d_0285, axiom, disjoint(lt, sv)).
+fof(d_0286, axiom, disjoint(lv, mt)).
+fof(d_0287, axiom, disjoint(lv, nb)).
+fof(d_0288, axiom, disjoint(lv, nl)).
+fof(d_0289, axiom, disjoint(lv, pl)).
+fof(d_0290, axiom, disjoint(lv, pt)).
+fof(d_0291, axiom, disjoint(lv, ro)).
+fof(d_0292, axiom, disjoint(lv, sk)).
+fof(d_0293, axiom, disjoint(lv, sl)).
+fof(d_0294, axiom, disjoint(lv, sv)).
+fof(d_0295, axiom, disjoint(mt, nb)).
+fof(d_0296, axiom, disjoint(mt, nl)).
+fof(d_0297, axiom, disjoint(mt, pl)).
+fof(d_0298, axiom, disjoint(mt, pt)).
+fof(d_0299, axiom, disjoint(mt, ro)).
+fof(d_0300, axiom, disjoint(mt, sk)).
+fof(d_0301, axiom, disjoint(mt, sl)).
+fof(d_0302, axiom, disjoint(mt, sv)).
+fof(d_0303, axiom, disjoint(nb, nl)).
+fof(d_0304, axiom, disjoint(nb, pl)).
+fof(d_0305, axiom, disjoint(nb, pt)).
+fof(d_0306, axiom, disjoint(nb, ro)).
+fof(d_0307, axiom, disjoint(nb, sk)).
+fof(d_0308, axiom, disjoint(nb, sl)).
+fof(d_0309, axiom, disjoint(nb, sv)).
+fof(d_0310, axiom, disjoint(nl, pl)).
+fof(d_0311, axiom, disjoint(nl, pt)).
+fof(d_0312, axiom, disjoint(nl, ro)).
+fof(d_0313, axiom, disjoint(nl, sk)).
+fof(d_0314, axiom, disjoint(nl, sl)).
+fof(d_0315, axiom, disjoint(nl, sv)).
+fof(d_0316, axiom, disjoint(nlBe, nlNl)).
+fof(d_0317, axiom, disjoint(pl, pt)).
+fof(d_0318, axiom, disjoint(pl, ro)).
+fof(d_0319, axiom, disjoint(pl, sk)).
+fof(d_0320, axiom, disjoint(pl, sl)).
+fof(d_0321, axiom, disjoint(pl, sv)).
+fof(d_0322, axiom, disjoint(pt, ro)).
+fof(d_0323, axiom, disjoint(pt, sk)).
+fof(d_0324, axiom, disjoint(pt, sl)).
+fof(d_0325, axiom, disjoint(pt, sv)).
+fof(d_0326, axiom, disjoint(ptBr, ptPt)).
+fof(d_0327, axiom, disjoint(ro, sk)).
+fof(d_0328, axiom, disjoint(ro, sl)).
+fof(d_0329, axiom, disjoint(ro, sv)).
+fof(d_0330, axiom, disjoint(sk, sl)).
+fof(d_0331, axiom, disjoint(sk, sv)).
+fof(d_0332, axiom, disjoint(sl, sv)).
+fof(d_0333, axiom, disjoint(svFi, svSe)).
+
+% ─── Unique Name Assumption ───────────────────────────────────────────
+% SKIPPED (--no-una): UNA is implicit from tree structure + sibling
+% and base language disjointness. All constants provably distinct via:
+%   - leq antisymmetry + disj_downward + disj_irrefl
+
+%--------------------------------------------------------------------------
+% Summary: 68 concept + 43 leq + 334 disjoint + 0 UNA = 445 axioms
+%--------------------------------------------------------------------------

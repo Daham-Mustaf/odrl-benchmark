@@ -6,6 +6,11 @@ Machine-verified meta-theorems for the ODRL constraint conflict detection framew
 
 ```bash
 ~/Downloads/Isabelle2025-2.app/bin/isabelle build -d ~/Desktop/tptp-odrl/Isabelle ODRL_Grounding
+
+~/Downloads/Isabelle2025-2.app/bin/isabelle jedit \
+  -d ~/Desktop/tptp-odrl/Isabelle \
+  ~/Desktop/tptp-odrl/Isabelle/ODRL_Grounding.thy
+  
 ```
 
 ## Verified Results (17 theorems, 0 sorry)

@@ -6,4 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "matplotlib>=3.10.8",
+    "rdflib>=7.6.0",
+    "setuptools<81",
+    "z3-solver==4.12.2.0",
 ]
