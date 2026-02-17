@@ -1,3 +1,4 @@
+```markdown
 # TPTP-ODRL Benchmark Suite
 
 **Automated Reasoning for ODRL Policy Conflict Detection**
@@ -21,61 +22,59 @@ automated conflict detection. Each constraint maps to a *denotation*
 intersection testing under a three-valued verdict: **Conflict**,
 **Compatible**, or **Unknown**.
 
-96 problems encoded in TPTP FOF. Vampire solves 88/96 (8 timeout, 0 wrong).
+**146 problems** encoded in TPTP FOF across 20 categories. Designed for ATP evaluation and TPTP library submission.
+
 ---
 
 ## 2. Architecture: Two-Layer Stack
 
 ```
-Layer 0   Domain KBs     GEO000-0.ax, DPV000-0.ax, LANG000-0.ax   Domain facts
-Layer 1   ODRL Core      ODRL000-0.ax                               KB properties + denotation rules
-Layer 2   Problems       ODRL0xx-1.p                                 Per-problem axioms + conjecture
+Layer 0   Domain KBs     GEO000-0.ax, DPV000-0.ax, LANG000-0.ax, ISO3166-0.ax
+Layer 1   ODRL Core      ODRL000-0.ax, RUNTIME000-0.ax, ALIGN000-0.ax
+Layer 2   Problems       ODRL0xx-1.p (per-problem axioms + conjecture)
 ```
 
 A higher layer never modifies a lower one. Problems include Layer 0
 and Layer 1 via TPTP `include()` directives, then add per-problem
-axioms (value lists, list closures) and the conjecture.
+axioms (value lists, list closures, inline KB fragments) and the conjecture.
 
 ### Layer 0 — Domain Knowledge Bases
 
-Three production KBs generated from real-world standards:
+Four production KBs generated from real-world standards:
 
-| File | Domain | \|C\| | Edges | Disjoint | Structure | Source | Generator |
-|------|--------|:-----:|:-----:|:--------:|-----------|--------|-----------|
-| `GEO000-0.ax` | Spatial (Europe) | 58 | 57 | 315 | Tree | UN M49 | `gen_layer0_geo.py` |
-| `DPV000-0.ax` | Purpose | 95 | 100 | 279 | DAG | W3C DPV v2 | `gen_layer0_kb.py` |
-| `LANG000-0.ax` | Language | 68 | 43 | 334 | Forest | BCP 47 | `gen_layer0_lang.py` |
+| File | Domain | \|C\| | Edges | Disjoint | Structure | Source |
+|------|--------|:-----:|:-----:|:--------:|-----------|--------|
+| `GEO000-0.ax` | Spatial (Europe) | 58 | 57 | 315 | Tree | UN M49 |
+| `DPV000-0.ax` | Purpose | 95 | 100 | 279 | DAG | W3C DPV v2 |
+| `LANG000-0.ax` | Language | 68 | 43 | 334 | Forest | BCP 47 |
+| `ISO3166-0.ax` | Country Codes | 6 | 5 | 15 | Tree | ISO 3166-1 |
 
 All KBs use `--no-una` (no Unique Name Assumption axioms). For tree/forest
-KBs, UNA is implicit from sibling disjointness (see §6). For the DAG KB,
-DAG-safe sibling disjointness is used (see §5).
+KBs, UNA is implicit from sibling disjointness (§6). For the DAG KB,
+DAG-safe sibling disjointness is used (§5).
 
 **Predicates** (uniform across all KBs):
-- `concept/1` — concept membership (Definition 2: C)
-- `leq/2` — direct subsumption/containment edges (Definition 2: ≤)
-- `disjoint/2` — pairwise disjointness (Definition 2: ⊥⊥)
+- `concept/1` — concept membership
+- `leq/2` — subsumption/containment edges
+- `disjoint/2` — pairwise disjointness
 
-Layer 1 provides reflexivity, transitivity of `leq` and symmetry,
-irreflexivity, downward closure of `disjoint`.
+### Layer 1 — ODRL Core (3 files, 51 axioms total)
 
-### Layer 1 — ODRL Core (`ODRL000-0.ax`, 33 axioms)
-
-Five parts, all domain-independent:
-
-| Part | Axioms | Content |
+| File | Axioms | Content |
 |------|:------:|---------|
-| A | 9 | Structural predicates (policy, constraint, operand typing) |
-| B | 6 | KB properties: `leq` reflexive/transitive/typed, `disjoint` symmetric/irreflexive/downward-closed |
-| C | 2 | Derived: disjointness–order consistency (Lemma 1), contrapositive |
-| D | 10 | Denotation rules for single-valued operators (eq, neq, isA, isPartOf, hasPart) |
-| E | 6 | Denotation rules for set-valued operators (isAnyOf, isAllOf, isNoneOf) |
+| `ODRL000-0.ax` | 33 | KB properties + denotation rules (Parts A–E) |
+| `RUNTIME000-0.ax` | 8 | Runtime context (`assigns/2`, `satisfies/3`) |
+| `ALIGN000-0.ax` | 10 | Cross-dataspace alignment (`align/2`) |
 
-All denotation rules are **bidirectional** (if + only-if). Without
-only-if rules, provers satisfy implications trivially by setting
-`in_denotation := true` for all inputs (open-world frame problem).
+**ODRL000-0.ax** (33 axioms):
+- Part A (9): Structural predicates
+- Part B (6): KB properties (reflexivity, transitivity, symmetry, irreflexivity, downward closure)
+- Part C (2): Derived consistency lemmas
+- Part D (10): Single-valued operators (eq, neq, isA, isPartOf, hasPart)
+- Part E (6): Set-valued operators (isAnyOf, isAllOf, isNoneOf)
 
-Key axiom `leq_typed` ensures `leq(X,Y) => concept(X) & concept(Y)`,
-faithfully encoding "≤ is a relation on C" (Definition 2).
+All denotation rules are **bidirectional** (if + only-if). Key axiom `leq_typed`
+ensures `leq(X,Y) => concept(X) & concept(Y)`.
 
 ---
 
@@ -91,10 +90,6 @@ faithfully encoding "≤ is a relation on C" (Definition 2).
 | `isPartOf` | `{x ∈ C \| x ≤ g}` | `in_denotation(X, G, isPartOf)` |
 | `hasPart` | `{x ∈ C \| g ≤ x}` | `in_denotation(X, G, hasPart)` |
 
-`isA` and `isPartOf` have identical denotation rules — the semantic
-distinction is carried by the KB's ≤ relation (taxonomic ⊑ vs
-mereological ⪯), not the operator label.
-
 ### 3.2 Set-Valued (Layer 1, Part E)
 
 | Operator | Denotation | Predicate |
@@ -103,14 +98,11 @@ mereological ⪯), not the operator label.
 | `isAllOf` | `{x ∈ C \| ∀i: x ≤ gᵢ}` | `in_denotation_set(X, L, isAllOf)` |
 | `isNoneOf` | `C \ ∪ᵢ {x ∈ C \| x ≤ gᵢ}` | `in_denotation_set(X, L, isNoneOf)` |
 
-Set-valued operators use auxiliary predicate `in_value_list(G, ListId)`.
-Per-problem **list closure axioms** enumerate the list exhaustively:
-```
+Set-valued operators require per-problem **list closure axioms**:
+```fof
 fof(list_closed, axiom, ![G]: (in_value_list(G, myList)
     => (G = val1 | G = val2 | G = val3))).
 ```
-This is necessary because FOL is open-world: without closure, Vampire
-can invent phantom list members that defeat isNoneOf proofs.
 
 ---
 
@@ -122,61 +114,31 @@ can invent phantom list members that defeat isNoneOf proofs.
 | Conflict | `¬∃x(den₁(x) ∧ den₂(x))` | Theorem |
 | Unknown | either | CounterSatisfiable / Timeout |
 
-The **prover encoding** negates all CounterSatisfiable conjectures so
-that every expected verdict maps to **Theorem**. This avoids the CSA
-ambiguity where "insufficient axioms" and "provably disjoint" both
-return CounterSatisfiable.
-
-All problems are in the **EPR fragment** (function-free, finite
-constants, universally quantified implications). Decidable; typical
-proof times 0.1–1.4s.
+All problems use **prover encoding** (negated Conflict conjectures → all expected results are Theorem).
 
 ---
 
 ## 5. DAG-Safe Sibling Disjointness
 
 Real-world ontologies like W3C DPV have DAG structure (concepts with
-multiple parents). Naïve sibling disjointness — asserting all children
-of the same parent are pairwise disjoint — produces contradictions when
-a multi-parent concept `m` descends from two siblings `a` and `b`:
+multiple parents). Naïve sibling disjointness produces contradictions when
+a multi-parent concept `m` descends from two siblings `a` and `b`.
 
-```
-disjoint(a, b)  ∧  leq(m, a)  ∧  leq(m, b)
-  → disjoint(m, m)              [disj_downward]
-  → ⊥                           [disj_irrefl]
-```
+**DAG-safe generation** asserts `disjoint(a, b)` only when `↓a ∩ ↓b = ∅`.
 
-**DAG-safe generation** (Definition 3b) asserts `disjoint(a, b)` only
-when the downward closures are disjoint: `↓a ∩ ↓b = ∅`.
+DPV Purpose taxonomy: 285 total sibling pairs, **279 safe**, 6 protected.
 
-DPV Purpose taxonomy: 285 total sibling pairs, 279 safe, 6 protected.
-
-| Multi-Parent Concept | Parent A | Parent B | Overlap |
-|---------------------|----------|----------|:-------:|
-| `commercialResearch` | `commercialPurpose` | `researchAndDevelopment` | 1 |
-| `nonCommercialResearch` | `nonCommercialPurpose` | `researchAndDevelopment` | 1 |
-| `personalisedAdvertising` | `marketing` | `personalisation` | 2 |
-| `servicePersonalisation` | `personalisation` | `serviceProvision` | 6 |
-| `communicationForCustomerCare` | `communicationManagement` | `customerManagement` | 1 |
-| `improveInternalCRMProcesses` | `customerManagement` | `serviceProvision` | 1 |
-
-**Theorem (Soundness).** DAG-safe generation never introduces
-contradictions. If `∃m: m ≤ a ∧ m ≤ b`, then `disjoint(a, b)` is
-not asserted, so `disj_downward + disj_irrefl` cannot derive ⊥. □
+**Theorem (Soundness).** DAG-safe generation never introduces contradictions. □
 
 ---
 
 ## 6. Implicit UNA Lemma
 
 For tree-structured KBs with sibling disjointness at every level,
-the Unique Name Assumption is derivable from KB axioms alone:
+the Unique Name Assumption is derivable from KB axioms alone via
+`leq` antisymmetry + `disj_downward` + `disj_irrefl`.
 
-**Lemma (Implicit UNA).** Let K = (C, ≤, ⊥⊥) where (C, ≤) forms a
-tree with sibling disjointness at every level. Then for all distinct
-constants a, b ∈ C: a ≠ b is derivable via `leq` antisymmetry +
-`disj_downward` + `disj_irrefl`.
-
-This eliminates C(n,2) pairwise distinctness axioms per KB:
+This eliminates C(n,2) pairwise distinctness axioms:
 
 | KB | \|C\| | UNA axioms saved |
 |----|:-----:|:----------------:|
@@ -186,131 +148,70 @@ This eliminates C(n,2) pairwise distinctness axioms per KB:
 | **Total** | | **8,396** |
 
 ---
----
-## 6.5 Advanced Suite (Categories 9–14, ODRL100–153)
-28 additional problems for comprehensive ATP evaluation:
-- **Cat 9**: DAG Multi-Parent (100–105, 6) — Note 1 validation + ablation
-- **Cat 10**: Nested Set Operators (110–114, 5) — isAllOf/isAnyOf/isNoneOf interaction
-- **Cat 11**: Quantifier Stress (120–123, 4) — ∀∃ alternation patterns
-- **Cat 12**: Large Composition (130–132, 3) — 3-operand AND, 5-way existential
-- **Cat 13**: Edge Cases (140–145, 6) — Degenerate KBs, reflexivity, tautologies
-- **Cat 14**: Multi-Hop Alignment (150–153, 4) — 3-KB chain: GEO→ISO→SYNTH
 
-Generated separately via `gen_advanced_suite.py` for TPTP library submission.
+## 7. Benchmark Problems (146 total)
 
-## 7. Benchmark Problems (96 total)
+### 7.1 Workshop Suite (Categories 1–8, ODRL010–095, 68 problems)
 
-### 7.1 Basic Operators (010–019, 10 problems)
+| Category | Range | Count | Focus |
+|----------|-------|:-----:|-------|
+| 1 | 010–019 | 10 | Basic operators (eq, isPartOf, isA, hasPart, neq) |
+| 2 | 020–025 | 6 | Set-valued operators (isAnyOf, isAllOf, isNoneOf) |
+| 3 | 030–037 | 8 | Constraint subsumption |
+| 4 | 040–047 | 8 | Multi-operand composition (GEO×DPV) |
+| 5 | 050–055 | 6 | Edge cases (leaf/root, self-overlap) |
+| 6 | 060–069 | 10 | Advanced analysis (tautology, redundancy, partial overlap) |
+| 7 | 070–079 | 10 | Cross-KB composition patterns |
+| 8 | 080–095 | 10 | Ablation tests |
 
-| # | Operators | Verdict | KB |
-|---|-----------|---------|-----|
-| 010 | KB transitivity test | Valid | GEO |
-| 011 | `isPartOf` ∩ `isPartOf` (overlap) | Compatible | GEO |
-| 012 | `eq` ∩ `eq` (distinct values) | Conflict | GEO |
-| 013 | `isPartOf` ∩ `isPartOf` (disjoint branches) | Conflict | GEO |
-| 014 | `isA` ∩ `isA` (ancestor–descendant) | Compatible | GEO |
-| 015 | `isA` ∩ `eq` (disjoint) | Conflict | GEO |
-| 016 | `hasPart` ∩ `isPartOf` (upward ∩ downward) | Compatible | GEO |
-| 017 | `hasPart` ∩ `hasPart` (disjoint upward) | Conflict | GEO |
-| 018 | `neq` ∩ `isPartOf` | Compatible | GEO |
-| 019 | `eq` ∩ `neq` (same value) | Conflict | GEO |
+Generated via `gen_spatial_suite.py`.
 
-### 7.2 Set-Valued Operators (020–025, 6 problems)
+### 7.2 Advanced Suite (Categories 9–16, 20–21, ODRL100–175 + 230–254, 60 problems)
 
-| # | Operators | Verdict | KB |
-|---|-----------|---------|-----|
-| 020 | `isAnyOf` ∩ `isPartOf` | Compatible | GEO |
-| 021 | `isNoneOf` ∩ `isPartOf` | Compatible | GEO |
-| 022 | `isAnyOf` ∩ `isNoneOf` | Conflict | GEO |
-| 023 | `isAllOf` ∩ `isNoneOf` | Conflict | GEO |
-| 024 | `isAnyOf` ∩ `isNoneOf` (partial) | Compatible | GEO |
-| 025 | `isAnyOf` ∩ `isNoneOf` (total cover) | Conflict | GEO |
+| Category | Range | Count | Focus |
+|----------|-------|:-----:|-------|
+| 9 | 100–105 | 6 | DAG Multi-Parent (NAIVE vs DAG-safe) |
+| 10 | 110–114 | 5 | Nested Set Operators |
+| 11 | 120–123 | 4 | Quantifier Stress (∀∃ alternation) |
+| 12 | 130–132 | 3 | Large-Scale Composition (3-operand AND, 5-way ∃) |
+| 13 | 140–145 | 6 | Edge Cases & Adversarial |
+| 14 | 150–159 | 11 | Multi-Hop Alignment (2–3 hop, witness-loss bug) |
+| 15 | 160–165 | 6 | N-Way Conflicts (non-transitive compatibility) |
+| 16 | 170–175 | 6 | N-Way Composed (multi-dim × N-way) |
+| 20 | 230–237 | 8 | XONE / Symmetric Difference (negative reasoning) |
+| 21 | 250–254 | 5 | Operator Monotonicity (meta-properties) |
 
-### 7.3 Constraint Subsumption (030–037, 8 problems)
+Generated via `gen_advanced_suite.py`.
 
-| # | Test | Verdict | KB |
-|---|------|---------|-----|
-| 030 | `isPartOf(germany) ⊆ isPartOf(wE)` | Confirmed | GEO |
-| 031 | `isPartOf(wE) ⊆ isPartOf(germany)` | Refuted | GEO |
-| 032–034 | Various `isA` subsumption | Confirmed | GEO |
-| 035 | Subsumption between disjoint operators | Conflict | GEO |
-| 036 | Cross-operator: `isPartOf ⊆ neq` | Confirmed | GEO |
-| 037 | Cross-operator: `neq ⊆ isPartOf` | Refuted | GEO |
+**Key Problems:**
+- **ODRL100**: NAIVE DAG contradiction (exp: ContradictoryAxioms)
+- **ODRL158–159**: Witness-loss bug (Prop 2(2) counterexample)
+- **ODRL162**: Non-transitive compatibility (THE N-way insight)
+- **ODRL233**: XONE failure (DAG-safe epistemic gap)
+- **ODRL250–254**: Universal monotonicity theorems
 
-### 7.4 Multi-Operand Composition (040–047, 8 problems)
+### 7.3 Extreme Suite (Categories 17–19, ODRL200–225, 18 problems)
 
-Uses both GEO (spatial) and DPV (purpose) KBs per problem.
+| Category | Range | Count | Focus |
+|----------|-------|:-----:|-------|
+| 17 | 200–205 | 6 | Set Operator Stress (deep isNoneOf/isAllOf/isAnyOf) |
+| 18 | 210–215 | 6 | Combined Complexity (multi-hop + N-way + DAG + runtime) |
+| 19 | 220–225 | 6 | Adversarial Operators (boundary cases, non-partition) |
 
-| # | Mode | Spatial | Purpose | Verdict |
-|---|------|---------|---------|---------|
-| 040 | AND | Compatible | Compatible | Compatible |
-| 041 | AND | Compatible | Conflict | Conflict |
-| 042 | OR | Conflict | Compatible | Compatible |
-| 043 | OR | Conflict | Conflict | Conflict |
-| 044 | AND | Conflict | Conflict | Conflict |
-| 045 | XONE | Conflict | Compatible | Compatible |
-| 046 | XONE | Compatible | Compatible | Unknown |
-| 047 | XONE | Conflict | Conflict | Conflict |
+Generated via `gen_extreme_suite.py`.
 
-### 7.5 Edge Cases (050–055, 6 problems)
+**Difficulty:** 11 Very Hard, 7 Extreme. Tests combinatorial depth without new syntax.
 
-| # | Test | Verdict | KB |
-|---|------|---------|-----|
-| 050 | `hasPart(leaf)` ∩ `isPartOf(root)` | Compatible | GEO |
-| 051 | `hasPart(germany)` ∩ `eq(world)` | Compatible | GEO |
-| 052 | Self-overlap: same constraint | Compatible | GEO |
-| 053 | Deep chain: `isPartOf(leaf)` ∩ `hasPart(root)` | Compatible | GEO |
-| 054 | Subsumption: `isPartOf(child) ⊆ isPartOf(parent)` | Confirmed | GEO |
-| 055 | `hasPart` asymmetry test | Refuted | GEO |
+**ODRL215** (Ultimate): 4 KBs × 3 policies × 3 operands × set ops × DAG alignment.
 
-### 7.6 Advanced Analysis (060–069, 10 problems)
+### 7.4 Combined Results
 
-| # | Test | Verdict | KB |
-|---|------|---------|-----|
-| 060 | Tautology: `isPartOf(root) = C` | Tautological | GEO |
-| 061–062 | Non-subsumption tests | Non-subsuming | GEO |
-| 063–064 | Redundancy detection | Redundant | GEO |
-| 065 | Non-subsuming cross-operator | Non-subsuming | GEO |
-| 066–068 | Partial overlap (various depths) | Partial | GEO |
-| 069 | Full overlap | Full | GEO |
-
-### 7.7 Advanced Suite (100–153, 28 problems)
-See `gen_advanced_suite.py --summary` for full listing.
-
-### 7.8 Combined Results
-| Status | Count | % |
-|--------|:-----:|:-:|
-| ✓ Theorem (correct) | 88 | 91.7% |
-| ⏱ Timeout (60s) | 8 | 8.3% |
-| ✗ Wrong answer | 0 | 0% |
-| **Total** | **96** | |
-
-Expected timeouts: ODRL060 (universal), ODRL085/088/089 (ablation),
-ODRL130 (3-operand), ODRL145/152 (unknown verdicts), ODRL058 (split pending).
-
-### 7.7 Results Summary
-
-| Status | Count | % |
-|--------|:-----:|:-:|
-| ✓ Theorem (correct) | 46 | 95.8% |
-| ⏱ Timeout (60s) | 2 | 4.2% |
-| ✗ Wrong answer | 0 | 0% |
-| **Total** | **48** | |
-
-Timeouts: ODRL051 (hasPart chain to root, requires long transitive
-chain) and ODRL060 (tautology, requires universal proof over 58
-concepts). Both are genuinely hard — rated 1.00 in TPTP difficulty.
-
-### 7.8 Verdict Distribution
-
-| Verdict | Count |
-|---------|:-----:|
-| Compatible | 15 |
-| Conflict | 17 |
-| Confirmed (subsumption) | 7 |
-| Refuted (subsumption) | 4 |
-| Unknown | 1 |
-| Other (tautological, redundant, partial, full) | 4 |
+| Suite | Problems | Generator | Status |
+|-------|:--------:|-----------|--------|
+| Workshop | 68 | `gen_spatial_suite.py` | Production |
+| Advanced | 60 | `gen_advanced_suite.py` | Production |
+| Extreme | 18 | `gen_extreme_suite.py` | Production |
+| **Total** | **146** | | |
 
 ---
 
@@ -321,26 +222,45 @@ concepts). Both are genuinely hard — rated 1.00 in TPTP difficulty.
 ```bash
 # Single problem
 vampire --include Problems/ODRL --mode casc \
-    Problems/ODRL/KBGrounding/Spatial/ODRL012-1.p
+    Problems/ODRL/KBGrounding/DAGMultiParent/ODRL100-1.p
 
-# All 48 problems with timing
-for f in Problems/ODRL/KBGrounding/Spatial/ODRL*-1.p; do
+# Advanced suite summary
+python gen_advanced_suite.py --summary
+
+# Extreme suite summary
+python gen_extreme_suite.py --summary
+
+# Run all problems
+for f in Problems/ODRL/KBGrounding/*/*.p; do
     echo -n "$(basename $f): "
     vampire --include Problems/ODRL --time_limit 60 --mode casc \
         "$f" 2>&1 | grep "SZS status"
 done
 ```
 
+### Regenerating Problems
+
+```bash
+# Workshop suite (68 problems)
+python gen_spatial_suite.py -o Problems/ODRL/KBGrounding/Spatial --encoding prover
+
+# Advanced suite (60 problems)
+python gen_advanced_suite.py --outdir Problems/ODRL
+
+# Extreme suite (18 problems)
+python gen_extreme_suite.py --outdir Problems/ODRL
+```
+
 ### Regenerating KBs
 
 ```bash
 # GEO (tree, Europe subset of UN M49)
-uv run python gen_layer0_geo.py \
+python gen_layer0_geo.py \
     -o Problems/ODRL/Axioms/Layer0-DomainKB/GEO000-0.ax \
     --scope europe --sibling-disjointness --no-una
 
 # DPV (DAG, W3C Data Privacy Vocabulary)
-uv run python gen_layer0_kb.py \
+python gen_layer0_kb.py \
     -i data/dpv/dpv-owl.ttl \
     -o Problems/ODRL/Axioms/Layer0-DomainKB/DPV000-0.ax \
     -n "https://w3id.org/dpv#" -r Purpose -d taxonomic \
@@ -348,23 +268,10 @@ uv run python gen_layer0_kb.py \
     --name "W3C DPV Purpose" --source "https://w3id.org/dpv"
 
 # LANG (forest, BCP 47 language tags)
-uv run python gen_layer0_lang.py \
+python gen_layer0_lang.py \
     -o Problems/ODRL/Axioms/Layer0-DomainKB/LANG000-0.ax \
     --sibling-disjointness --base-disjointness --no-una
 ```
-
-### Regenerating Problems
-
-```bash
-# Generate + run all 48 problems
-uv run python gen_spatial_suite.py \
-    -o Problems/ODRL/KBGrounding/Spatial \
-    --encoding prover --run
-```
-
-### SMT-LIB (Z3)
-
-Z3 encoding planned for future release. The current suite is TPTP-only.
 
 ---
 
@@ -374,78 +281,69 @@ Z3 encoding planned for future release. The current suite is TPTP-only.
 tptp-odrl/
 ├── README.md
 ├── gen_layer0_kb.py                 L0 generator (OWL → TPTP, DAG-safe)
-├── gen_layer0_geo.py                L0 generator (UN M49, hardcoded)
-├── gen_layer0_lang.py               L0 generator (BCP 47, hardcoded)
-├── gen_spatial_suite.py             Problem generator (48 problems)
-├── data/
-│   └── dpv/dpv-owl.ttl             Source ontology for DPV
-├── Isabelle/                        Mechanical verification (22 theorems, 0 sorry)
+├── gen_layer0_geo.py                L0 generator (UN M49)
+├── gen_layer0_lang.py               L0 generator (BCP 47)
+├── gen_spatial_suite.py             Workshop suite (68 problems)
+├── gen_advanced_suite.py            Advanced suite (60 problems)
+├── gen_extreme_suite.py             Extreme suite (18 problems)
+├── data/dpv/dpv-owl.ttl            Source ontology for DPV
+├── Isabelle/                        Mechanical verification (22 theorems)
 ├── Problems/ODRL/
 │   ├── Axioms/
 │   │   ├── Layer0-DomainKB/
 │   │   │   ├── GEO000-0.ax         58 concepts, 430 axioms (tree)
 │   │   │   ├── DPV000-0.ax         95 concepts, 474 axioms (DAG-safe)
-│   │   │   └── LANG000-0.ax        68 concepts, 445 axioms (forest)
-│   │   └── Layer1-ODRLCore/
-│   │       └── ODRL000-0.ax        33 axioms (KB properties + denotation)
+│   │   │   ├── LANG000-0.ax        68 concepts, 445 axioms (forest)
+│   │   │   └── ISO3166-0.ax        6 concepts, 26 axioms (tree)
+│   │   ├── Layer1-ODRLCore/
+│   │   │   ├── ODRL000-0.ax        33 axioms (KB properties + denotation)
+│   │   │   ├── RUNTIME000-0.ax     8 axioms (runtime context)
+│   │   │   └── ALIGN000-0.ax       10 axioms (cross-dataspace alignment)
+│   │   └── Alignment/
+│   │       └── ALIGN-GEO-ISO.ax    6 axioms (GEO→ISO alignment data)
 │   └── KBGrounding/
-│       └── Spatial/
-│           ├── ODRL010-1.p          Basic operators (10)
-│           ├── ODRL020-1.p          Set-valued operators (6)
-│           ├── ODRL030-1.p          Subsumption (8)
-│           ├── ODRL040-1.p          Composition GEO×DPV (8)
-│           ├── ODRL050-1.p          Edge cases (6)
-│           └── ODRL060-1.p          Advanced analysis (10)
+│       ├── Spatial/                 Workshop suite (68)
+│       ├── DAGMultiParent/          Category 9 (6)
+│       ├── NestedSetOperators/      Category 10 (5)
+│       ├── QuantifierStress/        Category 11 (4)
+│       ├── LargeComposition/        Category 12 (3)
+│       ├── EdgeCases/               Category 13 (6)
+│       ├── MultiHopAlignment/       Category 14 (11)
+│       ├── NWayConflict/            Category 15 (6)
+│       ├── NWayComposed/            Category 16 (6)
+│       ├── SetOperatorStress/       Category 17 (6)
+│       ├── CombinedComplexity/      Category 18 (6)
+│       ├── AdversarialOperators/    Category 19 (6)
+│       ├── XONESymmetricDiff/       Category 20 (8)
+│       └── OperatorMonotonicity/    Category 21 (5)
 └── results/
-    └── benchmark_prover_*.csv       Vampire results
+    └── benchmark_results.csv        Vampire results
 ```
 
 ---
 
 ## 10. Key Design Decisions
 
-**Why two layers instead of three?** The original Layer 2 (GROUND000-1.ax)
-separated denotation rules from KB properties. This created an unnecessary
-indirection — denotation rules are domain-independent and belong with KB
-axioms in Layer 1. The 2-layer architecture is simpler and all problems
-use the same axiom file.
+**Why two layers?** Denotation rules are domain-independent and belong with KB axioms. Simpler than 3-layer architecture.
 
-**Why bidirectional denotation rules?** Sufficient conditions alone allow
-`in_denotation := true` everywhere in open-world FOL. Necessary conditions
-constrain witness properties, enabling conflict proofs.
+**Why bidirectional denotation rules?** Prevents open-world frame problem (`in_denotation := true` everywhere).
 
-**Why `leq_typed`?** FOL is untyped. Without `leq(X,Y) => concept(X) &
-concept(Y)`, Vampire can invent phantom elements with `leq` relationships
-but no `concept` membership, defeating `neq` and subsumption proofs.
-This faithfully encodes "≤ is a relation on C" from Definition 2.
+**Why `leq_typed`?** Faithfully encodes "≤ is a relation on C" — prevents phantom elements.
 
-**Why list closure axioms?** Set-valued operators (`isNoneOf`, `isAllOf`)
-require universally quantifying over list members. In open-world FOL,
-without `![G]: (in_value_list(G, L) => (G = v1 | G = v2 | ...))`,
-Vampire can invent phantom list members that defeat the universal.
+**Why list closure axioms?** Prevents phantom list members in open-world FOL.
 
-**Why no UNA?** Tree + sibling disjointness makes all constants provably
-distinct (Implicit UNA Lemma, §6). This saves 8,396 axioms across three
-KBs and eliminates SInE pruning issues.
+**Why no UNA?** Tree + sibling disjointness makes constants provably distinct (saves 8,396 axioms).
 
-**Why DAG-safe disjointness?** Real ontologies have multi-parent concepts.
-Naïve sibling disjointness produces contradictions. DAG-safe generation
-(Definition 3b) preserves 98% of disjointness pairs while guaranteeing
-consistency (§5).
+**Why DAG-safe disjointness?** Preserves 98% of disjointness pairs while guaranteeing consistency for multi-parent concepts.
 
-**Why prover encoding (all Theorem)?** The original encoding produced
-mixed SZS statuses (Theorem for Compatible, CounterSatisfiable for
-Conflict). CounterSatisfiable is ambiguous — it conflates "provably
-disjoint" with "insufficient axioms". The prover encoding negates
-Conflict conjectures so all expected results are Theorem.
+**Why prover encoding?** All expected results map to Theorem (avoids CounterSatisfiable ambiguity).
 
 ---
 
 ## 11. Prover Details
 
-**Vampire** (CASC mode, `--mode casc`, `--time_limit 60`).
-Typical: 0.1s for basic problems, 1.4s for isNoneOf with partial
-overlap. Two problems timeout at 60s.
+**Vampire** (CASC mode, `--mode casc`, `--time_limit 60`).  
+Typical: 0.1–1.4s. All problems in EPR fragment (decidable).
 
 **Z3** encoding planned for future release.
 
@@ -455,16 +353,25 @@ overlap. Two problems timeout at 60s.
 
 | Version | Changes | Problems |
 |---------|---------|:--------:|
-| 0.1 | Initial eq, isPartOf, isA | 6 |
-| 0.2 | Bidirectional denotation discovery | 15 |
-| 0.3–0.5 | Set operators (isAnyOf, isAllOf, isNoneOf) | 29 |
-| 0.6–0.9 | Cross-dataspace, SMT-LIB, extended operators | 154 |
-| 1.0–1.2 | Operator pairs, adversarial, alignment | 154/154 |
-| **2.0** | **Complete rewrite: 2-layer architecture** | |
-| | DAG-safe DPV (95 concepts, 279 disjoint pairs) | |
-| | Implicit UNA Lemma (saves 8,396 axioms) | |
-| | `leq_typed` + list closure fixes | |
-| | Prover encoding (all Theorem) | **48 (46 solved)** |
+| 0.1–1.2 | Iterative development | 154 |
+| **2.0** | Complete rewrite: 2-layer architecture, DAG-safe DPV, Implicit UNA | 48 |
+| **2.1** | Advanced suite (Categories 9–14) | 96 |
+| **3.0** | **Extended benchmark: Advanced + Extreme suites** | **146** |
+| | Categories 15–16 (N-way analysis) | |
+| | Categories 17–19 (Extreme suite) | |
+| | Categories 20–21 (XONE + Monotonicity) | |
+| | Witness-loss bug demonstration (ODRL158–159) | |
+| | Multi-hop alignment (up to 4 dataspaces) | |
 
 ---
 
+## 13. Citation
+
+
+
+---
+
+**Authors:** Daham Mustafa (RWTH Aachen / Fraunhofer FIT), Geoff Sutcliffe (University of Miami)  
+**License:** MIT  
+**Status:** Production (v3.0, 146 problems)
+```
