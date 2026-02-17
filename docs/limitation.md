@@ -103,19 +103,45 @@ ODRL076: Load DPV with DAG-SAFE disjointness
 ```
 
 ---
+## Weakest Problems
 
-## **Summary Table:**
+**ODRL141** (single-concept KB) — `leq(universe, universe)` is trivially satisfiable in one step. Pure sanity check, zero reasoning depth.
 
-| **Axiom/Property** | **Paper Ref** | **Tested?** | **Priority** |
-|---|---|---|---|
-| KB Alignment | Def 8, Lemma 3, Prop 2, Cor 1 | ❌ | **HIGH** |
-| KB Monotonicity | Prop 3 | ❌ | **HIGH** |
-| Runtime Soundness | Thm 3 | ❌ | **HIGH** |
-| ⊤ handling | Def 3, 4, 5 | ❌ | **MEDIUM** |
-| Disjointness downward closure (direct) | Def 2 | ⚠️ implicit | **MEDIUM** |
-| Nominal domain (6 operands) | Def 2 | ❌ | **MEDIUM** |
-| Taxonomic (5 operands) | Def 2 | ❌ | **LOW** |
-| virtualLocation | Def 2 | ❌ | **LOW** |
-| DAG-safe disjointness | Note 1 | ❌ | **LOW** |
+**ODRL104** (naive ablation) — the KB is already inconsistent from ODRL100, so this just re-proves ⊥ → anything. Adds nothing over ODRL100 except pedagogically.
 
-**Recommendation:** Add 10-15 problems covering alignment (HIGH priority) and nominal domains (MEDIUM priority) to strengthen your empirical validation of the theoretical framework.
+**ODRL140/142** (eq ∩ neq) — tautological by definition. The prover just unfolds `den_eq_if` + `den_neq_onlyif` and gets a contradiction immediately. Loading 24 concepts in 142 doesn't change the proof path.
+
+**ODRL143** (reflexivity) — one-step: `leq_refl` → `den_isPartOf_if`. Done.
+
+**ODRL114** (isAllOf compatible) — wE ≤ europe makes the intersection trivially = ↓wE.
+
+These are all Easy-rated intentionally — they serve as baselines and sanity checks — but they don't stress any prover.
+
+## What's NOT Tested
+
+This is more important:
+
+**Temporal constraints** — ODRL has `dateTime`, `before`, `after`, `during` left operands. We have zero temporal KB. This is a whole dimension of policy conflict (e.g., permission valid 2024–2025 vs prohibition valid 2025–2026 → overlap in 2025).
+
+**Numeric/arithmetic constraints** — `count ≤ 5` vs `count > 3`, `payAmount`, `percentage`. Needs theory reasoning (LIA/LRA), not pure FOL. Big gap.
+
+**Action hierarchy** — every problem uses `odrl:use`. ODRL defines `play`, `display`, `distribute`, `modify` etc. with subsumption (`use` ⊇ `play`). Action conflict (permission to `play` vs prohibition to `use`) isn't tested.
+
+**OR composition** — we test AND (Theorem 2: one Conflict operand → composed Conflict). OR composition has different semantics (one Compatible → composed Compatible). Not covered.
+
+**Duty/obligation semantics** — all problems are permission vs prohibition. ODRL duties attached to permissions (e.g., "permission to use IF you attribute") are a distinct deontic pattern. Untested.
+
+**Party/assignee constraints** — `assignee isA dpv:DataProcessor` vs `assignee eq acme:Corp`. Organizational hierarchies for parties aren't modeled.
+
+**Runtime + alignment** — Cat 8 tests runtime (single-KB), Cat 14 tests alignment (no runtime). The combination — runtime satisfaction checking across aligned dataspaces — isn't tested.
+
+**n-way policy conflicts** — everything is pairwise (policyA vs policyB). Real dataspaces may have 3+ conflicting policies simultaneously.
+
+**Large-scale KB stress** — GEO has 24 concepts, DPV fragment has 6. Real DPV Purpose taxonomy has 100+. No scalability stress test with hundreds of concepts.
+
+**Mixed set operators across alignment** — e.g., `isAnyOf({dE, fR})` in ISO vs `isNoneOf({zoneEast})` in SYNTH through alignment. Set operators + multi-hop together aren't combined.
+
+## Recommendation
+
+The biggest gaps by impact are **temporal** and **numeric** — these are what real ODRL policies use most. But they require fundamentally different axiomatization (temporal intervals, arithmetic theories) that may be out of scope for a pure FOL TPTP benchmark. Worth flagging as future work in the submission though.
+

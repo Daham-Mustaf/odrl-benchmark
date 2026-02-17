@@ -31,7 +31,7 @@
 % One-liner : DAG-safe: conflict propagation acR ⊥ sP via R&D
 % Difficulty: Hard
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-16
+% Date     : 2026-02-17
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

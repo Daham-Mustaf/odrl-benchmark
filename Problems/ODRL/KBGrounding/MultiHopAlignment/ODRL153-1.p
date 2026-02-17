@@ -18,7 +18,7 @@
 % One-liner : Intermediate: hop 1 derives disjoint(dE, pL)
 % Difficulty: Medium
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-16
+% Date     : 2026-02-17
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

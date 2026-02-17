@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-gen_advanced_suite.py — Generate TPTP Problems: Categories 9–14.
+gen_advanced_suite.py — Generate TPTP Problems: Categories 9–15.
 
-Produces 32 .p files testing advanced reasoning patterns for ODRL
+Produces 38 .p files testing advanced reasoning patterns for ODRL
 policy conflict detection in European data spaces.
 
 Categories:
@@ -12,14 +12,10 @@ Categories:
   12 — Large-Scale Composition (ODRL130–132) Multi-operand AND / 5-way ∃
   13 — Edge Cases & Adversarial (ODRL140–145) Degenerate / pathological KBs
   14 — Multi-Hop Alignment (ODRL150–157)     2–3 hop, up to 4 dataspaces
+  15 — N-Way Policy Conflicts (ODRL160–165)  3–4 policies simultaneously
 
 Usage:
-  
-    uv run python gen_advanced_suite.py --outdir Problems/ODRL          # normal
-    uv run python gen_advanced_suite.py --outdir Problems/ODRL --flip   # CounterSat→Theorem
-    uv run python gen_advanced_suite.py --summary                       # table only
-    uv run python gen_advanced_suite.py --dry-run                       # preview
-
+    uv run python gen_advanced_suite.py --outdir Problems/ODRL
 
 Authors: Mustafa, D. & Sutcliffe, G.
 """
@@ -88,6 +84,7 @@ CAT_DIR = {
     12: "KBGrounding/LargeComposition",
     13: "KBGrounding/EdgeCases",
     14: "KBGrounding/MultiHopAlignment",
+    15: "KBGrounding/NWayConflict",
 }
 
 
@@ -99,7 +96,8 @@ def problem_category(fn):
     if num < 130: return 11
     if num < 140: return 12
     if num < 150: return 13
-    return 14
+    if num < 160: return 14
+    return 15
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -259,7 +257,7 @@ fof(min_refl, axiom, leq(universe, universe))."""
 # Paper Note 1 — DAG-safe sibling disjointness generation
 # ═══════════════════════════════════════════════════════════════════════════
 
-P("ODRL100-1.p", "ContradictoryAxioms", "Inconsistent",
+P("ODRL100-1.p", "Theorem", "ContradictoryAxioms",
   "Note 1 — DAG Multi-Parent Contradiction (Naive)", "Medium",
   "(No ODRL policy — KB consistency test)\n"
   "%   Tests: naive sibling disjointness on DAG taxonomy causes ⊥.",
@@ -810,6 +808,436 @@ P("ODRL157-1.p", "Theorem", "Conflict",
   inc=("GEO", "ISO", "ALIGN_DATA", "ODRL", "ALIGN_THEORY"),
   pl="Intermediate: hop 2 derives disjoint(zoneWest, zoneEast)")
 
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CATEGORY 15: N-WAY POLICY CONFLICTS (ODRL160–165)
+# Tests 3+ policies simultaneously — not just pairwise.
+#
+# Key insight: pairwise conflict analysis is NECESSARY but not SUFFICIENT.
+# Compatibility is NOT transitive: Compatible(A,B) ∧ Compatible(B,C) ⊬ Compatible(A,C).
+# N-way analysis reveals patterns invisible to pairwise checking.
+#
+# Patterns tested:
+#   160 — 3-policy mutual exclusion (all C(3,2) = 3 pairs conflict)
+#   161 — 3-policy common witness (3-way ∃)
+#   162 — Non-transitive compatibility (A~B, B~C, A⊥C)
+#   163 — Multi-dimensional 3-way (spatial + purpose, mixed verdicts)
+#   164 — 4-policy subsumption chain (4-way ∃)
+#   165 — 4-policy one spoiler (D conflicts with B,C but not A)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# 160: 3-policy mutual exclusion — all 3 pairs conflict
+#   policyA: permission spatial isPartOf(germany)
+#   policyB: prohibition spatial isPartOf(france)
+#   policyC: prohibition spatial isPartOf(poland)
+#
+#   de ⊥ fr (siblings under wE)
+#   de ⊥ pl (disj_downward from wE ⊥ eE)
+#   fr ⊥ pl (disj_downward from wE ⊥ eE)
+#   Prove: all 3 pairwise intersections are empty.
+P("ODRL160-1.p", "Theorem", "Conflict",
+  "N-Way — 3-Policy Mutual Exclusion", "Hard",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "geo:germany")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:france")]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [("spatial", "isPartOf", "geo:poland")]),
+  "3-policy mutual exclusion: all C(3,2) = 3 pairs conflict.\n"
+  "%   de ⊥ fr [siblings under wE]\n"
+  "%   de ⊥ pl [disj_downward from wE ⊥ eE + leq(de,wE) + leq(pl,eE)]\n"
+  "%   fr ⊥ pl [disj_downward from wE ⊥ eE + leq(fr,wE) + leq(pl,eE)]\n"
+  "%   Proves: pairwise analysis scales — all 3 pairs are independently empty.",
+  "fof(odrl160, conjecture,\n"
+  "    ( ![X]: ~( in_denotation(X, germany, isPartOf)\n"
+  "             & in_denotation(X, france, isPartOf) )\n"
+  "    & ![Y]: ~( in_denotation(Y, germany, isPartOf)\n"
+  "             & in_denotation(Y, poland, isPartOf) )\n"
+  "    & ![Z]: ~( in_denotation(Z, france, isPartOf)\n"
+  "             & in_denotation(Z, poland, isPartOf) ) )).",
+  inc=("GEO", "ODRL"),
+  pl="3-policy mutual exclusion: all 3 pairs conflict (de⊥fr, de⊥pl, fr⊥pl)")
+
+# 161: 3-policy common witness — 3-way existential
+#   policyA: permission spatial isPartOf(europe)
+#   policyB: prohibition spatial isPartOf(westernEurope)
+#   policyC: prohibition spatial eq(germany)
+#
+#   ∃X: X ∈ ↓europe ∧ X ∈ ↓wE ∧ X = de
+#   Witness: germany (leq(de,wE), leq(wE,europe), de=de)
+#   Tests: prover finds a single witness satisfying 3 constraints simultaneously.
+P("ODRL161-1.p", "Theorem", "Compatible",
+  "N-Way — 3-Policy Common Witness", "Medium",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "geo:europe")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:westernEurope")]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [("spatial", "eq", "geo:germany")]),
+  "3-way existential: ∃X in all three denotations simultaneously.\n"
+  "%   Witness: germany (leq(de,wE), leq(wE,europe) → leq(de,europe), de=de)\n"
+  "%   Tests: 3-way intersection ≠ ∅ → all 3 policies overlap at germany.",
+  "fof(odrl161, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, europe, isPartOf)\n"
+  "          & in_denotation(X, westernEurope, isPartOf)\n"
+  "          & in_denotation(X, germany, eq) )).",
+  inc=("GEO", "ODRL"),
+  pl="3-policy common witness: ∃X ∈ ↓europe ∩ ↓wE ∩ {de}")
+
+# 162: Non-transitive compatibility — the key N-way insight
+#   policyA: permission spatial isPartOf(westernEurope)
+#   policyB: prohibition spatial isPartOf(europe)
+#   policyC: prohibition spatial isPartOf(easternEurope)
+#
+#   A∩B = ↓wE ∩ ↓europe = ↓wE ≠ ∅        → Compatible(A,B)
+#   B∩C = ↓europe ∩ ↓eE = ↓eE ≠ ∅         → Compatible(B,C)
+#   A∩C = ↓wE ∩ ↓eE = ∅                    → Conflict(A,C) !!
+#
+#   This is THE motivating example for N-way analysis:
+#   Compatible(A,B) ∧ Compatible(B,C) ⊬ Compatible(A,C)
+#   Pairwise checking of adjacent policies misses this.
+P("ODRL162-1.p", "Theorem", "NonTransitive",
+  "N-Way — Non-Transitive Compatibility", "Hard",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "geo:westernEurope")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:europe")]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [("spatial", "isPartOf", "geo:easternEurope")]),
+  "Non-transitive compatibility — the key N-way insight.\n"
+  "%   Compatible(A,B): ↓wE ∩ ↓europe = ↓wE ≠ ∅  [witness: germany]\n"
+  "%   Compatible(B,C): ↓europe ∩ ↓eE = ↓eE ≠ ∅   [witness: poland]\n"
+  "%   Conflict(A,C):   ↓wE ∩ ↓eE = ∅              [wE ⊥ eE]\n"
+  "%   Proves: Compatible(A,B) ∧ Compatible(B,C) ⊬ Compatible(A,C)",
+  "fof(odrl162, conjecture,\n"
+  "    ( ?[X]: ( in_denotation(X, westernEurope, isPartOf)\n"
+  "            & in_denotation(X, europe, isPartOf) )\n"
+  "    & ?[Y]: ( in_denotation(Y, europe, isPartOf)\n"
+  "            & in_denotation(Y, easternEurope, isPartOf) )\n"
+  "    & ![Z]: ~( in_denotation(Z, westernEurope, isPartOf)\n"
+  "             & in_denotation(Z, easternEurope, isPartOf) ) )).",
+  inc=("GEO", "ODRL"),
+  pl="Non-transitive: Compatible(A,B) ∧ Compatible(B,C) but Conflict(A,C)")
+
+# 163: Multi-dimensional 3-way (spatial + purpose)
+#   policyA: permission, spatial isPartOf(europe), purpose isA(R&D)
+#   policyB: prohibition, spatial isPartOf(germany), purpose isA(academicResearch)
+#   policyC: prohibition, spatial isPartOf(france), purpose isA(commercialPurpose)
+#
+#   A vs B — spatial: de ≤ europe → Compatible
+#            purpose: acR ≤ R&D → Compatible
+#            AND: Compatible ∧ Compatible → Compatible
+#   A vs C — spatial: fr ≤ europe → Compatible
+#            purpose: isA(R&D) ∩ isA(cP) → witness cR (DAG-safe!) → Compatible
+#            AND: Compatible ∧ Compatible → Compatible
+#   B vs C — spatial: ↓de ∩ ↓fr = ∅ [de ⊥ fr] → Conflict
+#            AND: Conflict ∧ anything → Conflict (Theorem 2)
+#
+#   Pattern: "hub" policy A is compatible with both B and C,
+#   but B and C conflict on the spatial dimension.
+P("ODRL163-1.p", "Theorem", "MixedNWay",
+  "N-Way — Multi-Dimensional 3-Way (Spatial + Purpose)", "Very Hard",
+  tp("policyA", "permission", "use", [
+      ("spatial", "isPartOf", "geo:europe"),
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
+  ]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:germany"),
+      ("hasPurpose", "isA", "dpv:AcademicResearch")
+  ]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:france"),
+      ("hasPurpose", "isA", "dpv:CommercialPurpose")
+  ]),
+  "Multi-dimensional 3-way with mixed verdicts:\n"
+  "%   A vs B: spatial Compatible (de ≤ europe) ∧ purpose Compatible (acR ≤ R&D) → Compatible\n"
+  "%   A vs C: spatial Compatible (fr ≤ europe) ∧ purpose Compatible (cR ≤ R&D ∧ cR ≤ cP) → Compatible\n"
+  "%   B vs C: spatial Conflict (de ⊥ fr) → Conflict (Thm 2: one Conflict operand suffices)\n"
+  "%   Tests: multi-dimensional n-way with DAG-safe purpose KB.",
+  "fof(odrl163, conjecture,\n"
+  "    ( ?[Xs,Xp]: ( in_denotation(Xs, europe, isPartOf)\n"
+  "               & in_denotation(Xs, germany, isPartOf)\n"
+  "               & in_denotation(Xp, researchAndDevelopment, isA)\n"
+  "               & in_denotation(Xp, academicResearch, isA) )\n"
+  "    & ?[Ys,Yp]: ( in_denotation(Ys, europe, isPartOf)\n"
+  "               & in_denotation(Ys, france, isPartOf)\n"
+  "               & in_denotation(Yp, researchAndDevelopment, isA)\n"
+  "               & in_denotation(Yp, commercialPurpose, isA) )\n"
+  "    & ![Z]: ~( in_denotation(Z, germany, isPartOf)\n"
+  "             & in_denotation(Z, france, isPartOf) ) )).",
+  extra=DPV_SAFE_FRAGMENT,
+  inc=("GEO", "ODRL"),
+  pl="Multi-dim 3-way: A~B, A~C (spatial+purpose), but B⊥C (spatial)")
+
+# 164: 4-policy subsumption chain — 4-way existential
+#   policyA: permission spatial isPartOf(europe)
+#   policyB: prohibition spatial isPartOf(westernEurope)
+#   policyC: prohibition spatial isPartOf(germany)
+#   policyD: prohibition spatial eq(bavaria)
+#
+#   All 4 overlap at bavaria: leq(bav,de), leq(de,wE), leq(wE,europe)
+#   ∃X: X ∈ ↓europe ∩ ↓wE ∩ ↓de ∩ {bavaria}
+#   Witness: bavaria
+P("ODRL164-1.p", "Theorem", "Compatible",
+  "N-Way — 4-Policy Subsumption Chain", "Medium",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "geo:europe")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:westernEurope")]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [("spatial", "isPartOf", "geo:germany")]) + "\n%\n%   " +
+  tp("policyD", "prohibition", "use", [("spatial", "eq", "geo:bavaria")]),
+  "4-way existential: all 4 policies overlap at single witness.\n"
+  "%   Witness: bavaria (leq(bav,de), leq(de,wE), leq(wE,europe), bav=bav)\n"
+  "%   Tests: prover must find a witness satisfying 4 constraints simultaneously.",
+  "fof(odrl164, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, europe, isPartOf)\n"
+  "          & in_denotation(X, westernEurope, isPartOf)\n"
+  "          & in_denotation(X, germany, isPartOf)\n"
+  "          & in_denotation(X, bavaria, eq) )).",
+  inc=("GEO", "ODRL"),
+  pl="4-policy chain: ∃X ∈ ↓europe ∩ ↓wE ∩ ↓de ∩ {bav}")
+
+# 165: 4-policy one spoiler — D conflicts with B,C but not A
+#   policyA: permission spatial isPartOf(europe)          [broad]
+#   policyB: permission spatial isPartOf(westernEurope)   [west]
+#   policyC: permission spatial eq(germany)               [specific]
+#   policyD: prohibition spatial isPartOf(easternEurope)  [east — the spoiler]
+#
+#   A∩D = ↓europe ∩ ↓eE = ↓eE ≠ ∅                  → Compatible [witness: poland]
+#   B∩D = ↓wE ∩ ↓eE = ∅                             → Conflict [wE ⊥ eE]
+#   C∩D = {de} ∩ ↓eE = ∅                            → Conflict [de ≤ wE, wE ⊥ eE]
+#
+#   Pattern: "spoiler" policy D selectively conflicts with some but not all.
+#   Shows why every pair must be checked — ignoring D-vs-A would miss the safe pair.
+P("ODRL165-1.p", "Theorem", "MixedNWay",
+  "N-Way — 4-Policy One Spoiler", "Hard",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "geo:europe")]) + "\n%\n%   " +
+  tp("policyB", "permission", "use", [("spatial", "isPartOf", "geo:westernEurope")]) + "\n%\n%   " +
+  tp("policyC", "permission", "use", [("spatial", "eq", "geo:germany")]) + "\n%\n%   " +
+  tp("policyD", "prohibition", "use", [("spatial", "isPartOf", "geo:easternEurope")]),
+  "4-policy one spoiler: D conflicts with B,C but NOT with A.\n"
+  "%   Compatible(A,D): ↓europe ∩ ↓eE = ↓eE ≠ ∅    [witness: poland]\n"
+  "%   Conflict(B,D):   ↓wE ∩ ↓eE = ∅                [wE ⊥ eE]\n"
+  "%   Conflict(C,D):   {de} ∩ ↓eE = ∅                [de ≤ wE, wE ⊥ eE → de ⊥ eE]\n"
+  "%   Shows: spoiler analysis — every pair must be checked independently.",
+  "fof(odrl165, conjecture,\n"
+  "    ( ?[X]: ( in_denotation(X, europe, isPartOf)\n"
+  "            & in_denotation(X, easternEurope, isPartOf) )\n"
+  "    & ![Y]: ~( in_denotation(Y, westernEurope, isPartOf)\n"
+  "             & in_denotation(Y, easternEurope, isPartOf) )\n"
+  "    & ![Z]: ~( in_denotation(Z, germany, eq)\n"
+  "             & in_denotation(Z, easternEurope, isPartOf) ) )).",
+  inc=("GEO", "ODRL"),
+  pl="4-policy spoiler: Compatible(A,D) ∧ Conflict(B,D) ∧ Conflict(C,D)")
+
+P("ODRL170-1.p", "Theorem", "Compatible",
+  "N-Way Composed — 3 Policies All Compatible (Spatial + Purpose)", "Very Hard",
+  tp("policyA", "permission", "use", [
+      ("spatial", "isPartOf", "geo:europe"),
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
+  ]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [
+      ("spatial", "eq", "geo:germany"),
+      ("hasPurpose", "isA", "dpv:AcademicResearch")
+  ]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:westernEurope"),
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
+  ]),
+  "3-way multi-dim: all 3 pairs compatible on BOTH dimensions.\n"
+  "%   A∩B: spatial(europe∩germany=germany) ∧ purpose(R&D∩academic=academic) → Compatible\n"
+  "%   A∩C: spatial(europe∩wE=wE) ∧ purpose(R&D∩R&D=R&D) → Compatible\n"
+  "%   B∩C: spatial(germany∩wE=germany) ∧ purpose(academic∩R&D=academic) → Compatible\n"
+  "%   Witness sets: (germany, academicResearch) for all pairs",
+  "fof(odrl170, conjecture,\n"
+  "    ( ?[Xs,Xp]: ( in_denotation(Xs, europe, isPartOf)\n"
+  "                & in_denotation(Xs, germany, eq)\n"
+  "                & in_denotation(Xp, researchAndDevelopment, isA)\n"
+  "                & in_denotation(Xp, academicResearch, isA) )\n"
+  "    & ?[Ys,Yp]: ( in_denotation(Ys, europe, isPartOf)\n"
+  "                & in_denotation(Ys, westernEurope, isPartOf)\n"
+  "                & in_denotation(Yp, researchAndDevelopment, isA)\n"
+  "                & in_denotation(Yp, researchAndDevelopment, isA) )\n"
+  "    & ?[Zs,Zp]: ( in_denotation(Zs, germany, eq)\n"
+  "                & in_denotation(Zs, westernEurope, isPartOf)\n"
+  "                & in_denotation(Zp, academicResearch, isA)\n"
+  "                & in_denotation(Zp, researchAndDevelopment, isA) ) )).",
+  extra=DPV_SAFE_FRAGMENT,
+  inc=("GEO", "ODRL"),
+  pl="3-policy multi-dim: all pairs Compatible on spatial+purpose")
+
+P("ODRL171-1.p", "Theorem", "NonTransitive",
+  "N-Way Composed — Non-Transitive on ONE Dimension", "Very Hard",
+  tp("policyA", "permission", "use", [
+      ("spatial", "isPartOf", "geo:westernEurope"),
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
+  ]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:europe"),
+      ("hasPurpose", "isA", "dpv:AcademicResearch")
+  ]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:easternEurope"),
+      ("hasPurpose", "isA", "dpv:CommercialResearch")
+  ]),
+  "Non-transitivity in multi-dimensional space:\n"
+  "%   A∩B: spatial(wE∩europe=wE) ∧ purpose(R&D∩acR=acR) → Compatible\n"
+  "%   B∩C: spatial(europe∩eE=eE) ∧ purpose(acR∩cR via R&D) → Compatible\n"
+  "%   A∩C: spatial(wE∩eE=∅) → Conflict (Thm 2: one conflict dimension suffices)\n"
+  "%   Shows: Compatible(A,B) ∧ Compatible(B,C) ⊬ Compatible(A,C) even with multi-operand",
+  "fof(odrl171, conjecture,\n"
+  "    ( ?[Xs,Xp]: ( in_denotation(Xs, westernEurope, isPartOf)\n"
+  "                & in_denotation(Xs, europe, isPartOf)\n"
+  "                & in_denotation(Xp, researchAndDevelopment, isA)\n"
+  "                & in_denotation(Xp, academicResearch, isA) )\n"
+  "    & ?[Ys,Yp]: ( in_denotation(Ys, europe, isPartOf)\n"
+  "                & in_denotation(Ys, easternEurope, isPartOf)\n"
+  "                & in_denotation(Yp, academicResearch, isA)\n"
+  "                & in_denotation(Yp, commercialResearch, isA) )\n"
+  "    & ![Zs]: ~( in_denotation(Zs, westernEurope, isPartOf)\n"
+  "              & in_denotation(Zs, easternEurope, isPartOf) ) )).",
+  extra=DPV_SAFE_FRAGMENT,
+  inc=("GEO", "ODRL"),
+  pl="Non-transitive multi-dim: spatial conflict breaks transitivity")
+
+P("ODRL172-1.p", "Theorem", "Conflict",
+  "N-Way Composed — 3-Policy Mutual Exclusion (Multi-Dim)", "Very Hard",
+  tp("policyA", "permission", "use", [
+      ("spatial", "isPartOf", "geo:germany"),
+      ("hasPurpose", "isA", "dpv:CommercialPurpose")
+  ]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:france"),
+      ("hasPurpose", "isA", "dpv:ServiceProvision")
+  ]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:poland"),
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
+  ]),
+  "3-way mutual exclusion on BOTH dimensions:\n"
+  "%   Spatial: de⊥fr (siblings), de⊥pl (wE⊥eE), fr⊥pl (wE⊥eE)\n"
+  "%   Purpose: cP⊥sP, cP⊥R&D (via DAG-safe), sP⊥R&D (DAG-safe)\n"
+  "%   All 3 pairs conflict on BOTH dimensions → mutual exclusion",
+  "fof(odrl172, conjecture,\n"
+  "    ( ![X]: ~( in_denotation(X, germany, isPartOf)\n"
+  "             & in_denotation(X, france, isPartOf) )\n"
+  "    & ![Y]: ~( in_denotation(Y, germany, isPartOf)\n"
+  "             & in_denotation(Y, poland, isPartOf) )\n"
+  "    & ![Z]: ~( in_denotation(Z, france, isPartOf)\n"
+  "             & in_denotation(Z, poland, isPartOf) )\n"
+  "    & ![Xp]: ~( in_denotation(Xp, commercialPurpose, isA)\n"
+  "               & in_denotation(Xp, serviceProvision, isA) )\n"
+  "    & ![Yp]: ~( in_denotation(Yp, commercialPurpose, isA)\n"
+  "               & in_denotation(Yp, researchAndDevelopment, isA) )\n"
+  "    & ![Zp]: ~( in_denotation(Zp, serviceProvision, isA)\n"
+  "               & in_denotation(Zp, researchAndDevelopment, isA) ) )).",
+  extra=DPV_SAFE_FRAGMENT,
+  inc=("GEO", "ODRL"),
+  pl="3-policy mutual exclusion: all pairs conflict on BOTH dimensions")
+
+P("ODRL173-1.p", "Theorem", "Compatible",
+  "N-Way Composed — 3 Operands × 3 Policies", "Very Hard",
+  tp("policyA", "permission", "use", [
+      ("spatial", "isPartOf", "geo:europe"),
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment"),
+      ("language", "isPartOf", "lang:en")
+  ]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [
+      ("spatial", "eq", "geo:germany"),
+      ("hasPurpose", "isA", "dpv:AcademicResearch"),
+      ("language", "eq", "lang:enGB")
+  ]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:westernEurope"),
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment"),
+      ("language", "isPartOf", "lang:en")
+  ]),
+  "Maximum complexity: 3 operands × 3 policies = 9 pairwise operand checks.\n"
+  "%   Tests: Vampire's ability to find witnesses across 3 dimensions and 3 policies.\n"
+  "%   All 3 pairs compatible on all 3 dimensions.",
+  "fof(odrl173, conjecture,\n"
+  "    ( ?[Xs,Xp,Xl]: ( in_denotation(Xs, europe, isPartOf)\n"
+  "                   & in_denotation(Xs, germany, eq)\n"
+  "                   & in_denotation(Xp, researchAndDevelopment, isA)\n"
+  "                   & in_denotation(Xp, academicResearch, isA)\n"
+  "                   & in_denotation(Xl, en, isPartOf)\n"
+  "                   & in_denotation(Xl, enGB, eq) )\n"
+  "    & ?[Ys,Yp,Yl]: ( in_denotation(Ys, europe, isPartOf)\n"
+  "                   & in_denotation(Ys, westernEurope, isPartOf)\n"
+  "                   & in_denotation(Yp, researchAndDevelopment, isA)\n"
+  "                   & in_denotation(Yp, researchAndDevelopment, isA)\n"
+  "                   & in_denotation(Yl, en, isPartOf)\n"
+  "                   & in_denotation(Yl, en, isPartOf) )\n"
+  "    & ?[Zs,Zp,Zl]: ( in_denotation(Zs, germany, eq)\n"
+  "                   & in_denotation(Zs, westernEurope, isPartOf)\n"
+  "                   & in_denotation(Zp, academicResearch, isA)\n"
+  "                   & in_denotation(Zp, researchAndDevelopment, isA)\n"
+  "                   & in_denotation(Zl, enGB, eq)\n"
+  "                   & in_denotation(Zl, en, isPartOf) ) )).",
+  extra=DPV_SAFE_FRAGMENT,
+  inc=("GEO", "DPV", "LANG", "ODRL"),
+  pl="3-operand × 3-policy: maximum complexity test")
+
+P("ODRL174-1.p", "Theorem", "MixedNWay",
+  "N-Way Composed — 4-Policy Spoiler on One Dimension", "Very Hard",
+  tp("policyA", "permission", "use", [
+      ("spatial", "isPartOf", "geo:europe"),
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
+  ]) + "\n%\n%   " +
+  tp("policyB", "permission", "use", [
+      ("spatial", "isPartOf", "geo:westernEurope"),
+      ("hasPurpose", "isA", "dpv:AcademicResearch")
+  ]) + "\n%\n%   " +
+  tp("policyC", "permission", "use", [
+      ("spatial", "eq", "geo:germany"),
+      ("hasPurpose", "isA", "dpv:CommercialResearch")
+  ]) + "\n%\n%   " +
+  tp("policyD", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:easternEurope"),
+      ("hasPurpose", "isA", "dpv:ServiceProvision")
+  ]),
+  "4-policy spoiler: D conflicts with B,C on spatial but compatible with A.\n"
+  "%   Compatible(A,D): spatial(europe∩eE=eE) ∧ purpose(R&D vs sP compatible)\n"
+  "%   Conflict(B,D): spatial(wE⊥eE) → conflict\n"
+  "%   Conflict(C,D): spatial(germany⊥eE) → conflict\n"
+  "%   Purpose dimension compatible everywhere → spatial spoils B,C only",
+  "fof(odrl174, conjecture,\n"
+  "    ( ?[Xs,Xp]: ( in_denotation(Xs, europe, isPartOf)\n"
+  "                & in_denotation(Xs, easternEurope, isPartOf)\n"
+  "                & in_denotation(Xp, researchAndDevelopment, isA)\n"
+  "                & in_denotation(Xp, serviceProvision, isA) )\n"
+  "    & ![Ys]: ~( in_denotation(Ys, westernEurope, isPartOf)\n"
+  "              & in_denotation(Ys, easternEurope, isPartOf) )\n"
+  "    & ![Zs]: ~( in_denotation(Zs, germany, eq)\n"
+  "              & in_denotation(Zs, easternEurope, isPartOf) ) )).",
+  extra=DPV_SAFE_FRAGMENT,
+  inc=("GEO", "ODRL"),
+  pl="4-policy spoiler: spatial conflict on B,C only, purpose compatible")
+P("ODRL175-1.p", "Theorem", "Compatible",
+  "N-Way Composed — DAG Multi-Parent Across 3 Policies", "Very Hard",
+  tp("policyA", "permission", "use", [
+      ("hasPurpose", "isA", "dpv:CommercialPurpose"),
+      ("spatial", "isPartOf", "geo:germany")
+  ]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment"),
+      ("spatial", "isPartOf", "geo:europe")
+  ]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [
+      ("hasPurpose", "isA", "dpv:CommercialResearch"),
+      ("spatial", "eq", "geo:germany")
+  ]),
+  "3-way with DAG multi-parent: commercialResearch ≤ {cP, R&D}.\n"
+  "%   A∩B: purpose(cP∩R&D via cR) ∧ spatial(germany∩europe=germany) → Compatible\n"
+  "%   A∩C: purpose(cP∩cR via leq) ∧ spatial(germany∩germany) → Compatible\n"
+  "%   B∩C: purpose(R&D∩cR via leq) ∧ spatial(europe∩germany) → Compatible\n"
+  "%   Witness: (commercialResearch, germany) for all pairs\n"
+  "%   Tests: DAG-safe multi-parent in N-way composed context",
+  "fof(odrl175, conjecture,\n"
+  "    ( ?[Xp,Xs]: ( in_denotation(Xp, commercialPurpose, isA)\n"
+  "                & in_denotation(Xp, researchAndDevelopment, isA)\n"
+  "                & in_denotation(Xs, germany, isPartOf)\n"
+  "                & in_denotation(Xs, europe, isPartOf) )\n"
+  "    & ?[Yp,Ys]: ( in_denotation(Yp, commercialPurpose, isA)\n"
+  "                & in_denotation(Yp, commercialResearch, isA)\n"
+  "                & in_denotation(Ys, germany, isPartOf)\n"
+  "                & in_denotation(Ys, germany, eq) )\n"
+  "    & ?[Zp,Zs]: ( in_denotation(Zp, researchAndDevelopment, isA)\n"
+  "                & in_denotation(Zp, commercialResearch, isA)\n"
+  "                & in_denotation(Zs, europe, isPartOf)\n"
+  "                & in_denotation(Zs, germany, eq) ) )).",
+  extra=DPV_SAFE_FRAGMENT,
+  inc=("GEO", "ODRL"),
+  pl="DAG multi-parent in 3-way: cR witnesses all pairs")
 
 # ═══════════════════════════════════════════════════════════════════════════
 # File generation engine

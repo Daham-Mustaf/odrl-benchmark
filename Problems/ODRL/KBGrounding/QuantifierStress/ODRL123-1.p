@@ -17,7 +17,7 @@
 % One-liner : ∀∃ pattern: every G ≤ wE has ancestor in hasPart(G)
 % Difficulty: Hard
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-16
+% Date     : 2026-02-17
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 
