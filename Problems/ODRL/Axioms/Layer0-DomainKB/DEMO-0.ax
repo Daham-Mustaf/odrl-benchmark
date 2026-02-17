@@ -1,0 +1,91 @@
+%--------------------------------------------------------------------------
+% File     : DEMO-0.ax : Minimal KB for Analysis Modes Demo
+% Domain   : Policy Analysis Demonstration
+% Purpose  : Clean, complete KB for demonstrating 4 analysis modes
+% Structure: Small tree (10 concepts, complete disjointness)
+%--------------------------------------------------------------------------
+
+% ═══════════════════════════════════════════════════════════════════════
+% Concept Hierarchy (3 levels, 10 concepts)
+% ═══════════════════════════════════════════════════════════════════════
+
+% Root
+fof(demo_root, axiom, concept(allPurposes)).
+
+% Level 1: Two main branches
+fof(demo_l1_1, axiom, concept(commercial)).
+fof(demo_l1_2, axiom, concept(nonCommercial)).
+
+% Level 2: Commercial branch
+fof(demo_l2_1, axiom, concept(advertising)).
+fof(demo_l2_2, axiom, concept(sales)).
+fof(demo_l2_3, axiom, concept(analytics)).
+
+% Level 2: Non-commercial branch  
+fof(demo_l2_4, axiom, concept(research)).
+fof(demo_l2_5, axiom, concept(education)).
+fof(demo_l2_6, axiom, concept(publicService)).
+
+% Level 3: Specializations
+fof(demo_l3_1, axiom, concept(targetedAds)).
+
+% ═══════════════════════════════════════════════════════════════════════
+% Hierarchy (leq edges)
+% ═══════════════════════════════════════════════════════════════════════
+
+% Level 1 → Root
+fof(demo_leq_01, axiom, leq(commercial, allPurposes)).
+fof(demo_leq_02, axiom, leq(nonCommercial, allPurposes)).
+
+% Level 2 → Level 1 (Commercial)
+fof(demo_leq_03, axiom, leq(advertising, commercial)).
+fof(demo_leq_04, axiom, leq(sales, commercial)).
+fof(demo_leq_05, axiom, leq(analytics, commercial)).
+
+% Level 2 → Level 1 (Non-commercial)
+fof(demo_leq_06, axiom, leq(research, nonCommercial)).
+fof(demo_leq_07, axiom, leq(education, nonCommercial)).
+fof(demo_leq_08, axiom, leq(publicService, nonCommercial)).
+
+% Level 3 → Level 2
+fof(demo_leq_09, axiom, leq(targetedAds, advertising)).
+
+% Reflexivity (all concepts)
+fof(demo_refl_00, axiom, leq(allPurposes, allPurposes)).
+fof(demo_refl_01, axiom, leq(commercial, commercial)).
+fof(demo_refl_02, axiom, leq(nonCommercial, nonCommercial)).
+fof(demo_refl_03, axiom, leq(advertising, advertising)).
+fof(demo_refl_04, axiom, leq(sales, sales)).
+fof(demo_refl_05, axiom, leq(analytics, analytics)).
+fof(demo_refl_06, axiom, leq(research, research)).
+fof(demo_refl_07, axiom, leq(education, education)).
+fof(demo_refl_08, axiom, leq(publicService, publicService)).
+fof(demo_refl_09, axiom, leq(targetedAds, targetedAds)).
+
+% ═══════════════════════════════════════════════════════════════════════
+% Sibling Disjointness (complete, safe)
+% ═══════════════════════════════════════════════════════════════════════
+
+% Level 1 siblings
+fof(demo_disj_01, axiom, disjoint(commercial, nonCommercial)).
+
+% Level 2 siblings (commercial branch)
+fof(demo_disj_02, axiom, disjoint(advertising, sales)).
+fof(demo_disj_03, axiom, disjoint(advertising, analytics)).
+fof(demo_disj_04, axiom, disjoint(sales, analytics)).
+
+% Level 2 siblings (non-commercial branch)
+fof(demo_disj_05, axiom, disjoint(research, education)).
+fof(demo_disj_06, axiom, disjoint(research, publicService)).
+fof(demo_disj_07, axiom, disjoint(education, publicService)).
+
+% ═══════════════════════════════════════════════════════════════════════
+% Unique Name Assumption (explicit for demo clarity)
+% ═══════════════════════════════════════════════════════════════════════
+
+fof(demo_una, axiom,
+    $distinct(allPurposes, commercial, nonCommercial, 
+              advertising, sales, analytics, 
+              research, education, publicService, targetedAds)).
+
+%--------------------------------------------------------------------------

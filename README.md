@@ -375,3 +375,18 @@ Typical: 0.1–1.4s. All problems in EPR fragment (decidable).
 **License:** MIT  
 **Status:** Production (v3.0, 146 problems)
 ```
+## Benchmark Organization
+
+### Stage 2: KB-Dependent Reasoning (TPTP)
+- **Location:** `Problems/ODRL/KBGrounding/`
+- **Format:** TPTP (FOF logic)
+- **Solver:** Vampire
+- **Problems:** 146
+- **Categories:** Spatial, Purpose, Language, Multi-hop alignment
+
+### Stage 1: Self-Contained Reasoning (SMT2)
+- **Location:** `Problems/ODRL/SelfContained/`
+- **Format:** SMT-LIB2 (QF_LRA logic)
+- **Solver:** Z3
+- **Problems:** 165
+- **Categories:** delayPeriod, elapsedTime, percentage, resolution, dateTime, payAmount
