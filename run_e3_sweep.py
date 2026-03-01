@@ -283,9 +283,10 @@ def run_z3_grounded(prob_id, kb_name, level, timeout):
 
 def is_pass(actual, expected):
     ok_map = {
-        "Theorem":       {"Theorem"},
-        "Unknown":       {"Unknown", "GaveUp", "Timeout"},
-        "Unsatisfiable": {"Unsatisfiable", "CounterSatisfiable"},
+        "Theorem":            {"Theorem"},
+        "Unknown":            {"Unknown", "GaveUp", "Timeout"},
+        "Unknown_or_Theorem": {"Unknown", "Theorem", "GaveUp", "Timeout"},
+        "Unsatisfiable":      {"Unsatisfiable", "CounterSatisfiable"},
     }
     return actual in ok_map.get(expected, {expected})
 

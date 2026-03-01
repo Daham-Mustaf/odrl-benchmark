@@ -221,7 +221,7 @@ def run_case(case_name, probs, kb_disj, inc_dir, timeout, use_z3,
          expected, vlabel, note) in probs:
 
         # Vampire (uses TPTP file)
-        fp = inc_dir.parent / "CrossDS" / case_name / f"{prob_id}.p"
+        fp = inc_dir / "CrossDS" / case_name / f"{prob_id}.p"
         if fp.exists():
             vstatus, vtime = run_vampire(fp, inc_dir, timeout)
         else:
@@ -237,7 +237,7 @@ def run_case(case_name, probs, kb_disj, inc_dir, timeout, use_z3,
 
         z_ok = is_pass(zstatus, expected) if zstatus else False
         v_ok = is_pass(vstatus, expected) if vstatus != 'NoFile' else z_ok
-        overall = v_ok and z_ok
+        overall = v_ok if not (use_z3) else (v_ok and z_ok)
         passed_total += overall
 
         if vlabel == "TRUE-CONFLICT" and overall:
