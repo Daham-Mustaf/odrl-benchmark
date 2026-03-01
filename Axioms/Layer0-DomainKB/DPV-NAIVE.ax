@@ -1,0 +1,532 @@
+%--------------------------------------------------------------------------
+% File     : DPV-NAIVE.ax : TPTP v0.1.0. Released v0.1.0.
+% Domain   : OWL Ontology
+% Axioms   : Full hierarchy (taxonomic)
+% Version  : Profile: owl:Purpose
+% English  : OWL Ontology encoded as TPTP Layer 0 domain KB.
+%            UNA: IMPLICIT — tree + ⊥⊥ (Implicit UNA Lemma).
+% Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
+%            Automated Reasoning for ODRL Policy Conflict Detection
+% Source   : 
+% Names    : DPV-NAIVE.ax
+% Status   : Layer 0 — Domain Knowledge Base
+% Syntax   : Number of formulae    :   480 (  480 unt;   0 def)
+%            Number of atoms       :   480 (    0 equ)
+%            Maximal formula atoms  :     1 (   1 avg)
+%            Number of connectives  :     0 (   0   ~;   0   |;   0   &)
+%                                         (   0 <=>;   0  =>;   0  <=;   0 <~>)
+%            Maximal formula depth  :     1 (   1 avg)
+%            Maximal term depth     :     1 (   1 avg)
+%            Number of predicates   :     3 (    3 usr;   0 prp; 1-2 aty)
+%            Number of functors     :    95 (   95 usr;  95 con; 0-0 aty)
+%            Number of variables    :     0 (   0   !;   0   ?)
+% SPC      : FOF_EPR_RFN_NEQ
+% Comments : All formulae are ground unit clauses.
+%          : Layer 1 provides reflexivity + transitivity of leq/2.
+%          : NAIVE sibling ⊥⊥ — tree assumed; may be unsound for DAGs.
+%          : Multi-parent: commercialResearch, communicationForCustomerCare, improveInternalCRMProcesses, nonCommercialResearch, personalisedAdvertising, servicePersonalisation
+%          : Root(s): purpose
+% Ontology : Predicates: concept/1; leq/2; disjoint/2
+%          : Relation: leq/2 — class subsumption (paper Def. 2, ≤ = ⊑)
+% Stats    : Concepts 95 | Edges 100 | Disjoint 285 | UNA 0 | Total 480
+%          : Depth 4 | Leaves 63 | Internal 31 | Branch avg 3.1 max 17
+% Date     : 2026-02-28
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Gen      : gen_layer0.py --source owl:Purpose
+%--------------------------------------------------------------------------
+
+% ─── Concept membership (Definition 2: C) ─────────────────────────────
+fof(c_academicResearch, axiom, concept(academicResearch)).  % https://w3id.org/dpv#AcademicResearch
+fof(c_accountManagement, axiom, concept(accountManagement)).  % https://w3id.org/dpv#AccountManagement
+fof(c_advertising, axiom, concept(advertising)).  % https://w3id.org/dpv#Advertising
+fof(c_ageVerification, axiom, concept(ageVerification)).  % https://w3id.org/dpv#AgeVerification
+fof(c_combatClimateChange, axiom, concept(combatClimateChange)).  % https://w3id.org/dpv#CombatClimateChange
+fof(c_commercialPurpose, axiom, concept(commercialPurpose)).  % https://w3id.org/dpv#CommercialPurpose
+fof(c_commercialResearch, axiom, concept(commercialResearch)).  % https://w3id.org/dpv#CommercialResearch
+fof(c_communicationForCustomerCare, axiom, concept(communicationForCustomerCare)).  % https://w3id.org/dpv#CommunicationForCustomerCare
+fof(c_communicationManagement, axiom, concept(communicationManagement)).  % https://w3id.org/dpv#CommunicationManagement
+fof(c_counterMoneyLaundering, axiom, concept(counterMoneyLaundering)).  % https://w3id.org/dpv#CounterMoneyLaundering
+fof(c_counterterrorism, axiom, concept(counterterrorism)).  % https://w3id.org/dpv#Counterterrorism
+fof(c_creditChecking, axiom, concept(creditChecking)).  % https://w3id.org/dpv#CreditChecking
+fof(c_customerCare, axiom, concept(customerCare)).  % https://w3id.org/dpv#CustomerCare
+fof(c_customerClaimsManagement, axiom, concept(customerClaimsManagement)).  % https://w3id.org/dpv#CustomerClaimsManagement
+fof(c_customerManagement, axiom, concept(customerManagement)).  % https://w3id.org/dpv#CustomerManagement
+fof(c_customerOrderManagement, axiom, concept(customerOrderManagement)).  % https://w3id.org/dpv#CustomerOrderManagement
+fof(c_customerRelationshipManagement, axiom, concept(customerRelationshipManagement)).  % https://w3id.org/dpv#CustomerRelationshipManagement
+fof(c_customerSolvencyMonitoring, axiom, concept(customerSolvencyMonitoring)).  % https://w3id.org/dpv#CustomerSolvencyMonitoring
+fof(c_dataAltruism, axiom, concept(dataAltruism)).  % https://w3id.org/dpv#DataAltruism
+fof(c_deliveryOfGoods, axiom, concept(deliveryOfGoods)).  % https://w3id.org/dpv#DeliveryOfGoods
+fof(c_directMarketing, axiom, concept(directMarketing)).  % https://w3id.org/dpv#DirectMarketing
+fof(c_disputeManagement, axiom, concept(disputeManagement)).  % https://w3id.org/dpv#DisputeManagement
+fof(c_enforceAccessControl, axiom, concept(enforceAccessControl)).  % https://w3id.org/dpv#EnforceAccessControl
+fof(c_enforceSecurity, axiom, concept(enforceSecurity)).  % https://w3id.org/dpv#EnforceSecurity
+fof(c_establishContractualAgreement, axiom, concept(establishContractualAgreement)).  % https://w3id.org/dpv#EstablishContractualAgreement
+fof(c_fraudPreventionAndDetection, axiom, concept(fraudPreventionAndDetection)).  % https://w3id.org/dpv#FraudPreventionAndDetection
+fof(c_fulfilmentOfContractualObligation, axiom, concept(fulfilmentOfContractualObligation)).  % https://w3id.org/dpv#FulfilmentOfContractualObligation
+fof(c_fulfilmentOfObligation, axiom, concept(fulfilmentOfObligation)).  % https://w3id.org/dpv#FulfilmentOfObligation
+fof(c_humanResourceManagement, axiom, concept(humanResourceManagement)).  % https://w3id.org/dpv#HumanResourceManagement
+fof(c_identityAuthentication, axiom, concept(identityAuthentication)).  % https://w3id.org/dpv#IdentityAuthentication
+fof(c_identityVerification, axiom, concept(identityVerification)).  % https://w3id.org/dpv#IdentityVerification
+fof(c_improveExistingProductsAndServices, axiom, concept(improveExistingProductsAndServices)).  % https://w3id.org/dpv#ImproveExistingProductsAndServices
+fof(c_improveHealthcare, axiom, concept(improveHealthcare)).  % https://w3id.org/dpv#ImproveHealthcare
+fof(c_improveInternalCRMProcesses, axiom, concept(improveInternalCRMProcesses)).  % https://w3id.org/dpv#ImproveInternalCRMProcesses
+fof(c_improvePublicServices, axiom, concept(improvePublicServices)).  % https://w3id.org/dpv#ImprovePublicServices
+fof(c_improveTransportMobility, axiom, concept(improveTransportMobility)).  % https://w3id.org/dpv#ImproveTransportMobility
+fof(c_increaseServiceRobustness, axiom, concept(increaseServiceRobustness)).  % https://w3id.org/dpv#IncreaseServiceRobustness
+fof(c_internalResourceOptimisation, axiom, concept(internalResourceOptimisation)).  % https://w3id.org/dpv#InternalResourceOptimisation
+fof(c_legalCompliance, axiom, concept(legalCompliance)).  % https://w3id.org/dpv#LegalCompliance
+fof(c_maintainCreditCheckingDatabase, axiom, concept(maintainCreditCheckingDatabase)).  % https://w3id.org/dpv#MaintainCreditCheckingDatabase
+fof(c_maintainCreditRatingDatabase, axiom, concept(maintainCreditRatingDatabase)).  % https://w3id.org/dpv#MaintainCreditRatingDatabase
+fof(c_maintainFraudDatabase, axiom, concept(maintainFraudDatabase)).  % https://w3id.org/dpv#MaintainFraudDatabase
+fof(c_marketing, axiom, concept(marketing)).  % https://w3id.org/dpv#Marketing
+fof(c_memberPartnerManagement, axiom, concept(memberPartnerManagement)).  % https://w3id.org/dpv#MemberPartnerManagement
+fof(c_misusePreventionAndDetection, axiom, concept(misusePreventionAndDetection)).  % https://w3id.org/dpv#MisusePreventionAndDetection
+fof(c_nonCommercialPurpose, axiom, concept(nonCommercialPurpose)).  % https://w3id.org/dpv#NonCommercialPurpose
+fof(c_nonCommercialResearch, axiom, concept(nonCommercialResearch)).  % https://w3id.org/dpv#NonCommercialResearch
+fof(c_optimisationForConsumer, axiom, concept(optimisationForConsumer)).  % https://w3id.org/dpv#OptimisationForConsumer
+fof(c_optimisationForController, axiom, concept(optimisationForController)).  % https://w3id.org/dpv#OptimisationForController
+fof(c_optimiseUserInterface, axiom, concept(optimiseUserInterface)).  % https://w3id.org/dpv#OptimiseUserInterface
+fof(c_organisationComplianceManagement, axiom, concept(organisationComplianceManagement)).  % https://w3id.org/dpv#OrganisationComplianceManagement
+fof(c_organisationGovernance, axiom, concept(organisationGovernance)).  % https://w3id.org/dpv#OrganisationGovernance
+fof(c_organisationRiskManagement, axiom, concept(organisationRiskManagement)).  % https://w3id.org/dpv#OrganisationRiskManagement
+fof(c_paymentManagement, axiom, concept(paymentManagement)).  % https://w3id.org/dpv#PaymentManagement
+fof(c_personalisation, axiom, concept(personalisation)).  % https://w3id.org/dpv#Personalisation
+fof(c_personalisedAdvertising, axiom, concept(personalisedAdvertising)).  % https://w3id.org/dpv#PersonalisedAdvertising
+fof(c_personalisedBenefits, axiom, concept(personalisedBenefits)).  % https://w3id.org/dpv#PersonalisedBenefits
+fof(c_personnelHiring, axiom, concept(personnelHiring)).  % https://w3id.org/dpv#PersonnelHiring
+fof(c_personnelManagement, axiom, concept(personnelManagement)).  % https://w3id.org/dpv#PersonnelManagement
+fof(c_personnelPayment, axiom, concept(personnelPayment)).  % https://w3id.org/dpv#PersonnelPayment
+fof(c_protectionOfIPR, axiom, concept(protectionOfIPR)).  % https://w3id.org/dpv#ProtectionOfIPR
+fof(c_protectionOfNationalSecurity, axiom, concept(protectionOfNationalSecurity)).  % https://w3id.org/dpv#ProtectionOfNationalSecurity
+fof(c_protectionOfPublicSecurity, axiom, concept(protectionOfPublicSecurity)).  % https://w3id.org/dpv#ProtectionOfPublicSecurity
+fof(c_provideEventRecommendations, axiom, concept(provideEventRecommendations)).  % https://w3id.org/dpv#ProvideEventRecommendations
+fof(c_provideOfficialStatistics, axiom, concept(provideOfficialStatistics)).  % https://w3id.org/dpv#ProvideOfficialStatistics
+fof(c_providePersonalisedRecommendations, axiom, concept(providePersonalisedRecommendations)).  % https://w3id.org/dpv#ProvidePersonalisedRecommendations
+fof(c_provideProductRecommendations, axiom, concept(provideProductRecommendations)).  % https://w3id.org/dpv#ProvideProductRecommendations
+fof(c_publicBenefit, axiom, concept(publicBenefit)).  % https://w3id.org/dpv#PublicBenefit
+fof(c_publicPolicyMaking, axiom, concept(publicPolicyMaking)).  % https://w3id.org/dpv#PublicPolicyMaking
+fof(c_publicRelations, axiom, concept(publicRelations)).  % https://w3id.org/dpv#PublicRelations
+fof(c_purpose, axiom, concept(purpose)).  % https://w3id.org/dpv#Purpose
+fof(c_recordManagement, axiom, concept(recordManagement)).  % https://w3id.org/dpv#RecordManagement
+fof(c_repairImpairments, axiom, concept(repairImpairments)).  % https://w3id.org/dpv#RepairImpairments
+fof(c_requestedServiceProvision, axiom, concept(requestedServiceProvision)).  % https://w3id.org/dpv#RequestedServiceProvision
+fof(c_researchAndDevelopment, axiom, concept(researchAndDevelopment)).  % https://w3id.org/dpv#ResearchAndDevelopment
+fof(c_scientificResearch, axiom, concept(scientificResearch)).  % https://w3id.org/dpv#ScientificResearch
+fof(c_searchFunctionalities, axiom, concept(searchFunctionalities)).  % https://w3id.org/dpv#SearchFunctionalities
+fof(c_sellDataToThirdParties, axiom, concept(sellDataToThirdParties)).  % https://w3id.org/dpv#SellDataToThirdParties
+fof(c_sellInsightsFromData, axiom, concept(sellInsightsFromData)).  % https://w3id.org/dpv#SellInsightsFromData
+fof(c_sellProducts, axiom, concept(sellProducts)).  % https://w3id.org/dpv#SellProducts
+fof(c_sellProductsToDataSubject, axiom, concept(sellProductsToDataSubject)).  % https://w3id.org/dpv#SellProductsToDataSubject
+fof(c_serviceOptimisation, axiom, concept(serviceOptimisation)).  % https://w3id.org/dpv#ServiceOptimisation
+fof(c_servicePersonalisation, axiom, concept(servicePersonalisation)).  % https://w3id.org/dpv#ServicePersonalisation
+fof(c_serviceProvision, axiom, concept(serviceProvision)).  % https://w3id.org/dpv#ServiceProvision
+fof(c_serviceRegistration, axiom, concept(serviceRegistration)).  % https://w3id.org/dpv#ServiceRegistration
+fof(c_serviceUsageAnalytics, axiom, concept(serviceUsageAnalytics)).  % https://w3id.org/dpv#ServiceUsageAnalytics
+fof(c_socialMediaMarketing, axiom, concept(socialMediaMarketing)).  % https://w3id.org/dpv#SocialMediaMarketing
+fof(c_targetedAdvertising, axiom, concept(targetedAdvertising)).  % https://w3id.org/dpv#TargetedAdvertising
+fof(c_technicalServiceProvision, axiom, concept(technicalServiceProvision)).  % https://w3id.org/dpv#TechnicalServiceProvision
+fof(c_userInterfacePersonalisation, axiom, concept(userInterfacePersonalisation)).  % https://w3id.org/dpv#UserInterfacePersonalisation
+fof(c_vendorManagement, axiom, concept(vendorManagement)).  % https://w3id.org/dpv#VendorManagement
+fof(c_vendorPayment, axiom, concept(vendorPayment)).  % https://w3id.org/dpv#VendorPayment
+fof(c_vendorRecordsManagement, axiom, concept(vendorRecordsManagement)).  % https://w3id.org/dpv#VendorRecordsManagement
+fof(c_vendorSelectionAssessment, axiom, concept(vendorSelectionAssessment)).  % https://w3id.org/dpv#VendorSelectionAssessment
+fof(c_verification, axiom, concept(verification)).  % https://w3id.org/dpv#Verification
+
+% ─── Hierarchy (Definition 2: ≤) ──────────────────────────────────────
+% Direct edges only. Layer 1 provides reflexivity + transitivity.
+fof(h_0000, axiom, leq(academicResearch, researchAndDevelopment)).
+fof(h_0001, axiom, leq(accountManagement, purpose)).
+fof(h_0002, axiom, leq(advertising, marketing)).
+fof(h_0003, axiom, leq(ageVerification, verification)).
+fof(h_0004, axiom, leq(combatClimateChange, publicBenefit)).
+fof(h_0005, axiom, leq(commercialPurpose, purpose)).
+fof(h_0006, axiom, leq(commercialResearch, commercialPurpose)).
+fof(h_0007, axiom, leq(commercialResearch, researchAndDevelopment)).
+fof(h_0008, axiom, leq(communicationForCustomerCare, communicationManagement)).
+fof(h_0009, axiom, leq(communicationForCustomerCare, customerCare)).
+fof(h_0010, axiom, leq(communicationManagement, purpose)).
+fof(h_0011, axiom, leq(counterMoneyLaundering, fraudPreventionAndDetection)).
+fof(h_0012, axiom, leq(counterterrorism, publicBenefit)).
+fof(h_0013, axiom, leq(creditChecking, customerSolvencyMonitoring)).
+fof(h_0014, axiom, leq(customerCare, customerManagement)).
+fof(h_0015, axiom, leq(customerClaimsManagement, customerManagement)).
+fof(h_0016, axiom, leq(customerManagement, purpose)).
+fof(h_0017, axiom, leq(customerOrderManagement, customerManagement)).
+fof(h_0018, axiom, leq(customerRelationshipManagement, customerManagement)).
+fof(h_0019, axiom, leq(customerSolvencyMonitoring, customerManagement)).
+fof(h_0020, axiom, leq(dataAltruism, publicBenefit)).
+fof(h_0021, axiom, leq(deliveryOfGoods, requestedServiceProvision)).
+fof(h_0022, axiom, leq(directMarketing, marketing)).
+fof(h_0023, axiom, leq(disputeManagement, organisationGovernance)).
+fof(h_0024, axiom, leq(enforceAccessControl, enforceSecurity)).
+fof(h_0025, axiom, leq(enforceSecurity, purpose)).
+fof(h_0026, axiom, leq(establishContractualAgreement, purpose)).
+fof(h_0027, axiom, leq(fraudPreventionAndDetection, misusePreventionAndDetection)).
+fof(h_0028, axiom, leq(fulfilmentOfContractualObligation, fulfilmentOfObligation)).
+fof(h_0029, axiom, leq(fulfilmentOfObligation, purpose)).
+fof(h_0030, axiom, leq(humanResourceManagement, purpose)).
+fof(h_0031, axiom, leq(identityAuthentication, enforceSecurity)).
+fof(h_0032, axiom, leq(identityVerification, verification)).
+fof(h_0033, axiom, leq(improveExistingProductsAndServices, optimisationForController)).
+fof(h_0034, axiom, leq(improveHealthcare, publicBenefit)).
+fof(h_0035, axiom, leq(improveInternalCRMProcesses, customerRelationshipManagement)).
+fof(h_0036, axiom, leq(improveInternalCRMProcesses, optimisationForController)).
+fof(h_0037, axiom, leq(improvePublicServices, publicBenefit)).
+fof(h_0038, axiom, leq(improveTransportMobility, publicBenefit)).
+fof(h_0039, axiom, leq(increaseServiceRobustness, optimisationForController)).
+fof(h_0040, axiom, leq(internalResourceOptimisation, optimisationForController)).
+fof(h_0041, axiom, leq(legalCompliance, fulfilmentOfObligation)).
+fof(h_0042, axiom, leq(maintainCreditCheckingDatabase, creditChecking)).
+fof(h_0043, axiom, leq(maintainCreditRatingDatabase, creditChecking)).
+fof(h_0044, axiom, leq(maintainFraudDatabase, fraudPreventionAndDetection)).
+fof(h_0045, axiom, leq(marketing, purpose)).
+fof(h_0046, axiom, leq(memberPartnerManagement, organisationGovernance)).
+fof(h_0047, axiom, leq(misusePreventionAndDetection, enforceSecurity)).
+fof(h_0048, axiom, leq(nonCommercialPurpose, purpose)).
+fof(h_0049, axiom, leq(nonCommercialResearch, nonCommercialPurpose)).
+fof(h_0050, axiom, leq(nonCommercialResearch, researchAndDevelopment)).
+fof(h_0051, axiom, leq(optimisationForConsumer, serviceOptimisation)).
+fof(h_0052, axiom, leq(optimisationForController, serviceOptimisation)).
+fof(h_0053, axiom, leq(optimiseUserInterface, optimisationForConsumer)).
+fof(h_0054, axiom, leq(organisationComplianceManagement, organisationGovernance)).
+fof(h_0055, axiom, leq(organisationGovernance, purpose)).
+fof(h_0056, axiom, leq(organisationRiskManagement, organisationGovernance)).
+fof(h_0057, axiom, leq(paymentManagement, serviceProvision)).
+fof(h_0058, axiom, leq(personalisation, purpose)).
+fof(h_0059, axiom, leq(personalisedAdvertising, advertising)).
+fof(h_0060, axiom, leq(personalisedAdvertising, personalisation)).
+fof(h_0061, axiom, leq(personalisedBenefits, servicePersonalisation)).
+fof(h_0062, axiom, leq(personnelHiring, personnelManagement)).
+fof(h_0063, axiom, leq(personnelManagement, humanResourceManagement)).
+fof(h_0064, axiom, leq(personnelPayment, personnelManagement)).
+fof(h_0065, axiom, leq(protectionOfIPR, fulfilmentOfObligation)).
+fof(h_0066, axiom, leq(protectionOfNationalSecurity, publicBenefit)).
+fof(h_0067, axiom, leq(protectionOfPublicSecurity, publicBenefit)).
+fof(h_0068, axiom, leq(provideEventRecommendations, providePersonalisedRecommendations)).
+fof(h_0069, axiom, leq(provideOfficialStatistics, publicBenefit)).
+fof(h_0070, axiom, leq(providePersonalisedRecommendations, servicePersonalisation)).
+fof(h_0071, axiom, leq(provideProductRecommendations, providePersonalisedRecommendations)).
+fof(h_0072, axiom, leq(publicBenefit, purpose)).
+fof(h_0073, axiom, leq(publicPolicyMaking, publicBenefit)).
+fof(h_0074, axiom, leq(publicRelations, marketing)).
+fof(h_0075, axiom, leq(recordManagement, purpose)).
+fof(h_0076, axiom, leq(repairImpairments, serviceProvision)).
+fof(h_0077, axiom, leq(requestedServiceProvision, serviceProvision)).
+fof(h_0078, axiom, leq(researchAndDevelopment, purpose)).
+fof(h_0079, axiom, leq(scientificResearch, researchAndDevelopment)).
+fof(h_0080, axiom, leq(searchFunctionalities, serviceProvision)).
+fof(h_0081, axiom, leq(sellDataToThirdParties, sellProducts)).
+fof(h_0082, axiom, leq(sellInsightsFromData, sellProducts)).
+fof(h_0083, axiom, leq(sellProducts, serviceProvision)).
+fof(h_0084, axiom, leq(sellProductsToDataSubject, sellProducts)).
+fof(h_0085, axiom, leq(serviceOptimisation, serviceProvision)).
+fof(h_0086, axiom, leq(servicePersonalisation, personalisation)).
+fof(h_0087, axiom, leq(servicePersonalisation, serviceProvision)).
+fof(h_0088, axiom, leq(serviceProvision, purpose)).
+fof(h_0089, axiom, leq(serviceRegistration, serviceProvision)).
+fof(h_0090, axiom, leq(serviceUsageAnalytics, serviceProvision)).
+fof(h_0091, axiom, leq(socialMediaMarketing, marketing)).
+fof(h_0092, axiom, leq(targetedAdvertising, personalisedAdvertising)).
+fof(h_0093, axiom, leq(technicalServiceProvision, serviceProvision)).
+fof(h_0094, axiom, leq(userInterfacePersonalisation, servicePersonalisation)).
+fof(h_0095, axiom, leq(vendorManagement, purpose)).
+fof(h_0096, axiom, leq(vendorPayment, vendorManagement)).
+fof(h_0097, axiom, leq(vendorRecordsManagement, vendorManagement)).
+fof(h_0098, axiom, leq(vendorSelectionAssessment, vendorManagement)).
+fof(h_0099, axiom, leq(verification, enforceSecurity)).
+
+% ─── Disjointness (Definition 2: ⊥⊥) ─────────────────────────────────
+% NAIVE (tree-assumed) sibling ⊥⊥. Derived ⊥⊥ via disj_downward (Layer 1).
+fof(d_0000, axiom, disjoint(academicResearch, commercialResearch)).
+fof(d_0001, axiom, disjoint(academicResearch, nonCommercialResearch)).
+fof(d_0002, axiom, disjoint(academicResearch, scientificResearch)).
+fof(d_0003, axiom, disjoint(accountManagement, commercialPurpose)).
+fof(d_0004, axiom, disjoint(accountManagement, communicationManagement)).
+fof(d_0005, axiom, disjoint(accountManagement, customerManagement)).
+fof(d_0006, axiom, disjoint(accountManagement, enforceSecurity)).
+fof(d_0007, axiom, disjoint(accountManagement, establishContractualAgreement)).
+fof(d_0008, axiom, disjoint(accountManagement, fulfilmentOfObligation)).
+fof(d_0009, axiom, disjoint(accountManagement, humanResourceManagement)).
+fof(d_0010, axiom, disjoint(accountManagement, marketing)).
+fof(d_0011, axiom, disjoint(accountManagement, nonCommercialPurpose)).
+fof(d_0012, axiom, disjoint(accountManagement, organisationGovernance)).
+fof(d_0013, axiom, disjoint(accountManagement, personalisation)).
+fof(d_0014, axiom, disjoint(accountManagement, publicBenefit)).
+fof(d_0015, axiom, disjoint(accountManagement, recordManagement)).
+fof(d_0016, axiom, disjoint(accountManagement, researchAndDevelopment)).
+fof(d_0017, axiom, disjoint(accountManagement, serviceProvision)).
+fof(d_0018, axiom, disjoint(accountManagement, vendorManagement)).
+fof(d_0019, axiom, disjoint(advertising, directMarketing)).
+fof(d_0020, axiom, disjoint(advertising, publicRelations)).
+fof(d_0021, axiom, disjoint(advertising, socialMediaMarketing)).
+fof(d_0022, axiom, disjoint(ageVerification, identityVerification)).
+fof(d_0023, axiom, disjoint(combatClimateChange, counterterrorism)).
+fof(d_0024, axiom, disjoint(combatClimateChange, dataAltruism)).
+fof(d_0025, axiom, disjoint(combatClimateChange, improveHealthcare)).
+fof(d_0026, axiom, disjoint(combatClimateChange, improvePublicServices)).
+fof(d_0027, axiom, disjoint(combatClimateChange, improveTransportMobility)).
+fof(d_0028, axiom, disjoint(combatClimateChange, protectionOfNationalSecurity)).
+fof(d_0029, axiom, disjoint(combatClimateChange, protectionOfPublicSecurity)).
+fof(d_0030, axiom, disjoint(combatClimateChange, provideOfficialStatistics)).
+fof(d_0031, axiom, disjoint(combatClimateChange, publicPolicyMaking)).
+fof(d_0032, axiom, disjoint(commercialPurpose, communicationManagement)).
+fof(d_0033, axiom, disjoint(commercialPurpose, customerManagement)).
+fof(d_0034, axiom, disjoint(commercialPurpose, enforceSecurity)).
+fof(d_0035, axiom, disjoint(commercialPurpose, establishContractualAgreement)).
+fof(d_0036, axiom, disjoint(commercialPurpose, fulfilmentOfObligation)).
+fof(d_0037, axiom, disjoint(commercialPurpose, humanResourceManagement)).
+fof(d_0038, axiom, disjoint(commercialPurpose, marketing)).
+fof(d_0039, axiom, disjoint(commercialPurpose, nonCommercialPurpose)).
+fof(d_0040, axiom, disjoint(commercialPurpose, organisationGovernance)).
+fof(d_0041, axiom, disjoint(commercialPurpose, personalisation)).
+fof(d_0042, axiom, disjoint(commercialPurpose, publicBenefit)).
+fof(d_0043, axiom, disjoint(commercialPurpose, recordManagement)).
+fof(d_0044, axiom, disjoint(commercialPurpose, researchAndDevelopment)).
+fof(d_0045, axiom, disjoint(commercialPurpose, serviceProvision)).
+fof(d_0046, axiom, disjoint(commercialPurpose, vendorManagement)).
+fof(d_0047, axiom, disjoint(commercialResearch, nonCommercialResearch)).
+fof(d_0048, axiom, disjoint(commercialResearch, scientificResearch)).
+fof(d_0049, axiom, disjoint(communicationManagement, customerManagement)).
+fof(d_0050, axiom, disjoint(communicationManagement, enforceSecurity)).
+fof(d_0051, axiom, disjoint(communicationManagement, establishContractualAgreement)).
+fof(d_0052, axiom, disjoint(communicationManagement, fulfilmentOfObligation)).
+fof(d_0053, axiom, disjoint(communicationManagement, humanResourceManagement)).
+fof(d_0054, axiom, disjoint(communicationManagement, marketing)).
+fof(d_0055, axiom, disjoint(communicationManagement, nonCommercialPurpose)).
+fof(d_0056, axiom, disjoint(communicationManagement, organisationGovernance)).
+fof(d_0057, axiom, disjoint(communicationManagement, personalisation)).
+fof(d_0058, axiom, disjoint(communicationManagement, publicBenefit)).
+fof(d_0059, axiom, disjoint(communicationManagement, recordManagement)).
+fof(d_0060, axiom, disjoint(communicationManagement, researchAndDevelopment)).
+fof(d_0061, axiom, disjoint(communicationManagement, serviceProvision)).
+fof(d_0062, axiom, disjoint(communicationManagement, vendorManagement)).
+fof(d_0063, axiom, disjoint(counterMoneyLaundering, maintainFraudDatabase)).
+fof(d_0064, axiom, disjoint(counterterrorism, dataAltruism)).
+fof(d_0065, axiom, disjoint(counterterrorism, improveHealthcare)).
+fof(d_0066, axiom, disjoint(counterterrorism, improvePublicServices)).
+fof(d_0067, axiom, disjoint(counterterrorism, improveTransportMobility)).
+fof(d_0068, axiom, disjoint(counterterrorism, protectionOfNationalSecurity)).
+fof(d_0069, axiom, disjoint(counterterrorism, protectionOfPublicSecurity)).
+fof(d_0070, axiom, disjoint(counterterrorism, provideOfficialStatistics)).
+fof(d_0071, axiom, disjoint(counterterrorism, publicPolicyMaking)).
+fof(d_0072, axiom, disjoint(customerCare, customerClaimsManagement)).
+fof(d_0073, axiom, disjoint(customerCare, customerOrderManagement)).
+fof(d_0074, axiom, disjoint(customerCare, customerRelationshipManagement)).
+fof(d_0075, axiom, disjoint(customerCare, customerSolvencyMonitoring)).
+fof(d_0076, axiom, disjoint(customerClaimsManagement, customerOrderManagement)).
+fof(d_0077, axiom, disjoint(customerClaimsManagement, customerRelationshipManagement)).
+fof(d_0078, axiom, disjoint(customerClaimsManagement, customerSolvencyMonitoring)).
+fof(d_0079, axiom, disjoint(customerManagement, enforceSecurity)).
+fof(d_0080, axiom, disjoint(customerManagement, establishContractualAgreement)).
+fof(d_0081, axiom, disjoint(customerManagement, fulfilmentOfObligation)).
+fof(d_0082, axiom, disjoint(customerManagement, humanResourceManagement)).
+fof(d_0083, axiom, disjoint(customerManagement, marketing)).
+fof(d_0084, axiom, disjoint(customerManagement, nonCommercialPurpose)).
+fof(d_0085, axiom, disjoint(customerManagement, organisationGovernance)).
+fof(d_0086, axiom, disjoint(customerManagement, personalisation)).
+fof(d_0087, axiom, disjoint(customerManagement, publicBenefit)).
+fof(d_0088, axiom, disjoint(customerManagement, recordManagement)).
+fof(d_0089, axiom, disjoint(customerManagement, researchAndDevelopment)).
+fof(d_0090, axiom, disjoint(customerManagement, serviceProvision)).
+fof(d_0091, axiom, disjoint(customerManagement, vendorManagement)).
+fof(d_0092, axiom, disjoint(customerOrderManagement, customerRelationshipManagement)).
+fof(d_0093, axiom, disjoint(customerOrderManagement, customerSolvencyMonitoring)).
+fof(d_0094, axiom, disjoint(customerRelationshipManagement, customerSolvencyMonitoring)).
+fof(d_0095, axiom, disjoint(dataAltruism, improveHealthcare)).
+fof(d_0096, axiom, disjoint(dataAltruism, improvePublicServices)).
+fof(d_0097, axiom, disjoint(dataAltruism, improveTransportMobility)).
+fof(d_0098, axiom, disjoint(dataAltruism, protectionOfNationalSecurity)).
+fof(d_0099, axiom, disjoint(dataAltruism, protectionOfPublicSecurity)).
+fof(d_0100, axiom, disjoint(dataAltruism, provideOfficialStatistics)).
+fof(d_0101, axiom, disjoint(dataAltruism, publicPolicyMaking)).
+fof(d_0102, axiom, disjoint(directMarketing, publicRelations)).
+fof(d_0103, axiom, disjoint(directMarketing, socialMediaMarketing)).
+fof(d_0104, axiom, disjoint(disputeManagement, memberPartnerManagement)).
+fof(d_0105, axiom, disjoint(disputeManagement, organisationComplianceManagement)).
+fof(d_0106, axiom, disjoint(disputeManagement, organisationRiskManagement)).
+fof(d_0107, axiom, disjoint(enforceAccessControl, identityAuthentication)).
+fof(d_0108, axiom, disjoint(enforceAccessControl, misusePreventionAndDetection)).
+fof(d_0109, axiom, disjoint(enforceAccessControl, verification)).
+fof(d_0110, axiom, disjoint(enforceSecurity, establishContractualAgreement)).
+fof(d_0111, axiom, disjoint(enforceSecurity, fulfilmentOfObligation)).
+fof(d_0112, axiom, disjoint(enforceSecurity, humanResourceManagement)).
+fof(d_0113, axiom, disjoint(enforceSecurity, marketing)).
+fof(d_0114, axiom, disjoint(enforceSecurity, nonCommercialPurpose)).
+fof(d_0115, axiom, disjoint(enforceSecurity, organisationGovernance)).
+fof(d_0116, axiom, disjoint(enforceSecurity, personalisation)).
+fof(d_0117, axiom, disjoint(enforceSecurity, publicBenefit)).
+fof(d_0118, axiom, disjoint(enforceSecurity, recordManagement)).
+fof(d_0119, axiom, disjoint(enforceSecurity, researchAndDevelopment)).
+fof(d_0120, axiom, disjoint(enforceSecurity, serviceProvision)).
+fof(d_0121, axiom, disjoint(enforceSecurity, vendorManagement)).
+fof(d_0122, axiom, disjoint(establishContractualAgreement, fulfilmentOfObligation)).
+fof(d_0123, axiom, disjoint(establishContractualAgreement, humanResourceManagement)).
+fof(d_0124, axiom, disjoint(establishContractualAgreement, marketing)).
+fof(d_0125, axiom, disjoint(establishContractualAgreement, nonCommercialPurpose)).
+fof(d_0126, axiom, disjoint(establishContractualAgreement, organisationGovernance)).
+fof(d_0127, axiom, disjoint(establishContractualAgreement, personalisation)).
+fof(d_0128, axiom, disjoint(establishContractualAgreement, publicBenefit)).
+fof(d_0129, axiom, disjoint(establishContractualAgreement, recordManagement)).
+fof(d_0130, axiom, disjoint(establishContractualAgreement, researchAndDevelopment)).
+fof(d_0131, axiom, disjoint(establishContractualAgreement, serviceProvision)).
+fof(d_0132, axiom, disjoint(establishContractualAgreement, vendorManagement)).
+fof(d_0133, axiom, disjoint(fulfilmentOfContractualObligation, legalCompliance)).
+fof(d_0134, axiom, disjoint(fulfilmentOfContractualObligation, protectionOfIPR)).
+fof(d_0135, axiom, disjoint(fulfilmentOfObligation, humanResourceManagement)).
+fof(d_0136, axiom, disjoint(fulfilmentOfObligation, marketing)).
+fof(d_0137, axiom, disjoint(fulfilmentOfObligation, nonCommercialPurpose)).
+fof(d_0138, axiom, disjoint(fulfilmentOfObligation, organisationGovernance)).
+fof(d_0139, axiom, disjoint(fulfilmentOfObligation, personalisation)).
+fof(d_0140, axiom, disjoint(fulfilmentOfObligation, publicBenefit)).
+fof(d_0141, axiom, disjoint(fulfilmentOfObligation, recordManagement)).
+fof(d_0142, axiom, disjoint(fulfilmentOfObligation, researchAndDevelopment)).
+fof(d_0143, axiom, disjoint(fulfilmentOfObligation, serviceProvision)).
+fof(d_0144, axiom, disjoint(fulfilmentOfObligation, vendorManagement)).
+fof(d_0145, axiom, disjoint(humanResourceManagement, marketing)).
+fof(d_0146, axiom, disjoint(humanResourceManagement, nonCommercialPurpose)).
+fof(d_0147, axiom, disjoint(humanResourceManagement, organisationGovernance)).
+fof(d_0148, axiom, disjoint(humanResourceManagement, personalisation)).
+fof(d_0149, axiom, disjoint(humanResourceManagement, publicBenefit)).
+fof(d_0150, axiom, disjoint(humanResourceManagement, recordManagement)).
+fof(d_0151, axiom, disjoint(humanResourceManagement, researchAndDevelopment)).
+fof(d_0152, axiom, disjoint(humanResourceManagement, serviceProvision)).
+fof(d_0153, axiom, disjoint(humanResourceManagement, vendorManagement)).
+fof(d_0154, axiom, disjoint(identityAuthentication, misusePreventionAndDetection)).
+fof(d_0155, axiom, disjoint(identityAuthentication, verification)).
+fof(d_0156, axiom, disjoint(improveExistingProductsAndServices, improveInternalCRMProcesses)).
+fof(d_0157, axiom, disjoint(improveExistingProductsAndServices, increaseServiceRobustness)).
+fof(d_0158, axiom, disjoint(improveExistingProductsAndServices, internalResourceOptimisation)).
+fof(d_0159, axiom, disjoint(improveHealthcare, improvePublicServices)).
+fof(d_0160, axiom, disjoint(improveHealthcare, improveTransportMobility)).
+fof(d_0161, axiom, disjoint(improveHealthcare, protectionOfNationalSecurity)).
+fof(d_0162, axiom, disjoint(improveHealthcare, protectionOfPublicSecurity)).
+fof(d_0163, axiom, disjoint(improveHealthcare, provideOfficialStatistics)).
+fof(d_0164, axiom, disjoint(improveHealthcare, publicPolicyMaking)).
+fof(d_0165, axiom, disjoint(improveInternalCRMProcesses, increaseServiceRobustness)).
+fof(d_0166, axiom, disjoint(improveInternalCRMProcesses, internalResourceOptimisation)).
+fof(d_0167, axiom, disjoint(improvePublicServices, improveTransportMobility)).
+fof(d_0168, axiom, disjoint(improvePublicServices, protectionOfNationalSecurity)).
+fof(d_0169, axiom, disjoint(improvePublicServices, protectionOfPublicSecurity)).
+fof(d_0170, axiom, disjoint(improvePublicServices, provideOfficialStatistics)).
+fof(d_0171, axiom, disjoint(improvePublicServices, publicPolicyMaking)).
+fof(d_0172, axiom, disjoint(improveTransportMobility, protectionOfNationalSecurity)).
+fof(d_0173, axiom, disjoint(improveTransportMobility, protectionOfPublicSecurity)).
+fof(d_0174, axiom, disjoint(improveTransportMobility, provideOfficialStatistics)).
+fof(d_0175, axiom, disjoint(improveTransportMobility, publicPolicyMaking)).
+fof(d_0176, axiom, disjoint(increaseServiceRobustness, internalResourceOptimisation)).
+fof(d_0177, axiom, disjoint(legalCompliance, protectionOfIPR)).
+fof(d_0178, axiom, disjoint(maintainCreditCheckingDatabase, maintainCreditRatingDatabase)).
+fof(d_0179, axiom, disjoint(marketing, nonCommercialPurpose)).
+fof(d_0180, axiom, disjoint(marketing, organisationGovernance)).
+fof(d_0181, axiom, disjoint(marketing, personalisation)).
+fof(d_0182, axiom, disjoint(marketing, publicBenefit)).
+fof(d_0183, axiom, disjoint(marketing, recordManagement)).
+fof(d_0184, axiom, disjoint(marketing, researchAndDevelopment)).
+fof(d_0185, axiom, disjoint(marketing, serviceProvision)).
+fof(d_0186, axiom, disjoint(marketing, vendorManagement)).
+fof(d_0187, axiom, disjoint(memberPartnerManagement, organisationComplianceManagement)).
+fof(d_0188, axiom, disjoint(memberPartnerManagement, organisationRiskManagement)).
+fof(d_0189, axiom, disjoint(misusePreventionAndDetection, verification)).
+fof(d_0190, axiom, disjoint(nonCommercialPurpose, organisationGovernance)).
+fof(d_0191, axiom, disjoint(nonCommercialPurpose, personalisation)).
+fof(d_0192, axiom, disjoint(nonCommercialPurpose, publicBenefit)).
+fof(d_0193, axiom, disjoint(nonCommercialPurpose, recordManagement)).
+fof(d_0194, axiom, disjoint(nonCommercialPurpose, researchAndDevelopment)).
+fof(d_0195, axiom, disjoint(nonCommercialPurpose, serviceProvision)).
+fof(d_0196, axiom, disjoint(nonCommercialPurpose, vendorManagement)).
+fof(d_0197, axiom, disjoint(nonCommercialResearch, scientificResearch)).
+fof(d_0198, axiom, disjoint(optimisationForConsumer, optimisationForController)).
+fof(d_0199, axiom, disjoint(organisationComplianceManagement, organisationRiskManagement)).
+fof(d_0200, axiom, disjoint(organisationGovernance, personalisation)).
+fof(d_0201, axiom, disjoint(organisationGovernance, publicBenefit)).
+fof(d_0202, axiom, disjoint(organisationGovernance, recordManagement)).
+fof(d_0203, axiom, disjoint(organisationGovernance, researchAndDevelopment)).
+fof(d_0204, axiom, disjoint(organisationGovernance, serviceProvision)).
+fof(d_0205, axiom, disjoint(organisationGovernance, vendorManagement)).
+fof(d_0206, axiom, disjoint(paymentManagement, repairImpairments)).
+fof(d_0207, axiom, disjoint(paymentManagement, requestedServiceProvision)).
+fof(d_0208, axiom, disjoint(paymentManagement, searchFunctionalities)).
+fof(d_0209, axiom, disjoint(paymentManagement, sellProducts)).
+fof(d_0210, axiom, disjoint(paymentManagement, serviceOptimisation)).
+fof(d_0211, axiom, disjoint(paymentManagement, servicePersonalisation)).
+fof(d_0212, axiom, disjoint(paymentManagement, serviceRegistration)).
+fof(d_0213, axiom, disjoint(paymentManagement, serviceUsageAnalytics)).
+fof(d_0214, axiom, disjoint(paymentManagement, technicalServiceProvision)).
+fof(d_0215, axiom, disjoint(personalisation, publicBenefit)).
+fof(d_0216, axiom, disjoint(personalisation, recordManagement)).
+fof(d_0217, axiom, disjoint(personalisation, researchAndDevelopment)).
+fof(d_0218, axiom, disjoint(personalisation, serviceProvision)).
+fof(d_0219, axiom, disjoint(personalisation, vendorManagement)).
+fof(d_0220, axiom, disjoint(personalisedAdvertising, servicePersonalisation)).
+fof(d_0221, axiom, disjoint(personalisedBenefits, providePersonalisedRecommendations)).
+fof(d_0222, axiom, disjoint(personalisedBenefits, userInterfacePersonalisation)).
+fof(d_0223, axiom, disjoint(personnelHiring, personnelPayment)).
+fof(d_0224, axiom, disjoint(protectionOfNationalSecurity, protectionOfPublicSecurity)).
+fof(d_0225, axiom, disjoint(protectionOfNationalSecurity, provideOfficialStatistics)).
+fof(d_0226, axiom, disjoint(protectionOfNationalSecurity, publicPolicyMaking)).
+fof(d_0227, axiom, disjoint(protectionOfPublicSecurity, provideOfficialStatistics)).
+fof(d_0228, axiom, disjoint(protectionOfPublicSecurity, publicPolicyMaking)).
+fof(d_0229, axiom, disjoint(provideEventRecommendations, provideProductRecommendations)).
+fof(d_0230, axiom, disjoint(provideOfficialStatistics, publicPolicyMaking)).
+fof(d_0231, axiom, disjoint(providePersonalisedRecommendations, userInterfacePersonalisation)).
+fof(d_0232, axiom, disjoint(publicBenefit, recordManagement)).
+fof(d_0233, axiom, disjoint(publicBenefit, researchAndDevelopment)).
+fof(d_0234, axiom, disjoint(publicBenefit, serviceProvision)).
+fof(d_0235, axiom, disjoint(publicBenefit, vendorManagement)).
+fof(d_0236, axiom, disjoint(publicRelations, socialMediaMarketing)).
+fof(d_0237, axiom, disjoint(recordManagement, researchAndDevelopment)).
+fof(d_0238, axiom, disjoint(recordManagement, serviceProvision)).
+fof(d_0239, axiom, disjoint(recordManagement, vendorManagement)).
+fof(d_0240, axiom, disjoint(repairImpairments, requestedServiceProvision)).
+fof(d_0241, axiom, disjoint(repairImpairments, searchFunctionalities)).
+fof(d_0242, axiom, disjoint(repairImpairments, sellProducts)).
+fof(d_0243, axiom, disjoint(repairImpairments, serviceOptimisation)).
+fof(d_0244, axiom, disjoint(repairImpairments, servicePersonalisation)).
+fof(d_0245, axiom, disjoint(repairImpairments, serviceRegistration)).
+fof(d_0246, axiom, disjoint(repairImpairments, serviceUsageAnalytics)).
+fof(d_0247, axiom, disjoint(repairImpairments, technicalServiceProvision)).
+fof(d_0248, axiom, disjoint(requestedServiceProvision, searchFunctionalities)).
+fof(d_0249, axiom, disjoint(requestedServiceProvision, sellProducts)).
+fof(d_0250, axiom, disjoint(requestedServiceProvision, serviceOptimisation)).
+fof(d_0251, axiom, disjoint(requestedServiceProvision, servicePersonalisation)).
+fof(d_0252, axiom, disjoint(requestedServiceProvision, serviceRegistration)).
+fof(d_0253, axiom, disjoint(requestedServiceProvision, serviceUsageAnalytics)).
+fof(d_0254, axiom, disjoint(requestedServiceProvision, technicalServiceProvision)).
+fof(d_0255, axiom, disjoint(researchAndDevelopment, serviceProvision)).
+fof(d_0256, axiom, disjoint(researchAndDevelopment, vendorManagement)).
+fof(d_0257, axiom, disjoint(searchFunctionalities, sellProducts)).
+fof(d_0258, axiom, disjoint(searchFunctionalities, serviceOptimisation)).
+fof(d_0259, axiom, disjoint(searchFunctionalities, servicePersonalisation)).
+fof(d_0260, axiom, disjoint(searchFunctionalities, serviceRegistration)).
+fof(d_0261, axiom, disjoint(searchFunctionalities, serviceUsageAnalytics)).
+fof(d_0262, axiom, disjoint(searchFunctionalities, technicalServiceProvision)).
+fof(d_0263, axiom, disjoint(sellDataToThirdParties, sellInsightsFromData)).
+fof(d_0264, axiom, disjoint(sellDataToThirdParties, sellProductsToDataSubject)).
+fof(d_0265, axiom, disjoint(sellInsightsFromData, sellProductsToDataSubject)).
+fof(d_0266, axiom, disjoint(sellProducts, serviceOptimisation)).
+fof(d_0267, axiom, disjoint(sellProducts, servicePersonalisation)).
+fof(d_0268, axiom, disjoint(sellProducts, serviceRegistration)).
+fof(d_0269, axiom, disjoint(sellProducts, serviceUsageAnalytics)).
+fof(d_0270, axiom, disjoint(sellProducts, technicalServiceProvision)).
+fof(d_0271, axiom, disjoint(serviceOptimisation, servicePersonalisation)).
+fof(d_0272, axiom, disjoint(serviceOptimisation, serviceRegistration)).
+fof(d_0273, axiom, disjoint(serviceOptimisation, serviceUsageAnalytics)).
+fof(d_0274, axiom, disjoint(serviceOptimisation, technicalServiceProvision)).
+fof(d_0275, axiom, disjoint(servicePersonalisation, serviceRegistration)).
+fof(d_0276, axiom, disjoint(servicePersonalisation, serviceUsageAnalytics)).
+fof(d_0277, axiom, disjoint(servicePersonalisation, technicalServiceProvision)).
+fof(d_0278, axiom, disjoint(serviceProvision, vendorManagement)).
+fof(d_0279, axiom, disjoint(serviceRegistration, serviceUsageAnalytics)).
+fof(d_0280, axiom, disjoint(serviceRegistration, technicalServiceProvision)).
+fof(d_0281, axiom, disjoint(serviceUsageAnalytics, technicalServiceProvision)).
+fof(d_0282, axiom, disjoint(vendorPayment, vendorRecordsManagement)).
+fof(d_0283, axiom, disjoint(vendorPayment, vendorSelectionAssessment)).
+fof(d_0284, axiom, disjoint(vendorRecordsManagement, vendorSelectionAssessment)).
+
+% ─── Unique Name Assumption ───────────────────────────────────────────
+% IMPLICIT — tree + ⊥⊥ (Implicit UNA Lemma).
+% SKIPPED — implicit from tree structure + ⊥⊥ (Implicit UNA Lemma).
+
+%--------------------------------------------------------------------------
+% Summary: 95 concept + 100 leq + 285 disjoint + 0 UNA = 480 axioms
+%--------------------------------------------------------------------------

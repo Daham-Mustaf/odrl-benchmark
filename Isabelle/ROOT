@@ -1,0 +1,8 @@
+session ODRL = HOL +
+  directories
+    theories
+  theories
+    "theories/ODRL_Grounding"
+    "theories/ODRL_Analysis_Modes"
+    "theories/ODRL_Scenarios"
+    "theories/multi_parent_inconsistency"

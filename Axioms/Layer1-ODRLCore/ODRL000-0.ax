@@ -1,0 +1,197 @@
+%--------------------------------------------------------------------------
+% File     : ODRL000-0.ax : TPTP v0.1.0. Released v0.1.0.
+% Domain   : ODRL Policy Conflict Detection
+% Axioms   : KB structure, denotation rules, structural predicates
+% Version  : 0.3.0 — unified leq/2, bidirectional denotation rules,
+%            disjointness closure. Matches paper Defs. 1–3, Lemma 1.
+% English  : Generic axioms for ODRL constraint conflict detection.
+%            Part A encodes the ODRL constraint structure (Def. 1).
+%            Part B encodes KB properties: reflexivity, transitivity
+%            of the ordering, and symmetry, irreflexivity, downward
+%            closure of disjointness (Def. 2). Part C asserts the
+%            derived disjointness-order consistency lemma (Lemma 1)
+%            for prover performance. Parts D-E encode bidirectional
+%            denotation rules for all eight KB-dependent operators
+%            (Def. 3).
+% Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
+%            Automated Reasoning for ODRL Policy Conflict Detection
+% Source   : [MuS25]
+% Names    : ODRL000-0.ax
+% Status   : Layer 1 — Generic ODRL Axioms
+% Syntax   : Number of formulae    :    33 (   0 unt;   0 def)
+%            Number of atoms       :    76 (   4 equ)
+%            Maximal formula atoms  :     4 (   2 avg)
+%            Number of connectives  :    49 (   5   ~;   0   |;  11   &)
+%                                         (   0 <=>;  33  =>;   0  <=;   0 <~>)
+%            Maximal formula depth  :     4 (   2 avg)
+%            Maximal term depth     :     1 (   1 avg)
+%            Number of predicates   :    17 (  17 usr;   0 prp; 1-3 aty)
+%            Number of functors     :     8 (   8 usr;   8 con; 0-0 aty)
+%            Number of variables    :    69 (  68   !;   1   ?)
+% SPC      : FOF_EPR_RFN_SEQ
+% Comments : All terms are variables or constants (no function symbols
+%          :   with arity > 0), placing this in the EPR fragment.
+%          : Operator constants: eq, neq, isA, isPartOf, hasPart,
+%          :   isAnyOf, isAllOf, isNoneOf.
+%          : Comparison operators (lt, lteq, gt, gteq) are omitted:
+%          :   they apply to XSD datatypes, not KB-dependent operands.
+%          : Part C axioms (disj_order_consistency, disj_implies_not_leq)
+%          :   are derivable from Part B but asserted for Vampire
+%          :   performance on isNoneOf conflict proofs.
+%          : isA and isPartOf receive identical denotation rules; the
+%          :   semantic distinction is carried by the KB's ≤ relation
+%          :   (taxonomic ⊑ vs. mereological ⪯), not the operator label.
+% Ontology : Predicates: concept/1; leq/2; disjoint/2 (from Layer 0)
+%          :   policy/1; permission/1; prohibition/1; obligation/1;
+%          :   constraint/1; has_asset/2; has_constraint/2;
+%          :   has_operand/2; has_operator/2; has_value/2;
+%          :   same_operand/2; in_denotation/3; in_denotation_set/3;
+%          :   in_value_list/2
+%          : Constants: eq, neq, isA, isPartOf, hasPart, isAnyOf,
+%          :   isAllOf, isNoneOf
+% Stats    : Part A  9 (structural)  | Part B  5 (KB properties)
+%          : Part C  2 (derived)     | Part D 10 (single-val den)
+%          : Part E  6 (set-val den) | Total  33
+% Date     : 2026-02-15
+% Authors  : Mustafa, D. & Sutcliffe, G.
+%--------------------------------------------------------------------------
+
+% ─── Part A: Structural predicates (Definition 1 — Constraint) ──────
+%
+% ODRL constraints are tuples c = (ℓ, ⊠, v). These axioms type
+% policy rules and their components. Not used in denotation
+% reasoning but included for complete problem encodings.
+
+fof(permission_is_policy,   axiom, ![P]: (permission(P)  => policy(P))).
+fof(prohibition_is_policy,  axiom, ![P]: (prohibition(P) => policy(P))).
+fof(obligation_is_policy,   axiom, ![P]: (obligation(P)  => policy(P))).
+fof(has_asset_policy,       axiom, ![P,A]:  (has_asset(P, A)      => policy(P))).
+fof(has_constraint_policy,  axiom, ![P,C]:  (has_constraint(P, C) => policy(P))).
+fof(has_operand_constraint, axiom, ![C,L]:  (has_operand(C, L)    => constraint(C))).
+fof(has_operator_constraint,axiom, ![C,Op]: (has_operator(C, Op)  => constraint(C))).
+fof(has_value_constraint,   axiom, ![C,V]:  (has_value(C, V)      => constraint(C))).
+
+fof(same_operand_def, axiom,
+    ![C1,C2,L]: ((has_operand(C1, L) & has_operand(C2, L))
+        => same_operand(C1, C2))).
+
+% ─── Part B: KB universal properties (Definition 2) ─────────────────
+%
+% ≤ is reflexive, transitive, and typed (domain/codomain = C).
+% ⊥⊥ is symmetric, irreflexive, and downward-closed.
+
+% --- Ordering (≤): reflexive, transitive ---
+fof(leq_refl, axiom,
+    ![X]: (concept(X) => leq(X, X))).
+
+fof(leq_trans, axiom,
+    ![X,Y,Z]: ((leq(X, Y) & leq(Y, Z)) => leq(X, Z))).
+
+fof(leq_typed, axiom,
+    ![X,Y]: (leq(X,Y) => (concept(X) & concept(Y)))).
+
+% --- Disjointness (⊥⊥): symmetric, irreflexive, downward-closed ---
+fof(disj_sym, axiom,
+    ![X,Y]: (disjoint(X, Y) => disjoint(Y, X))).
+
+fof(disj_irrefl, axiom,
+    ![X]: ~disjoint(X, X)).
+
+fof(disj_downward, axiom,
+    ![X,Y,Xp,Yp]: ((disjoint(X, Y) & leq(Xp, X) & leq(Yp, Y))
+        => disjoint(Xp, Yp))).
+
+% ─── Part C: Disjointness–Order Consistency (Lemma 1) ───────────────
+%
+% Derivable from Part B (see paper proof), but asserted as axioms
+% for Vampire performance on isNoneOf conflict proofs.
+
+fof(disj_order_consistency, axiom,
+    ![X,Y]: (leq(X, Y) => ~disjoint(X, Y))).
+
+% Contrapositive — helps Vampire derive ~leq from disjoint.
+fof(disj_implies_not_leq, axiom,
+    ![X,Y]: (disjoint(X, Y) => ~leq(X, Y))).
+
+% ─── Part D: Denotation rules — single-valued (Definition 3) ────────
+%
+% Predicate: in_denotation(X, G, Op)
+%   "concept X is in the denotation of constraint (_, Op, v)
+%    where γ(v) = G"
+%
+% Each operator has IF (proves Compatible) and ONLY-IF (proves
+% Conflict). Both directions are necessary for sound reasoning.
+
+% --- eq: ⟦ℓ eq v⟧ = {g} ---
+fof(den_eq_if, axiom,
+    ![X,G]: ((X = G) => in_denotation(X, G, eq))).
+
+fof(den_eq_onlyif, axiom,
+    ![X,G]: (in_denotation(X, G, eq) => (X = G))).
+
+% --- neq: ⟦ℓ neq v⟧ = C \ {g} ---
+fof(den_neq_if, axiom,
+    ![X,G]: ((concept(X) & X != G) => in_denotation(X, G, neq))).
+
+fof(den_neq_onlyif, axiom,
+    ![X,G]: (in_denotation(X, G, neq) => X != G)).
+
+% --- isA: ⟦ℓ isA v⟧ = {x ∈ C | x ≤ g} ---
+fof(den_isA_if, axiom,
+    ![X,G]: (leq(X, G) => in_denotation(X, G, isA))).
+
+fof(den_isA_onlyif, axiom,
+    ![X,G]: (in_denotation(X, G, isA) => leq(X, G))).
+
+% --- isPartOf: ⟦ℓ isPartOf v⟧ = {x ∈ C | x ≤ g} ---
+%     Identical to isA — distinction carried by KB's ≤ (paper §3.1 fn)
+fof(den_isPartOf_if, axiom,
+    ![X,G]: (leq(X, G) => in_denotation(X, G, isPartOf))).
+
+fof(den_isPartOf_onlyif, axiom,
+    ![X,G]: (in_denotation(X, G, isPartOf) => leq(X, G))).
+
+% --- hasPart: ⟦ℓ hasPart v⟧ = {x ∈ C | g ≤ x} ---
+fof(den_hasPart_if, axiom,
+    ![X,G]: (leq(G, X) => in_denotation(X, G, hasPart))).
+
+fof(den_hasPart_onlyif, axiom,
+    ![X,G]: (in_denotation(X, G, hasPart) => leq(G, X))).
+
+% ─── Part E: Denotation rules — set-valued (Definition 3 cont.) ─────
+%
+% Predicate: in_denotation_set(X, ListId, Op)
+% Auxiliary: in_value_list(G, ListId)
+%   asserted per-problem for set-valued right operands.
+
+% --- isAnyOf: ⟦ℓ isAnyOf {v₁,...,vₙ}⟧ = ∪ {x ∈ C | x ≤ gᵢ} ---
+fof(den_isAnyOf_if, axiom,
+    ![X,Gi,L]: ((in_value_list(Gi, L) & leq(X, Gi))
+        => in_denotation_set(X, L, isAnyOf))).
+
+fof(den_isAnyOf_onlyif, axiom,
+    ![X,L]: (in_denotation_set(X, L, isAnyOf)
+        => ?[Gi]: (in_value_list(Gi, L) & leq(X, Gi)))).
+
+% --- isAllOf: ⟦ℓ isAllOf {v₁,...,vₙ}⟧ = {x ∈ C | ∀i: x ≤ gᵢ} ---
+fof(den_isAllOf_if, axiom,
+    ![X,L]: ((concept(X) & ![Gi]: (in_value_list(Gi, L) => leq(X, Gi)))
+        => in_denotation_set(X, L, isAllOf))).
+
+fof(den_isAllOf_onlyif, axiom,
+    ![X,L,Gi]: ((in_denotation_set(X, L, isAllOf) & in_value_list(Gi, L))
+        => leq(X, Gi))).
+
+% --- isNoneOf: ⟦ℓ isNoneOf {v₁,...,vₙ}⟧ = C \ ∪ {x ∈ C | x ≤ gᵢ} ---
+fof(den_isNoneOf_if, axiom,
+    ![X,L]: ((concept(X) & ![Gi]: (in_value_list(Gi, L) => ~leq(X, Gi)))
+        => in_denotation_set(X, L, isNoneOf))).
+
+fof(den_isNoneOf_onlyif, axiom,
+    ![X,L,Gi]: ((in_denotation_set(X, L, isNoneOf) & in_value_list(Gi, L))
+        => ~leq(X, Gi))).
+
+%--------------------------------------------------------------------------
+% Summary: 9 structural + 6 KB + 2 derived + 10 single-den + 6 set-den
+%        = 33 axioms
+%--------------------------------------------------------------------------

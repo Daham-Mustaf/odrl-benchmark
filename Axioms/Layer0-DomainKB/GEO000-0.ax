@@ -1,0 +1,119 @@
+%--------------------------------------------------------------------------
+% File     : GEO000-0.ax : TPTP v0.1.0. Released v0.1.0.
+% Domain   : Geographic Regions — Curated European Hierarchy
+% Axioms   : Full hierarchy (mereological)
+% Version  : Profile: curated
+% English  : Geographic Regions — Curated European Hierarchy encoded as TPTP Layer 0 domain KB.
+%            UNA: $distinct groups (Sutcliffe); avoids clause explosion.
+% Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
+%            Automated Reasoning for ODRL Policy Conflict Detection
+% Source   : [1] https://unstats.un.org/unsd/methodology/m49/ (levels 0-2)
+%            [3] https://ec.europa.eu/eurostat/web/nuts/overview (levels 3-4)
+% Names    : GEO000-0.ax
+% Status   : Layer 0 — Domain Knowledge Base
+% Syntax   : Number of formulae    :    62 (   62 unt;   0 def)
+%            Number of atoms       :    62 (    0 equ)
+%            Maximal formula atoms  :     1 (   1 avg)
+%            Number of connectives  :     0 (   0   ~;   0   |;   0   &)
+%                                         (   0 <=>;   0  =>;   0  <=;   0 <~>)
+%            Maximal formula depth  :     1 (   1 avg)
+%            Maximal term depth     :     1 (   1 avg)
+%            Number of predicates   :     3 (    3 usr;   0 prp; 1-2 aty)
+%            Number of functors     :    24 (   24 usr;  24 con; 0-0 aty)
+%            Number of variables    :     0 (   0   !;   0   ?)
+% SPC      : FOF_EPR_RFN_NEQ
+% Comments : All formulae are ground unit clauses.
+%          : Layer 1 provides reflexivity + transitivity of leq/2.
+%          : Multi-parent: none
+%          : Root(s): europe
+% Ontology : Predicates: concept/1; leq/2; disjoint/2
+%          : Relation: leq/2 — part-whole containment (paper Def. 2, ≤ = ⪯)
+% Stats    : Concepts 24 | Edges 23 | Disjoint 10 | UNA 5 | Total 62
+%          : Depth 4 | Leaves 8 | Internal 15 | Branch avg 1.4 max 4
+% Date     : 2026-02-28
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Gen      : gen_layer0.py --source curated
+%--------------------------------------------------------------------------
+
+% ─── Concept membership (Definition 2: C) ─────────────────────────────
+fof(c_barcelona, axiom, concept(barcelona)).  % NUTS:ES511 — Barcelona
+fof(c_bavaria, axiom, concept(bavaria)).  % NUTS:DE2 — Bavaria
+fof(c_catalonia, axiom, concept(catalonia)).  % NUTS:ES51 — Catalonia
+fof(c_cologne, axiom, concept(cologne)).  % NUTS:DEA23 — Cologne
+fof(c_easternEurope, axiom, concept(easternEurope)).  % M49:151 — Eastern Europe
+fof(c_europe, axiom, concept(europe)).  % M49:150 — Europe
+fof(c_france, axiom, concept(france)).  % M49:250 — France
+fof(c_germany, axiom, concept(germany)).  % M49:276 — Germany
+fof(c_ileDeFrance, axiom, concept(ileDeFrance)).  % NUTS:FR1 — Île-de-France
+fof(c_italy, axiom, concept(italy)).  % M49:380 — Italy
+fof(c_lombardy, axiom, concept(lombardy)).  % NUTS:ITC4 — Lombardy
+fof(c_marseille, axiom, concept(marseille)).  % NUTS:FRL04 — Marseille
+fof(c_masovia, axiom, concept(masovia)).  % NUTS:PL9 — Masovia
+fof(c_milan, axiom, concept(milan)).  % NUTS:ITC4C — Milan
+fof(c_munich, axiom, concept(munich)).  % NUTS:DE212 — Munich
+fof(c_northRhineWestphalia, axiom, concept(northRhineWestphalia)).  % NUTS:DEA — North Rhine-Westphalia
+fof(c_northernEurope, axiom, concept(northernEurope)).  % M49:154 — Northern Europe
+fof(c_paris, axiom, concept(paris)).  % NUTS:FR101 — Paris
+fof(c_poland, axiom, concept(poland)).  % M49:616 — Poland
+fof(c_provence, axiom, concept(provence)).  % NUTS:FRL — Provence-Alpes-Côte d'Azur
+fof(c_southernEurope, axiom, concept(southernEurope)).  % M49:039 — Southern Europe
+fof(c_spain, axiom, concept(spain)).  % M49:724 — Spain
+fof(c_warsaw, axiom, concept(warsaw)).  % NUTS:PL911 — Warsaw
+fof(c_westernEurope, axiom, concept(westernEurope)).  % M49:155 — Western Europe
+
+% ─── Hierarchy (Definition 2: ≤) ──────────────────────────────────────
+% Direct edges only. Layer 1 provides reflexivity + transitivity.
+fof(h_0000, axiom, leq(barcelona, catalonia)).
+fof(h_0001, axiom, leq(bavaria, germany)).
+fof(h_0002, axiom, leq(catalonia, spain)).
+fof(h_0003, axiom, leq(cologne, northRhineWestphalia)).
+fof(h_0004, axiom, leq(easternEurope, europe)).
+fof(h_0005, axiom, leq(france, westernEurope)).
+fof(h_0006, axiom, leq(germany, westernEurope)).
+fof(h_0007, axiom, leq(ileDeFrance, france)).
+fof(h_0008, axiom, leq(italy, southernEurope)).
+fof(h_0009, axiom, leq(lombardy, italy)).
+fof(h_0010, axiom, leq(marseille, provence)).
+fof(h_0011, axiom, leq(masovia, poland)).
+fof(h_0012, axiom, leq(milan, lombardy)).
+fof(h_0013, axiom, leq(munich, bavaria)).
+fof(h_0014, axiom, leq(northRhineWestphalia, germany)).
+fof(h_0015, axiom, leq(northernEurope, europe)).
+fof(h_0016, axiom, leq(paris, ileDeFrance)).
+fof(h_0017, axiom, leq(poland, easternEurope)).
+fof(h_0018, axiom, leq(provence, france)).
+fof(h_0019, axiom, leq(southernEurope, europe)).
+fof(h_0020, axiom, leq(spain, southernEurope)).
+fof(h_0021, axiom, leq(warsaw, masovia)).
+fof(h_0022, axiom, leq(westernEurope, europe)).
+
+% ─── Disjointness (Definition 2: ⊥⊥) ─────────────────────────────────
+% DAG-safe sibling ⊥⊥. Derived ⊥⊥ via disj_downward (Layer 1).
+fof(d_0000, axiom, disjoint(bavaria, northRhineWestphalia)).
+fof(d_0001, axiom, disjoint(easternEurope, northernEurope)).
+fof(d_0002, axiom, disjoint(easternEurope, southernEurope)).
+fof(d_0003, axiom, disjoint(easternEurope, westernEurope)).
+fof(d_0004, axiom, disjoint(france, germany)).
+fof(d_0005, axiom, disjoint(ileDeFrance, provence)).
+fof(d_0006, axiom, disjoint(italy, spain)).
+fof(d_0007, axiom, disjoint(northernEurope, southernEurope)).
+fof(d_0008, axiom, disjoint(northernEurope, westernEurope)).
+fof(d_0009, axiom, disjoint(southernEurope, westernEurope)).
+
+% ─── Unique Name Assumption ───────────────────────────────────────────
+% $distinct groups (Sutcliffe); avoids clause explosion.
+fof(una_distinct_europe, axiom, $distinct(easternEurope, northernEurope, southernEurope, westernEurope)).
+
+fof(una_distinct_france, axiom, $distinct(ileDeFrance, provence)).
+
+fof(una_distinct_germany, axiom, $distinct(bavaria, northRhineWestphalia)).
+
+fof(una_distinct_southernEurope, axiom, $distinct(italy, spain)).
+
+fof(una_distinct_westernEurope, axiom, $distinct(france, germany)).
+
+
+
+%--------------------------------------------------------------------------
+% Summary: 24 concept + 23 leq + 10 disjoint + 5 UNA = 62 axioms
+%--------------------------------------------------------------------------

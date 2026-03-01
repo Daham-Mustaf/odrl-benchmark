@@ -1,0 +1,182 @@
+%--------------------------------------------------------------------------
+% File     : AXIS000-0 : TPTP v0.2.0
+% Domain   : ODRL Spatial Axis Profile
+% Axioms   : Axis decomposition, interval denotation, and verdict algebra
+% Version  : 0.2.0
+% Source   : [Mustafa et al., 2026]
+% Purpose  : Layer 1 axioms encoding the formal framework of the axis
+%            decomposition paper: interval membership, per-axis verdicts,
+%            box-level aggregation, and Kleene three-valued composition.
+% Depends  : ORD000-0.ax  (total order: leq/2, less/2)
+%            ORD001-0.ax  (density, OPTIONAL — for continuous domains only)
+%
+% Paper map (by label, not number — numbers shift between drafts):
+%   Section A  — Interval membership     → def:interval-denotation
+%   Section B  — Per-axis verdicts        → def:axis-verdict, def:axis-subsumption
+%   Section C  — Verdict algebra          → rem:three-valued
+%   Section D  — Box-level aggregation    → def:box-verdict
+%
+% Design notes:
+%   - All axioms are sort-agnostic: they use leq/2 and less/2 from
+%     ORD000-0.ax, not $real or $int.  This matches the paper's claim
+%     that all theorems are parametric in D_k (rem:domain-bounds).
+%   - The verdict algebra implements strong Kleene (K_3) three-valued
+%     logic (rem:three-valued): conjunction = min, disjunction = max
+%     over the ordering  Conflict < Unknown < Compatible.
+%   - Cross-domain aggregation (def:cross-domain) uses the SAME Kleene
+%     conjunction as box-level aggregation.  No separate predicates
+%     are needed: nest box_verdict associatively for n operands.
+%
+% Known limitation:
+%   (L1) The per-axis verdict predicates (axis_conflict, axis_compatible,
+%        axis_subsumes) in Section B model all intervals as CLOSED
+%        [lo, hi].  Half-open and open intervals arising from lt/gt
+%        operators (def:interval-denotation, equations 4–5) are not
+%        distinguished.  This may cause false Compatible verdicts at
+%        shared endpoints.
+%
+%        Example of L1 impact:
+%          Policy 1: width lt 600   → denotation [0, 600)
+%          Policy 2: width gteq 600 → denotation [600, ∞)
+%          Truth: disjoint (Conflict).
+%          axis_conflict(v0, v600, v600, inf) finds X=600 → wrong.
+%
+%        For boundary-sensitive benchmarks, use the typed interval
+%        membership predicates from Section A directly in the
+%        conjecture, bypassing Section B.  See Boundary/ benchmarks
+%        for examples.
+%--------------------------------------------------------------------------
+
+include('Axioms/Layer0-DomainKB/ORD000-0.ax').
+% NOTE: For continuous domains (coordinates, percentages), problem files
+% should additionally include ORD001-0.ax for the density axiom.
+% For discrete domains (pixel counts), ORD000-0.ax alone suffices.
+
+% ==========================================================================
+% Section A: Interval membership                [Paper: def:interval-denotation]
+% ==========================================================================
+% Four interval types arise from the five dimensional comparison operators
+% (O_delta = {eq, lt, lteq, gt, gteq}):
+%
+%   eq   v  →  [v, v]        (closed)       — in_closed
+%   lteq v  →  [inf D_k, v]  (closed)       — in_closed
+%   gteq v  →  [v, sup D_k]  (closed)       — in_closed
+%   lt   v  →  [inf D_k, v)  (right-open)   — in_ropen
+%   gt   v  →  (v, sup D_k]  (left-open)    — in_lopen
+%
+% These are the PRECISE predicates.  Problem files that need
+% open/closed boundary precision should build conjectures directly
+% from these, rather than using the simplified Section B predicates.
+
+% [A, B] — closed interval
+fof(in_closed, axiom, ![X,A,B]:
+    (in_closed(X,A,B) <=> (leq(A,X) & leq(X,B)))).
+
+% (A, B] — left-open interval
+fof(in_lopen, axiom, ![X,A,B]:
+    (in_lopen(X,A,B) <=> (less(A,X) & leq(X,B)))).
+
+% [A, B) — right-open interval
+fof(in_ropen, axiom, ![X,A,B]:
+    (in_ropen(X,A,B) <=> (leq(A,X) & less(X,B)))).
+
+% (A, B) — open interval
+fof(in_open, axiom, ![X,A,B]:
+    (in_open(X,A,B) <=> (less(A,X) & less(X,B)))).
+
+% ==========================================================================
+% Section B: Per-axis verdicts         [Paper: def:axis-verdict,
+%                                               def:axis-subsumption]
+% ==========================================================================
+% Each predicate takes two intervals as endpoint pairs (I1lo,I1hi)
+% and (I2lo,I2hi), treated as CLOSED intervals [lo, hi].
+%
+% LIMITATION L1 applies here.  For boundary-sensitive cases, bypass
+% these predicates and use Section A directly in the conjecture.
+% See the header for a worked example.
+
+% Conflict: no value satisfies both intervals simultaneously.
+% Maps to: [[c1]] ∩ [[c2]] = ∅  (def:axis-verdict, first case)
+fof(axis_conflict_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
+    (axis_conflict(I1lo,I1hi,I2lo,I2hi) <=>
+     ~?[X]: (in_closed(X,I1lo,I1hi) & in_closed(X,I2lo,I2hi)))).
+
+% Compatible: at least one value satisfies both intervals.
+% Maps to: [[c1]] ∩ [[c2]] ≠ ∅  (def:axis-verdict, second case)
+fof(axis_compatible_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
+    (axis_compatible(I1lo,I1hi,I2lo,I2hi) <=>
+     ?[X]: (in_closed(X,I1lo,I1hi) & in_closed(X,I2lo,I2hi)))).
+
+% Subsumption: every value in I1 is also in I2.
+% Maps to: [[c1]] ⊆ [[c2]]  (def:axis-subsumption)
+% Used for redundancy detection and supply-chain refinement.
+fof(axis_subsumes_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
+    (axis_subsumes(I1lo,I1hi,I2lo,I2hi) <=>
+     ![X]: (in_closed(X,I1lo,I1hi) => in_closed(X,I2lo,I2hi)))).
+
+% ==========================================================================
+% Section C: Verdict algebra                    [Paper: rem:three-valued]
+% ==========================================================================
+% Three-valued verdict labels with strong Kleene semantics.
+% The ordering  Conflict < Unknown < Compatible  maps to  F < ⊥ < T.
+%
+% Conjunction: min(a, b)
+% Disjunction: max(a, b)
+% Negation:    ¬⊥ = ⊥  (NOT Heyting's ¬⊥ = F)
+
+% --- Verdict constants exist and are distinct ---
+fof(conflict_is_verdict,   axiom, is_verdict(conflict)).
+fof(compatible_is_verdict, axiom, is_verdict(compatible)).
+fof(unknown_is_verdict,    axiom, is_verdict(unknown)).
+
+fof(verdicts_distinct_cf_cp, axiom, conflict != compatible).
+fof(verdicts_distinct_cf_un, axiom, conflict != unknown).
+fof(verdicts_distinct_cp_un, axiom, compatible != unknown).
+
+% --- Verdict enumeration (closure) ---
+fof(verdict_enum, axiom, ![V]:
+    (is_verdict(V) => (V = conflict | V = compatible | V = unknown))).
+
+% ==========================================================================
+% Section D: Box-level verdict aggregation      [Paper: def:box-verdict]
+% ==========================================================================
+% Aggregates per-axis verdicts using Kleene conjunction.
+% box_verdict/2 handles two verdicts; for n axes or n operands,
+% nest associatively:
+%   box_verdict(V1, box_verdict(V2, V3))
+%
+% This is sound because K_3 conjunction is associative and commutative.
+%
+% Cross-domain aggregation (def:cross-domain) uses the IDENTICAL
+% truth table, so box_verdict serves both purposes.  No separate
+% cross_verdict predicate is needed.
+
+% Rule 1: any Conflict ⟹ Conflict
+% Justification: thm:projection — membership in the box requires
+% membership in every axis projection.
+fof(box_conflict, axiom, ![V1,V2]:
+    (((is_verdict(V1) & is_verdict(V2)) & (V1 = conflict | V2 = conflict))
+     => box_verdict(V1,V2) = conflict)).
+
+% Rule 2: both Compatible ⟹ Compatible
+fof(box_compatible, axiom, ![V1,V2]:
+    (((is_verdict(V1) & is_verdict(V2)) & (V1 = compatible & V2 = compatible))
+     => box_verdict(V1,V2) = compatible)).
+
+% Rule 3: no Conflict, at least one Unknown ⟹ Unknown
+% This is the K_3 residual: ¬⊥ = ⊥ (rem:three-valued).
+fof(box_unknown, axiom, ![V1,V2]:
+    (((is_verdict(V1) & is_verdict(V2)) &
+      (V1 = unknown | V2 = unknown) & V1 != conflict & V2 != conflict)
+     => box_verdict(V1,V2) = unknown)).
+
+% --- Closure: box_verdict always returns a verdict ---
+fof(box_verdict_total, axiom, ![V1,V2]:
+    ((is_verdict(V1) & is_verdict(V2)) =>
+     (box_verdict(V1,V2) = conflict |
+      box_verdict(V1,V2) = compatible |
+      box_verdict(V1,V2) = unknown))).
+
+%--------------------------------------------------------------------------
+% END OF AXIS000-0.ax
+%--------------------------------------------------------------------------

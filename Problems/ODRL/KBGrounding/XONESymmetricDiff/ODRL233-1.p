@@ -1,0 +1,91 @@
+%--------------------------------------------------------------------------
+% File     : ODRL233-1.p : TPTP v0.1.0.
+% Domain   : ODRL Policy Conflict Detection
+% Problem  : XONE Failure — DAG-Safe Suppression Blocks Proof
+% Expected : CounterSatisfiable
+% Verdict  : XONEFailure
+% Paper    : XONE Failure — DAG-Safe Suppression Blocks Proof
+%
+% ODRL Policy (Conceptual):
+%   ex:policyA a odrl:Set ;
+%   %     odrl:permission [
+%   %       odrl:action odrl:use ;
+%   %       odrl:constraint [
+%   %         odrl:leftOperand odrl:hasPurpose ;
+%   %         odrl:operator odrl:isA ;
+%   %         odrl:rightOperand dpv:CommercialPurpose ] ] .
+%   %
+%   %   ex:policyB a odrl:Set ;
+%   %     odrl:prohibition [
+%   %       odrl:action odrl:use ;
+%   %       odrl:constraint [
+%   %         odrl:leftOperand odrl:hasPurpose ;
+%   %         odrl:operator odrl:isA ;
+%   %         odrl:rightOperand dpv:ResearchAndDevelopment ] ] .
+%
+% Formal test:
+%   XONE fails: DAG-safe suppresses disjoint(cP, R&D).
+%   %   Without disjointness, ~leq(cP, R&D) is unprovable.
+%   %   Model A: leq(cP,R&D)=false → acR is XONE witness → conjecture TRUE
+%   %   Model B: leq(cP,R&D)=true  → ↓cP ⊆ ↓R&D → no XONE → conjecture FALSE
+%   %   Both consistent → CounterSatisfiable (prover cannot decide).
+%   %   Tests: DAG-safe suppression creates irreducible ambiguity for XONE.
+%
+% One-liner : XONE failure: DAG-safe suppresses cP⊥R&D → proof blocked
+% Difficulty: Very Hard
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Date     : 2026-02-28
+% Gen      : gen_advanced_suite.py
+%--------------------------------------------------------------------------
+
+include('Axioms/Layer1-ODRLCore/ODRL000-0.ax').
+
+% ─── Problem-specific axioms ─────────────────────────────────────────
+% --- DPV Fragment (DAG-SAFE sibling disjointness) ---
+% Same hierarchy as NAIVE, but disjoint(commercialPurpose, researchAndDevelopment)
+% is SUPPRESSED because ↓commercialPurpose ∩ ↓researchAndDevelopment ≠ ∅.
+% DAG-safety algorithm (Note 1): suppress disj(A,B) when ∃C: C ≤ A ∧ C ≤ B.
+
+% Hierarchy (identical to NAIVE)
+fof(dpv_s_root, axiom, concept(purpose)).
+fof(dpv_s_c1, axiom, concept(commercialPurpose)).
+fof(dpv_s_c2, axiom, concept(researchAndDevelopment)).
+fof(dpv_s_c3, axiom, concept(commercialResearch)).
+fof(dpv_s_c4, axiom, concept(academicResearch)).
+fof(dpv_s_c5, axiom, concept(serviceProvision)).
+
+fof(dpv_s_leq1, axiom, leq(commercialPurpose, purpose)).
+fof(dpv_s_leq2, axiom, leq(researchAndDevelopment, purpose)).
+fof(dpv_s_leq3, axiom, leq(serviceProvision, purpose)).
+fof(dpv_s_leq4, axiom, leq(commercialResearch, commercialPurpose)).
+fof(dpv_s_leq5, axiom, leq(commercialResearch, researchAndDevelopment)).
+fof(dpv_s_leq6, axiom, leq(academicResearch, researchAndDevelopment)).
+
+% Reflexivity
+fof(dpv_s_refl1, axiom, leq(purpose, purpose)).
+fof(dpv_s_refl2, axiom, leq(commercialPurpose, commercialPurpose)).
+fof(dpv_s_refl3, axiom, leq(researchAndDevelopment, researchAndDevelopment)).
+fof(dpv_s_refl4, axiom, leq(commercialResearch, commercialResearch)).
+fof(dpv_s_refl5, axiom, leq(academicResearch, academicResearch)).
+fof(dpv_s_refl6, axiom, leq(serviceProvision, serviceProvision)).
+
+% DAG-SAFE sibling disjointness — SUPPRESSED: commercialPurpose ⊥ R&D
+% Only safe pairs remain:
+fof(dpv_s_disj_safe1, axiom,
+    disjoint(commercialPurpose, serviceProvision)).
+fof(dpv_s_disj_safe2, axiom,
+    disjoint(researchAndDevelopment, serviceProvision)).
+
+% UNA
+fof(dpv_s_una, axiom,
+    $distinct(purpose, commercialPurpose, researchAndDevelopment,
+              commercialResearch, academicResearch, serviceProvision)).
+
+% ─── Conjecture ──────────────────────────────────────────────────────
+fof(odrl233, conjecture,
+    ?[X]: ( ( in_denotation(X, commercialPurpose, isA)
+            & ~in_denotation(X, researchAndDevelopment, isA) )
+          | ( ~in_denotation(X, commercialPurpose, isA)
+            & in_denotation(X, researchAndDevelopment, isA) ) )).
+
+%--------------------------------------------------------------------------
