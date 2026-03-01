@@ -1,27 +1,28 @@
 %--------------------------------------------------------------------------
-% File     : ODRL062-1.p : TPTP v0.1.0
+% File     : ODRL062-1.p : TPTP v0.1.0.
 % Domain   : ODRL Policy Conflict Detection
 % Problem  : Non-tautological: hasPart(europe) = {europe} ≠ C
-% Expected : Theorem
-% Verdict  : Non-Tautological
+% Expected : CounterSatisfiable
+% Verdict  : Consistent
 % Paper    : Tautology Detection (hasPart root)
-% Encoding : prover-friendly (flipped for refutation provers)
 %
 % ODRL Policy (Turtle):
 %   c: [ odrl:operator odrl:hasPart ; odrl:rightOperand geo:europe ] .
 %
-% Denotation analysis:
-%   ⟦hasPart(europe)⟧ = {x ∈ C | europe ≤ x} = {europe}
-%   europe is maximal (root) → only europe itself satisfies hasPart(europe)
-%   This is NOT tautological: |⟦hasPart(europe)⟧| = 1, |C| = 58
-%   Counterexample: germany — europe ¬≤ germany
+% Formal:
+%   ⟦hasPart(europe)⟧ = {X ∈ C | leq(europe, X)} = {europe}  [only via reflexivity]
+%   europe is maximal (root) — no leq(europe, X) except X=europe
+%   Counterexample: germany — leq(europe, germany) not in KB
 %
+% Notes    : Contrast with ODRL060: hasPart at root has smallest denotation (1 element). isPartOf at root has largest (all 26). Vampire skipped (CounterSat → Z3 only).
 % Difficulty: Easy
 % Authors  : Mustafa, D. & Sutcliffe, G.
+% Date     : 2026-02-28
+% Gen      : gen_hierarchy_suite.py
 %--------------------------------------------------------------------------
-include('Axioms/Layer0-DomainKB/GEO000-0.ax').
 include('Axioms/Layer1-ODRLCore/ODRL000-0.ax').
-
+include('Axioms/Layer0-DomainKB/GEO000-0.ax').
+% ─── Conjecture ──────────────────────────────────────────────────────
 fof(odrl062, conjecture,
-    ?[X]: ( concept(X) & ~in_denotation(X, europe, hasPart) )).
+    ~in_denotation(germany, europe, hasPart)).
 %--------------------------------------------------------------------------

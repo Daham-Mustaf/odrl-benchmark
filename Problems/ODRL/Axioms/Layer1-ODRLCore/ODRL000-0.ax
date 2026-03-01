@@ -51,7 +51,7 @@
 %          :   isAllOf, isNoneOf
 % Stats    : Part A  9 (structural)  | Part B  5 (KB properties)
 %          : Part C  2 (derived)     | Part D 10 (single-val den)
-%          : Part E  6 (set-val den) | Total  32
+%          : Part E  6 (set-val den) | Total  33
 % Date     : 2026-02-15
 % Authors  : Mustafa, D. & Sutcliffe, G.
 %--------------------------------------------------------------------------

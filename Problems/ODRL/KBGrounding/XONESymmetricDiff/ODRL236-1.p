@@ -41,7 +41,7 @@
 % One-liner : XONE matrix: all C(3,2)=3 pairwise symmetric diffs non-empty
 % Difficulty: Extreme
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

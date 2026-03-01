@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-gen_advanced_suite.py — Generate TPTP Problems: Categories 9–15.
+gen_advanced_suite.py — Generate TPTP Problems: Categories 9–16, 20–21.
 
-Produces 38 .p files testing advanced reasoning patterns for ODRL
+Produces 60 .p files testing advanced reasoning patterns for ODRL
 policy conflict detection in European data spaces.
 
 Categories:
@@ -11,8 +11,11 @@ Categories:
   11 — Quantifier Stress (ODRL120–123)       ∀∃ alternation patterns
   12 — Large-Scale Composition (ODRL130–132) Multi-operand AND / 5-way ∃
   13 — Edge Cases & Adversarial (ODRL140–145) Degenerate / pathological KBs
-  14 — Multi-Hop Alignment (ODRL150–157)     2–3 hop, up to 4 dataspaces
+  14 — Multi-Hop Alignment (ODRL150–159)     2–3 hop + witness-loss bug
   15 — N-Way Policy Conflicts (ODRL160–165)  3–4 policies simultaneously
+  16 — N-Way Composed Policies (ODRL170–175) N-way × multi-operand
+  20 — XONE / Symmetric Difference (ODRL230–237) Negative denotation reasoning
+  21 — Operator Monotonicity (ODRL250–254)   Meta-properties of ODRL operators
 
 Usage:
     uv run python gen_advanced_suite.py --outdir Problems/ODRL
@@ -85,19 +88,28 @@ CAT_DIR = {
     13: "KBGrounding/EdgeCases",
     14: "KBGrounding/MultiHopAlignment",
     15: "KBGrounding/NWayConflict",
+    16: "KBGrounding/NWayComposed",
+    20: "KBGrounding/XONESymmetricDiff",
+    21: "KBGrounding/OperatorMonotonicity",
 }
 
 
 def problem_category(fn):
-    """Return category number from filename like ODRL100-1.p."""
-    num = int(fn.replace("ODRL", "").replace("-1.p", ""))
+    """Return category number from filename like ODRL100-1.p or ODRL158-2.p."""
+    # Extract number: ODRL158-2.p → 158, ODRL100-1.p → 100
+    import re
+    m = re.match(r"ODRL(\d+)", fn)
+    num = int(m.group(1))
     if num < 110: return 9
     if num < 120: return 10
     if num < 130: return 11
     if num < 140: return 12
     if num < 150: return 13
     if num < 160: return 14
-    return 15
+    if num < 170: return 15
+    if num < 230: return 16
+    if num < 250: return 20
+    return 21
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -250,6 +262,63 @@ MINIMAL_KB_FRAGMENT = """\
 % --- Minimal KB: single concept "universe" ---
 fof(min_root, axiom, concept(universe)).
 fof(min_refl, axiom, leq(universe, universe))."""
+
+# ─── Witness-Loss KBs (Proposition 2(2) counterexample) ──────────────────
+# Source KB: {witA, witB, witC} where witA ≤ witB, witA ≤ witC,
+# witB and witC are incomparable (no disjointness asserted).
+# witA is the ONLY witness for isA(witB) ∩ isA(witC).
+KB_WITNESS_SOURCE = """\
+% --- Witness-Loss Source KB ---
+% Counterexample for Proposition 2(2) (Graceful Degradation).
+% witA is the shared descendant (witness): witA ≤ witB ∧ witA ≤ witC.
+% witB, witC are incomparable — no disjointness asserted.
+fof(wit_src_c1, axiom, concept(witA)).
+fof(wit_src_c2, axiom, concept(witB)).
+fof(wit_src_c3, axiom, concept(witC)).
+
+fof(wit_src_leq1, axiom, leq(witA, witB)).
+fof(wit_src_leq2, axiom, leq(witA, witC)).
+fof(wit_src_refl1, axiom, leq(witA, witA)).
+fof(wit_src_refl2, axiom, leq(witB, witB)).
+fof(wit_src_refl3, axiom, leq(witC, witC)).
+
+% NO disjoint(witB, witC) — incomparable, not disjoint.
+fof(wit_src_una, axiom, $distinct(witA, witB, witC))."""
+
+# Target KB: only α(witB) and α(witC) — witness witA is UNMAPPED.
+# This is what you get after partial alignment with dom(α) = {witB, witC}.
+KB_WITNESS_TARGET = """\
+% --- Witness-Loss Target KB (after partial alignment) ---
+% dom(α) = {witB, witC}. Witness witA is UNMAPPED → lost.
+% Target concepts: tgtB = α(witB), tgtC = α(witC).
+fof(wit_tgt_c1, axiom, concept(tgtB)).
+fof(wit_tgt_c2, axiom, concept(tgtC)).
+
+fof(wit_tgt_refl1, axiom, leq(tgtB, tgtB)).
+fof(wit_tgt_refl2, axiom, leq(tgtC, tgtC)).
+
+% NO leq(tgtB, tgtC) or leq(tgtC, tgtB) — incomparable (matching source).
+% NO concept corresponding to witA — it was lost in alignment!
+fof(wit_tgt_una, axiom, $distinct(tgtB, tgtC))."""
+
+# Target KB (FULL): β maps ALL concepts including witness witA.
+# dom(β) = {witA, witB, witC} — downward-closed. Verdict preserved.
+KB_WITNESS_TARGET_FULL = """\
+% --- Witness-Loss Target KB (downward-closed alignment) ---
+% dom(β) = {witA, witB, witC}. Witness witA IS mapped → preserved.
+% Target concepts: tgtA = β(witA), tgtB = β(witB), tgtC = β(witC).
+fof(wit_full_c1, axiom, concept(tgtA)).
+fof(wit_full_c2, axiom, concept(tgtB)).
+fof(wit_full_c3, axiom, concept(tgtC)).
+
+fof(wit_full_leq1, axiom, leq(tgtA, tgtB)).
+fof(wit_full_leq2, axiom, leq(tgtA, tgtC)).
+fof(wit_full_refl1, axiom, leq(tgtA, tgtA)).
+fof(wit_full_refl2, axiom, leq(tgtB, tgtB)).
+fof(wit_full_refl3, axiom, leq(tgtC, tgtC)).
+
+% Structure preserved: tgtA ≤ tgtB, tgtA ≤ tgtC (mirrors source).
+fof(wit_full_una, axiom, $distinct(tgtA, tgtB, tgtC))."""
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -675,10 +744,11 @@ P("ODRL145-1.p", "CounterSatisfiable", "Unknown",
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# CATEGORY 14: MULTI-HOP ALIGNMENT (ODRL150–157)
+# CATEGORY 14: MULTI-HOP ALIGNMENT (ODRL150–159)
 # Tests alignment composition: GEO → ISO → SYNTH → COMP (up to 4-KB chain)
 #   2-hop (ODRL150–153): GEO → ISO → SYNTH
 #   3-hop (ODRL154–157): GEO → ISO → SYNTH → COMP
+#   Witness-loss (ODRL158–159): Prop 2(2) counterexample
 # ═══════════════════════════════════════════════════════════════════════════
 
 P("ODRL150-1.p", "CounterSatisfiable", "Conflict",
@@ -807,6 +877,64 @@ P("ODRL157-1.p", "Theorem", "Conflict",
   extra=SYNTH_KB_NO_DISJ + "\n" + ALIGN_ISO_SYNTH,
   inc=("GEO", "ISO", "ALIGN_DATA", "ODRL", "ALIGN_THEORY"),
   pl="Intermediate: hop 2 derives disjoint(zoneWest, zoneEast)")
+
+# ─── Proposition 2(2) Counterexample: Witness Loss under Partial Alignment ──
+
+P("ODRL158-1.p", "Theorem", "Compatible",
+  "Proposition 2(2) Baseline — Compatible in Source KB", "Easy",
+  tp("policyA", "permission", "use", [("hasPurpose", "isA", "wit:witB")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("hasPurpose", "isA", "wit:witC")]),
+  "Baseline for Prop 2(2) counterexample.\n"
+  "%   Source KB: witA ≤ witB, witA ≤ witC, no disjoint(witB, witC).\n"
+  "%   ⟦isA(witB)⟧ = {witA, witB}, ⟦isA(witC)⟧ = {witA, witC}\n"
+  "%   Intersection = {witA} ≠ ∅ → Compatible.\n"
+  "%   Witness: witA (shared descendant of both witB and witC).",
+  "fof(odrl158, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, witB, isA)\n"
+  "          & in_denotation(X, witC, isA) )).",
+  extra=KB_WITNESS_SOURCE,
+  inc=("ODRL",),
+  pl="Prop 2(2) baseline: witA witnesses isA(witB) ∩ isA(witC) ≠ ∅")
+
+P("ODRL159-1.p", "CounterSatisfiable", "FabricatedConflict",
+  "Proposition 2(2) Bug — Fabricated Conflict from Partial Alignment", "Very Hard",
+  tp("policyA", "permission", "use", [("hasPurpose", "isA", "tgt:tgtB")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("hasPurpose", "isA", "tgt:tgtC")]),
+  "Proposition 2(2) COUNTEREXAMPLE: partial alignment creates false Conflict.\n"
+  "%   Partial alignment α: dom(α) = {witB, witC}. Witness witA is UNMAPPED.\n"
+  "%   Target KB: {tgtB, tgtC} only (no concept for witA).\n"
+  "%   ⟦isA(tgtB)⟧ = {tgtB}, ⟦isA(tgtC)⟧ = {tgtC}\n"
+  "%   Intersection = ∅ (tgtB ≠ tgtC by UNA) → FABRICATED Conflict!\n"
+  "%   Source was Compatible (ODRL158), target is Conflict → verdict NOT preserved.\n"
+  "%   Disproves: 'partial alignment can only weaken toward Unknown, never fabricate'.",
+  "fof(odrl159, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, tgtB, isA)\n"
+  "          & in_denotation(X, tgtC, isA) )).",
+  flip_conj=
+  "fof(odrl159, conjecture,\n"
+  "    ![X]: ~( in_denotation(X, tgtB, isA)\n"
+  "           & in_denotation(X, tgtC, isA) )).",
+  extra=KB_WITNESS_TARGET,
+  inc=("ODRL",),
+  pl="Prop 2(2) BUG: partial alignment loses witness → fabricated Conflict")
+
+P("ODRL158-2.p", "Theorem", "Compatible",
+  "Proposition 2(2) Fix — Downward-Closed Alignment Preserves Verdict", "Hard",
+  tp("policyA", "permission", "use", [("hasPurpose", "isA", "tgt:tgtB")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("hasPurpose", "isA", "tgt:tgtC")]),
+  "Proposition 2(2) FIX: downward-closed alignment preserves Compatible.\n"
+  "%   Total alignment β: dom(β) = {witA, witB, witC}. ALL concepts mapped.\n"
+  "%   Target KB: {tgtA, tgtB, tgtC} with tgtA ≤ tgtB, tgtA ≤ tgtC.\n"
+  "%   ⟦isA(tgtB)⟧ = {tgtA, tgtB}, ⟦isA(tgtC)⟧ = {tgtA, tgtC}\n"
+  "%   Intersection = {tgtA} ≠ ∅ → Compatible PRESERVED.\n"
+  "%   Compare: ODRL158 (source), ODRL159 (partial → fabricated Conflict).\n"
+  "%   Fix: require dom(α) ⊇ ↓g for each grounding value g.",
+  "fof(odrl158b, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, tgtB, isA)\n"
+  "          & in_denotation(X, tgtC, isA) )).",
+  extra=KB_WITNESS_TARGET_FULL,
+  inc=("ODRL",),
+  pl="Prop 2(2) FIX: downward-closed alignment → Compatible preserved")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -1019,6 +1147,25 @@ P("ODRL165-1.p", "Theorem", "MixedNWay",
   inc=("GEO", "ODRL"),
   pl="4-policy spoiler: Compatible(A,D) ∧ Conflict(B,D) ∧ Conflict(C,D)")
 
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CATEGORY 16: N-WAY COMPOSED POLICIES (ODRL170–175)
+# Combines Categories 12 (large composition) + 15 (n-way): 3–4 policies,
+# each with 2–3 operands (spatial + purpose + language).
+#
+# Tests: Does Theorem 2 (operand composition) scale to N-way interactions?
+# Key: one Conflict operand suffices for composed Conflict (Theorem 2),
+# so multi-dim N-way can short-circuit on a single dimension.
+# ═══════════════════════════════════════════════════════════════════════════
+
+# 170: 3-Policy Multi-Dim All Compatible
+#   A: permission, spatial isPartOf(europe), purpose isA(R&D)
+#   B: prohibition, spatial eq(germany), purpose isA(academicResearch)
+#   C: prohibition, spatial isPartOf(westernEurope), purpose isA(R&D)
+#
+#   A∩B: spatial(europe∩de=de) ∧ purpose(R&D∩acR=acR) → Compatible
+#   A∩C: spatial(europe∩wE=wE) ∧ purpose(R&D∩R&D=R&D) → Compatible
+#   B∩C: spatial(de∩wE=de) ∧ purpose(acR∩R&D=acR) → Compatible
 P("ODRL170-1.p", "Theorem", "Compatible",
   "N-Way Composed — 3 Policies All Compatible (Spatial + Purpose)", "Very Hard",
   tp("policyA", "permission", "use", [
@@ -1055,6 +1202,16 @@ P("ODRL170-1.p", "Theorem", "Compatible",
   inc=("GEO", "ODRL"),
   pl="3-policy multi-dim: all pairs Compatible on spatial+purpose")
 
+# 171: Non-Transitive Multi-Dim
+#   A: permission, spatial isPartOf(westernEurope), purpose isA(R&D)
+#   B: prohibition, spatial isPartOf(europe), purpose isA(academicResearch)
+#   C: prohibition, spatial isPartOf(easternEurope), purpose isA(commercialResearch)
+#
+#   A∩B: spatial(wE∩europe=wE ✓) ∧ purpose(R&D∩acR=acR ✓) → Compatible
+#   B∩C: spatial(europe∩eE=eE ✓) ∧ purpose(acR∩cR: both ≤ R&D, witness cR ✓) → Compatible
+#   A∩C: spatial(wE⊥eE = ∅) → Conflict (Thm 2: one dimension suffices)
+#
+#   Key: non-transitivity persists even with multi-operand composition.
 P("ODRL171-1.p", "Theorem", "NonTransitive",
   "N-Way Composed — Non-Transitive on ONE Dimension", "Very Hard",
   tp("policyA", "permission", "use", [
@@ -1071,8 +1228,8 @@ P("ODRL171-1.p", "Theorem", "NonTransitive",
   ]),
   "Non-transitivity in multi-dimensional space:\n"
   "%   A∩B: spatial(wE∩europe=wE) ∧ purpose(R&D∩acR=acR) → Compatible\n"
-  "%   B∩C: spatial(europe∩eE=eE) ∧ purpose(acR∩cR via R&D) → Compatible\n"
-  "%   A∩C: spatial(wE∩eE=∅) → Conflict (Thm 2: one conflict dimension suffices)\n"
+  "%   B∩C: spatial(europe∩eE=eE) ∧ purpose(acR∩cR: both ≤ R&D) → Compatible\n"
+  "%   A∩C: spatial(wE⊥eE=∅) → Conflict (Thm 2: one conflict dimension suffices)\n"
   "%   Shows: Compatible(A,B) ∧ Compatible(B,C) ⊬ Compatible(A,C) even with multi-operand",
   "fof(odrl171, conjecture,\n"
   "    ( ?[Xs,Xp]: ( in_denotation(Xs, westernEurope, isPartOf)\n"
@@ -1089,8 +1246,20 @@ P("ODRL171-1.p", "Theorem", "NonTransitive",
   inc=("GEO", "ODRL"),
   pl="Non-transitive multi-dim: spatial conflict breaks transitivity")
 
+# 172: 3-Policy Mutual Exclusion Multi-Dim
+#   A: permission, spatial isPartOf(germany), purpose isA(commercialPurpose)
+#   B: prohibition, spatial isPartOf(france), purpose isA(serviceProvision)
+#   C: prohibition, spatial isPartOf(poland), purpose isA(serviceProvision)
+#
+#   Spatial: de⊥fr, de⊥pl, fr⊥pl — all 3 pairs disjoint.
+#   By Theorem 2, spatial Conflict alone suffices → composed Conflict for all pairs.
+#
+#   NOTE: Purpose is NOT mutually exclusive for all 3 pairs in DAG-safe:
+#   cP⊥sP ✓, but cP is NOT disjoint from sP for the B∩C pair (both have sP).
+#   B∩C purpose: sP∩sP = sP (trivially compatible).
+#   However spatial kills ALL pairs regardless of purpose.
 P("ODRL172-1.p", "Theorem", "Conflict",
-  "N-Way Composed — 3-Policy Mutual Exclusion (Multi-Dim)", "Very Hard",
+  "N-Way Composed — 3-Policy Mutual Exclusion (Spatial Suffices)", "Very Hard",
   tp("policyA", "permission", "use", [
       ("spatial", "isPartOf", "geo:germany"),
       ("hasPurpose", "isA", "dpv:CommercialPurpose")
@@ -1101,29 +1270,30 @@ P("ODRL172-1.p", "Theorem", "Conflict",
   ]) + "\n%\n%   " +
   tp("policyC", "prohibition", "use", [
       ("spatial", "isPartOf", "geo:poland"),
-      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
+      ("hasPurpose", "isA", "dpv:ServiceProvision")
   ]),
-  "3-way mutual exclusion on BOTH dimensions:\n"
-  "%   Spatial: de⊥fr (siblings), de⊥pl (wE⊥eE), fr⊥pl (wE⊥eE)\n"
-  "%   Purpose: cP⊥sP, cP⊥R&D (via DAG-safe), sP⊥R&D (DAG-safe)\n"
-  "%   All 3 pairs conflict on BOTH dimensions → mutual exclusion",
+  "3-way mutual exclusion via spatial (Theorem 2 short-circuit):\n"
+  "%   Spatial: de⊥fr, de⊥pl, fr⊥pl → all 3 pairs Conflict\n"
+  "%   By Theorem 2: AND(spatial=Conflict, purpose=any) = Conflict\n"
+  "%   Purpose operand irrelevant — spatial suffices for all pairs.\n"
+  "%   Tests: Theorem 2 short-circuit in N-way composed context.",
   "fof(odrl172, conjecture,\n"
   "    ( ![X]: ~( in_denotation(X, germany, isPartOf)\n"
   "             & in_denotation(X, france, isPartOf) )\n"
   "    & ![Y]: ~( in_denotation(Y, germany, isPartOf)\n"
   "             & in_denotation(Y, poland, isPartOf) )\n"
   "    & ![Z]: ~( in_denotation(Z, france, isPartOf)\n"
-  "             & in_denotation(Z, poland, isPartOf) )\n"
-  "    & ![Xp]: ~( in_denotation(Xp, commercialPurpose, isA)\n"
-  "               & in_denotation(Xp, serviceProvision, isA) )\n"
-  "    & ![Yp]: ~( in_denotation(Yp, commercialPurpose, isA)\n"
-  "               & in_denotation(Yp, researchAndDevelopment, isA) )\n"
-  "    & ![Zp]: ~( in_denotation(Zp, serviceProvision, isA)\n"
-  "               & in_denotation(Zp, researchAndDevelopment, isA) ) )).",
+  "             & in_denotation(Z, poland, isPartOf) ) )).",
   extra=DPV_SAFE_FRAGMENT,
   inc=("GEO", "ODRL"),
-  pl="3-policy mutual exclusion: all pairs conflict on BOTH dimensions")
+  pl="3-policy mutual exclusion: spatial conflict suffices (Thm 2)")
 
+# 173: 3-Operand × 3-Policy — maximum pairwise complexity
+#   A: permission, spatial isPartOf(europe), purpose isA(R&D), language isPartOf(en)
+#   B: prohibition, spatial eq(germany), purpose isA(acR), language eq(enGB)
+#   C: prohibition, spatial isPartOf(wE), purpose isA(R&D), language isPartOf(en)
+#
+#   9 pairwise operand checks (3 pairs × 3 operands), all Compatible.
 P("ODRL173-1.p", "Theorem", "Compatible",
   "N-Way Composed — 3 Operands × 3 Policies", "Very Hard",
   tp("policyA", "permission", "use", [
@@ -1165,10 +1335,22 @@ P("ODRL173-1.p", "Theorem", "Compatible",
   "                   & in_denotation(Zl, en, isPartOf) ) )).",
   extra=DPV_SAFE_FRAGMENT,
   inc=("GEO", "DPV", "LANG", "ODRL"),
-  pl="3-operand × 3-policy: maximum complexity test")
+  pl="3-operand × 3-policy: maximum complexity, all pairs Compatible")
 
+# 174: 4-Policy One Spoiler Multi-Dim
+#   A: permission, spatial isPartOf(europe), purpose isA(R&D)
+#   B: permission, spatial isPartOf(westernEurope), purpose isA(academicResearch)
+#   C: permission, spatial eq(germany), purpose isA(commercialResearch)
+#   D: prohibition, spatial isPartOf(easternEurope), purpose isA(R&D)
+#
+#   A∩D: spatial(europe∩eE=eE ✓) ∧ purpose(R&D∩R&D=R&D ✓) → Compatible
+#   B∩D: spatial(wE⊥eE=∅) → Conflict (Thm 2: spatial suffices)
+#   C∩D: spatial(de⊥eE=∅, de ≤ wE, wE⊥eE) → Conflict
+#
+#   NOTE: Purpose(A)=R&D=Purpose(D), so purpose is trivially compatible for A∩D.
+#   D's spatial (eE) is the spoiler — only breaks policies in western Europe.
 P("ODRL174-1.p", "Theorem", "MixedNWay",
-  "N-Way Composed — 4-Policy Spoiler on One Dimension", "Very Hard",
+  "N-Way Composed — 4-Policy Spoiler on Spatial Dimension", "Very Hard",
   tp("policyA", "permission", "use", [
       ("spatial", "isPartOf", "geo:europe"),
       ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
@@ -1183,25 +1365,36 @@ P("ODRL174-1.p", "Theorem", "MixedNWay",
   ]) + "\n%\n%   " +
   tp("policyD", "prohibition", "use", [
       ("spatial", "isPartOf", "geo:easternEurope"),
-      ("hasPurpose", "isA", "dpv:ServiceProvision")
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
   ]),
   "4-policy spoiler: D conflicts with B,C on spatial but compatible with A.\n"
-  "%   Compatible(A,D): spatial(europe∩eE=eE) ∧ purpose(R&D vs sP compatible)\n"
-  "%   Conflict(B,D): spatial(wE⊥eE) → conflict\n"
-  "%   Conflict(C,D): spatial(germany⊥eE) → conflict\n"
-  "%   Purpose dimension compatible everywhere → spatial spoils B,C only",
+  "%   Compatible(A,D): spatial(europe∩eE=eE ✓) ∧ purpose(R&D∩R&D=R&D ✓) → Compatible\n"
+  "%   Conflict(B,D): spatial(wE⊥eE) → Conflict (Thm 2 short-circuit)\n"
+  "%   Conflict(C,D): spatial(de⊥eE, via de≤wE, wE⊥eE) → Conflict\n"
+  "%   Purpose dimension compatible everywhere — spatial spoils B,C only.",
   "fof(odrl174, conjecture,\n"
   "    ( ?[Xs,Xp]: ( in_denotation(Xs, europe, isPartOf)\n"
   "                & in_denotation(Xs, easternEurope, isPartOf)\n"
   "                & in_denotation(Xp, researchAndDevelopment, isA)\n"
-  "                & in_denotation(Xp, serviceProvision, isA) )\n"
+  "                & in_denotation(Xp, researchAndDevelopment, isA) )\n"
   "    & ![Ys]: ~( in_denotation(Ys, westernEurope, isPartOf)\n"
   "              & in_denotation(Ys, easternEurope, isPartOf) )\n"
   "    & ![Zs]: ~( in_denotation(Zs, germany, eq)\n"
   "              & in_denotation(Zs, easternEurope, isPartOf) ) )).",
   extra=DPV_SAFE_FRAGMENT,
   inc=("GEO", "ODRL"),
-  pl="4-policy spoiler: spatial conflict on B,C only, purpose compatible")
+  pl="4-policy spoiler: spatial conflict on B,C; purpose compatible with A")
+
+# 175: DAG Multi-Parent in N-Way Composed
+#   A: permission, purpose isA(commercialPurpose), spatial isPartOf(germany)
+#   B: prohibition, purpose isA(researchAndDevelopment), spatial isPartOf(europe)
+#   C: prohibition, purpose isA(commercialResearch), spatial eq(germany)
+#
+#   commercialResearch ≤ cP [parent A] ∧ commercialResearch ≤ R&D [parent B]
+#   A∩B: purpose(cP∩R&D: witness=cR, DAG-safe!) ∧ spatial(de∩europe=de) → Compatible
+#   A∩C: purpose(cP∩cR: cR≤cP → cR) ∧ spatial(de∩de) → Compatible
+#   B∩C: purpose(R&D∩cR: cR≤R&D → cR) ∧ spatial(europe∩de=de) → Compatible
+#   Witness: (commercialResearch, germany) for all 3 pairs!
 P("ODRL175-1.p", "Theorem", "Compatible",
   "N-Way Composed — DAG Multi-Parent Across 3 Policies", "Very Hard",
   tp("policyA", "permission", "use", [
@@ -1238,6 +1431,366 @@ P("ODRL175-1.p", "Theorem", "Compatible",
   extra=DPV_SAFE_FRAGMENT,
   inc=("GEO", "ODRL"),
   pl="DAG multi-parent in 3-way: cR witnesses all pairs")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CATEGORY 20: XONE & SYMMETRIC DIFFERENCE (ODRL230–237)
+#
+# XONE at denotation level = symmetric difference: D₁ △ D₂ ≠ ∅
+# ∃X: (X ∈ D₁ ∧ X ∉ D₂) ∨ (X ∉ D₁ ∧ X ∈ D₂)
+#
+# KEY CHALLENGE: proving ~in_denotation (negative reasoning)
+# Negative proof path for ~in_denotation(X, G, isPartOf):
+#   1. Assume in_denotation(X, G, isPartOf) → leq(X, G)  [den_onlyif]
+#   2. From disjointness: disjoint(A, B) ∧ leq(X, A) ∧ leq(X, G) → ...
+#   3. disj_downward → disjoint(X, X)
+#   4. disj_irrefl → ⊥  → therefore ~in_denotation(X, G, isPartOf)
+#
+# This is genuinely hard for ATPs: proof by contradiction with chain reasoning.
+# ═══════════════════════════════════════════════════════════════════════════
+
+# 230: Basic 2-way XONE — disjoint siblings
+#   isPartOf(de) △ isPartOf(fr)
+#   de ⊥ fr [siblings under wE, directly asserted]
+#   Witness: germany (∈ ↓de, ∉ ↓fr)
+#   Negative proof: in_den(de,fr,isPO) → leq(de,fr) → disj_downward(de,fr,de,de) → disj(de,de) → ⊥
+P("ODRL230-1.p", "Theorem", "XONESuccess",
+  "XONE — Basic Symmetric Difference (Disjoint Siblings)", "Very Hard",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "geo:germany")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:france")]),
+  "XONE: ∃X in exactly one of ↓de, ↓fr (symmetric difference).\n"
+  "%   Witness: germany ∈ ↓de ∧ germany ∉ ↓fr.\n"
+  "%   Negative proof: leq(de,fr) → disj_downward(de,fr,de,de) → disj(de,de) → ⊥\n"
+  "%   Tests: ATP proof by contradiction for negative denotation membership.",
+  "fof(odrl230, conjecture,\n"
+  "    ?[X]: ( ( in_denotation(X, germany, isPartOf)\n"
+  "            & ~in_denotation(X, france, isPartOf) )\n"
+  "          | ( ~in_denotation(X, germany, isPartOf)\n"
+  "            & in_denotation(X, france, isPartOf) ) )).",
+  inc=("GEO", "ODRL"),
+  pl="XONE: ↓de △ ↓fr ≠ ∅ via sibling disjointness")
+
+# 231: XONE via derived disjointness — cross-region
+#   isPartOf(de) △ isPartOf(pl)
+#   de ≤ wE, pl ≤ eE, wE ⊥ eE → disj_downward → de ⊥ pl [DERIVED, not direct]
+#   Witness: germany (∈ ↓de, ∉ ↓pl)
+#   Harder than 230: negative proof requires derived disjointness chain.
+P("ODRL231-1.p", "Theorem", "XONESuccess",
+  "XONE — Symmetric Difference (Derived Disjointness)", "Very Hard",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "geo:germany")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:poland")]),
+  "XONE via derived disjointness:\n"
+  "%   de ≤ wE, pl ≤ eE, disjoint(wE,eE)\n"
+  "%   → disj_downward → disjoint(de, pl) [derived, not asserted]\n"
+  "%   Witness: germany ∈ ↓de ∧ germany ∉ ↓pl.\n"
+  "%   Harder: negative proof requires multi-step derivation chain.",
+  "fof(odrl231, conjecture,\n"
+  "    ?[X]: ( ( in_denotation(X, germany, isPartOf)\n"
+  "            & ~in_denotation(X, poland, isPartOf) )\n"
+  "          | ( ~in_denotation(X, germany, isPartOf)\n"
+  "            & in_denotation(X, poland, isPartOf) ) )).",
+  inc=("GEO", "ODRL"),
+  pl="XONE: ↓de △ ↓pl ≠ ∅ via derived disjointness (wE⊥eE)")
+
+# 232: 3-way XONE — exactly one of three mutually disjoint
+#   de, fr, pl: pairwise disjoint
+#   ∃X: exactly one of {↓de, ↓fr, ↓pl} contains X
+#   Witness: germany (∈ ↓de, ∉ ↓fr, ∉ ↓pl)
+#   Requires 2 negative proofs per disjunct. With 3 disjuncts → 6 potential negative proofs.
+P("ODRL232-1.p", "Theorem", "XONEThreeWay",
+  "XONE — 3-Way Exactly-One (Mutual Exclusion)", "Extreme",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "geo:germany")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:france")]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [("spatial", "isPartOf", "geo:poland")]),
+  "3-way XONE: ∃X in exactly one of {↓de, ↓fr, ↓pl}.\n"
+  "%   de ⊥ fr [sibling], de ⊥ pl [derived wE⊥eE], fr ⊥ pl [derived wE⊥eE]\n"
+  "%   Witness: germany (∈ ↓de, ∉ ↓fr, ∉ ↓pl)\n"
+  "%   Requires: 1 positive proof + 2 negative proofs (contradiction chains).\n"
+  "%   Tests: 3-way symmetric difference with mixed direct/derived disjointness.",
+  "fof(odrl232, conjecture,\n"
+  "    ?[X]: ( ( in_denotation(X, germany, isPartOf)\n"
+  "            & ~in_denotation(X, france, isPartOf)\n"
+  "            & ~in_denotation(X, poland, isPartOf) )\n"
+  "          | ( ~in_denotation(X, germany, isPartOf)\n"
+  "            & in_denotation(X, france, isPartOf)\n"
+  "            & ~in_denotation(X, poland, isPartOf) )\n"
+  "          | ( ~in_denotation(X, germany, isPartOf)\n"
+  "            & ~in_denotation(X, france, isPartOf)\n"
+  "            & in_denotation(X, poland, isPartOf) ) )).",
+  inc=("GEO", "ODRL"),
+  pl="3-way XONE: exactly one of {↓de, ↓fr, ↓pl}")
+
+# 233: XONE failure — DAG-safe suppression prevents proof
+#   isA(cP) △ isA(R&D) with DAG-safe KB
+#   DAG-safe suppresses disjoint(cP, R&D) → ~leq(cP, R&D) is UNPROVABLE
+#   Model A: leq(cP, R&D) = false → acR is XONE witness → conjecture TRUE
+#   Model B: leq(cP, R&D) = true  → cP ∈ ↓R&D, ↓cP ⊆ ↓R&D → no XONE → conjecture FALSE
+#   Both models consistent with axioms → CounterSatisfiable
+#
+#   This is THE motivating example for XONE + DAG:
+#   suppressed disjointness creates logical ambiguity the prover cannot resolve.
+P("ODRL233-1.p", "CounterSatisfiable", "XONEFailure",
+  "XONE Failure — DAG-Safe Suppression Blocks Proof", "Very Hard",
+  tp("policyA", "permission", "use", [("hasPurpose", "isA", "dpv:CommercialPurpose")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("hasPurpose", "isA", "dpv:ResearchAndDevelopment")]),
+  "XONE fails: DAG-safe suppresses disjoint(cP, R&D).\n"
+  "%   Without disjointness, ~leq(cP, R&D) is unprovable.\n"
+  "%   Model A: leq(cP,R&D)=false → acR is XONE witness → conjecture TRUE\n"
+  "%   Model B: leq(cP,R&D)=true  → ↓cP ⊆ ↓R&D → no XONE → conjecture FALSE\n"
+  "%   Both consistent → CounterSatisfiable (prover cannot decide).\n"
+  "%   Tests: DAG-safe suppression creates irreducible ambiguity for XONE.",
+  "fof(odrl233, conjecture,\n"
+  "    ?[X]: ( ( in_denotation(X, commercialPurpose, isA)\n"
+  "            & ~in_denotation(X, researchAndDevelopment, isA) )\n"
+  "          | ( ~in_denotation(X, commercialPurpose, isA)\n"
+  "            & in_denotation(X, researchAndDevelopment, isA) ) )).",
+  extra=DPV_SAFE_FRAGMENT,
+  inc=("ODRL",),
+  pl="XONE failure: DAG-safe suppresses cP⊥R&D → proof blocked")
+
+# 234: XONE + isNoneOf — set negation interacts with XONE
+#   isNoneOf({wE}) △ isPartOf(eE)
+#   isNoneOf({wE}) = {X : concept(X) ∧ ¬leq(X, wE)}
+#   isPartOf(eE) = {X : leq(X, eE)}
+#
+#   Second disjunct (X ∈ ↓wE ∧ X ∈ ↓eE): impossible (wE ⊥ eE)
+#   First disjunct (X ∉ ↓wE ∧ X ∉ ↓eE):
+#     Witness: europe (not ≤ wE, not ≤ eE)
+#     ~leq(europe, wE): assume leq → leq(eE, europe) → leq(eE, wE) → disj(eE,eE) → ⊥
+#     ~leq(europe, eE): assume leq → leq(wE, europe) → leq(wE, eE) → disj(wE,wE) → ⊥
+P("ODRL234-1.p", "Theorem", "XONESetOp",
+  "XONE + isNoneOf — Set Negation × Symmetric Difference", "Extreme",
+  tp("policyA", "permission", "use", [("spatial", "isNoneOf", "( geo:westernEurope )")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:easternEurope")]),
+  "XONE: isNoneOf({wE}) △ isPartOf(eE)\n"
+  "%   Second disjunct (X ≤ wE ∧ X ≤ eE): impossible (wE ⊥ eE)\n"
+  "%   First disjunct: ∃X: X ∉ ↓wE ∧ X ∉ ↓eE\n"
+  "%   Witness: europe (~leq(europe,wE) via eE-collapse, ~leq(europe,eE) via wE-collapse)\n"
+  "%   Tests: XONE with set-theoretic complement (isNoneOf) + negative root reasoning.",
+  "fof(odrl234, conjecture,\n"
+  "    ?[X]: ( ( in_denotation_set(X, noneList234, isNoneOf)\n"
+  "            & ~in_denotation(X, easternEurope, isPartOf) )\n"
+  "          | ( ~in_denotation_set(X, noneList234, isNoneOf)\n"
+  "            & in_denotation(X, easternEurope, isPartOf) ) )).",
+  extra=(
+      "fof(list_234_1, axiom, in_value_list(westernEurope, noneList234)).\n" +
+      generate_list_closure("noneList234", ["westernEurope"])
+  ),
+  inc=("GEO", "ODRL"),
+  pl="XONE: isNoneOf({wE}) △ isPartOf(eE), witness = europe (root)")
+
+# 235: XONE + 2-hop alignment — cross-dataspace symmetric difference
+#   isPartOf(zoneWest) △ isPartOf(zoneEast)
+#   Disjointness derived via 2-hop alignment: GEO → ISO → SYNTH
+#   GEO: disj(wE,eE) → disj(de,pl) → Hop 1: disj(dE,pL) → Hop 2: disj(zoneWest,zoneEast)
+#   Once disj(zoneWest,zoneEast) is derived, XONE proof follows.
+#   Witness: zoneWest (∈ ↓zoneWest, ∉ ↓zoneEast)
+P("ODRL235-1.p", "Theorem", "XONEAligned",
+  "XONE + 2-Hop Alignment — Cross-Dataspace Symmetric Difference", "Extreme",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "synth:zoneWest")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "synth:zoneEast")]),
+  "XONE via 2-hop alignment:\n"
+  "%   GEO: disj(wE,eE) → disj_downward → disj(de,pl)\n"
+  "%   Hop 1: align(de,dE) + align(pl,pL) → disj(dE,pL)\n"
+  "%   Hop 2: align(dE,zoneWest) + align(pL,zoneEast) → disj(zoneWest,zoneEast)\n"
+  "%   → ~leq(zoneWest, zoneEast) → ~in_den(zoneWest, zoneEast, isPartOf)\n"
+  "%   Witness: zoneWest. Tests: XONE proof requires alignment + disjointness chain.",
+  "fof(odrl235, conjecture,\n"
+  "    ?[X]: ( ( in_denotation(X, zoneWest, isPartOf)\n"
+  "            & ~in_denotation(X, zoneEast, isPartOf) )\n"
+  "          | ( ~in_denotation(X, zoneWest, isPartOf)\n"
+  "            & in_denotation(X, zoneEast, isPartOf) ) )).",
+  extra=SYNTH_KB_NO_DISJ + "\n" + ALIGN_ISO_SYNTH,
+  inc=("GEO", "ISO", "ALIGN_DATA", "ODRL", "ALIGN_THEORY"),
+  pl="XONE: zoneWest △ zoneEast via 2-hop alignment chain")
+
+# 236: XONE all-pairs verdict matrix — 3 concepts, all XONE pairs in one conjecture
+#   de, fr, pl: pairwise XONE (symmetric difference non-empty for each pair)
+#   Proves: de△fr ≠ ∅ ∧ de△pl ≠ ∅ ∧ fr△pl ≠ ∅
+#   Each pair needs a witness + negative proof → 3 × 2 = 6 total sub-goals.
+P("ODRL236-1.p", "Theorem", "XONEMatrix",
+  "XONE All-Pairs Matrix — 3 Concepts, All Pairs", "Extreme",
+  tp("policyA", "permission", "use", [("spatial", "isPartOf", "geo:germany")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:france")]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [("spatial", "isPartOf", "geo:poland")]),
+  "XONE all-pairs: prove symmetric difference non-empty for ALL C(3,2) = 3 pairs.\n"
+  "%   de△fr ≠ ∅ [witness: germany, de ⊥ fr sibling]\n"
+  "%   de△pl ≠ ∅ [witness: germany, de ⊥ pl derived]\n"
+  "%   fr△pl ≠ ∅ [witness: france, fr ⊥ pl derived]\n"
+  "%   3 witnesses, 6 negative proofs → massive proof obligation.",
+  "fof(odrl236, conjecture,\n"
+  "    ( ?[X1]: ( ( in_denotation(X1, germany, isPartOf)\n"
+  "               & ~in_denotation(X1, france, isPartOf) )\n"
+  "             | ( ~in_denotation(X1, germany, isPartOf)\n"
+  "               & in_denotation(X1, france, isPartOf) ) )\n"
+  "    & ?[X2]: ( ( in_denotation(X2, germany, isPartOf)\n"
+  "               & ~in_denotation(X2, poland, isPartOf) )\n"
+  "             | ( ~in_denotation(X2, germany, isPartOf)\n"
+  "               & in_denotation(X2, poland, isPartOf) ) )\n"
+  "    & ?[X3]: ( ( in_denotation(X3, france, isPartOf)\n"
+  "               & ~in_denotation(X3, poland, isPartOf) )\n"
+  "             | ( ~in_denotation(X3, france, isPartOf)\n"
+  "               & in_denotation(X3, poland, isPartOf) ) ) )).",
+  inc=("GEO", "ODRL"),
+  pl="XONE matrix: all C(3,2)=3 pairwise symmetric diffs non-empty")
+
+# 237: XONE + multi-dimensional — spatial XONE with purpose compatibility
+#   Two policies, each with 2 operands:
+#   A: spatial isPartOf(germany), purpose isA(R&D)
+#   B: spatial isPartOf(france), purpose isA(R&D)
+#
+#   Spatial: de △ fr ≠ ∅ (XONE — disjoint siblings)
+#   Purpose: R&D ∩ R&D = R&D (trivially compatible — same denotation)
+#
+#   Combined: spatial has XONE pattern, purpose has overlap.
+#   Proves both simultaneously: spatial XONE + purpose compatible.
+#   Tests: interaction of XONE on one dimension with compatibility on another.
+P("ODRL237-1.p", "Theorem", "XONEMultiDim",
+  "XONE Multi-Dimensional — Spatial XONE × Purpose Compatible", "Extreme",
+  tp("policyA", "permission", "use", [
+      ("spatial", "isPartOf", "geo:germany"),
+      ("hasPurpose", "isA", "dpv:ResearchAndDevelopment")
+  ]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [
+      ("spatial", "isPartOf", "geo:france"),
+      ("hasPurpose", "isA", "dpv:AcademicResearch")
+  ]),
+  "XONE multi-dim: spatial XONE × purpose compatible.\n"
+  "%   Spatial: de △ fr ≠ ∅ [XONE — disjoint siblings]\n"
+  "%   Purpose: R&D ∩ acR = acR ≠ ∅ [Compatible — acR ≤ R&D]\n"
+  "%   Combined conjecture proves both: spatial asymmetry + purpose overlap.\n"
+  "%   Tests: XONE on one operand + compatibility on another in single formula.",
+  "fof(odrl237, conjecture,\n"
+  "    ( ?[Xs]: ( ( in_denotation(Xs, germany, isPartOf)\n"
+  "               & ~in_denotation(Xs, france, isPartOf) )\n"
+  "             | ( ~in_denotation(Xs, germany, isPartOf)\n"
+  "               & in_denotation(Xs, france, isPartOf) ) )\n"
+  "    & ?[Xp]: ( in_denotation(Xp, researchAndDevelopment, isA)\n"
+  "             & in_denotation(Xp, academicResearch, isA) ) )).",
+  extra=DPV_SAFE_FRAGMENT,
+  inc=("GEO", "ODRL"),
+  pl="XONE+multi-dim: spatial(de△fr) × purpose(R&D∩acR)")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CATEGORY 21: OPERATOR MONOTONICITY (ODRL250–254)
+#
+# Tests meta-properties of ODRL operators w.r.t. the KB hierarchy.
+#
+#   Monotone:      leq(A,B) → ⟦op(A)⟧ ⊆ ⟦op(B)⟧    (isPartOf, isA)
+#   Anti-monotone:  leq(A,B) → ⟦op(B)⟧ ⊆ ⟦op(A)⟧    (hasPart, isNoneOf)
+#   Non-monotone:   Neither direction holds            (eq, neq)
+#
+# These are universally quantified theorems about ALL concept pairs,
+# not just specific instances like ODRL122. They push ATPs because
+# the prover must reason about arbitrary concepts, not ground terms.
+# ═══════════════════════════════════════════════════════════════════════════
+
+# 250: isPartOf is monotone — THE fundamental denotation property
+#   ∀A,B,X: leq(A,B) → (in_den(X,A,isPartOf) → in_den(X,B,isPartOf))
+#   Proof: in_den(X,A,isPartOf) → leq(X,A) [den_onlyif]
+#          leq(X,A) ∧ leq(A,B) → leq(X,B) [leq_trans]
+#          leq(X,B) → in_den(X,B,isPartOf) [den_if]
+P("ODRL250-1.p", "Theorem", "Monotone",
+  "Lemma 2 (universal) — isPartOf Monotonicity", "Hard",
+  "(Meta-property: no ODRL policy — operator characterization)",
+  "∀A,B,X: leq(A,B) → (in_den(X,A,isPartOf) → in_den(X,B,isPartOf))\n"
+  "%   Proof chain: den_isPartOf_onlyif → leq_trans → den_isPartOf_if\n"
+  "%   Tests: universally quantified operator property over arbitrary concepts.",
+  "fof(odrl250, conjecture,\n"
+  "    ![A,B,X]: (\n"
+  "        (leq(A, B) & in_denotation(X, A, isPartOf))\n"
+  "      => in_denotation(X, B, isPartOf) )).",
+  inc=("GEO", "ODRL"),
+  pl="isPartOf monotonicity: leq(A,B) → ↓A ⊆ ↓B (universal)")
+
+# 251: hasPart is anti-monotone
+#   ∀A,B,X: leq(A,B) → (in_den(X,B,hasPart) → in_den(X,A,hasPart))
+#   Proof: in_den(X,B,hasPart) → leq(B,X) [den_onlyif]
+#          leq(A,B) ∧ leq(B,X) → leq(A,X) [leq_trans]
+#          leq(A,X) → in_den(X,A,hasPart) [den_if]
+#   Note: direction REVERSES — smaller concept has LARGER hasPart denotation.
+P("ODRL251-1.p", "Theorem", "AntiMonotone",
+  "Lemma 2 (universal) — hasPart Anti-Monotonicity", "Hard",
+  "(Meta-property: no ODRL policy — operator characterization)",
+  "∀A,B,X: leq(A,B) → (in_den(X,B,hasPart) → in_den(X,A,hasPart))\n"
+  "%   Proof chain: den_hasPart_onlyif → leq_trans → den_hasPart_if\n"
+  "%   Direction reverses: A ≤ B → ↑B ⊆ ↑A (smaller concept, more ancestors).\n"
+  "%   Tests: anti-monotone reasoning with universally quantified hasPart.",
+  "fof(odrl251, conjecture,\n"
+  "    ![A,B,X]: (\n"
+  "        (leq(A, B) & in_denotation(X, B, hasPart))\n"
+  "      => in_denotation(X, A, hasPart) )).",
+  inc=("GEO", "ODRL"),
+  pl="hasPart anti-monotonicity: leq(A,B) → ↑B ⊆ ↑A (universal)")
+
+# 252: isNoneOf is anti-monotone (concrete instance with set ops)
+#   leq(germany, westernEurope)
+#   → isNoneOf({westernEurope}) ⊆ isNoneOf({germany})
+#   "If X is outside wE, then X is also outside germany."
+#   Proof (contrapositive of isPartOf monotonicity):
+#     in_den_set(X, listWE, isNoneOf) → concept(X) ∧ ¬leq(X, wE)
+#     Contrapositive of mono: if leq(X, de) → leq(X, wE)
+#     So ¬leq(X, wE) → ¬leq(X, de) → in_den_set(X, listDE, isNoneOf)
+P("ODRL252-1.p", "Theorem", "AntiMonotone",
+  "Corollary — isNoneOf Anti-Monotonicity (Concrete)", "Very Hard",
+  tp("policyA", "permission", "use", [("spatial", "isNoneOf", "( geo:westernEurope )")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isNoneOf", "( geo:germany )")]),
+  "isNoneOf anti-monotonicity: leq(de, wE) → isNoneOf({wE}) ⊆ isNoneOf({de})\n"
+  "%   Contrapositive of isPartOf monotonicity.\n"
+  "%   ∀X: (concept(X) ∧ ¬leq(X,wE)) → (concept(X) ∧ ¬leq(X,de))\n"
+  "%   Tests: negation + set operator + hierarchy reasoning combined.",
+  "fof(odrl252, conjecture,\n"
+  "    ![X]: (\n"
+  "        in_denotation_set(X, noneListWE252, isNoneOf)\n"
+  "      => in_denotation_set(X, noneListDE252, isNoneOf) )).",
+  extra=(
+      "fof(list_252a, axiom, in_value_list(westernEurope, noneListWE252)).\n" +
+      generate_list_closure("noneListWE252", ["westernEurope"]) + "\n"
+      "fof(list_252b, axiom, in_value_list(germany, noneListDE252)).\n" +
+      generate_list_closure("noneListDE252", ["germany"])
+  ),
+  inc=("GEO", "ODRL"),
+  pl="isNoneOf anti-monotone: de ≤ wE → isNoneOf({wE}) ⊆ isNoneOf({de})")
+
+# 253: eq is non-monotone — counterexample with negative reasoning
+#   leq(bavaria, germany) but eq(bavaria) ⊄ eq(germany)
+#   Witness: bavaria ∈ eq(bavaria) but bavaria ∉ eq(germany)
+#   eq(bavaria) = {bavaria}, eq(germany) = {germany}
+#   Negative proof: in_den(bav, de, eq) → bav = de → $distinct contradiction → ⊥
+P("ODRL253-1.p", "Theorem", "NonMonotone",
+  "Counterexample — eq Is Non-Monotone", "Medium",
+  tp("policyA", "permission", "use", [("spatial", "eq", "geo:bavaria")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "eq", "geo:germany")]),
+  "eq is non-monotone: leq(bavaria, germany) but eq(bav) ⊄ eq(de).\n"
+  "%   Positive: in_den(bavaria, bavaria, eq) [den_eq_if: bav = bav]\n"
+  "%   Negative: ~in_den(bavaria, germany, eq) [den_eq_onlyif: bav = de → ⊥ by UNA]\n"
+  "%   Tests: proof by contradiction using UNA ($distinct) for negative membership.",
+  "fof(odrl253, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, bavaria, eq)\n"
+  "          & ~in_denotation(X, germany, eq) )).",
+  inc=("GEO", "ODRL"),
+  pl="eq non-monotone: bav ∈ eq(bav) ∧ bav ∉ eq(de) despite bav ≤ de")
+
+# 254: neq is non-monotone — counterexample (reverse direction)
+#   leq(bavaria, germany) but neq(bavaria) ⊄ neq(germany)
+#   Witness: germany ∈ neq(bavaria) but germany ∉ neq(germany)
+#   neq(bavaria) = C\{bavaria}, neq(germany) = C\{germany}
+#   de ∈ neq(bav) because de ≠ bav, but de ∉ neq(de) because de = de.
+P("ODRL254-1.p", "Theorem", "NonMonotone",
+  "Counterexample — neq Is Non-Monotone", "Medium",
+  tp("policyA", "permission", "use", [("spatial", "neq", "geo:bavaria")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "neq", "geo:germany")]),
+  "neq is non-monotone: leq(bav, de) but neq(bav) ⊄ neq(de).\n"
+  "%   Positive: in_den(germany, bavaria, neq) [den_neq_if: de ≠ bav by UNA]\n"
+  "%   Negative: ~in_den(germany, germany, neq) [den_neq_onlyif: de ≠ de → ⊥]\n"
+  "%   Tests: neq non-monotonicity via UNA-based positive + self-equality negative.",
+  "fof(odrl254, conjecture,\n"
+  "    ?[X]: ( in_denotation(X, bavaria, neq)\n"
+  "          & ~in_denotation(X, germany, neq) )).",
+  inc=("GEO", "ODRL"),
+  pl="neq non-monotone: de ∈ neq(bav) ∧ de ∉ neq(de) despite bav ≤ de")
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # File generation engine
@@ -1361,7 +1914,7 @@ def print_summary():
     for p in PROBLEMS:
         diffs[p["diff"]] = diffs.get(p["diff"], 0) + 1
     print(f"\nBy difficulty:")
-    for d in ["Easy", "Medium", "Hard", "Very Hard"]:
+    for d in ["Easy", "Medium", "Hard", "Very Hard", "Extreme"]:
         if d in diffs:
             print(f"  {d}: {diffs[d]}")
 

@@ -65,7 +65,7 @@
 % One-liner : 4-policy spoiler: spatial conflict on B,C; purpose compatible with A
 % Difficulty: Very Hard
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

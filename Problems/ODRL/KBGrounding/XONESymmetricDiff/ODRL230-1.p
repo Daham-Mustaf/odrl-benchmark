@@ -32,7 +32,7 @@
 % One-liner : XONE: ↓de △ ↓fr ≠ ∅ via sibling disjointness
 % Difficulty: Very Hard
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

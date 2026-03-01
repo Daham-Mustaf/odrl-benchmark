@@ -1,45 +1,29 @@
 %--------------------------------------------------------------------------
-% File     : ODRL090-1.p : TPTP v0.1.0
+% File     : ODRL090-1.p : TPTP v0.1.0.
 % Domain   : ODRL Policy Conflict Detection
-% Problem  : Runtime soundness: Conflict → no ω satisfies both
+% Problem  : Theorem 3 (forward): static Conflict → no runtime context satisfies both
 % Expected : Theorem
-% Verdict  : Sound
+% Verdict  : Conflict
 % Paper    : Theorem 3 — Runtime Soundness (Conflict → no context)
 %
 % ODRL Policy (Turtle):
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:spatial ;
-%         odrl:operator odrl:isPartOf ;
-%         odrl:rightOperand geo:westernEurope ] ] .
+%   (see problem description)
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:prohibition [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:spatial ;
-%         odrl:operator odrl:isPartOf ;
-%         odrl:rightOperand geo:easternEurope ] ] .
+% Formal:
+%   Static: ⟦isPartOf(wE)⟧ ∩ ⟦isPartOf(eE)⟧ = ∅  [Conflict, ODRL013]
+%   Runtime: ∀Ω: ¬(satisfies(Ω,wE,isPartOf) ∧ satisfies(Ω,eE,isPartOf))
+%   6-step refutation via satisfies_needs_assignment + backward bridge
 %
-% Denotation analysis:
-%   Static: ⟦isPartOf(wE)⟧ ∩ ⟦isPartOf(eE)⟧ = ∅ (Conflict)
-%   6-step refutation proof:
-%     1. satisfies_needs_assignment → assigns(ω_sk, X)
-%     2. satisfaction_to_denotation → in_den(X, wE/eE, isPartOf)
-%     3. context_functional → same X for both
-%     4. den_isPartOf_onlyif → leq(X, wE) ∧ leq(X, eE)
-%     5. disj_downward(wE ⊥ eE) → disjoint(X, X)
-%     6. disj_irrefl → contradiction
-%
+% Notes    : Key: Part D (satisfies_needs_assignment) provides assigns(ω_sk,X) for the Skolem context; without it, the backward bridge cannot fire.
 % Difficulty: Hard
 % Authors  : Mustafa, D. & Sutcliffe, G.
+% Date     : 2026-02-28
+% Gen      : gen_hierarchy_suite.py
 %--------------------------------------------------------------------------
-include('Axioms/Layer0-DomainKB/GEO000-0.ax').
 include('Axioms/Layer1-ODRLCore/ODRL000-0.ax').
+include('Axioms/Layer0-DomainKB/GEO000-0.ax').
 include('Axioms/Layer1-ODRLCore/RUNTIME000-0.ax').
-
+% ─── Conjecture ──────────────────────────────────────────────────────
 fof(odrl090, conjecture,
     ![Omega]: ~( satisfies(Omega, westernEurope, isPartOf)
               & satisfies(Omega, easternEurope, isPartOf) )).

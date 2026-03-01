@@ -24,7 +24,7 @@
 % One-liner : Non-existent concept: no concept/1 → satisfaction unknown
 % Difficulty: Medium
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

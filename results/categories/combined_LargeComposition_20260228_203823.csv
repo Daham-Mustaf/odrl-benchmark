@@ -1,0 +1,4 @@
+category,file,expected,vampire,vampire_t,pass
+LargeComposition,ODRL130-1.p,Theorem,Unknown,120.21,False
+LargeComposition,ODRL131-1.p,CounterSatisfiable,Unknown,120.19,True
+LargeComposition,ODRL132-1.p,Theorem,Theorem,0.14,True

@@ -1,5 +1,5 @@
 %--------------------------------------------------------------------------
-% File     : ODRL051-1.p : TPTP v0.1.0
+% File     : ODRL051-1.p : TPTP v0.1.0.
 % Domain   : ODRL Policy Conflict Detection
 % Problem  : Root reachability: hasPart(germany) ∩ eq(europe) ≠ ∅
 % Expected : Theorem
@@ -7,31 +7,29 @@
 % Paper    : Definition 3 (hasPart)
 %
 % ODRL Policy (Turtle):
-%   ex:policy1 a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:spatial ;
-%         odrl:operator odrl:hasPart ;
-%         odrl:rightOperand geo:germany ] ] .
+%   ex:policyA a odrl:Set ;
+%     odrl:permission [ odrl:action odrl:use ;
+%       odrl:constraint [ odrl:leftOperand odrl:spatial ; odrl:operator odrl:hasPart ; odrl:rightOperand geo:germany ] ] .
 %
-%   ex:policy2 a odrl:Set ;
-%     odrl:prohibition [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:spatial ;
-%         odrl:operator odrl:eq ;
-%         odrl:rightOperand geo:europe ] ] .
+%   ex:policyB a odrl:Set ;
+%     odrl:prohibition [ odrl:action odrl:use ;
+%       odrl:constraint [ odrl:leftOperand odrl:spatial ; odrl:operator odrl:eq ; odrl:rightOperand geo:europe ] ] .
 %
-% Denotation analysis:
-%   Witness: europe (leq(germany,wE) ∧ leq(wE,europe) → europe ∈ hasPart(de))
+% Formal:
+%   ⟦hasPart(germany)⟧ = {X | leq(germany,X)}
+%                   = {germany, westernEurope, europe, world}
+%   europe ∈ this set  [leq(germany,wE) + leq(wE,europe) → leq(germany,europe)]
+%   Witness: europe
 %
+% Notes    : hasPart traverses UPWARD — the 'any ancestor' test.
 % Difficulty: Medium
 % Authors  : Mustafa, D. & Sutcliffe, G.
+% Date     : 2026-02-28
+% Gen      : gen_hierarchy_suite.py
 %--------------------------------------------------------------------------
-include('Axioms/Layer0-DomainKB/GEO000-0.ax').
 include('Axioms/Layer1-ODRLCore/ODRL000-0.ax').
-
+include('Axioms/Layer0-DomainKB/GEO000-0.ax').
+% ─── Conjecture ──────────────────────────────────────────────────────
 fof(odrl051, conjecture,
     ?[X]: ( in_denotation(X, germany, hasPart)
           & in_denotation(X, europe, eq) )).

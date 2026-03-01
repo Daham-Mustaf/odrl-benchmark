@@ -17,7 +17,7 @@
 % One-liner : Reflexivity: ∀G: concept(G) → G ∈ ⟦isPartOf(G)⟧
 % Difficulty: Easy
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

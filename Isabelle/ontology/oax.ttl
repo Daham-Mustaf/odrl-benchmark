@@ -1,0 +1,249 @@
+@prefix oax:   <http://w3id.org/odrl/spatial-axis#> .
+@prefix odrl:  <http://www.w3.org/ns/odrl/2/> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix vann:  <http://purl.org/vocab/vann/> .
+
+# =============================================================
+# Ontology Metadata
+# =============================================================
+<http://w3id.org/odrl/spatial-axis#>
+    a owl:Ontology ;
+    rdfs:label "ODRL Spatial Axis Profile"@en ;
+    dct:title "ODRL Spatial Axis Profile"@en ;
+    dct:description
+        """An ODRL Profile that introduces 15 axis-specific
+        LeftOperands to resolve the dimensionality mismatch
+        between ODRL 2.2's multi-dimensional spatial
+        LeftOperands and its scalar constraint pattern.
+        The profile introduces axis-specific LeftOperands
+        for all five multi-dimensional spatial terms in ODRL 2.2,
+        covering both 2D and 3D cases while preserving ODRL's scalar
+        constraint semantics."""@en ;
+    dct:creator "Daham Mustafa" ;
+    dct:contributor "Diego Collarana", "Christoph Lange-Bever", "Stephan Decker" ;
+    dct:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dct:created "2026-02-08"^^xsd:date ;
+    owl:versionInfo "0.1.0" ;
+    vann:preferredNamespacePrefix "oax" ;
+    vann:preferredNamespaceUri "http://w3id.org/odrl/spatial-axis#" ;
+    rdfs:seeAlso <https://www.w3.org/TR/odrl-model/> ;
+    rdfs:seeAlso <https://www.w3.org/TR/odrl-vocab/> .
+
+# =============================================================
+# Profile-local annotation property
+# =============================================================
+# FIX #1: LeftOperands are individuals, not properties.
+#         rdfs:range is a category error. Use a custom annotation.
+oax:valueType
+    a owl:AnnotationProperty ;
+    rdfs:label "expected value type"@en ;
+    skos:definition
+        "The expected XSD datatype of the right operand
+         when this left operand is used in a constraint."@en .
+
+# =============================================================
+# Image/Asset Dimensions — absoluteSize axes
+# Domain: (0, ∞) — zero collapses the dimension
+# =============================================================
+oax:absoluteSizeWidth
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "absolute size (width axis)"@en ;
+    skos:broader odrl:absoluteSize ;
+    skos:definition
+        "The width axis of the absolute size of the target asset."@en ;
+    skos:note
+        "Domain: (0, ∞). Unit is asset-dependent (e.g. pixels, mm)."@en ;
+    skos:scopeNote
+        "Use to constrain image width independently of height."@en ;
+    oax:valueType xsd:decimal .
+
+oax:absoluteSizeHeight
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "absolute size (height axis)"@en ;
+    skos:broader odrl:absoluteSize ;
+    skos:definition
+        "The height axis of the absolute size of the target asset."@en ;
+    skos:note
+        "Domain: (0, ∞). Unit is asset-dependent (e.g. pixels, mm)."@en ;
+    skos:scopeNote
+        "Use to constrain image height independently of width."@en ;
+    oax:valueType xsd:decimal .
+
+oax:absoluteSizeDepth
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "absolute size (depth axis)"@en ;
+    skos:broader odrl:absoluteSize ;
+    skos:definition
+        "The depth axis of the absolute size of the target asset."@en ;
+    skos:note
+        "Domain: (0, ∞). Applicable to 3D assets only."@en ;
+    skos:scopeNote
+        "Use to constrain depth of 3D assets independently of width and height."@en ;
+    oax:valueType xsd:decimal .
+
+# =============================================================
+# Image/Asset Dimensions — relativeSize axes
+# Domain: (0, 100] — zero collapses; 100% is valid maximum
+# =============================================================
+oax:relativeSizeWidth
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "relative size (width axis)"@en ;
+    skos:broader odrl:relativeSize ;
+    skos:definition
+        "The width axis of the relative size of the target asset, as a percentage."@en ;
+    skos:note "Domain: (0, 100]. Unit: percent of original width."@en ;
+    skos:scopeNote
+        "Use to constrain relative width independently of height."@en ;
+    oax:valueType xsd:decimal .
+
+oax:relativeSizeHeight
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "relative size (height axis)"@en ;
+    skos:broader odrl:relativeSize ;
+    skos:definition
+        "The height axis of the relative size of the target asset, as a percentage."@en ;
+    skos:note "Domain: (0, 100]. Unit: percent of original height."@en ;
+    skos:scopeNote
+        "Use to constrain relative height independently of width."@en ;
+    oax:valueType xsd:decimal .
+
+oax:relativeSizeDepth
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "relative size (depth axis)"@en ;
+    skos:broader odrl:relativeSize ;
+    skos:definition
+        "The depth axis of the relative size of the target asset, as a percentage."@en ;
+    skos:note "Domain: (0, 100]. Applicable to 3D assets only. Unit: percent of original depth."@en ;
+    skos:scopeNote
+        "Use to constrain relative depth of 3D assets independently of width and height."@en ;
+    oax:valueType xsd:decimal .
+
+# =============================================================
+# Canvas/Viewport Position — absoluteSpatialPosition axes
+# Domain: ℝ — negative offsets are valid (position left/above origin)
+# =============================================================
+oax:absoluteSpatialPositionX
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "absolute spatial position (X axis)"@en ;
+    skos:broader odrl:absoluteSpatialPosition ;
+    skos:definition
+        "The X-axis component of the absolute spatial position."@en ;
+    skos:note "Domain: (-∞, ∞). Unit is asset-dependent."@en ;
+    skos:scopeNote
+        "Use to constrain horizontal canvas position independently."@en ;
+    oax:valueType xsd:decimal .
+
+oax:absoluteSpatialPositionY
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "absolute spatial position (Y axis)"@en ;
+    skos:broader odrl:absoluteSpatialPosition ;
+    skos:definition
+        "The Y-axis component of the absolute spatial position."@en ;
+    skos:note "Domain: (-∞, ∞). Unit is asset-dependent."@en ;
+    skos:scopeNote
+        "Use to constrain vertical canvas position independently."@en ;
+    oax:valueType xsd:decimal .
+
+oax:absoluteSpatialPositionZ
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "absolute spatial position (Z axis)"@en ;
+    skos:broader odrl:absoluteSpatialPosition ;
+    skos:definition
+        "The Z-axis component of the absolute spatial position."@en ;
+    skos:note "Domain: (-∞, ∞). Applicable to 3D assets only."@en ;
+    skos:scopeNote
+        "Use to constrain depth position of 3D assets independently."@en ;
+    oax:valueType xsd:decimal .
+
+# =============================================================
+# Canvas/Viewport Position — relativeSpatialPosition axes
+# Domain: [0, 100] — 0% = left/top edge, 100% = right/bottom edge
+# =============================================================
+oax:relativeSpatialPositionX
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "relative spatial position (X axis)"@en ;
+    skos:broader odrl:relativeSpatialPosition ;
+    skos:definition
+        "The X-axis component of the relative spatial position, as a percentage."@en ;
+    skos:note "Domain: [0, 100]. Unit: percent of canvas width."@en ;
+    skos:scopeNote
+        "Use to constrain horizontal position as percentage of canvas width."@en ;
+    oax:valueType xsd:decimal .
+
+oax:relativeSpatialPositionY
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "relative spatial position (Y axis)"@en ;
+    skos:broader odrl:relativeSpatialPosition ;
+    skos:definition
+        "The Y-axis component of the relative spatial position, as a percentage."@en ;
+    skos:note "Domain: [0, 100]. Unit: percent of canvas height."@en ;
+    skos:scopeNote
+        "Use to constrain vertical position as percentage of canvas height."@en ;
+    oax:valueType xsd:decimal .
+
+oax:relativeSpatialPositionZ
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "relative spatial position (Z axis)"@en ;
+    skos:broader odrl:relativeSpatialPosition ;
+    skos:definition
+        "The Z-axis component of the relative spatial position, as a percentage."@en ;
+    skos:note "Domain: [0, 100]. Applicable to 3D assets only. Unit: percent of canvas depth."@en ;
+    skos:scopeNote
+        "Use to constrain depth position as percentage of canvas depth."@en ;
+    oax:valueType xsd:decimal .
+
+# =============================================================
+# Geographic Location — spatialCoordinates axes
+# Domains per WGS 84
+# =============================================================
+oax:spatialCoordinatesLatitude
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "spatial coordinates (latitude)"@en ;
+    skos:broader odrl:spatialCoordinates ;
+    skos:definition
+        "The latitude component of spatial coordinates."@en ;
+    skos:note "Domain: [-90, 90]. Unit: decimal degrees (WGS 84)."@en ;
+    skos:scopeNote
+        "Use to constrain geographic latitude independently of longitude."@en ;
+    oax:valueType xsd:decimal .
+
+oax:spatialCoordinatesLongitude
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "spatial coordinates (longitude)"@en ;
+    skos:broader odrl:spatialCoordinates ;
+    skos:definition
+        "The longitude component of spatial coordinates."@en ;
+    skos:note "Domain: [-180, 180]. Unit: decimal degrees (WGS 84)."@en ;
+    skos:scopeNote
+        "Use to constrain geographic longitude independently of latitude."@en ;
+    oax:valueType xsd:decimal .
+
+oax:spatialCoordinatesAltitude
+    a skos:Concept, odrl:LeftOperand ;
+    rdfs:isDefinedBy <http://w3id.org/odrl/spatial-axis#> ;
+    skos:prefLabel "spatial coordinates (altitude)"@en ;
+    skos:broader odrl:spatialCoordinates ;
+    skos:definition
+        "The altitude component of spatial coordinates."@en ;
+    skos:note "Domain: (-∞, ∞). Unit: metres above WGS 84 ellipsoid."@en ;
+    skos:scopeNote
+        "Use to constrain geographic altitude independently of latitude and longitude."@en ;
+    oax:valueType xsd:decimal .

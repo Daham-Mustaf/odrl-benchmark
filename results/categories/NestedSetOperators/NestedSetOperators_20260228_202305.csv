@@ -1,0 +1,6 @@
+category,file,expected,vampire,vampire_t,pass
+NestedSetOperators,ODRL110-1.p,Theorem,Theorem,0.07,True
+NestedSetOperators,ODRL111-1.p,Theorem,Theorem,0.07,True
+NestedSetOperators,ODRL112-1.p,CounterSatisfiable,Unknown,30.10,False
+NestedSetOperators,ODRL113-1.p,Theorem,Theorem,0.07,True
+NestedSetOperators,ODRL114-1.p,Theorem,Theorem,0.07,True

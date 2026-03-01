@@ -1,5 +1,5 @@
 %--------------------------------------------------------------------------
-% File     : ODRL011-1.p : TPTP v0.1.0
+% File     : ODRL011-1.p : TPTP v0.1.0.
 % Domain   : ODRL Policy Conflict Detection
 % Problem  : Compatible: isPartOf(europe) ∩ eq(germany) ≠ ∅
 % Expected : Theorem
@@ -7,7 +7,7 @@
 % Paper    : Definition 3, Definition 5
 %
 % ODRL Policy (Turtle):
-%   ex:policy1 a odrl:Set ;
+%   ex:policyA a odrl:Set ;
 %     odrl:permission [
 %       odrl:action odrl:use ;
 %       odrl:constraint [
@@ -15,7 +15,7 @@
 %         odrl:operator odrl:isPartOf ;
 %         odrl:rightOperand geo:europe ] ] .
 %
-%   ex:policy2 a odrl:Set ;
+%   ex:policyB a odrl:Set ;
 %     odrl:prohibition [
 %       odrl:action odrl:use ;
 %       odrl:constraint [
@@ -23,16 +23,19 @@
 %         odrl:operator odrl:eq ;
 %         odrl:rightOperand geo:germany ] ] .
 %
-% Denotation analysis:
-%   ⟦isPartOf(europe)⟧ ⊇ {germany}, ⟦eq(germany)⟧ = {germany}
-%   Witness: germany
+% Formal:
+%   ⟦isPartOf(europe)⟧ = {x | leq(x, europe)} ∋ germany
+%   ⟦eq(germany)⟧ = {germany}
+%   Witness: germany (leq_trans: de ≤ wE ≤ europe)
 %
 % Difficulty: Easy
 % Authors  : Mustafa, D. & Sutcliffe, G.
+% Date     : 2026-02-28
+% Gen      : gen_hierarchy_suite.py
 %--------------------------------------------------------------------------
-include('Axioms/Layer0-DomainKB/GEO000-0.ax').
 include('Axioms/Layer1-ODRLCore/ODRL000-0.ax').
-
+include('Axioms/Layer0-DomainKB/GEO000-0.ax').
+% ─── Conjecture ──────────────────────────────────────────────────────
 fof(odrl011, conjecture,
     ?[X]: ( in_denotation(X, europe, isPartOf)
           & in_denotation(X, germany, eq) )).

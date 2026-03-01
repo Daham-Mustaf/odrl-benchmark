@@ -1,0 +1,7 @@
+category,file,expected,vampire,vampire_t,pass
+DAGMultiParent,ODRL100-1.p,Theorem,ContradictoryAxioms,0.13,False
+DAGMultiParent,ODRL101-1.p,Theorem,Theorem,0.07,True
+DAGMultiParent,ODRL102-1.p,CounterSatisfiable,Unknown,30.08,False
+DAGMultiParent,ODRL103-1.p,CounterSatisfiable,Unknown,30.08,False
+DAGMultiParent,ODRL104-1.p,Theorem,Theorem,0.07,True
+DAGMultiParent,ODRL105-1.p,Theorem,Theorem,0.07,True

@@ -34,7 +34,7 @@
 % One-liner : 2-hop alignment: GEO→ISO→SYNTH conflict detection
 % Difficulty: Very Hard
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

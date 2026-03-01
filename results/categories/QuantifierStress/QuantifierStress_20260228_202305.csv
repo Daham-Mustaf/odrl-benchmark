@@ -1,0 +1,5 @@
+category,file,expected,vampire,vampire_t,pass
+QuantifierStress,ODRL120-1.p,Theorem,Theorem,0.07,True
+QuantifierStress,ODRL121-1.p,Theorem,Theorem,0.07,True
+QuantifierStress,ODRL122-1.p,Theorem,Theorem,0.07,True
+QuantifierStress,ODRL123-1.p,Theorem,Theorem,0.07,True

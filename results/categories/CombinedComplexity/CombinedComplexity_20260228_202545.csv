@@ -1,0 +1,7 @@
+category,file,expected,vampire,vampire_t,pass
+CombinedComplexity,ODRL210-1.p,Theorem,Theorem,0.07,True
+CombinedComplexity,ODRL211-1.p,Theorem,Theorem,0.07,True
+CombinedComplexity,ODRL212-1.p,Theorem,Theorem,0.06,True
+CombinedComplexity,ODRL213-1.p,Theorem,Theorem,0.06,True
+CombinedComplexity,ODRL214-1.p,Theorem,Theorem,0.07,True
+CombinedComplexity,ODRL215-1.p,Theorem,Unknown,30.10,False

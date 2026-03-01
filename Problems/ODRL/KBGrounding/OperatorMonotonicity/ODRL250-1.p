@@ -17,7 +17,7 @@
 % One-liner : isPartOf monotonicity: leq(A,B) → ↓A ⊆ ↓B (universal)
 % Difficulty: Hard
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

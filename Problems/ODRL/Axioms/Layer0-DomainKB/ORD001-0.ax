@@ -1,0 +1,46 @@
+%--------------------------------------------------------------------------
+% File     : ORD001-0 : TPTP v0.2.0
+% Domain   : ODRL Spatial Axis Profile
+% Axioms   : Density axiom for continuous (real-valued) domains
+% Version  : 0.2.0
+% Status   : Axioms
+% Source   : [Mustafa et al., 2026]
+% Purpose  : Extends ORD000-0.ax with density: between any two distinct
+%            values exists a third.  This axiom is required for reasoning
+%            about open intervals over continuous domains (R, Q) but is
+%            INCOMPATIBLE with discrete domains (N, Z).
+%
+% Paper map (by label):
+%   Density  → rem:discrete ("continuous (R) ... domains")
+%   Use case → def:interval-denotation, equations 4–5 (lt, gt produce
+%              open endpoints that require intermediate witnesses)
+%
+% Usage:
+%   Include alongside ORD000-0.ax in problem files that reason over
+%   continuous domains (geographic coordinates, relative percentages).
+%   Do NOT include for discrete domains (pixel counts).
+%
+%   Continuous:  include('ORD000-0.ax'). include('ORD001-0.ax').
+%   Discrete:    include('ORD000-0.ax').  % density omitted
+%
+% Depends  : ORD000-0.ax (less/2)
+%--------------------------------------------------------------------------
+
+include('Axioms/Layer0-DomainKB/ORD000-0.ax').
+
+% Density: between any two distinct values exists a third.
+% This ensures that open intervals (a, b) with a < b are non-empty,
+% which is needed for compatibility witnesses on strict operators (lt, gt).
+%
+% Example where density matters:
+%   Policy 1: width gt 599   → denotation (599, ∞)
+%   Policy 2: width lt 601   → denotation (-∞, 601)
+%   Intersection: (599, 601) — non-empty only if dense.
+%   Without density, Vampire cannot find a witness between 599 and 601
+%   if the domain might be {599, 601} with nothing between.
+fof(dense, axiom, ![X,Y]:
+    (less(X,Y) => ?[Z]: (less(X,Z) & less(Z,Y)))).
+
+%--------------------------------------------------------------------------
+% END OF ORD001-0.ax
+%--------------------------------------------------------------------------

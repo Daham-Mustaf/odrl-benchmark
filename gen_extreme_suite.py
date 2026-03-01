@@ -89,6 +89,7 @@ CAT_DIR = {
     14: "KBGrounding/MultiHopAlignment",
     15: "KBGrounding/NWayConflict",
     16: "KBGrounding/NWayComposed",
+    17: "KBGrounding/SetOperatorStress",
     20: "KBGrounding/XONESymmetricDiff",
     21: "KBGrounding/OperatorMonotonicity",
 }
@@ -108,6 +109,7 @@ def problem_category(fn):
     if num < 160: return 14
     if num < 170: return 15
     if num < 230: return 16
+    if 200 <= num < 210: return 17
     if num < 250: return 20
     return 21
 
@@ -319,6 +321,213 @@ fof(wit_full_refl3, axiom, leq(tgtC, tgtC)).
 
 % Structure preserved: tgtA ≤ tgtB, tgtA ≤ tgtC (mirrors source).
 fof(wit_full_una, axiom, $distinct(tgtA, tgtB, tgtC))."""
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CATEGORY 17: SET OPERATOR STRESS (ODRL200–205)
+#
+# Tests deep interactions between isNoneOf (complement), isAllOf (∩),
+# and isAnyOf (∪). These force the prover into complex set-theoretic
+# reasoning over finite KB concepts with CWA closure axioms.
+# ═══════════════════════════════════════════════════════════════════════════
+
+# 200: isNoneOf vs isNoneOf — double complement interaction
+#   policyA: permission spatial isNoneOf({westernEurope})  → C \ ↓wE
+#   policyB: prohibition spatial isNoneOf({easternEurope}) → C \ ↓eE
+#
+#   Overlap: (C \ ↓wE) ∩ (C \ ↓eE) = C \ (↓wE ∪ ↓eE)
+#   If ↓wE ∪ ↓eE = C (i.e., wE and eE partition europe) then overlap = ∅
+#   But europe itself: ¬leq(europe, wE) ∧ ¬leq(europe, eE)
+#   → europe ∈ isNoneOf({wE}) ∧ europe ∈ isNoneOf({eE})
+#   Witness: europe → Compatible
+#
+#   This is HARD because the prover must reason about what is NOT below wE or eE.
+#   The isNoneOf semantics requires ∀-elimination over the CWA closure,
+#   then showing ¬leq(europe, wE) (which requires checking all leq axioms).
+P("ODRL200-1.p", "Theorem", "Compatible",
+  "isNoneOf × isNoneOf — Double Complement Overlap", "Very Hard",
+  tp("policyA", "permission", "use", [("spatial", "isNoneOf", "( geo:westernEurope )")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isNoneOf", "( geo:easternEurope )")]),
+  "Double complement: (C \\ ↓wE) ∩ (C \\ ↓eE)\n"
+  "%   europe: ¬leq(europe, wE) ∧ ¬leq(europe, eE)\n"
+  "%   Witness: europe ∈ isNoneOf({wE}) ∩ isNoneOf({eE})\n"
+  "%   Hard: prover must show ¬leq(europe, wE) — requires CWA over leq.",
+  "fof(odrl200, conjecture,\n"
+  "    ?[X]: ( in_denotation_set(X, noneListA200, isNoneOf)\n"
+  "          & in_denotation_set(X, noneListB200, isNoneOf) )).",
+  extra=(
+      "fof(list_200a, axiom, in_value_list(westernEurope, noneListA200)).\n" +
+      generate_list_closure("noneListA200", ["westernEurope"]) + "\n"
+      "fof(list_200b, axiom, in_value_list(easternEurope, noneListB200)).\n" +
+      generate_list_closure("noneListB200", ["easternEurope"])
+  ),
+  inc=("GEO", "ODRL"),
+  pl="Double complement: isNoneOf({wE}) ∩ isNoneOf({eE}) ≠ ∅ (witness: europe)")
+
+# 201: isNoneOf vs isAllOf — complement meets intersection
+#   policyA: permission spatial isNoneOf({easternEurope})  → C \ ↓eE
+#   policyB: prohibition spatial isAllOf({europe, westernEurope})
+#            → ↓europe ∩ ↓wE = ↓wE (since wE ≤ europe)
+#
+#   Overlap: (C \ ↓eE) ∩ ↓wE
+#   wE⊥eE → ↓wE ∩ ↓eE = ∅ → every X ∈ ↓wE has ¬leq(X, eE)
+#   → ↓wE ⊆ isNoneOf({eE})
+#   → Overlap = ↓wE ≠ ∅ → Compatible
+#   Witness: germany
+P("ODRL201-1.p", "Theorem", "Compatible",
+  "isNoneOf × isAllOf — Complement Meets Intersection", "Very Hard",
+  tp("policyA", "permission", "use", [("spatial", "isNoneOf", "( geo:easternEurope )")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isAllOf", "( geo:europe geo:westernEurope )")]),
+  "Complement ∩ intersection:\n"
+  "%   isNoneOf({eE}) = C \\ ↓eE, isAllOf({europe, wE}) = ↓wE\n"
+  "%   wE⊥eE → ↓wE ⊆ (C \\ ↓eE) → overlap = ↓wE ≠ ∅\n"
+  "%   Hard: prover must chain disjointness → non-membership → complement inclusion.",
+  "fof(odrl201, conjecture,\n"
+  "    ?[X]: ( in_denotation_set(X, noneList201, isNoneOf)\n"
+  "          & in_denotation_set(X, allList201, isAllOf) )).",
+  extra=(
+      "fof(list_201a, axiom, in_value_list(easternEurope, noneList201)).\n" +
+      generate_list_closure("noneList201", ["easternEurope"]) + "\n"
+      "fof(list_201b_1, axiom, in_value_list(europe, allList201)).\n"
+      "fof(list_201b_2, axiom, in_value_list(westernEurope, allList201)).\n" +
+      generate_list_closure("allList201", ["europe", "westernEurope"])
+  ),
+  inc=("GEO", "ODRL"),
+  pl="Complement ∩ intersection: isNoneOf({eE}) ∩ isAllOf({europe,wE}) = ↓wE")
+
+# 202: isNoneOf with large exclusion list → nearly empty complement
+#   isNoneOf({westernEurope, easternEurope}) = C \ (↓wE ∪ ↓eE)
+#   ↓wE ∪ ↓eE covers almost all of C (all under europe)
+#   What's left? europe itself (¬leq(europe, wE) ∧ ¬leq(europe, eE))
+#   Prove: europe is the ONLY witness in the complement
+#   Specifically: in_denotation_set(X, list, isNoneOf) → X = europe
+#   (given GEO KB where wE and eE are the only children of europe)
+P("ODRL202-1.p", "Theorem", "NearEmpty",
+  "isNoneOf — Large Exclusion, Nearly Empty Complement", "Extreme",
+  tp("policyA", "permission", "use",
+     [("spatial", "isNoneOf", "( geo:westernEurope geo:easternEurope )")]),
+  "isNoneOf({wE, eE}) = C \\ (↓wE ∪ ↓eE)\n"
+  "%   In GEO KB: wE and eE are children of europe, which covers all countries.\n"
+  "%   Only europe itself is NOT below wE or eE.\n"
+  "%   Prove: the complement is exactly {europe}.\n"
+  "%   Extreme: requires exhaustive checking of all 24 GEO concepts.",
+  "fof(odrl202, conjecture,\n"
+  "    ![X]: ( in_denotation_set(X, noneList202, isNoneOf)\n"
+  "        => X = europe )).",
+  extra=(
+      "fof(list_202_1, axiom, in_value_list(westernEurope, noneList202)).\n"
+      "fof(list_202_2, axiom, in_value_list(easternEurope, noneList202)).\n" +
+      generate_list_closure("noneList202", ["westernEurope", "easternEurope"])
+  ),
+  inc=("GEO", "ODRL"),
+  pl="Near-empty complement: isNoneOf({wE,eE}) = {europe} only")
+
+# 203: 3-way set operator interaction
+#   policyA: permission spatial isAnyOf({germany, france})     → ↓de ∪ ↓fr
+#   policyB: prohibition spatial isNoneOf({westernEurope})     → C \ ↓wE
+#   policyC: prohibition spatial isAllOf({europe, germany})    → ↓europe ∩ ↓de = ↓de
+#
+#   A∩B: (↓de ∪ ↓fr) ∩ (C \ ↓wE)
+#        de ≤ wE → de ∈ ↓wE → de ∉ (C\↓wE)
+#        fr ≤ wE → fr ∈ ↓wE → fr ∉ (C\↓wE)
+#        All elements of ↓de and ↓fr are ≤ wE → intersection = ∅ → Conflict(A,B)!
+#   A∩C: (↓de ∪ ↓fr) ∩ ↓de = ↓de ≠ ∅ → Compatible(A,C)
+#   B∩C: (C \ ↓wE) ∩ ↓de = ∅ (de ≤ wE) → Conflict(B,C)
+#
+#   Non-transitive again, but through set operators!
+P("ODRL203-1.p", "Theorem", "MixedNWay",
+  "3-Way Set Operators — isAnyOf × isNoneOf × isAllOf", "Extreme",
+  tp("policyA", "permission", "use", [("spatial", "isAnyOf", "( geo:germany geo:france )")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isNoneOf", "( geo:westernEurope )")]) + "\n%\n%   " +
+  tp("policyC", "prohibition", "use", [("spatial", "isAllOf", "( geo:europe geo:germany )")]),
+  "3-way set operator non-transitivity:\n"
+  "%   Conflict(A,B): isAnyOf({de,fr}) ∩ isNoneOf({wE}) = ∅\n"
+  "%     (de,fr both ≤ wE → excluded from complement)\n"
+  "%   Compatible(A,C): isAnyOf({de,fr}) ∩ isAllOf({europe,de}) = ↓de ≠ ∅\n"
+  "%   Conflict(B,C): isNoneOf({wE}) ∩ isAllOf({europe,de}) = (C\\↓wE) ∩ ↓de = ∅\n"
+  "%   Extreme: 3 different set operators, non-transitive via complement.",
+  "fof(odrl203, conjecture,\n"
+  "    ( ![X]: ~( in_denotation_set(X, anyList203, isAnyOf)\n"
+  "             & in_denotation_set(X, noneList203, isNoneOf) )\n"
+  "    & ?[Y]: ( in_denotation_set(Y, anyList203, isAnyOf)\n"
+  "            & in_denotation_set(Y, allList203, isAllOf) )\n"
+  "    & ![Z]: ~( in_denotation_set(Z, noneList203, isNoneOf)\n"
+  "             & in_denotation_set(Z, allList203, isAllOf) ) )).",
+  extra=(
+      "fof(list_203a_1, axiom, in_value_list(germany, anyList203)).\n"
+      "fof(list_203a_2, axiom, in_value_list(france, anyList203)).\n" +
+      generate_list_closure("anyList203", ["germany", "france"]) + "\n"
+      "fof(list_203b, axiom, in_value_list(westernEurope, noneList203)).\n" +
+      generate_list_closure("noneList203", ["westernEurope"]) + "\n"
+      "fof(list_203c_1, axiom, in_value_list(europe, allList203)).\n"
+      "fof(list_203c_2, axiom, in_value_list(germany, allList203)).\n" +
+      generate_list_closure("allList203", ["europe", "germany"])
+  ),
+  inc=("GEO", "ODRL"),
+  pl="3-way set ops: isAnyOf × isNoneOf × isAllOf, non-transitive")
+
+# 204: isNoneOf conflict with isPartOf — universal proof over complement
+#   isNoneOf({europe}) = C \ ↓europe
+#   isPartOf(germany) = ↓de ⊆ ↓europe (since de ≤ wE ≤ europe)
+#   Prove: ∀X: ¬(X ∈ isNoneOf({europe}) ∧ X ∈ isPartOf(germany))
+#   Requires: for every X, either X ∈ ↓europe (so ¬isNoneOf) or X ∉ ↓de
+P("ODRL204-1.p", "Theorem", "Conflict",
+  "isNoneOf × isPartOf — Universal Complement Conflict", "Very Hard",
+  tp("policyA", "permission", "use", [("spatial", "isNoneOf", "( geo:europe )")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use", [("spatial", "isPartOf", "geo:germany")]),
+  "isNoneOf({europe}) ∩ isPartOf(germany) = ∅\n"
+  "%   ↓de ⊆ ↓europe → every X ∈ isPartOf(de) has leq(X, europe)\n"
+  "%   → X ∉ isNoneOf({europe})\n"
+  "%   Universal proof: ∀X: ¬(complement ∧ descendant)",
+  "fof(odrl204, conjecture,\n"
+  "    ![X]: ~( in_denotation_set(X, noneList204, isNoneOf)\n"
+  "           & in_denotation(X, germany, isPartOf) )).",
+  extra=(
+      "fof(list_204, axiom, in_value_list(europe, noneList204)).\n" +
+      generate_list_closure("noneList204", ["europe"])
+  ),
+  inc=("GEO", "ODRL"),
+  pl="Complement conflict: isNoneOf({europe}) ∩ isPartOf(de) = ∅")
+
+# 205: isAnyOf large union vs isNoneOf large exclusion
+#   isAnyOf({germany, france, italy, spain, netherlands})
+#   isNoneOf({westernEurope, easternEurope})
+#   Union: ↓de ∪ ↓fr ∪ ↓it ∪ ↓es ∪ ↓nl — all ≤ wE
+#   Complement: C \ (↓wE ∪ ↓eE) = {europe} (from ODRL202)
+#   → Union ∩ Complement = ∅ (all union members ≤ wE → excluded)
+#   → Conflict
+P("ODRL205-1.p", "CounterSatisfiable", "Conflict",
+  "isAnyOf(5) × isNoneOf(2) — Large Union vs Large Exclusion", "Extreme",
+  tp("policyA", "permission", "use",
+     [("spatial", "isAnyOf", "( geo:germany geo:france geo:italy geo:spain geo:netherlands )")]) + "\n%\n%   " +
+  tp("policyB", "prohibition", "use",
+     [("spatial", "isNoneOf", "( geo:westernEurope geo:easternEurope )")]),
+  "Large union ∩ large complement:\n"
+  "%   isAnyOf({de,fr,it,es,nl}): all ≤ wE → all ∈ ↓wE\n"
+  "%   isNoneOf({wE,eE}): C \\ (↓wE ∪ ↓eE) ≈ {europe}\n"
+  "%   → Union ∩ Complement = ∅ (all union members excluded)\n"
+  "%   Extreme: 5-element list + 2-element exclusion + CWA reasoning.",
+  "fof(odrl205, conjecture,\n"
+  "    ?[X]: ( in_denotation_set(X, anyList205, isAnyOf)\n"
+  "          & in_denotation_set(X, noneList205, isNoneOf) )).",
+  flip_conj=
+  "fof(odrl205, conjecture,\n"
+  "    ![X]: ~( in_denotation_set(X, anyList205, isAnyOf)\n"
+  "           & in_denotation_set(X, noneList205, isNoneOf) )).",
+  extra=(
+      "fof(list_205a_1, axiom, in_value_list(germany, anyList205)).\n"
+      "fof(list_205a_2, axiom, in_value_list(france, anyList205)).\n"
+      "fof(list_205a_3, axiom, in_value_list(italy, anyList205)).\n"
+      "fof(list_205a_4, axiom, in_value_list(spain, anyList205)).\n"
+      "fof(list_205a_5, axiom, in_value_list(netherlands, anyList205)).\n" +
+      generate_list_closure("anyList205",
+          ["germany", "france", "italy", "spain", "netherlands"]) + "\n"
+      "fof(list_205b_1, axiom, in_value_list(westernEurope, noneList205)).\n"
+      "fof(list_205b_2, axiom, in_value_list(easternEurope, noneList205)).\n" +
+      generate_list_closure("noneList205", ["westernEurope", "easternEurope"])
+  ),
+  inc=("GEO", "ODRL"),
+  pl="Large union vs large complement: isAnyOf(5) ∩ isNoneOf(2) = ∅")
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════

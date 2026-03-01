@@ -1,0 +1,541 @@
+{
+  "experiment": "E3_incompleteness_sweep",
+  "date": "2026-02-28",
+  "kbs": [
+    {
+      "kb": "GEO",
+      "levels": [],
+      "n_disjoint_axioms": 32,
+      "n_problems": 13,
+      "n_conflict_problems": 8,
+      "n_compatible_problems": 5
+    },
+    {
+      "kb": "DPV",
+      "levels": [],
+      "n_disjoint_axioms": 22,
+      "n_problems": 13,
+      "n_conflict_problems": 8,
+      "n_compatible_problems": 5
+    },
+    {
+      "kb": "LANG",
+      "levels": [],
+      "n_disjoint_axioms": 25,
+      "n_problems": 13,
+      "n_conflict_problems": 8,
+      "n_compatible_problems": 5
+    }
+  ],
+  "summary": {},
+  "results": [
+    {
+      "kb": "GEO",
+      "problem": "GEO_C01",
+      "type": "conflict",
+      "note": "wE vs eE: root disjointness",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_C02",
+      "type": "conflict",
+      "note": "de vs fr: direct sibling",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_C03",
+      "type": "conflict",
+      "note": "de vs pl: cross-region derived",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_C04",
+      "type": "conflict",
+      "note": "bav vs pl: 2-hop derived",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_C05",
+      "type": "conflict",
+      "note": "fr vs cz: cross-region derived",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_C06",
+      "type": "conflict",
+      "note": "it vs eE: it\u2264wE, wE\u22a5eE",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_C07",
+      "type": "conflict",
+      "note": "es vs cz: cross-region",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_C08",
+      "type": "conflict",
+      "note": "be vs pl: cross-region",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_M01",
+      "type": "compatible",
+      "note": "de \u2264 wE: pure subsumption",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_M02",
+      "type": "compatible",
+      "note": "bav \u2264 de \u2264 wE \u2264 eu: chain",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_M03",
+      "type": "compatible",
+      "note": "eq(de) \u2229 isPartOf(wE): de\u2208\u2193wE",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_M04",
+      "type": "compatible",
+      "note": "subsumption \u2193de \u2286 \u2193wE",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "GEO",
+      "problem": "GEO_M05",
+      "type": "compatible",
+      "note": "3-way chain de\u2264wE\u2264eu",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_C01",
+      "type": "conflict",
+      "note": "cP vs sP: direct disjoint siblings",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_C02",
+      "type": "conflict",
+      "note": "R&D vs sP: direct disjoint siblings",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_C03",
+      "type": "conflict",
+      "note": "acR vs sP: acR\u2264R&D, R&D\u22a5sP \u2192 acR\u22a5sP",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_C04",
+      "type": "conflict",
+      "note": "cR vs sP: cR\u2264cP, cP\u22a5sP \u2192 cR\u22a5sP",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_C05",
+      "type": "conflict",
+      "note": "leg vs mkt: direct disjoint siblings",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_C06",
+      "type": "conflict",
+      "note": "prod vs R&D: prod\u2264cP, cP and R&D share cR \u2014 wait, prod\u22a5R&D IS safe",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_C07",
+      "type": "conflict",
+      "note": "pubR vs cP: pubR\u2264R&D, R&D and cP share cR \u2014 pubR\u22a5cP IS safe",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_C08",
+      "type": "conflict",
+      "note": "acR vs leg: acR\u2264R&D, R&D\u22a5leg",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_M01",
+      "type": "compatible",
+      "note": "cP \u2229 R&D: witness=cR (DAG!) \u2014 NEVER conflicts",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_M02",
+      "type": "compatible",
+      "note": "cR \u2264 R&D: pure subsumption",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_M03",
+      "type": "compatible",
+      "note": "cR \u2264 cP: pure subsumption",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_M04",
+      "type": "compatible",
+      "note": "acR \u2286 R&D: subsumption",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "DPV",
+      "problem": "DPV_M05",
+      "type": "compatible",
+      "note": "acR \u2229 R&D: acR\u2264R&D",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_C01",
+      "type": "conflict",
+      "note": "en vs de: root language siblings",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_C02",
+      "type": "conflict",
+      "note": "enGB vs enUS: British vs American",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_C03",
+      "type": "conflict",
+      "note": "enGB vs fr: cross-language (enGB\u2264en, en\u22a5fr)",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_C04",
+      "type": "conflict",
+      "note": "deAT vs fr: deAT\u2264de, de\u22a5fr",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_C05",
+      "type": "conflict",
+      "note": "frCH vs en: frCH\u2264fr, fr\u22a5en",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_C06",
+      "type": "conflict",
+      "note": "enUS vs de: cross-language derived",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_C07",
+      "type": "conflict",
+      "note": "de vs fr: root language siblings",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_C08",
+      "type": "conflict",
+      "note": "frBE vs de: frBE\u2264fr, fr\u22a5de",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Unknown_or_Theorem",
+        "50": "Unknown_or_Theorem",
+        "75": "Unknown_or_Theorem",
+        "100": "Unknown"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_M01",
+      "type": "compatible",
+      "note": "enGB \u2264 en: subsumption",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_M02",
+      "type": "compatible",
+      "note": "deAT \u2264 de: Austrian German \u2264 German",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_M03",
+      "type": "compatible",
+      "note": "frCH \u2264 fr: Swiss French \u2264 French",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_M04",
+      "type": "compatible",
+      "note": "\u2193enGB \u2286 \u2193en: subsumption",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    },
+    {
+      "kb": "LANG",
+      "problem": "LANG_M05",
+      "type": "compatible",
+      "note": "3-way chain: enGB\u2264en\u2264all",
+      "verdicts": {
+        "0": "Theorem",
+        "25": "Theorem",
+        "50": "Theorem",
+        "75": "Theorem",
+        "100": "Theorem"
+      }
+    }
+  ],
+  "total_files": 195
+}

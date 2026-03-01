@@ -1,15 +1,13 @@
 %--------------------------------------------------------------------------
 % File     : DPV-NAIVE.ax : TPTP v0.1.0. Released v0.1.0.
-% Domain   : W3C Data Privacy Vocabulary — Purpose taxonomy
+% Domain   : OWL Ontology
 % Axioms   : Full hierarchy (taxonomic)
-% Version  : Generated from OWL source.
-% English  : W3C Data Privacy Vocabulary — Purpose taxonomy encoded as a TPTP Layer 0 domain
-%            knowledge base. Contains concept membership, direct
-%            subsumption edges, and disjointness. UNA is implicit
-%            from tree structure + sibling disjointness (Implicit UNA Lemma).
+% Version  : Profile: owl:Purpose
+% English  : OWL Ontology encoded as TPTP Layer 0 domain KB.
+%            UNA: IMPLICIT — tree + ⊥⊥ (Implicit UNA Lemma).
 % Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
 %            Automated Reasoning for ODRL Policy Conflict Detection
-% Source   : https://w3id.org/dpv
+% Source   : 
 % Names    : DPV-NAIVE.ax
 % Status   : Layer 0 — Domain Knowledge Base
 % Syntax   : Number of formulae    :   480 (  480 unt;   0 def)
@@ -23,23 +21,18 @@
 %            Number of functors     :    95 (   95 usr;  95 con; 0-0 aty)
 %            Number of variables    :     0 (   0   !;   0   ?)
 % SPC      : FOF_EPR_RFN_NEQ
-% Comments : All formulae are ground unit clauses (no variables).
-%          : Reflexivity and transitivity of leq/2 are provided by
-%          : Layer 1 (ODRL000-0.ax), not asserted here.
-%          : UNA: IMPLICIT — tree + sibling disjointness makes all
-%          :   constants provably distinct via antisymmetry +
-%          :   disj_downward + disj_irrefl (Implicit UNA Lemma).
-%          : NAIVE MODE — tree-assumed sibling disjointness (may be
-%          :   unsound for DAG-structured vocabularies).
+% Comments : All formulae are ground unit clauses.
+%          : Layer 1 provides reflexivity + transitivity of leq/2.
+%          : NAIVE sibling ⊥⊥ — tree assumed; may be unsound for DAGs.
 %          : Multi-parent: commercialResearch, communicationForCustomerCare, improveInternalCRMProcesses, nonCommercialResearch, personalisedAdvertising, servicePersonalisation
-%          : Root: purpose
+%          : Root(s): purpose
 % Ontology : Predicates: concept/1; leq/2; disjoint/2
 %          : Relation: leq/2 — class subsumption (paper Def. 2, ≤ = ⊑)
 % Stats    : Concepts 95 | Edges 100 | Disjoint 285 | UNA 0 | Total 480
 %          : Depth 4 | Leaves 63 | Internal 31 | Branch avg 3.1 max 17
-% Date     : 2026-02-16
+% Date     : 2026-02-28
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Gen      : gen_layer0_kb.py from https://w3id.org/dpv
+% Gen      : gen_layer0.py --source owl:Purpose
 %--------------------------------------------------------------------------
 
 % ─── Concept membership (Definition 2: C) ─────────────────────────────
@@ -140,7 +133,7 @@ fof(c_vendorSelectionAssessment, axiom, concept(vendorSelectionAssessment)).  % 
 fof(c_verification, axiom, concept(verification)).  % https://w3id.org/dpv#Verification
 
 % ─── Hierarchy (Definition 2: ≤) ──────────────────────────────────────
-% Only direct edges. Layer 1 provides reflexivity + transitivity.
+% Direct edges only. Layer 1 provides reflexivity + transitivity.
 fof(h_0000, axiom, leq(academicResearch, researchAndDevelopment)).
 fof(h_0001, axiom, leq(accountManagement, purpose)).
 fof(h_0002, axiom, leq(advertising, marketing)).
@@ -243,9 +236,7 @@ fof(h_0098, axiom, leq(vendorSelectionAssessment, vendorManagement)).
 fof(h_0099, axiom, leq(verification, enforceSecurity)).
 
 % ─── Disjointness (Definition 2: ⊥⊥) ─────────────────────────────────
-% NAIVE sibling disjointness: children of the same parent are disjoint.
-% WARNING: May be unsound for DAG-structured vocabularies.
-% Derived disjointness follows from disj_downward (Layer 1).
+% NAIVE (tree-assumed) sibling ⊥⊥. Derived ⊥⊥ via disj_downward (Layer 1).
 fof(d_0000, axiom, disjoint(academicResearch, commercialResearch)).
 fof(d_0001, axiom, disjoint(academicResearch, nonCommercialResearch)).
 fof(d_0002, axiom, disjoint(academicResearch, scientificResearch)).
@@ -533,15 +524,9 @@ fof(d_0283, axiom, disjoint(vendorPayment, vendorSelectionAssessment)).
 fof(d_0284, axiom, disjoint(vendorRecordsManagement, vendorSelectionAssessment)).
 
 % ─── Unique Name Assumption ───────────────────────────────────────────
-% SKIPPED (--no-una): UNA is implicit from tree structure + sibling
-% disjointness. All constants are provably distinct via:
-%   - leq antisymmetry: a ≤ b ∧ b ≤ a → a = b
-%   - disj_downward:    ⊥(a,b) ∧ c ≤ a → ⊥(c,b)
-%   - disj_irrefl:      ⊥(a,b) ∧ c ≤ a ∧ c ≤ b → ⊥
-% Collapsing any two constants leads to contradiction.
+% IMPLICIT — tree + ⊥⊥ (Implicit UNA Lemma).
+% SKIPPED — implicit from tree structure + ⊥⊥ (Implicit UNA Lemma).
 
 %--------------------------------------------------------------------------
 % Summary: 95 concept + 100 leq + 285 disjoint + 0 UNA = 480 axioms
-% NAIVE mode: ALL sibling pairs asserted (including problematic ones)
-% WARNING: This KB may be INCONSISTENT if it contains multi-parent concepts.
 %--------------------------------------------------------------------------

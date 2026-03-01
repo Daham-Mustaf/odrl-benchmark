@@ -1,11 +1,10 @@
 %--------------------------------------------------------------------------
 % File     : ISO3166-0.ax : TPTP v0.1.0. Released v0.1.0.
 % Domain   : ISO 3166-1 Country Codes — European Union
-% Axioms   : Containment hierarchy (mereological)
+% Axioms   : Full hierarchy (mereological)
 % Version  : Profile: iso3166
-% English  : Flat 2-level KB: europe → country (no sub-regions).
-%            For cross-dataspace alignment with GEO000-0.ax.
-%            UNA via $distinct — avoids clause explosion (Sutcliffe).
+% English  : ISO 3166-1 Country Codes — European Union encoded as TPTP Layer 0 domain KB.
+%            UNA: $distinct groups (Sutcliffe); avoids clause explosion.
 % Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
 %            Automated Reasoning for ODRL Policy Conflict Detection
 % Source   : [2] https://www.iso.org/iso-3166-country-codes.html
@@ -24,15 +23,15 @@
 % SPC      : FOF_EPR_RFN_NEQ
 % Comments : All formulae are ground unit clauses.
 %          : Layer 1 provides reflexivity + transitivity of leq/2.
-%          : UNA: $distinct groups by parent (Sutcliffe).
-%          : Root: europe
+%          : Multi-parent: none
+%          : Root(s): europe
 % Ontology : Predicates: concept/1; leq/2
-%          : Relation: leq/2 — geographic containment (paper Def. 2)
+%          : Relation: leq/2 — part-whole containment (paper Def. 2, ≤ = ⪯)
 % Stats    : Concepts 28 | Edges 27 | Disjoint 0 | UNA 1 | Total 56
 %          : Depth 1 | Leaves 27 | Internal 0 | Branch avg 27.0 max 27
-% Date     : 2026-02-16
+% Date     : 2026-02-28
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Gen      : gen_layer0_geo.py --profile iso3166
+% Gen      : gen_layer0.py --source iso3166
 %--------------------------------------------------------------------------
 
 % ─── Concept membership (Definition 2: C) ─────────────────────────────
@@ -65,8 +64,8 @@ fof(c_sE, axiom, concept(sE)).  % ISO 3166:SE — Sweden
 fof(c_sI, axiom, concept(sI)).  % ISO 3166:SI — Slovenia
 fof(c_sK, axiom, concept(sK)).  % ISO 3166:SK — Slovakia
 
-% ─── Hierarchy (Definition 2: ≤ = containment) ────────────────────────
-% Only direct edges. Layer 1 provides reflexivity + transitivity.
+% ─── Hierarchy (Definition 2: ≤) ──────────────────────────────────────
+% Direct edges only. Layer 1 provides reflexivity + transitivity.
 fof(h_0000, axiom, leq(aT, europe)).
 fof(h_0001, axiom, leq(bE, europe)).
 fof(h_0002, axiom, leq(bG, europe)).
@@ -98,10 +97,9 @@ fof(h_0026, axiom, leq(sK, europe)).
 % ─── Disjointness (Definition 2: ⊥⊥) ─────────────────────────────────
 % (none)
 
-% ─── Unique Name Assumption (via $distinct) ──────────────────────────
-% Geoff Sutcliffe recommendation: $distinct avoids clause explosion.
-
-fof(iso_distinct_europe, axiom,
+% ─── Unique Name Assumption ───────────────────────────────────────────
+% $distinct groups (Sutcliffe); avoids clause explosion.
+fof(una_distinct_europe, axiom,
     $distinct(
         aT, bE, bG, cY, cZ, dE, dK, eE,
         eS, fI, fR, gR, hR, hU, iE, iT,

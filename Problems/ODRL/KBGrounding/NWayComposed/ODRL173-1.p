@@ -63,7 +63,7 @@
 % One-liner : 3-operand × 3-policy: maximum complexity, all pairs Compatible
 % Difficulty: Very Hard
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

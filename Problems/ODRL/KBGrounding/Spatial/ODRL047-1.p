@@ -1,25 +1,28 @@
 %--------------------------------------------------------------------------
-% File     : ODRL047-1.p : TPTP v0.1.0
+% File     : ODRL047-1.p : TPTP v0.1.0.
 % Domain   : ODRL Policy Conflict Detection
-% Problem  : XONE-Conflict: spatial ✗ ⊕ purpose ✗ → Conflict
+% Problem  : XONE-Conflict: V_spatial=Conflict ∧ V_purpose=Conflict
 % Expected : Theorem
 % Verdict  : Conflict
 % Paper    : Definition 6 (Composition, xone)
-% Encoding : prover-friendly (flipped for refutation provers)
 %
 % ODRL Policy (Turtle):
-%   V_spatial=Conflict, V_purpose=Conflict
+%   (see problem description)
 %
-% Denotation analysis:
-%   XONE: ∀k:V_k=Conflict → Conflict
+% Formal:
+%   spatial: isPartOf(wE) ∩ isPartOf(eE) = ∅  [disj(wE,eE)]
+%   purpose: isA(academicResearch) ∩ isA(marketing) = ∅  [disj(aR,mk)]
+%   XONE: all dims ✗ → Conflict (no dim can be the exclusive ✓)
 %
 % Difficulty: Hard
 % Authors  : Mustafa, D. & Sutcliffe, G.
+% Date     : 2026-02-28
+% Gen      : gen_hierarchy_suite.py
 %--------------------------------------------------------------------------
+include('Axioms/Layer1-ODRLCore/ODRL000-0.ax').
 include('Axioms/Layer0-DomainKB/GEO000-0.ax').
 include('Axioms/Layer0-DomainKB/DPV000-0.ax').
-include('Axioms/Layer1-ODRLCore/ODRL000-0.ax').
-
+% ─── Conjecture ──────────────────────────────────────────────────────
 fof(odrl047, conjecture,
     ( ![Xs]: ~( in_denotation(Xs, westernEurope, isPartOf)
               & in_denotation(Xs, easternEurope, isPartOf) )

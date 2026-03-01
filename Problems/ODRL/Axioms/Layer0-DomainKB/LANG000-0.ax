@@ -1,16 +1,14 @@
 %--------------------------------------------------------------------------
 % File     : LANG000-0.ax : TPTP v0.1.0. Released v0.1.0.
 % Domain   : BCP47 Language Tags — European Dataspace Languages
-% Axioms   : Language tag hierarchy (taxonomic)
-% Version  : Curated from RFC 5646 / ISO 639-1 / ISO 3166-1.
-% English  : BCP47 language tag hierarchy for ODRL policy reasoning.
-%            leq/2 represents language specialization (is-variant-of).
-%            UNA via $distinct — avoids clause explosion (Sutcliffe).
+% Axioms   : Full hierarchy (taxonomic)
+% Version  : Profile: bcp47-eu
+% English  : BCP47 Language Tags — European Dataspace Languages encoded as TPTP Layer 0 domain KB.
+%            UNA: $distinct groups (Sutcliffe); avoids clause explosion.
 % Refs     : [MuS25] Mustafa, D. & Sutcliffe, G. (2025),
 %            Automated Reasoning for ODRL Policy Conflict Detection
 % Source   : [1] https://www.iana.org/assignments/language-subtag-registry/
-%            [2] https://www.rfc-editor.org/rfc/rfc5646 (BCP47)
-%            [5] https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:01958R0001-20130701
+%            [2] https://www.rfc-editor.org/rfc/rfc5646
 % Names    : LANG000-0.ax
 % Status   : Layer 0 — Domain Knowledge Base
 % Syntax   : Number of formulae    :   455 (  455 unt;   0 def)
@@ -26,15 +24,15 @@
 % SPC      : FOF_EPR_RFN_NEQ
 % Comments : All formulae are ground unit clauses.
 %          : Layer 1 provides reflexivity + transitivity of leq/2.
-%          : UNA: $distinct groups by hierarchy level (Sutcliffe).
-%          : Root(s): 25 base languages (no single root)
+%          : Multi-parent: none
+%          : Root(s): bg, cs, da, de, el, en, es, et, fi, fr, ga, hr, hu, it, lt, lv, mt, nb, nl, pl, pt, ro, sk, sl, sv
 % Ontology : Predicates: concept/1; leq/2; disjoint/2
-%          : Relation: leq/2 — language specialization (paper Def. 2)
+%          : Relation: leq/2 — class subsumption (paper Def. 2, ≤ = ⊑)
 % Stats    : Concepts 68 | Edges 43 | Disjoint 334 | UNA 10 | Total 455
-%          : Depth 1 | Leaves 43 | Base langs 25 | Branch avg 1.7 max 5
-% Date     : 2026-02-16
+%          : Depth 1 | Leaves 43 | Internal 0 | Branch avg 1.7 max 5
+% Date     : 2026-02-28
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Gen      : gen_layer0_lang.py (24 EU langs + nb; Reg. 1/1958 + cross-DS variants)
+% Gen      : gen_layer0.py --source bcp47-eu
 %--------------------------------------------------------------------------
 
 % ─── Concept membership (Definition 2: C) ─────────────────────────────
@@ -107,8 +105,8 @@ fof(c_sv, axiom, concept(sv)).  % BCP47:sv — Swedish
 fof(c_svFi, axiom, concept(svFi)).  % BCP47:sv-FI — Swedish (Finland)
 fof(c_svSe, axiom, concept(svSe)).  % BCP47:sv-SE — Swedish (Sweden)
 
-% ─── Hierarchy (Definition 2: ≤ = language specialization) ─────────────
-% leq(enUs, en) means: en-US is a regional variant of en.
+% ─── Hierarchy (Definition 2: ≤) ──────────────────────────────────────
+% Direct edges only. Layer 1 provides reflexivity + transitivity.
 fof(h_0000, axiom, leq(bgBg, bg)).
 fof(h_0001, axiom, leq(csCz, cs)).
 fof(h_0002, axiom, leq(daDk, da)).
@@ -154,8 +152,7 @@ fof(h_0041, axiom, leq(svFi, sv)).
 fof(h_0042, axiom, leq(svSe, sv)).
 
 % ─── Disjointness (Definition 2: ⊥⊥) ─────────────────────────────────
-% Sibling + base language disjointness.
-% Derived disjointness follows from disj_downward (Layer 1).
+% DAG-safe sibling ⊥⊥. Derived ⊥⊥ via disj_downward (Layer 1).
 fof(d_0000, axiom, disjoint(bg, cs)).
 fof(d_0001, axiom, disjoint(bg, da)).
 fof(d_0002, axiom, disjoint(bg, de)).
@@ -491,11 +488,9 @@ fof(d_0331, axiom, disjoint(sk, sv)).
 fof(d_0332, axiom, disjoint(sl, sv)).
 fof(d_0333, axiom, disjoint(svFi, svSe)).
 
-% ─── Unique Name Assumption (via $distinct) ──────────────────────────
-% Geoff Sutcliffe recommendation: Use $distinct instead of pairwise !=
-% $distinct is recognized natively by ATP systems and avoids clause explosion.
-
-fof(lang_distinct_base, axiom,
+% ─── Unique Name Assumption ───────────────────────────────────────────
+% $distinct groups (Sutcliffe); avoids clause explosion.
+fof(una_distinct_roots, axiom,
     $distinct(
         bg, cs, da, de, el, en, es, et,
         fi, fr, ga, hr, hu, it, lt, lv,
@@ -503,35 +498,24 @@ fof(lang_distinct_base, axiom,
         sv
     )).
 
-fof(lang_distinct_de, axiom,
-    $distinct(deAt, deCh, deDe, deLu)).
+fof(una_distinct_de, axiom, $distinct(deAt, deCh, deDe, deLu)).
 
-fof(lang_distinct_el, axiom,
-    $distinct(elCy, elGr)).
+fof(una_distinct_el, axiom, $distinct(elCy, elGr)).
 
-fof(lang_distinct_en, axiom,
-    $distinct(enAu, enCa, enGb, enIe, enUs)).
+fof(una_distinct_en, axiom, $distinct(enAu, enCa, enGb, enIe, enUs)).
 
-fof(lang_distinct_es, axiom,
-    $distinct(esAr, esEs, esMx)).
+fof(una_distinct_es, axiom, $distinct(esAr, esEs, esMx)).
 
-fof(lang_distinct_fr, axiom,
-    $distinct(frBe, frCa, frCh, frFr, frLu)).
+fof(una_distinct_fr, axiom, $distinct(frBe, frCa, frCh, frFr, frLu)).
 
-fof(lang_distinct_it, axiom,
-    $distinct(itCh, itIt)).
+fof(una_distinct_it, axiom, $distinct(itCh, itIt)).
 
-fof(lang_distinct_nl, axiom,
-    $distinct(nlBe, nlNl)).
+fof(una_distinct_nl, axiom, $distinct(nlBe, nlNl)).
 
-fof(lang_distinct_pt, axiom,
-    $distinct(ptBr, ptPt)).
+fof(una_distinct_pt, axiom, $distinct(ptBr, ptPt)).
 
-fof(lang_distinct_sv, axiom,
-    $distinct(svFi, svSe)).
+fof(una_distinct_sv, axiom, $distinct(svFi, svSe)).
 
-% Note: Within each $distinct group, all constants are pairwise unequal.
-% ATP systems expand $distinct efficiently without clause explosion.
 
 %--------------------------------------------------------------------------
 % Summary: 68 concept + 43 leq + 334 disjoint + 10 UNA = 455 axioms

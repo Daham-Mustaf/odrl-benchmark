@@ -1,0 +1,13 @@
+benchmark,name,prover,encoding,expected,actual,match,time_s,error
+ODRL090,theorem3-forward-conflict-no-context,vampire,tptp,Theorem,Theorem,True,0.131,
+ODRL090,theorem3-forward-conflict-no-context,z3,smt2,unsat,sat,False,2.728,
+ODRL091,runtime-witness-compatible-europe-germany,vampire,tptp,Theorem,Theorem,True,0.069,
+ODRL091,runtime-witness-compatible-europe-germany,z3,smt2,unsat,sat,False,1.592,
+ODRL092,theorem3-contrapositive-witness-compatible,vampire,tptp,Theorem,Theorem,True,0.064,
+ODRL092,theorem3-contrapositive-witness-compatible,z3,smt2,unsat,sat,False,0.981,
+ODRL093,permissive-satisfaction-ungrounded,vampire,tptp,Theorem,Theorem,True,0.063,
+ODRL093,permissive-satisfaction-ungrounded,z3,smt2,unsat,sat,False,1.923,
+ODRL094,multi-operand-runtime-spatial-purpose,vampire,tptp,Theorem,Theorem,True,0.130,
+ODRL094,multi-operand-runtime-spatial-purpose,z3,smt2,unsat,sat,False,10.690,
+ODRL095,runtime-conflict-propagation-lemma2-theorem3,vampire,tptp,Theorem,Theorem,True,0.094,
+ODRL095,runtime-conflict-propagation-lemma2-theorem3,z3,smt2,unsat,sat,False,2.673,

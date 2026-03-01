@@ -1,0 +1,82 @@
+%--------------------------------------------------------------------------
+% File     : REAL000-0 : TPTP v0.2.0
+% Domain   : ODRL Spatial Axis Profile
+% Axioms   : Native real arithmetic for TFA encoding
+% Version  : 0.2.0
+% Status   : Axioms (domain bounds only, no conjectures)
+% Source   : [Mustafa et al., 2026]
+% Purpose  : Minimal TFA axioms. Real arithmetic ($less, $lesseq,
+%            $sum, $product) is built-in; this file provides only
+%            domain-specific constants and bounds.
+% Note     : This file uses pure TFA with $real. Do NOT mix with
+%            Anthem-style encodings that use a general sort with
+%            injections from $int and symbol.
+%
+% Usage    : TFA problem files include this file and guard constraint
+%            values with the appropriate domain predicate, e.g.:
+%              tff(c1, axiom, is_size(x) & $lesseq(x, 600.0)).
+%            The domain bounds then propagate automatically.
+%
+% Paper map (by label):
+%   is_size      → absoluteSize         (rem:domain-bounds)
+%   is_rel_size  → relativeSize         (rem:domain-bounds)
+%   is_abs_pos   → absoluteSpatialPos.  (rem:domain-bounds)
+%   is_rel_pos   → relativeSpatialPos.  (rem:domain-bounds)
+%   is_latitude  → spatialCoordinates   (rem:domain-bounds)
+%   is_longitude → spatialCoordinates   (rem:profile-independence)
+%   is_altitude  → spatialCoordinates   (rem:domain-bounds)
+%--------------------------------------------------------------------------
+
+% === Type declarations (required by TFA) ===
+tff(is_size_type,      type, is_size:      $real > $o).
+tff(is_rel_size_type,  type, is_rel_size:  $real > $o).
+tff(is_abs_pos_type,   type, is_abs_pos:   $real > $o).
+tff(is_rel_pos_type,   type, is_rel_pos:   $real > $o).
+tff(is_latitude_type,  type, is_latitude:  $real > $o).
+tff(is_longitude_type, type, is_longitude: $real > $o).
+tff(is_altitude_type,  type, is_altitude:  $real > $o).
+
+% === Domain bounds for absolute size: (0, infinity) ===
+% Zero collapses the dimension — not a valid size.
+tff(size_positive, axiom, ![X: $real]:
+    (is_size(X) => $greater(X, 0.0))).
+
+% === Domain bounds for relative size: (0, 100] ===
+% Zero collapses the dimension; 100% is valid maximum.
+tff(rel_size_lo, axiom, ![X: $real]:
+    (is_rel_size(X) => $greater(X, 0.0))).
+tff(rel_size_hi, axiom, ![X: $real]:
+    (is_rel_size(X) => $lesseq(X, 100.0))).
+
+% === Domain bounds for absolute position: (-inf, inf) ===
+% Negative offsets are valid (position left/above origin).
+% No bound axioms needed — domain is all of $real.
+
+% === Domain bounds for relative position: [0, 100] ===
+% 0% is valid (left/top/front edge). Closed at both ends.
+tff(rel_pos_lo, axiom, ![X: $real]:
+    (is_rel_pos(X) => $greatereq(X, 0.0))).
+tff(rel_pos_hi, axiom, ![X: $real]:
+    (is_rel_pos(X) => $lesseq(X, 100.0))).
+
+% === Domain bounds for latitude: [-90, 90] ===
+tff(lat_lo, axiom, ![X: $real]:
+    (is_latitude(X) => $greatereq(X, -90.0))).
+tff(lat_hi, axiom, ![X: $real]:
+    (is_latitude(X) => $lesseq(X, 90.0))).
+
+% === Domain bounds for longitude: [-180, 180] (NON-WRAPPING) ===
+% CAVEAT: These bounds treat longitude as a linear segment, not a
+% circle. Regions crossing the antimeridian (e.g. [170, -170])
+% require circular interval algebra, which is outside the scope
+% of the current framework (see rem:profile-independence).
+% Problem files MUST NOT test antimeridian-crossing regions under
+% these axioms — results would be unsound.
+tff(lon_lo_non_wrapping, axiom, ![X: $real]:
+    (is_longitude(X) => $greatereq(X, -180.0))).
+tff(lon_hi_non_wrapping, axiom, ![X: $real]:
+    (is_longitude(X) => $lesseq(X, 180.0))).
+
+% === Domain bounds for altitude: (-inf, inf) ===
+% No restriction — below sea level is valid.
+% No bound axioms needed — domain is all of $real.

@@ -31,7 +31,7 @@
 % One-liner : Subsumption chain: ↓bavaria ⊆ ↓europe via 3-hop leq
 % Difficulty: Medium
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 

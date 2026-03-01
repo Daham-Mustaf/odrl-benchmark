@@ -47,7 +47,7 @@
 % One-liner : 4-policy chain: ∃X ∈ ↓europe ∩ ↓wE ∩ ↓de ∩ {bav}
 % Difficulty: Medium
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-17
+% Date     : 2026-02-28
 % Gen      : gen_advanced_suite.py
 %--------------------------------------------------------------------------
 
