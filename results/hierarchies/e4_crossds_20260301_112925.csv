@@ -1,0 +1,21 @@
+case,prob_id,type,a,b,expected,label,vampire,z3,pass,note,fp_semantics
+Case1_SharedHub,E4_C1_01,conflict,westernEurope,easternEurope,Theorem,TRUE-CONFLICT,Theorem,,False,D1 root pair wE⊥eE,shared_hub
+Case1_SharedHub,E4_C1_02,conflict,germany,france,Theorem,TRUE-CONFLICT,Theorem,,False,D1 sibling de⊥fr,shared_hub
+Case1_SharedHub,E4_C1_03,conflict,germany,poland,Theorem,TRUE-CONFLICT,Theorem,,False,D2 cross-region de→wE⊥eE←pl,shared_hub
+Case1_SharedHub,E4_C1_04,conflict,bavaria,czechia,Theorem,TRUE-CONFLICT,Theorem,,False,D3 chain bav→de→wE⊥eE←cz,shared_hub
+Case1_SharedHub,E4_C1_05,conflict,italy,easternEurope,Theorem,TRUE-CONFLICT,Theorem,,False,D2 it→wE⊥eE,shared_hub
+Case1_SharedHub,E4_C1_06,compat,germany,westernEurope,Theorem,TRUE-COMPAT,Theorem,,False,subsumption de≤wE,shared_hub
+Case1_SharedHub,E4_C1_07,compat,bavaria,europe,Theorem,TRUE-COMPAT,Theorem,,False,chain bav≤de≤wE≤eu,shared_hub
+Case1_SharedHub,E4_C1_08,compat,germany,westernEurope,Theorem,TRUE-COMPAT,Theorem,,False,universal subsumption ↓de⊆↓wE,shared_hub
+Case1_SharedHub,E4_C1_09,compat,germany,europe,Theorem,TRUE-COMPAT,Theorem,,False,3-way chain de≤wE≤eu,shared_hub
+Case1_SharedHub,E4_C1_10,compat,bavaria,westernEurope,Theorem,TRUE-COMPAT,Theorem,,False,universal bav≤de≤wE,shared_hub
+Case2_AsymmetricKB,E4_C2_01,conflict,germany,poland,Theorem,TRUE-CONFLICT,Theorem,,False,"de≤wE, pl≤eE, root wE⊥eE — KB_B sufficient",asymmetric_consumer_grounded
+Case2_AsymmetricKB,E4_C2_02,conflict,westernEurope,easternEurope,Theorem,TRUE-CONFLICT,Theorem,,False,root pair — directly in KB_B,asymmetric_consumer_grounded
+Case2_AsymmetricKB,E4_C2_03,conflict,france,czechia,Theorem,TRUE-CONFLICT,Theorem,,False,"fr≤wE, cz≤eE, root wE⊥eE — KB_B sufficient",asymmetric_consumer_grounded
+Case2_AsymmetricKB,E4_C2_04,conflict,bavaria,poland,Theorem,TRUE-CONFLICT,Theorem,,False,"bav≤de≤wE, pl≤eE, root — KB_B sufficient",asymmetric_consumer_grounded
+Case2_AsymmetricKB,E4_C2_05,conflict,italy,easternEurope,Theorem,TRUE-CONFLICT,Theorem,,False,"it≤wE, root wE⊥eE — KB_B sufficient",asymmetric_consumer_grounded
+Case2_AsymmetricKB,E4_C2_06,conflict,germany,france,Unknown,FP-RISK→OK,Unknown,,False,"de⊥fr: KB_A only; KB_B both≤wE, no sibling",asymmetric_consumer_grounded
+Case2_AsymmetricKB,E4_C2_07,conflict,belgium,spain,Unknown,FP-RISK→OK,Unknown,,False,"be⊥es: KB_A only; KB_B both≤wE, no sibling",asymmetric_consumer_grounded
+Case2_AsymmetricKB,E4_C2_08,conflict,poland,czechia,Unknown,FP-RISK→OK,Unknown,,False,"pl⊥cz: KB_A only; KB_B both≤eE, no sibling",asymmetric_consumer_grounded
+Case2_AsymmetricKB,E4_C2_09,conflict,bavaria,france,Unknown,FP-RISK→OK,Unknown,,False,bav⊥fr: KB_A only via bav≤de⊥fr; KB_B no de⊥fr,asymmetric_consumer_grounded
+Case2_AsymmetricKB,E4_C2_10,conflict,netherlands,spain,Unknown,FP-RISK→OK,Unknown,,False,"nl⊥es: KB_A only; KB_B both≤wE, no sibling",asymmetric_consumer_grounded

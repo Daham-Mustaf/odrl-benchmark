@@ -1,8 +1,3 @@
-session ODRL = HOL +
-  directories
-    theories
+session DeonticOntology in "DeonticOntology" = HOL +
   theories
-    "theories/ODRL_Grounding"
-    "theories/ODRL_Analysis_Modes"
-    "theories/ODRL_Scenarios"
-    "theories/multi_parent_inconsistency"
+    "ODRLDeonticOntology"
