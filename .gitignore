@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Isabelle
+**/*.thy~
+**/.isabelle/
+
+# Build artifacts
+build/
