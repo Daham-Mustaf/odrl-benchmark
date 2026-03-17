@@ -26,7 +26,7 @@ from datetime import date
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
-from gen_foundation_problems import SMT2_AXIOMS
+from axiom_data import SMT2_AXIOMS
 
 META = {
     "domain":  "Deontic Ontology / ODRL Grounding",
