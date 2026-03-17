@@ -4,10 +4,29 @@
 % Problem  : Full axiom set consistency
 % Status   : Satisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND001-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % The full axiom set (Ax5.1-5.10, A1-A3, B1-B3) is satisfiable.
 % % Minimal model: one perm rule, one agent pair, one action, one target.
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% @prefix schema: <https://schema.org/> .
+% 
+% <drk:policy-theater-read> a odrl:Agreement ;
+%     odrl:permission [ a odrl:Permission ;
+%         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
+%         odrl:assigner <drk:BerlinerEnsemble> ;
+%         odrl:action   odrl:read ;
+%         odrl:target   <drk:TheaterShowtimeDataset> ] .
+% 
+% <drk:TheaterShowtimeDataset>          a dcat:Dataset ;
+%     schema:name "Berliner Ensemble Showtime Dataset" .
+% <drk:BerlinerEnsemble>                a schema:Organization .
+% <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)

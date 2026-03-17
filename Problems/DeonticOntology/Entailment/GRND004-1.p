@@ -4,10 +4,31 @@
 % Problem  : Prohibition with remedy creates Power and Subjection
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND004-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % proh(f1) + has_rem(f1) + founds(e1,rho1,f1).
 % % Entails Power(acme,decl(distribute),d1) and Subjection(alice,decl(distribute),d1).
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% @prefix schema: <https://schema.org/> .
+% 
+% <drk:policy-concert-remedy> a odrl:Agreement ;
+%     odrl:prohibition [ a odrl:Prohibition ;
+%         odrl:assignee <drk:MusicMarketplaceAG> ;
+%         odrl:assigner <drk:PhilharmonieBerlin> ;
+%         odrl:action   odrl:distribute ;
+%         odrl:target   <drk:ConcertRecordingDataset> ;
+%         odrl:remedy   [ a odrl:Duty ;
+%             odrl:action odrl:compensate ] ] .
+% 
+% <drk:ConcertRecordingDataset> a dcat:Dataset ;
+%     schema:name "Philharmonie Berlin Concert Recordings" .
+% <drk:PhilharmonieBerlin>  a schema:Organization .
+% <drk:MusicMarketplaceAG>  a schema:Organization .
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)

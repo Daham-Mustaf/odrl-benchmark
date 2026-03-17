@@ -4,11 +4,36 @@
 % Problem  : Weak permission: Liberty+Duty conflict when prohibition added
 % Status   : Unsatisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND009-no-immunity-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % H1 = {Liberty, NoRight} — no Immunity/Disability.
 % % Acme adds proh(f2): Ax5.3 creates Duty(alice,rfr(read),d1).
 % % Ax5.9: Liberty + Duty-to-refrain => False.
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% @prefix schema: <https://schema.org/> .
+% 
+% <drk:policy-conflict> a odrl:Agreement ;
+%     odrl:permission  [ a odrl:Permission ;
+%         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
+%         odrl:assigner <drk:StaatlicheMuseenBerlin> ;
+%         odrl:action   odrl:read ;
+%         odrl:target   <drk:MuseumCollectionAPI> ] ;
+%     odrl:prohibition [ a odrl:Prohibition ;
+%         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
+%         odrl:assigner <drk:StaatlicheMuseenBerlin> ;
+%         odrl:action   odrl:read ;
+%         odrl:target   <drk:MuseumCollectionAPI> ] .
+% 
+% <drk:MuseumCollectionAPI>             a dcat:DataService .
+% <drk:StaatlicheMuseenBerlin>          a schema:Organization .
+% <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
+% # Weak permission (no Immunity/Disability).
+% # Prohibition creates Duty(rfr(read)) => Liberty + Duty conflict => False.
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)

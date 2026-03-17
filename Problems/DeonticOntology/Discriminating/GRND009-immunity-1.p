@@ -4,10 +4,32 @@
 % Problem  : Strong permission: Liberty persists (Disability blocks prohibition)
 % Status   : Unsatisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND009-immunity-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % H2 = {Liberty, NoRight, Immunity, Disability}.
 % % Acme attempts proh(f2). Ax5.10: Disability + proh => False.
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% @prefix schema: <https://schema.org/> .
+% 
+% <drk:policy-strong> a odrl:Agreement ;
+%     odrl:permission [ a odrl:Permission ;
+%         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
+%         odrl:assigner <drk:StaatlicheMuseenBerlin> ;
+%         odrl:action   odrl:read ;
+%         odrl:target   <drk:MuseumCollectionAPI> ] .
+% 
+% <drk:MuseumCollectionAPI>             a dcat:DataService ;
+%     schema:name "Staatliche Museen Berlin Collection API" .
+% <drk:StaatlicheMuseenBerlin>          a schema:Organization .
+% <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
+% # strong(p) asserted (profile extension, not ODRL 2.2).
+% # Immunity(Bibliothek) + Disability(Museen).
+% # StaatlicheMuseenBerlin attempts prohibition => blocked by Disability.
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)

@@ -4,10 +4,29 @@
 % Problem  : Prohibition creates Duty and Claim over rfr(a)
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND003-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % proh(f1) activated by e1 entails Duty(alice,rfr(distribute),d1)
 % % and Claim(acme,rfr(distribute),d1).
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% @prefix schema: <https://schema.org/> .
+% 
+% <drk:policy-no-distribute> a odrl:Agreement ;
+%     odrl:prohibition [ a odrl:Prohibition ;
+%         odrl:assignee <drk:StreamingPortalGmbH> ;
+%         odrl:assigner <drk:StaatlicheMuseenBerlin> ;
+%         odrl:action   odrl:distribute ;
+%         odrl:target   <drk:MuseumCollectionAPI> ] .
+% 
+% <drk:MuseumCollectionAPI>    a dcat:DataService ;
+%     schema:name "Staatliche Museen Berlin Collection API" .
+% <drk:StaatlicheMuseenBerlin> a schema:Organization .
+% <drk:StreamingPortalGmbH>    a schema:Organization .
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)

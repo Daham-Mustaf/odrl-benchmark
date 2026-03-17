@@ -1,13 +1,16 @@
 ; --------------------------------------------------------------------------
 ; File     : GRND000-0.smt2
-; Domain   : Deontic Ontology / ODRL Grounding 
+; Domain   : Deontic Ontology / ODRL Grounding
 ; Problem  : Signature preamble — sorts, functions, rfr/decl axioms
-; Version  : 1.1
+; Version  : 1.4
 ; English  : SMT-LIB preamble. SMT-LIB has NO include directive.
 ;            Embedded verbatim at the top of every .smt2 problem file
 ;            by the problem generators. Do NOT add (check-sat) here.
+;            Import in generators via:
+;              from gen_signature import generate_smt2 as _gen_smt2
+;              SMT2_PREAMBLE = _gen_smt2()
 ;
-; Source   : Mohammed et al., What Does ODRL Mean? 
+; Source   : Mohammed et al., What Does ODRL Mean? FOIS 2026
 ; Generated: 2026-03-17 by gen_signature.py
 ;
 ; Correspondence with GRND000-0.ax (FOF):
@@ -21,6 +24,10 @@
 ;   FOF strong(R)                    <->  (declare-fun strong (Rule) Bool)
 ;   FOF issue/1                      <->  (declare-fun issue (Rule) Action)
 ;
+; CHANGELOG v1.4:
+;   - version aligned with gen_foundation_problems.py v1.4
+;   - trailing whitespace removed from META fields
+;   - import path documented in header
 ; CHANGELOG v1.1:
 ;   - founds: 2-ary -> 3-ary (Event Relator Rule)
 ;   - Added odrl-rel predicate
@@ -28,7 +35,7 @@
 ;   - Added issue function
 ; --------------------------------------------------------------------------
 (set-logic UF)
-(set-info :source |Mohammed et al., What Does ODRL Mean? |)
+(set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
 (set-info :status unknown)
 
 ; --------------------------------------------------------------------------
@@ -48,11 +55,9 @@
 ; --------------------------------------------------------------------------
 (declare-fun perm    (Rule) Bool)
 (declare-fun proh    (Rule) Bool)
-(declare-fun obl     (Rule) Bool)     ; CANONICAL — paper Ax5.4
-(declare-fun has-rem (Rule) Bool)     ; CANONICAL — paper Ax5.7
+(declare-fun obl     (Rule) Bool)     ; CANONICAL — paper Ax5.6
+(declare-fun has-rem (Rule) Bool)     ; CANONICAL — paper Ax5.4
 (declare-fun strong  (Rule) Bool)     ; Profile extension; not in ODRL 2.2
-                                      ; Asserted as unit clause in GRND002-strong
-
 (declare-fun aee (Rule Agent)  Bool)
 (declare-fun aer (Rule Agent)  Bool)
 (declare-fun act (Rule Action) Bool)
@@ -67,17 +72,13 @@
 (declare-fun founds  (Event Relator Rule)            Bool)
 (declare-fun part-of (Position Relator)              Bool)
 (declare-fun bearer  (Position Agent)                Bool)
-
 ; cnt and cnt-f: two predicates because Action and Forbearance are
 ; distinct SMT-LIB sorts. In FOF (GRND000-0.ax), a single cnt/3
 ; handles both via action(A)/forbearance(A) type guards.
-(declare-fun cnt     (Position Action      Target)   Bool)  ; action content
-(declare-fun cnt-f   (Position Forbearance Target)   Bool)  ; forbearance content
-
+(declare-fun cnt     (Position Action      Target)   Bool)
+(declare-fun cnt-f   (Position Forbearance Target)   Bool)
 ; odrl-rel: relator founded by an ODRL rule activation.
-; Subset of Relator. Required for ax:correlativity and ax:odrl-rel-typing.
 (declare-fun odrl-rel (Relator) Bool)
-
 ; Hohfeldian position type predicates
 (declare-fun liberty    (Position) Bool)
 (declare-fun no-right   (Position) Bool)
@@ -91,18 +92,14 @@
 ; --------------------------------------------------------------------------
 ; RFR FUNCTION  rfr : Action -> Forbearance
 ; pos : Forbearance -> Action  (left-inverse of rfr)
-;
-; RFR1 (rfr(a) != a) holds automatically — Action and Forbearance are
-;   distinct sorts in SMT-LIB; rfr(a) : Forbearance cannot equal a : Action.
+; RFR1 holds automatically — Action and Forbearance are distinct sorts.
 ; RFR4, RFR5 hold by sort separation.
 ; --------------------------------------------------------------------------
 (declare-fun rfr (Action)      Forbearance)
 (declare-fun pos (Forbearance) Action)
-
 ; RFR2: Injectivity
 (assert (forall ((a Action) (b Action))
   (=> (= (rfr a) (rfr b)) (= a b))))
-
 ; RFR3: Left-inverse
 (assert (forall ((a Action))
   (= (pos (rfr a)) a)))
@@ -110,13 +107,12 @@
 ; --------------------------------------------------------------------------
 ; DECL FUNCTION  decl : Action -> Action
 ; decl(A) = institutional act of declaring a violation on action A.
+; Used in Ax5.4 (Power-Subjection for remedy).
 ; --------------------------------------------------------------------------
 (declare-fun decl (Action) Action)
-
 ; DECL2: Injectivity
 (assert (forall ((a Action) (b Action))
   (=> (= (decl a) (decl b)) (= a b))))
-
 ; DECL3: Distinctness from base action
 (assert (forall ((a Action))
   (not (= (decl a) a))))
@@ -127,7 +123,6 @@
 ; Used in P3-P4 normative hierarchy grounding.
 ; --------------------------------------------------------------------------
 (declare-fun issue (Rule) Action)
-
 ; ISSUE2: Injectivity
 (assert (forall ((a Rule) (b Rule))
   (=> (= (issue a) (issue b)) (= a b))))
@@ -143,7 +138,6 @@
 (assert (forall ((p Position)) (not (and (duty p)     (claim p)))))
 (assert (forall ((p Position)) (not (and (duty p)     (no-right p)))))
 (assert (forall ((p Position)) (not (and (claim p)    (no-right p)))))
-
 ; Within competence level
 (assert (forall ((p Position)) (not (and (power p)      (subjection p)))))
 (assert (forall ((p Position)) (not (and (power p)      (immunity p)))))
@@ -151,7 +145,6 @@
 (assert (forall ((p Position)) (not (and (subjection p) (immunity p)))))
 (assert (forall ((p Position)) (not (and (subjection p) (disability p)))))
 (assert (forall ((p Position)) (not (and (immunity p)   (disability p)))))
-
 ; Conduct vs competence
 (assert (forall ((p Position)) (not (and (liberty p)  (power p)))))
 (assert (forall ((p Position)) (not (and (liberty p)  (subjection p)))))
@@ -169,7 +162,6 @@
 (assert (forall ((p Position)) (not (and (no-right p) (subjection p)))))
 (assert (forall ((p Position)) (not (and (no-right p) (immunity p)))))
 (assert (forall ((p Position)) (not (and (no-right p) (disability p)))))
-
 ; --------------------------------------------------------------------------
 ; END OF PREAMBLE — problem files append axioms + conjecture after this
 ; --------------------------------------------------------------------------

@@ -4,9 +4,29 @@
 % Problem  : Correlativity: Liberty implies unique NoRight in relator
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND006-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % odrl_rel(rho1), Liberty(l) partOf rho1 => exists unique n. NoRight(n) partOf rho1.
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% @prefix schema: <https://schema.org/> .
+% 
+% <drk:policy-corr> a odrl:Agreement ;
+%     odrl:permission [ a odrl:Permission ;
+%         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
+%         odrl:assigner <drk:BerlinerEnsemble> ;
+%         odrl:action   odrl:use ;
+%         odrl:target   <drk:PlayProductionMetadataDataset> ] .
+% 
+% <drk:PlayProductionMetadataDataset>   a dcat:Dataset ;
+%     schema:name "Berliner Ensemble Play Production Metadata" .
+% <drk:BerlinerEnsemble>                a schema:Organization .
+% <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
+% # Liberty(Bibliothek) entails unique NoRight(Ensemble) in relator.
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)

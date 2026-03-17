@@ -4,9 +4,29 @@
 % Problem  : Permission creates Liberty and NoRight
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND002-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % perm(p1) activated by e1 entails Liberty(alice,read,d1) and NoRight(acme,read,d1).
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% @prefix schema: <https://schema.org/> .
+% 
+% # Same policy as GRND001 — different question asked (entailment)
+% <drk:policy-theater-read> a odrl:Agreement ;
+%     odrl:permission [ a odrl:Permission ;
+%         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
+%         odrl:assigner <drk:BerlinerEnsemble> ;
+%         odrl:action   odrl:read ;
+%         odrl:target   <drk:TheaterShowtimeDataset> ] .
+% 
+% <drk:TheaterShowtimeDataset>          a dcat:Dataset ;
+%     schema:name "Berliner Ensemble Showtime Dataset" .
+% <drk:BerlinerEnsemble>                a schema:Organization .
+% <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)

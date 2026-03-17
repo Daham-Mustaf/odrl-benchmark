@@ -4,10 +4,21 @@
 % Problem  : Open-world: uncovered action entails Liberty by default
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND007-open-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % Open-world closure added. No proh for 'modify'.
 % % Liberty(alice,modify,d1) is derivable.
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% 
+% # behaviour=open policy over drk:TheaterShowtimeDataset.
+% # No prohibition on odrl:modify declared.
+% # => Liberty(drk:StreamingPortalGmbH, modify,
+% #            drk:TheaterShowtimeDataset) derivable by default.
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)

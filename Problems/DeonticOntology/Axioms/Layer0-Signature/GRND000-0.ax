@@ -1,12 +1,12 @@
 %--------------------------------------------------------------------------
 % File     : GRND000-0.ax
-% Domain   : Deontic Ontology / ODRL Grounding 
+% Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Signature — sorts, predicates, rfr/decl functions
-% Version  : 1.1
+% Version  : 1.4
 % English  : FOF signature. Include in ALL DeonticOntology .p files via:
-%              include('Axioms/GRND000-0.ax').
+%              include('Axioms/Layer0-Signature/GRND000-0.ax').
 %
-% Source   : Mohammed et al., What Does ODRL Mean? 
+% Source   : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Generated: 2026-03-17 by gen_signature.py
 %
 % Sorts (unary guard predicates — FOF has no native sorts):
@@ -19,6 +19,9 @@
 %   decl/1  : Act -> Act           (declare-violation institutional act)
 %   issue/1 : Policy -> Act        (issue-policy institutional act)
 %
+% CHANGELOG v1.4:
+%   - version aligned with gen_foundation_problems.py v1.4
+%   - trailing whitespace removed from META fields
 % CHANGELOG v1.1:
 %   - founds/2 -> founds/3 (event, relator, rule) — matches paper axioms
 %   - Added odrl_rel/1 predicate (ax:odrl-rel-typing, ax:correlativity)
@@ -69,7 +72,7 @@
 % UFO RELATOR AND POSITION PREDICATES
 %
 %   founds(E, Rho, R) — event E founds relator Rho for rule R  (3-ary)
-%                       UFO axiom a77. Paper axioms Ax5.1–Ax5.8 all use
+%                       UFO axiom a77. Paper axioms Ax5.1-Ax5.8 all use
 %                       this 3-ary form. The third argument individuates
 %                       the relator by the rule-event pair (Ax5.5).
 %
@@ -100,23 +103,19 @@
 %--------------------------------------------------------------------------
 fof(rfr_irreflexive, axiom,
     ! [A] : ( action(A) => rfr(A) != A )).
-
 fof(rfr_injective, axiom,
     ! [A, B] : ( ( action(A) & action(B) & rfr(A) = rfr(B) ) => A = B )).
-
 fof(rfr_left_inverse, axiom,
     ! [A] : ( action(A) => pos(rfr(A)) = A )).
-
 fof(rfr_range_forbearance, axiom,
     ! [A] : ( action(A) => forbearance(rfr(A)) )).
-
 fof(forbearance_not_action, axiom,
     ! [F] : ( forbearance(F) => ~ action(F) )).
 
 %--------------------------------------------------------------------------
 % DECL FUNCTION  decl : Act -> Act
 % decl(A) = institutional act of declaring a violation on action A.
-% Used in Ax5.7 (Violation Authority / Power-Subjection for remedy).
+% Used in Ax5.4 (Power-Subjection for remedy).
 %
 % DECL1  action(A) => action(decl(A))    (range guard)
 % DECL2  decl(A)=decl(B) => A=B          (injectivity)
@@ -124,10 +123,8 @@ fof(forbearance_not_action, axiom,
 %--------------------------------------------------------------------------
 fof(decl_range_action, axiom,
     ! [A] : ( action(A) => action(decl(A)) )).
-
 fof(decl_injective, axiom,
     ! [A, B] : ( ( action(A) & action(B) & decl(A) = decl(B) ) => A = B )).
-
 fof(decl_distinct, axiom,
     ! [A] : ( action(A) => decl(A) != A )).
 
@@ -135,15 +132,14 @@ fof(decl_distinct, axiom,
 % ISSUE FUNCTION  issue : Rule -> Act
 % issue(Pi) = institutional act of issuing policy Pi.
 % Used in P3-P4 normative hierarchy grounding (Section 5.3):
-%   Power(y, issue(pi'), t) land Subj(x, issue(pi'), t)
+%   Power(y, issue(pi'), t) & Subj(x, issue(pi'), t)
 % enables authorization hierarchies and delegation chains.
 %
-% ISSUE1  rule(R) => action(issue(R))    (range guard — issue acts are acts)
+% ISSUE1  rule(R) => action(issue(R))    (range guard)
 % ISSUE2  issue(A)=issue(B) => A=B       (injectivity)
 %--------------------------------------------------------------------------
 fof(issue_range_action, axiom,
     ! [R] : ( rule(R) => action(issue(R)) )).
-
 fof(issue_injective, axiom,
     ! [A, B] : ( ( rule(A) & rule(B) & issue(A) = issue(B) ) => A = B )).
 
@@ -170,7 +166,6 @@ fof(liberty_not_no_right, axiom, ! [P] : ~ ( liberty(P)  & no_right(P) )).
 fof(duty_not_claim,       axiom, ! [P] : ~ ( duty(P)     & claim(P)    )).
 fof(duty_not_no_right,    axiom, ! [P] : ~ ( duty(P)     & no_right(P) )).
 fof(claim_not_no_right,   axiom, ! [P] : ~ ( claim(P)    & no_right(P) )).
-
 % Within competence level
 fof(power_not_subjection,      axiom, ! [P] : ~ ( power(P)      & subjection(P) )).
 fof(power_not_immunity,        axiom, ! [P] : ~ ( power(P)      & immunity(P)   )).
@@ -178,7 +173,6 @@ fof(power_not_disability,      axiom, ! [P] : ~ ( power(P)      & disability(P) 
 fof(subjection_not_immunity,   axiom, ! [P] : ~ ( subjection(P) & immunity(P)   )).
 fof(subjection_not_disability, axiom, ! [P] : ~ ( subjection(P) & disability(P) )).
 fof(immunity_not_disability,   axiom, ! [P] : ~ ( immunity(P)   & disability(P) )).
-
 % Conduct vs competence (16 pairs)
 fof(cn_1,  axiom, ! [P] : ~ ( liberty(P)  & power(P)      )).
 fof(cn_2,  axiom, ! [P] : ~ ( liberty(P)  & subjection(P) )).
@@ -196,5 +190,4 @@ fof(cn_13, axiom, ! [P] : ~ ( no_right(P) & power(P)      )).
 fof(cn_14, axiom, ! [P] : ~ ( no_right(P) & subjection(P) )).
 fof(cn_15, axiom, ! [P] : ~ ( no_right(P) & immunity(P)   )).
 fof(cn_16, axiom, ! [P] : ~ ( no_right(P) & disability(P) )).
-
 % End of GRND000-0.ax

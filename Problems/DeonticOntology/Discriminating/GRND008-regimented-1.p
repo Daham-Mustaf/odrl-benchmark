@@ -4,10 +4,28 @@
 % Problem  : Regimented prohibition: contradiction
 % Status   : Unsatisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND008-regimented-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % Regimented axiom: ~does when prohibited.
 % % Ground witness: does(alice,distribute,d1). Contradiction.
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% @prefix schema: <https://schema.org/> .
+% 
+% <drk:policy-regimented> a odrl:Agreement ;
+%     odrl:prohibition [ a odrl:Prohibition ;
+%         odrl:assignee <drk:MusicMarketplaceAG> ;
+%         odrl:action   odrl:distribute ;
+%         odrl:target   <drk:ConcertRecordingDataset> ] .
+% 
+% <drk:ConcertRecordingDataset> a dcat:Dataset .
+% <drk:MusicMarketplaceAG>      a schema:Organization .
+% # Regimented reading: does(MusicMarketplaceAG, distribute) impossible.
+% # Ground witness asserts it => contradiction.
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)

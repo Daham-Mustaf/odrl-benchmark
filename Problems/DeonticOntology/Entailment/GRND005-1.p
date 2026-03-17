@@ -4,10 +4,25 @@
 % Problem  : Liberty-Duty conflict detection (single relator)
 % Status   : Unsatisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.3
+% Policy   : Policies/GRND005-policy.ttl
+% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
 %
 % % Liberty(l,alice,read,d1) and Duty(d,alice,rfr(read),d1) in same rho.
-% % Ax5.8 derives False.
+% % Ax5.9 derives False.
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% 
+% # Conflict witness — not a valid standalone policy.
+% # Ground instance asserts:
+% #   Liberty(drk:UniversitaetsbibliothekMuenchen,
+% #           read, drk:TheaterShowtimeDataset)
+% # AND
+% #   Duty(drk:UniversitaetsbibliothekMuenchen,
+% #        rfr(read), drk:TheaterShowtimeDataset)
+% # in the same relator. Ax5.9 derives False.
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
