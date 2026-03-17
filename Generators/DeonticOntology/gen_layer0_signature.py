@@ -2,9 +2,8 @@
 gen_signature.py
 ================
 Generates TWO signature files for the FOIS 2026 deontic grounding:
-
-  Problems/DeonticOntology/Axioms/GRND000-0.ax     — FOF/TPTP  (Vampire)
-  Problems/DeonticOntology/Axioms/GRND000-0.smt2   — SMT-LIB   (Z3)
+  Problems/DeonticOntology/Axioms/Layer0-Signature/GRND000-0.ax     — FOF/TPTP  (Vampire)
+  Problems/DeonticOntology/Axioms/Layer0-Signature/GRND000-0.smt2   — SMT-LIB   (Z3)
 
 FOF file:
   Used via include() at the top of every .p problem file.
@@ -18,7 +17,6 @@ Usage:
     uv run Generators/DeonticOntology/gen_signature.py \
   --out-dir Problems/DeonticOntology/Axioms
 """
-
 import argparse
 import textwrap
 from pathlib import Path
@@ -27,13 +25,12 @@ from datetime import date
 META = {
     "domain":  "Deontic Ontology / ODRL Grounding ",
     "source":  "Mohammed et al., What Does ODRL Mean? ",
-    "version": "1.0",
+    "version": "1.1",  # bumped: founds/3, odrl_rel, strong, issue added
 }
 
 # ============================================================================
 # FOF
 # ============================================================================
-
 def fof_header() -> str:
     return textwrap.dedent(f"""\
         %--------------------------------------------------------------------------
@@ -47,16 +44,21 @@ def fof_header() -> str:
         % Source   : {META['source']}
         % Generated: {date.today().isoformat()} by gen_signature.py
         %
-        % SZS status: Not a conjecture file — axiom library only
-        %
         % Sorts (unary guard predicates — FOF has no native sorts):
         %   agent, action, target, rule, position, legal_relator, event,
         %   forbearance
         %
         % Functions:
-        %   rfr/1  : Act -> Forbearance   (refrain from action)
-        %   pos/1  : Forbearance -> Act   (left-inverse of rfr)
-        %   decl/1 : Act -> Act           (declare-violation institutional act)
+        %   rfr/1   : Act -> Forbearance   (refrain from action)
+        %   pos/1   : Forbearance -> Act   (left-inverse of rfr)
+        %   decl/1  : Act -> Act           (declare-violation institutional act)
+        %   issue/1 : Policy -> Act        (issue-policy institutional act)
+        %
+        % CHANGELOG v1.1:
+        %   - founds/2 -> founds/3 (event, relator, rule) — matches paper axioms
+        %   - Added odrl_rel/1 predicate (ax:odrl-rel-typing, ax:correlativity)
+        %   - Added strong/1 predicate (ax:perm-relator-strong)
+        %   - Added issue/1 function (P3-P4 normative hierarchy)
         %--------------------------------------------------------------------------
     """)
 
@@ -72,6 +74,9 @@ FOF_SORT_GUARDS = """\
 %   rule(X)          — X is an ODRL rule (perm / proh / duty)
 %   position(X)      — X is a Hohfeldian position (UFO moment)
 %   legal_relator(X) — X is a UFO legal relator
+%   odrl_rel(X)      — X is a relator founded by an ODRL rule activation
+%                      Subset of legal_relator. Used in ax:correlativity,
+%                      ax:odrl-rel-typing.
 %   event(X)         — X is an activation event
 %   forbearance(X)   — X is a forbearance in rfr(Act)
 %--------------------------------------------------------------------------
@@ -83,9 +88,10 @@ FOF_RULE_PREDICATES = """\
 %   perm(R)    — R is an odrl:Permission
 %   proh(R)    — R is an odrl:Prohibition
 %   obl(R)     — R is an odrl:Duty  [CANONICAL NAME]
-%                Paper uses ODRLDuty(d) in Ax5.4 — must be changed to obl(d)
 %   has_rem(R) — R is a prohibition carrying odrl:remedy  [CANONICAL NAME]
-%                Paper uses rem(f) in Ax5.7 — must be changed to has_rem(f)
+%   strong(R)  — R is a strongly-permitted permission
+%                Not derivable from ODRL 2.2; asserted by profile extension.
+%                Required for ax:perm-relator-strong.
 %
 % ODRL STRUCTURAL ROLE PREDICATES
 %   aee(R, X)  — assignee of R is X
@@ -102,14 +108,18 @@ FOF_RULE_PREDICATES = """\
 FOF_RELATOR_PREDICATES = """\
 %--------------------------------------------------------------------------
 % UFO RELATOR AND POSITION PREDICATES
-%   founds(E, Rho)    — E founds relator Rho        (UFO axiom a77)
+%
+%   founds(E, Rho, R) — event E founds relator Rho for rule R  (3-ary)
+%                       UFO axiom a77. Paper axioms Ax5.1–Ax5.8 all use
+%                       this 3-ary form. The third argument individuates
+%                       the relator by the rule-event pair (Ax5.5).
+%
 %   part_of(Pos, Rho) — Pos is part of Rho          (UFO §2.10)
 %   bearer(Pos, X)    — Pos inheres in agent X       (UFO moment)
 %   cnt(Pos, A, T)    — Pos has content A on target T  [CANONICAL]
-%                       A in Act union Forbearance
-%                       Used for ALL rule types: perm, proh, obl.
-%                       Paper uses about(l,a,t) in Ax5.1 for Liberty/NoRight
-%                       content — must be unified to cnt(l,a,t) everywhere.
+%                       A in Act union Forbearance.
+%                       Single predicate; type of A distinguished by
+%                       action(A) / forbearance(A) guards.
 %
 % HOHFELDIAN POSITION TYPE PREDICATES
 %   Conduct:    liberty   no_right   duty   claim
@@ -131,7 +141,6 @@ FOF_RFR = """\
 % RFR4  action(A) => forbearance(rfr(A)) (range guard)
 % RFR5  forbearance(F) => ~action(F)     (sort disjointness)
 %--------------------------------------------------------------------------
-
 fof(rfr_irreflexive, axiom,
     ! [A] : ( action(A) => rfr(A) != A )).
 
@@ -146,20 +155,18 @@ fof(rfr_range_forbearance, axiom,
 
 fof(forbearance_not_action, axiom,
     ! [F] : ( forbearance(F) => ~ action(F) )).
-
 """
 
 FOF_DECL = """\
 %--------------------------------------------------------------------------
 % DECL FUNCTION  decl : Act -> Act
 % decl(A) = institutional act of declaring a violation on action A.
-% Used in Ax5.7 (Violation Authority).
+% Used in Ax5.7 (Violation Authority / Power-Subjection for remedy).
 %
 % DECL1  action(A) => action(decl(A))    (range guard)
 % DECL2  decl(A)=decl(B) => A=B          (injectivity)
-% DECL3  action(A) => decl(A) != A       (distinctness)
+% DECL3  action(A) => decl(A) != A       (distinctness from base action)
 %--------------------------------------------------------------------------
-
 fof(decl_range_action, axiom,
     ! [A] : ( action(A) => action(decl(A)) )).
 
@@ -168,28 +175,45 @@ fof(decl_injective, axiom,
 
 fof(decl_distinct, axiom,
     ! [A] : ( action(A) => decl(A) != A )).
+"""
 
+FOF_ISSUE = """\
+%--------------------------------------------------------------------------
+% ISSUE FUNCTION  issue : Rule -> Act
+% issue(Pi) = institutional act of issuing policy Pi.
+% Used in P3-P4 normative hierarchy grounding (Section 5.3):
+%   Power(y, issue(pi'), t) land Subj(x, issue(pi'), t)
+% enables authorization hierarchies and delegation chains.
+%
+% ISSUE1  rule(R) => action(issue(R))    (range guard — issue acts are acts)
+% ISSUE2  issue(A)=issue(B) => A=B       (injectivity)
+%--------------------------------------------------------------------------
+fof(issue_range_action, axiom,
+    ! [R] : ( rule(R) => action(issue(R)) )).
+
+fof(issue_injective, axiom,
+    ! [A, B] : ( ( rule(A) & rule(B) & issue(A) = issue(B) ) => A = B )).
 """
 
 FOF_NORMCONTENT = """\
 %--------------------------------------------------------------------------
 % NORMCONTENT TYPE DISTINCTION
 % NormContent ::= Act | Forbearance  (paper, between Ax5.1 and Ax5.2)
-% A position cannot have both action content and forbearance content.
+% A position cannot have both action content and forbearance content
+% over the same target (disjoint sorts of content arguments).
 %--------------------------------------------------------------------------
-
 fof(action_forbearance_content_disjoint, axiom,
     ! [Pos, A, F, T1, T2] :
       ( ( cnt(Pos, A, T1) & cnt(Pos, F, T2) & action(A) & forbearance(F) )
      => A != F )).
-
 """
 
 FOF_POSITION_DISJOINTNESS = """\
 %--------------------------------------------------------------------------
 % POSITION SORT DISJOINTNESS — all 8 types mutually disjoint
+% Grounded in UFO disjointness of moment types
+% (Guizzardi2022-PORUUF, griffo2023powers).
 %--------------------------------------------------------------------------
-
 % Within conduct level
 fof(liberty_not_duty,     axiom, ! [P] : ~ ( liberty(P)  & duty(P)     )).
 fof(liberty_not_claim,    axiom, ! [P] : ~ ( liberty(P)  & claim(P)    )).
@@ -199,12 +223,12 @@ fof(duty_not_no_right,    axiom, ! [P] : ~ ( duty(P)     & no_right(P) )).
 fof(claim_not_no_right,   axiom, ! [P] : ~ ( claim(P)    & no_right(P) )).
 
 % Within competence level
-fof(power_not_subjection,     axiom, ! [P] : ~ ( power(P)      & subjection(P) )).
-fof(power_not_immunity,       axiom, ! [P] : ~ ( power(P)      & immunity(P)   )).
-fof(power_not_disability,     axiom, ! [P] : ~ ( power(P)      & disability(P) )).
-fof(subjection_not_immunity,  axiom, ! [P] : ~ ( subjection(P) & immunity(P)   )).
-fof(subjection_not_disability,axiom, ! [P] : ~ ( subjection(P) & disability(P) )).
-fof(immunity_not_disability,  axiom, ! [P] : ~ ( immunity(P)   & disability(P) )).
+fof(power_not_subjection,      axiom, ! [P] : ~ ( power(P)      & subjection(P) )).
+fof(power_not_immunity,        axiom, ! [P] : ~ ( power(P)      & immunity(P)   )).
+fof(power_not_disability,      axiom, ! [P] : ~ ( power(P)      & disability(P) )).
+fof(subjection_not_immunity,   axiom, ! [P] : ~ ( subjection(P) & immunity(P)   )).
+fof(subjection_not_disability, axiom, ! [P] : ~ ( subjection(P) & disability(P) )).
+fof(immunity_not_disability,   axiom, ! [P] : ~ ( immunity(P)   & disability(P) )).
 
 % Conduct vs competence (16 pairs)
 fof(cn_1,  axiom, ! [P] : ~ ( liberty(P)  & power(P)      )).
@@ -230,15 +254,19 @@ fof(cn_16, axiom, ! [P] : ~ ( no_right(P) & disability(P) )).
 def generate_fof() -> str:
     return "\n".join([
         fof_header(),
-        FOF_SORT_GUARDS, FOF_RULE_PREDICATES, FOF_RELATOR_PREDICATES,
-        FOF_RFR, FOF_DECL, FOF_NORMCONTENT, FOF_POSITION_DISJOINTNESS,
+        FOF_SORT_GUARDS,
+        FOF_RULE_PREDICATES,
+        FOF_RELATOR_PREDICATES,
+        FOF_RFR,
+        FOF_DECL,
+        FOF_ISSUE,
+        FOF_NORMCONTENT,
+        FOF_POSITION_DISJOINTNESS,
     ])
-
 
 # ============================================================================
 # SMT-LIB
 # ============================================================================
-
 def smt2_header() -> str:
     return textwrap.dedent(f"""\
         ; --------------------------------------------------------------------------
@@ -254,23 +282,31 @@ def smt2_header() -> str:
         ; Generated: {date.today().isoformat()} by gen_signature.py
         ;
         ; Correspondence with GRND000-0.ax (FOF):
-        ;   FOF guard predicate agent(X)  <->  (declare-sort Agent 0)
-        ;   FOF perm(R)                   <->  (declare-fun perm (Rule) Bool)
-        ;   FOF fof(rfr_irreflexive,...)  <->  (assert (forall ((a Action)) ...))
-        ;   cnt/3 dual-sort              <->  cnt (Action) + cnt-f (Forbearance)
+        ;   FOF guard predicate agent(X)     <->  (declare-sort Agent 0)
+        ;   FOF perm(R)                      <->  (declare-fun perm (Rule) Bool)
+        ;   FOF founds(E,Rho,R) [3-ary]      <->  (declare-fun founds (Event Relator Rule) Bool)
+        ;   FOF cnt/3 (action + forbearance) <->  cnt (Action) + cnt-f (Forbearance)
+        ;                                         Two predicates because Action and
+        ;                                         Forbearance are distinct SMT-LIB sorts.
+        ;   FOF odrl_rel(X)                  <->  (declare-fun odrl-rel (Relator) Bool)
+        ;   FOF strong(R)                    <->  (declare-fun strong (Rule) Bool)
+        ;   FOF issue/1                      <->  (declare-fun issue (Rule) Action)
+        ;
+        ; CHANGELOG v1.1:
+        ;   - founds: 2-ary -> 3-ary (Event Relator Rule)
+        ;   - Added odrl-rel predicate
+        ;   - Added strong predicate
+        ;   - Added issue function
         ; --------------------------------------------------------------------------
-
         (set-logic UF)
         (set-info :source |{META['source']}|)
         (set-info :status unknown)
-
     """)
 
 SMT2_SORTS = """\
 ; --------------------------------------------------------------------------
 ; SORTS — uninterpreted (closest to FOF guard predicates)
 ; --------------------------------------------------------------------------
-
 (declare-sort Agent       0)
 (declare-sort Action      0)
 (declare-sort Forbearance 0)
@@ -279,44 +315,47 @@ SMT2_SORTS = """\
 (declare-sort Position    0)
 (declare-sort Relator     0)
 (declare-sort Event       0)
-
 """
 
 SMT2_RULE_PREDICATES = """\
 ; --------------------------------------------------------------------------
 ; ODRL RULE TYPE PREDICATES
 ; --------------------------------------------------------------------------
-
 (declare-fun perm    (Rule) Bool)
 (declare-fun proh    (Rule) Bool)
-(declare-fun obl     (Rule) Bool)   ; CANONICAL — paper Ax5.4 uses ODRLDuty, must change to obl
-(declare-fun has-rem (Rule) Bool)   ; CANONICAL — paper Ax5.7 uses rem, must change to has-rem
+(declare-fun obl     (Rule) Bool)     ; CANONICAL — paper Ax5.4
+(declare-fun has-rem (Rule) Bool)     ; CANONICAL — paper Ax5.7
+(declare-fun strong  (Rule) Bool)     ; Profile extension; not in ODRL 2.2
+                                      ; Asserted as unit clause in GRND002-strong
 
 (declare-fun aee (Rule Agent)  Bool)
 (declare-fun aer (Rule Agent)  Bool)
 (declare-fun act (Rule Action) Bool)
 (declare-fun tgt (Rule Target) Bool)
-
 (declare-fun activates (Event Rule) Bool)
-
 """
 
 SMT2_RELATOR_PREDICATES = """\
 ; --------------------------------------------------------------------------
 ; UFO RELATOR AND POSITION PREDICATES
 ; --------------------------------------------------------------------------
+; founds: 3-ary — matches paper axioms Ax5.1-Ax5.8
+; Third argument (Rule) individuates relator by rule-event pair (Ax5.5).
+(declare-fun founds  (Event Relator Rule)            Bool)
+(declare-fun part-of (Position Relator)              Bool)
+(declare-fun bearer  (Position Agent)                Bool)
 
-(declare-fun founds  (Event    Relator)            Bool)
-(declare-fun part-of (Position Relator)            Bool)
-(declare-fun bearer  (Position Agent)              Bool)
-(declare-fun cnt     (Position Action      Target) Bool)  ; action content — CANONICAL
-(declare-fun cnt-f   (Position Forbearance Target) Bool)  ; forbearance content
-; cnt   = action content (permissions, obligations). Used in Ax5.1 for Liberty/NoRight too.
-;         Paper uses about(l,a,t) in Ax5.1 — must be unified to cnt everywhere.
-; cnt-f = forbearance content (prohibitions, Ax5.2).
-; Two predicates because Action and Forbearance are distinct SMT-LIB sorts.
-; In FOF (GRND000-0.ax), a single cnt/3 handles both via type guards.
+; cnt and cnt-f: two predicates because Action and Forbearance are
+; distinct SMT-LIB sorts. In FOF (GRND000-0.ax), a single cnt/3
+; handles both via action(A)/forbearance(A) type guards.
+(declare-fun cnt     (Position Action      Target)   Bool)  ; action content
+(declare-fun cnt-f   (Position Forbearance Target)   Bool)  ; forbearance content
 
+; odrl-rel: relator founded by an ODRL rule activation.
+; Subset of Relator. Required for ax:correlativity and ax:odrl-rel-typing.
+(declare-fun odrl-rel (Relator) Bool)
+
+; Hohfeldian position type predicates
 (declare-fun liberty    (Position) Bool)
 (declare-fun no-right   (Position) Bool)
 (declare-fun duty       (Position) Bool)
@@ -325,7 +364,6 @@ SMT2_RELATOR_PREDICATES = """\
 (declare-fun subjection (Position) Bool)
 (declare-fun immunity   (Position) Bool)
 (declare-fun disability (Position) Bool)
-
 """
 
 SMT2_RFR = """\
@@ -333,10 +371,10 @@ SMT2_RFR = """\
 ; RFR FUNCTION  rfr : Action -> Forbearance
 ; pos : Forbearance -> Action  (left-inverse of rfr)
 ;
-; RFR1 holds automatically — Action and Forbearance are distinct sorts.
+; RFR1 (rfr(a) != a) holds automatically — Action and Forbearance are
+;   distinct sorts in SMT-LIB; rfr(a) : Forbearance cannot equal a : Action.
 ; RFR4, RFR5 hold by sort separation.
 ; --------------------------------------------------------------------------
-
 (declare-fun rfr (Action)      Forbearance)
 (declare-fun pos (Forbearance) Action)
 
@@ -347,30 +385,42 @@ SMT2_RFR = """\
 ; RFR3: Left-inverse
 (assert (forall ((a Action))
   (= (pos (rfr a)) a)))
-
 """
 
 SMT2_DECL = """\
 ; --------------------------------------------------------------------------
 ; DECL FUNCTION  decl : Action -> Action
+; decl(A) = institutional act of declaring a violation on action A.
 ; --------------------------------------------------------------------------
-
 (declare-fun decl (Action) Action)
 
 ; DECL2: Injectivity
 (assert (forall ((a Action) (b Action))
   (=> (= (decl a) (decl b)) (= a b))))
 
-; DECL3: Distinctness
-(assert (forall ((a Action))(not (= (decl a) a))))
+; DECL3: Distinctness from base action
+(assert (forall ((a Action))
+  (not (= (decl a) a))))
+"""
 
+SMT2_ISSUE = """\
+; --------------------------------------------------------------------------
+; ISSUE FUNCTION  issue : Rule -> Action
+; issue(Pi) = institutional act of issuing policy Pi.
+; Used in P3-P4 normative hierarchy grounding.
+; --------------------------------------------------------------------------
+(declare-fun issue (Rule) Action)
+
+; ISSUE2: Injectivity
+(assert (forall ((a Rule) (b Rule))
+  (=> (= (issue a) (issue b)) (= a b))))
 """
 
 SMT2_POSITION_DISJOINTNESS = """\
 ; --------------------------------------------------------------------------
 ; POSITION SORT DISJOINTNESS
+; Grounded in UFO disjointness of moment types.
 ; --------------------------------------------------------------------------
-
 ; Within conduct level
 (assert (forall ((p Position)) (not (and (liberty p)  (duty p)))))
 (assert (forall ((p Position)) (not (and (liberty p)  (claim p)))))
@@ -413,20 +463,23 @@ SMT2_POSITION_DISJOINTNESS = """\
 def generate_smt2() -> str:
     return "\n".join([
         smt2_header(),
-        SMT2_SORTS, SMT2_RULE_PREDICATES, SMT2_RELATOR_PREDICATES,
-        SMT2_RFR, SMT2_DECL, SMT2_POSITION_DISJOINTNESS,
+        SMT2_SORTS,
+        SMT2_RULE_PREDICATES,
+        SMT2_RELATOR_PREDICATES,
+        SMT2_RFR,
+        SMT2_DECL,
+        SMT2_ISSUE,
+        SMT2_POSITION_DISJOINTNESS,
     ])
-
 
 # ============================================================================
 # CLI
 # ============================================================================
-
 def main():
     parser = argparse.ArgumentParser(
         description="Generate GRND000-0.ax (FOF) and GRND000-0.smt2 (SMT-LIB) signatures."
     )
-    parser.add_argument("--out-dir", default="../../Problems/DeonticOntology/Axioms")
+    parser.add_argument("--out-dir", default="Problems/DeonticOntology/Axioms/Layer0-Signature")
     parser.add_argument("--stdout-fof",  action="store_true")
     parser.add_argument("--stdout-smt2", action="store_true")
     args = parser.parse_args()
@@ -452,7 +505,6 @@ def main():
     print(f"  Lines: {fof_content.count(chr(10))}  FOF axioms: {fof_content.count('fof(')}")
     print(f"Written: {smt2_path}")
     print(f"  Lines: {smt2_content.count(chr(10))}  (assert): {smt2_content.count('(assert')}  (declare-): {smt2_content.count('(declare-')}")
-
 
 if __name__ == "__main__":
     main()

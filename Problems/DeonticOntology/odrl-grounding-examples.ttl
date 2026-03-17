@@ -1,0 +1,372 @@
+## ============================================================
+## ODRL Grounding Examples — FOIS 2026
+## "What Does ODRL Mean? Grounding Permissions, Prohibitions,
+##  and Duties in Deontic Logic and Foundational Ontology"
+##
+## Each block shows:
+##   (A) The ODRL policy (Information Model layer)
+##   (B) The grounded Hohfeldian positions (UFO-L layer)
+##
+## Prefix declarations
+## ============================================================
+
+@prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:     <https://example.org/> .
+
+## UFO-L / grounding vocabulary (proposed extension namespace)
+@prefix ufo:    <https://ontology.example.org/ufo/> .
+@prefix ufol:   <https://ontology.example.org/ufo-l/> .
+@prefix gr:     <https://ontology.example.org/grounding/> .
+
+## ============================================================
+## EXAMPLE 1 — Basic Permission
+## ODRL: Alice (assignee) may read dataset D1 (granted by Bob)
+##
+## Grounding (Axiom ax:perm-relator-basic):
+##   → LegalRelator ρ_P founded by activation event e1
+##   → Liberty   borne by Alice  — she may read
+##   → No-right  borne by Bob    — he cannot demand she not read
+##
+## Hohfeldian coverage: Liberty + No-right  (conduct level)
+## ============================================================
+
+## (A) ODRL policy layer
+
+ex:Policy1 a odrl:Set ;
+    odrl:permission ex:Perm1 .
+
+ex:Perm1 a odrl:Permission ;
+    odrl:assignee  ex:Alice ;
+    odrl:assigner  ex:Bob ;
+    odrl:action    odrl:read ;
+    odrl:target    ex:Dataset_D1 .
+
+## (B) Grounded UFO-L layer
+##     Produced when ex:Event_e1 activates ex:Perm1
+##     (all constraints of ex:Perm1 satisfied at e1)
+
+ex:Event_e1 a ufol:ActivationEvent ;
+    gr:activates  ex:Perm1 .
+
+ex:Relator_rP1 a ufol:LegalRelator ;
+    gr:foundedBy  ex:Event_e1 .
+
+ex:Liberty_L1 a ufol:Liberty ;
+    ufol:bearer   ex:Alice ;
+    ufol:cnt      ex:read_D1 ;          ## content: (read, Dataset_D1)
+    ufo:partOf    ex:Relator_rP1 .
+
+ex:NoRight_N1 a ufol:NoRight ;
+    ufol:bearer   ex:Bob ;
+    ufol:cnt      ex:read_D1 ;
+    ufo:partOf    ex:Relator_rP1 .
+
+## ============================================================
+## EXAMPLE 2 — Strong Permission
+## ODRL: Alice may distribute D2 (Bob explicitly grants,
+##        closed-world / strong-permission flag set)
+##
+## Grounding (Axioms ax:perm-relator-basic + ax:perm-relator-strong):
+##   → Liberty   borne by Alice
+##   → No-right  borne by Bob
+##   → Immunity  borne by Alice  — Bob cannot revoke this liberty
+##   → Disability borne by Bob   — Bob lacks competence to prohibit
+##
+## Hohfeldian coverage: Liberty + No-right + Immunity + Disability
+## (conduct + competence level — Theorem thm:strong-crosslevel)
+## ============================================================
+
+ex:Policy2 a odrl:Set ;
+    odrl:permission ex:Perm2 .
+
+ex:Perm2 a odrl:Permission ;
+    odrl:assignee  ex:Alice ;
+    odrl:assigner  ex:Bob ;
+    odrl:action    odrl:distribute ;
+    odrl:target    ex:Dataset_D2 ;
+    gr:strongPermission  "true"^^xsd:boolean .  ## closed-world flag
+
+ex:Event_e2 a ufol:ActivationEvent ;
+    gr:activates  ex:Perm2 .
+
+ex:Relator_rP2 a ufol:LegalRelator ;
+    gr:foundedBy  ex:Event_e2 .
+
+ex:Liberty_L2 a ufol:Liberty ;
+    ufol:bearer   ex:Alice ;
+    ufol:cnt      ex:distribute_D2 ;
+    ufo:partOf    ex:Relator_rP2 .
+
+ex:NoRight_N2 a ufol:NoRight ;
+    ufol:bearer   ex:Bob ;
+    ufol:cnt      ex:distribute_D2 ;
+    ufo:partOf    ex:Relator_rP2 .
+
+## Competence-level positions added for strong permission:
+
+ex:Immunity_I2 a ufol:Immunity ;
+    ufol:bearer   ex:Alice ;
+    ufol:cnt      ex:distribute_D2 ;
+    ufo:partOf    ex:Relator_rP2 .
+
+ex:Disability_D2 a ufol:Disability ;
+    ufol:bearer   ex:Bob ;
+    ufol:cnt      ex:distribute_D2 ;
+    ufo:partOf    ex:Relator_rP2 .
+    ## Interpretation: Bob holds Disability → cannot create
+    ## a Prohibition over (distribute, D2) for Alice
+    ## (Axiom ax:disability-block)
+
+## ============================================================
+## EXAMPLE 3 — Prohibition WITHOUT remedy
+## ODRL: Alice is prohibited from modifying D3 (by Bob)
+##
+## Grounding (Axiom ax:proh-relator-basic):
+##   → Duty      borne by Alice  (duty to refrain from modifying)
+##   → Claim     borne by Bob    (claim that Alice refrains)
+##
+## Note: rfr(modify) = forbearance-from-modifying
+## Hohfeldian coverage: Duty + Claim  (conduct level)
+##
+## This is SANCTIONED prohibition (Proposition prop:sanctioned):
+## violation is possible; it just creates no remedy here
+## since no odrl:remedy is attached.
+## ============================================================
+
+ex:Policy3 a odrl:Set ;
+    odrl:prohibition ex:Proh3 .
+
+ex:Proh3 a odrl:Prohibition ;
+    odrl:assignee  ex:Alice ;
+    odrl:assigner  ex:Bob ;
+    odrl:action    odrl:modify ;
+    odrl:target    ex:Dataset_D3 .
+
+ex:Event_e3 a ufol:ActivationEvent ;
+    gr:activates  ex:Proh3 .
+
+ex:Relator_rF3 a ufol:LegalRelator ;
+    gr:foundedBy  ex:Event_e3 .
+
+ex:Duty_Df3 a ufol:Duty ;
+    ufol:bearer   ex:Alice ;
+    ufol:cnt      ex:refrain_modify_D3 ;   ## rfr(modify, D3)
+    ufo:partOf    ex:Relator_rF3 .
+
+ex:Claim_Cf3 a ufol:Claim ;
+    ufol:bearer   ex:Bob ;
+    ufol:cnt      ex:refrain_modify_D3 ;
+    ufo:partOf    ex:Relator_rF3 .
+
+## ============================================================
+## EXAMPLE 4 — Prohibition WITH remedy  ← KEY EXAMPLE
+## ODRL: Alice is prohibited from commercializing D4 (by Bob);
+##        if infringed, Alice must pay a fee (remedy).
+##
+## Grounding (ax:proh-relator-basic + ax:proh-relator-remedy):
+##   Conduct level:
+##     → Duty      borne by Alice  (duty to refrain)
+##     → Claim     borne by Bob    (claim Alice refrains)
+##   Competence level (added because rem(f) holds):
+##     → Power     borne by Bob    (power to declare violation)
+##     → Subjection borne by Alice (subject to Bob's declaration)
+##
+## This is the CROSS-LEVEL case (Theorem thm:sanctioned-crosslevel).
+## Bob's Power licenses the institutional act of declaring
+## infringement, which via out_3 triggers the remedy duty.
+## ============================================================
+
+ex:Policy4 a odrl:Agreement ;
+    odrl:prohibition ex:Proh4 .
+
+ex:Proh4 a odrl:Prohibition ;
+    odrl:assignee  ex:Alice ;
+    odrl:assigner  ex:Bob ;
+    odrl:action    odrl:commercialize ;
+    odrl:target    ex:Dataset_D4 ;
+    odrl:remedy    ex:Remedy4 .
+
+ex:Remedy4 a odrl:Duty ;
+    odrl:assignee  ex:Alice ;
+    odrl:assigner  ex:Bob ;
+    odrl:action    ex:payFee ;
+    odrl:target    ex:Dataset_D4 .
+
+ex:Event_e4 a ufol:ActivationEvent ;
+    gr:activates  ex:Proh4 .
+
+ex:Relator_rF4 a ufol:LegalRelator ;
+    gr:foundedBy  ex:Event_e4 .
+
+## Conduct-level positions (basic prohibition):
+
+ex:Duty_Df4 a ufol:Duty ;
+    ufol:bearer   ex:Alice ;
+    ufol:cnt      ex:refrain_commercialize_D4 ;
+    ufo:partOf    ex:Relator_rF4 .
+
+ex:Claim_Cf4 a ufol:Claim ;
+    ufol:bearer   ex:Bob ;
+    ufol:cnt      ex:refrain_commercialize_D4 ;
+    ufo:partOf    ex:Relator_rF4 .
+
+## Competence-level positions (because remedy present):
+
+ex:Power_Pw4 a ufol:Power ;
+    ufol:bearer   ex:Bob ;
+    ufol:cnt      ex:declareViolation_commercialize_D4 ;
+                  ## content: decl(commercialize, D4)
+    ufo:partOf    ex:Relator_rF4 .
+
+ex:Subjection_S4 a ufol:Subjection ;
+    ufol:bearer   ex:Alice ;
+    ufol:cnt      ex:declareViolation_commercialize_D4 ;
+    ufo:partOf    ex:Relator_rF4 .
+
+## When Bob exercises ex:Power_Pw4 (performs the institutional act
+## of declaring infringement), out_3 derives:
+##   does(Alice, payFee, D4)  ∈ G_π  (remedy obligation active)
+
+## ============================================================
+## EXAMPLE 5 — Duty / Obligation
+## ODRL: Alice must provide attribution when using D5 (by Bob)
+##
+## Grounding (Axiom ax:obl-relator):
+##   → Duty      borne by Alice  (obligation to attribute)
+##   → Claim     borne by Bob    (claim Alice attributes)
+##
+## Achievement semantics only (Proposition prop:achievement):
+## fulfilled upon single performance; violated when
+## performance is no longer possible.
+## ============================================================
+
+ex:Policy5 a odrl:Agreement ;
+    odrl:obligation ex:Obl5 .
+
+ex:Obl5 a odrl:Duty ;
+    odrl:assignee  ex:Alice ;
+    odrl:assigner  ex:Bob ;
+    odrl:action    odrl:attribute ;
+    odrl:target    ex:Dataset_D5 .
+
+ex:Event_e5 a ufol:ActivationEvent ;
+    gr:activates  ex:Obl5 .
+
+ex:Relator_rD5 a ufol:LegalRelator ;
+    gr:foundedBy  ex:Event_e5 .
+
+ex:Duty_Du5 a ufol:Duty ;
+    ufol:bearer   ex:Alice ;
+    ufol:cnt      ex:attribute_D5 ;
+    ufo:partOf    ex:Relator_rD5 .
+
+ex:Claim_Co5 a ufol:Claim ;
+    ufol:bearer   ex:Bob ;
+    ufol:cnt      ex:attribute_D5 ;
+    ufo:partOf    ex:Relator_rD5 .
+
+## ============================================================
+## EXAMPLE 6 — Conflict Detection
+## ODRL: Bob grants Alice permission to read D6,
+##        then Carol (a second assigner) prohibits Alice from reading D6.
+##
+## With naive ODRL: odrl:conflict selects resolution strategy
+##   but gives no ontological account of WHY it is a conflict.
+##
+## With grounding (Axiom ax:cross-relator):
+##   Permission creates:   Liberty(Alice, read, D6)
+##   Prohibition creates:  Duty(Alice, rfr(read), D6)
+##   Axiom ax:cross-relator detects:
+##     Liberty(Alice, read, D6) ∧ Duty(Alice, rfr(read), D6) → ⊥
+##
+## The conflict is now ONTOLOGICALLY grounded: Alice cannot
+## simultaneously hold a Liberty and a Duty-to-refrain over
+## the same (action, target) pair.
+## ============================================================
+
+ex:Policy6a a odrl:Set ;
+    odrl:permission ex:Perm6 .
+
+ex:Perm6 a odrl:Permission ;
+    odrl:assignee  ex:Alice ;
+    odrl:assigner  ex:Bob ;
+    odrl:action    odrl:read ;
+    odrl:target    ex:Dataset_D6 .
+
+ex:Policy6b a odrl:Set ;
+    odrl:prohibition ex:Proh6 .
+
+ex:Proh6 a odrl:Prohibition ;
+    odrl:assignee  ex:Alice ;
+    odsl:assigner  ex:Carol ;
+    odrl:action    odrl:read ;
+    odrl:target    ex:Dataset_D6 .
+
+## Grounding of ex:Perm6:
+
+ex:Liberty_L6 a ufol:Liberty ;
+    ufol:bearer   ex:Alice ;
+    ufol:cnt      ex:read_D6 .
+
+## Grounding of ex:Proh6:
+
+ex:Duty_Df6 a ufol:Duty ;
+    ufol:bearer   ex:Alice ;
+    ufol:cnt      ex:refrain_read_D6 .   ## rfr(read, D6)
+
+## Conflict detected by ax:cross-relator:
+##   Liberty_L6 and Duty_Df6 share bearer=Alice and
+##   cnt(Liberty, read, D6) + cnt(Duty, rfr(read), D6)
+##   → ⊥   (inconsistency, regardless of which relator they belong to)
+
+## ============================================================
+## EXAMPLE 7 — Policy Issuance Authority (P3 / P4)
+## Multi-stakeholder data space: a Connector (IDS/Gaia-X)
+## holds the Power to issue sub-policies for a dataset.
+##
+## Grounding adds Power/Subjection for policy issuance,
+## enabling normative hierarchy and delegation chains.
+## ============================================================
+
+ex:Policy7 a odrl:Agreement ;
+    odrl:permission ex:Perm7 .
+
+ex:Perm7 a odrl:Permission ;
+    odrl:assignee  ex:Connector_A ;
+    odrl:assigner  ex:DataSpaceAuthority ;
+    odrl:action    ex:issueSubPolicy ;
+    odrl:target    ex:Dataset_D7 .
+
+## Grounding creates Power to issue sub-policies:
+
+ex:Event_e7 a ufol:ActivationEvent ;
+    gr:activates  ex:Perm7 .
+
+ex:Relator_rP7 a ufol:LegalRelator ;
+    gr:foundedBy  ex:Event_e7 .
+
+ex:Power_Pw7 a ufol:Power ;
+    ufol:bearer   ex:DataSpaceAuthority ;
+    ufol:cnt      ex:issue_SubPolicy_D7 ;
+    ufo:partOf    ex:Relator_rP7 .
+
+ex:Subjection_S7 a ufol:Subjection ;
+    ufol:bearer   ex:Connector_A ;
+    ufol:cnt      ex:issue_SubPolicy_D7 ;
+    ufo:partOf    ex:Relator_rP7 .
+
+## ============================================================
+## SUMMARY TABLE (as comments)
+##
+## Rule type              | Conduct positions     | Competence positions
+## -----------------------+-----------------------+---------------------
+## Permission (weak)      | Liberty + No-right    | —
+## Permission (strong)    | Liberty + No-right    | Immunity + Disability
+## Prohibition (no remedy)| Duty + Claim          | —
+## Prohibition (remedy)   | Duty + Claim          | Power + Subjection
+## Duty/Obligation        | Duty + Claim          | —
+##
+## Total positions surfaced by grounding: 2 (ODRL) → 8 (full Hohfeld)
+## ============================================================

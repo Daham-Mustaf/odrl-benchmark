@@ -2,23 +2,28 @@
 % File     : GRND000-0.ax
 % Domain   : Deontic Ontology / ODRL Grounding 
 % Problem  : Signature — sorts, predicates, rfr/decl functions
-% Version  : 1.0
+% Version  : 1.1
 % English  : FOF signature. Include in ALL DeonticOntology .p files via:
 %              include('Axioms/GRND000-0.ax').
 %
 % Source   : Mohammed et al., What Does ODRL Mean? 
-% Generated: 2026-03-10 by gen_signature.py
-%
-% SZS status: Not a conjecture file — axiom library only
+% Generated: 2026-03-17 by gen_signature.py
 %
 % Sorts (unary guard predicates — FOF has no native sorts):
 %   agent, action, target, rule, position, legal_relator, event,
 %   forbearance
 %
 % Functions:
-%   rfr/1  : Act -> Forbearance   (refrain from action)
-%   pos/1  : Forbearance -> Act   (left-inverse of rfr)
-%   decl/1 : Act -> Act           (declare-violation institutional act)
+%   rfr/1   : Act -> Forbearance   (refrain from action)
+%   pos/1   : Forbearance -> Act   (left-inverse of rfr)
+%   decl/1  : Act -> Act           (declare-violation institutional act)
+%   issue/1 : Policy -> Act        (issue-policy institutional act)
+%
+% CHANGELOG v1.1:
+%   - founds/2 -> founds/3 (event, relator, rule) — matches paper axioms
+%   - Added odrl_rel/1 predicate (ax:odrl-rel-typing, ax:correlativity)
+%   - Added strong/1 predicate (ax:perm-relator-strong)
+%   - Added issue/1 function (P3-P4 normative hierarchy)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -32,6 +37,9 @@
 %   rule(X)          — X is an ODRL rule (perm / proh / duty)
 %   position(X)      — X is a Hohfeldian position (UFO moment)
 %   legal_relator(X) — X is a UFO legal relator
+%   odrl_rel(X)      — X is a relator founded by an ODRL rule activation
+%                      Subset of legal_relator. Used in ax:correlativity,
+%                      ax:odrl-rel-typing.
 %   event(X)         — X is an activation event
 %   forbearance(X)   — X is a forbearance in rfr(Act)
 %--------------------------------------------------------------------------
@@ -41,9 +49,10 @@
 %   perm(R)    — R is an odrl:Permission
 %   proh(R)    — R is an odrl:Prohibition
 %   obl(R)     — R is an odrl:Duty  [CANONICAL NAME]
-%                Paper uses ODRLDuty(d) in Ax5.4 — must be changed to obl(d)
 %   has_rem(R) — R is a prohibition carrying odrl:remedy  [CANONICAL NAME]
-%                Paper uses rem(f) in Ax5.7 — must be changed to has_rem(f)
+%   strong(R)  — R is a strongly-permitted permission
+%                Not derivable from ODRL 2.2; asserted by profile extension.
+%                Required for ax:perm-relator-strong.
 %
 % ODRL STRUCTURAL ROLE PREDICATES
 %   aee(R, X)  — assignee of R is X
@@ -58,14 +67,18 @@
 
 %--------------------------------------------------------------------------
 % UFO RELATOR AND POSITION PREDICATES
-%   founds(E, Rho)    — E founds relator Rho        (UFO axiom a77)
+%
+%   founds(E, Rho, R) — event E founds relator Rho for rule R  (3-ary)
+%                       UFO axiom a77. Paper axioms Ax5.1–Ax5.8 all use
+%                       this 3-ary form. The third argument individuates
+%                       the relator by the rule-event pair (Ax5.5).
+%
 %   part_of(Pos, Rho) — Pos is part of Rho          (UFO §2.10)
 %   bearer(Pos, X)    — Pos inheres in agent X       (UFO moment)
 %   cnt(Pos, A, T)    — Pos has content A on target T  [CANONICAL]
-%                       A in Act union Forbearance
-%                       Used for ALL rule types: perm, proh, obl.
-%                       Paper uses about(l,a,t) in Ax5.1 for Liberty/NoRight
-%                       content — must be unified to cnt(l,a,t) everywhere.
+%                       A in Act union Forbearance.
+%                       Single predicate; type of A distinguished by
+%                       action(A) / forbearance(A) guards.
 %
 % HOHFELDIAN POSITION TYPE PREDICATES
 %   Conduct:    liberty   no_right   duty   claim
@@ -85,7 +98,6 @@
 % RFR4  action(A) => forbearance(rfr(A)) (range guard)
 % RFR5  forbearance(F) => ~action(F)     (sort disjointness)
 %--------------------------------------------------------------------------
-
 fof(rfr_irreflexive, axiom,
     ! [A] : ( action(A) => rfr(A) != A )).
 
@@ -101,17 +113,15 @@ fof(rfr_range_forbearance, axiom,
 fof(forbearance_not_action, axiom,
     ! [F] : ( forbearance(F) => ~ action(F) )).
 
-
 %--------------------------------------------------------------------------
 % DECL FUNCTION  decl : Act -> Act
 % decl(A) = institutional act of declaring a violation on action A.
-% Used in Ax5.7 (Violation Authority).
+% Used in Ax5.7 (Violation Authority / Power-Subjection for remedy).
 %
 % DECL1  action(A) => action(decl(A))    (range guard)
 % DECL2  decl(A)=decl(B) => A=B          (injectivity)
-% DECL3  action(A) => decl(A) != A       (distinctness)
+% DECL3  action(A) => decl(A) != A       (distinctness from base action)
 %--------------------------------------------------------------------------
-
 fof(decl_range_action, axiom,
     ! [A] : ( action(A) => action(decl(A)) )).
 
@@ -121,23 +131,38 @@ fof(decl_injective, axiom,
 fof(decl_distinct, axiom,
     ! [A] : ( action(A) => decl(A) != A )).
 
+%--------------------------------------------------------------------------
+% ISSUE FUNCTION  issue : Rule -> Act
+% issue(Pi) = institutional act of issuing policy Pi.
+% Used in P3-P4 normative hierarchy grounding (Section 5.3):
+%   Power(y, issue(pi'), t) land Subj(x, issue(pi'), t)
+% enables authorization hierarchies and delegation chains.
+%
+% ISSUE1  rule(R) => action(issue(R))    (range guard — issue acts are acts)
+% ISSUE2  issue(A)=issue(B) => A=B       (injectivity)
+%--------------------------------------------------------------------------
+fof(issue_range_action, axiom,
+    ! [R] : ( rule(R) => action(issue(R)) )).
+
+fof(issue_injective, axiom,
+    ! [A, B] : ( ( rule(A) & rule(B) & issue(A) = issue(B) ) => A = B )).
 
 %--------------------------------------------------------------------------
 % NORMCONTENT TYPE DISTINCTION
 % NormContent ::= Act | Forbearance  (paper, between Ax5.1 and Ax5.2)
-% A position cannot have both action content and forbearance content.
+% A position cannot have both action content and forbearance content
+% over the same target (disjoint sorts of content arguments).
 %--------------------------------------------------------------------------
-
 fof(action_forbearance_content_disjoint, axiom,
     ! [Pos, A, F, T1, T2] :
       ( ( cnt(Pos, A, T1) & cnt(Pos, F, T2) & action(A) & forbearance(F) )
      => A != F )).
 
-
 %--------------------------------------------------------------------------
 % POSITION SORT DISJOINTNESS — all 8 types mutually disjoint
+% Grounded in UFO disjointness of moment types
+% (Guizzardi2022-PORUUF, griffo2023powers).
 %--------------------------------------------------------------------------
-
 % Within conduct level
 fof(liberty_not_duty,     axiom, ! [P] : ~ ( liberty(P)  & duty(P)     )).
 fof(liberty_not_claim,    axiom, ! [P] : ~ ( liberty(P)  & claim(P)    )).
@@ -147,12 +172,12 @@ fof(duty_not_no_right,    axiom, ! [P] : ~ ( duty(P)     & no_right(P) )).
 fof(claim_not_no_right,   axiom, ! [P] : ~ ( claim(P)    & no_right(P) )).
 
 % Within competence level
-fof(power_not_subjection,     axiom, ! [P] : ~ ( power(P)      & subjection(P) )).
-fof(power_not_immunity,       axiom, ! [P] : ~ ( power(P)      & immunity(P)   )).
-fof(power_not_disability,     axiom, ! [P] : ~ ( power(P)      & disability(P) )).
-fof(subjection_not_immunity,  axiom, ! [P] : ~ ( subjection(P) & immunity(P)   )).
-fof(subjection_not_disability,axiom, ! [P] : ~ ( subjection(P) & disability(P) )).
-fof(immunity_not_disability,  axiom, ! [P] : ~ ( immunity(P)   & disability(P) )).
+fof(power_not_subjection,      axiom, ! [P] : ~ ( power(P)      & subjection(P) )).
+fof(power_not_immunity,        axiom, ! [P] : ~ ( power(P)      & immunity(P)   )).
+fof(power_not_disability,      axiom, ! [P] : ~ ( power(P)      & disability(P) )).
+fof(subjection_not_immunity,   axiom, ! [P] : ~ ( subjection(P) & immunity(P)   )).
+fof(subjection_not_disability, axiom, ! [P] : ~ ( subjection(P) & disability(P) )).
+fof(immunity_not_disability,   axiom, ! [P] : ~ ( immunity(P)   & disability(P) )).
 
 % Conduct vs competence (16 pairs)
 fof(cn_1,  axiom, ! [P] : ~ ( liberty(P)  & power(P)      )).
