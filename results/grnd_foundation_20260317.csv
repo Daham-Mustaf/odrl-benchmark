@@ -1,0 +1,11 @@
+problem,prover,mode,expected,result,time_s,pass
+GRND002,Z3 4.14,default,unsat,unsat,0.07,PASS
+GRND003,Z3 4.14,default,unsat,unsat,0.068,PASS
+GRND004,Z3 4.14,default,unsat,unsat,0.069,PASS
+GRND005,Z3 4.14,default,unsat,unsat,0.069,PASS
+GRND006,Z3 4.14,default,unsat,unsat,0.068,PASS
+GRND007-open,Z3 4.14,default,unsat,unsat,0.734,PASS
+GRND008-sanctioned,Z3 4.14,default,unsat,unsat,0.07,PASS
+GRND008-regimented,Z3 4.14,default,unsat,unsat,0.066,PASS
+GRND009-immunity,Z3 4.14,default,unsat,unsat,0.067,PASS
+GRND009-no-immunity,Z3 4.14,default,unsat,unsat,0.068,PASS

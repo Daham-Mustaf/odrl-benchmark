@@ -5,7 +5,7 @@
 % Status   : Satisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND007-closed-policy.ttl
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
+% Generated: 2026-03-18 by gen_foundation_problems.py v1.4
 %
 % % No perm rule for 'modify'. No open-world closure.
 % % Liberty(alice,modify,d1) is NOT derivable — consistent with its negation.

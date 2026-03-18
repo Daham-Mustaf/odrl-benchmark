@@ -1,0 +1,2 @@
+problem,prover,mode,expected,result,time_s,pass
+GRND001,Z3 4.14,default,sat,sat,60.074,PASS

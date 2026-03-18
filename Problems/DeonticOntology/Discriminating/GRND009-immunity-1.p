@@ -5,7 +5,7 @@
 % Status   : Unsatisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND009-immunity-policy.ttl
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
+% Generated: 2026-03-18 by gen_foundation_problems.py v1.4
 %
 % % H2 = {Liberty, NoRight, Immunity, Disability}.
 % % Acme attempts proh(f2). Ax5.10: Disability + proh => False.

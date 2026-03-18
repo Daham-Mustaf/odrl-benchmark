@@ -5,7 +5,7 @@
 % Status   : Satisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND001-policy.ttl
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
+% Generated: 2026-03-18 by gen_foundation_problems.py v1.4
 %
 % % The full axiom set (Ax5.1-5.10, A1-A3, B1-B3) is satisfiable.
 % % Minimal model: one perm rule, one agent pair, one action, one target.

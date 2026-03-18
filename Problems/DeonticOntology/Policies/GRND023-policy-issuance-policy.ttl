@@ -1,0 +1,28 @@
+# ------------------------------------------------------------------------------
+# File     : GRND023-policy-issuance-policy.ttl
+# Domain   : Deontic Ontology / ODRL Grounding
+# Problem  : Policy issuance: Power to issue policy creates Subjection
+# Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
+# Generated: 2026-03-18 by gen_foundation_problems.py
+# Links    : Discriminating/GRND023-policy-issuance-1.p
+#            Discriminating/GRND023-policy-issuance-1.smt2
+# ------------------------------------------------------------------------------
+
+@prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+@prefix drk:    <http://w3id.org/drk/ontology/> .
+@prefix dcat:   <http://www.w3.org/ns/dcat#> .
+@prefix schema: <https://schema.org/> .
+
+# Policy issuance authority:
+# PhilharmonieBerlin holds Power to issue policies over concert recordings.
+# UniversitaetsbibliothekMuenchen holds Subjection to those issuances.
+<drk:policy-issuance> a odrl:Agreement ;
+    odrl:obligation [ a odrl:Duty ;
+        odrl:assignee <drk:PhilharmonieBerlin> ;
+        odrl:assigner <drk:FraunhoferFIT> ;
+        odrl:action   odrl:distribute ;
+        odrl:target   <drk:ConcertRecordingDataset> ] .
+
+<drk:ConcertRecordingDataset> a dcat:Dataset .
+<drk:PhilharmonieBerlin>      a schema:Organization .
+<drk:FraunhoferFIT>           a schema:Organization .

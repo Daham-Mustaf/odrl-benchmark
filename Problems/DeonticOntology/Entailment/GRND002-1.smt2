@@ -5,7 +5,7 @@
 ; Status   : unsat
 ; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 ; Policy   : Policies/GRND002-policy.ttl
-; Generated: 2026-03-17 by gen_foundation_problems.py v1.4
+; Generated: 2026-03-18 by gen_foundation_problems.py v1.4
 ;
 ; perm(p1) activated by e1 entails Liberty(alice,read,d1) and NoRight(acme,read,d1).
 ;
@@ -44,7 +44,7 @@
 ;              SMT2_PREAMBLE = _gen_smt2()
 ;
 ; Source   : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Generated: 2026-03-17 by gen_signature.py
+; Generated: 2026-03-18 by gen_signature.py
 ;
 ; Correspondence with GRND000-0.ax (FOF):
 ;   FOF guard predicate agent(X)     <->  (declare-sort Agent 0)

@@ -5,7 +5,7 @@
 % Status   : Unsatisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND005-policy.ttl
-% Generated: 2026-03-17 by gen_foundation_problems.py v1.4
+% Generated: 2026-03-18 by gen_foundation_problems.py v1.4
 %
 % % Liberty(l,alice,read,d1) and Duty(d,alice,rfr(read),d1) in same rho.
 % % Ax5.9 derives False.

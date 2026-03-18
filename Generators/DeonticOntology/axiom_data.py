@@ -65,6 +65,107 @@ fof(ax_correlativity_liberty, axiom,
         <=> ( ? [N] : ( no_right(N) & part_of(N,Rho) & cnt(N,A,T)
                       & ! [M] : ( ( no_right(M) & part_of(M,Rho) & cnt(M,A,T) )
                                  => M = N ) ) ) ) )).""",
+
+    # ------------------------------------------------------------------
+    # Extension axioms (used by GRND010-GRND018)
+    # ------------------------------------------------------------------
+
+    "ax_perm_relator_strong": """\
+fof(ax_perm_relator_strong, axiom,
+    ! [P, X, Y, A, T, E, Rho] :
+      ( ( perm(P) & strong(P) & aee(P,X) & aer(P,Y) & act(P,A) & tgt(P,T)
+        & activates(E,P) & founds(E,Rho,P) )
+     => ? [Im, Db] :
+          ( immunity(Im)   & bearer(Im,X) & cnt(Im,A,T)  & part_of(Im,Rho)
+          & disability(Db) & bearer(Db,Y) & cnt(Db,A,T)  & part_of(Db,Rho) ) )).""",
+
+    "ax_obl_relator": """\
+fof(ax_obl_relator, axiom,
+    ! [D, X, Y, A, T, E] :
+      ( ( obl(D) & aee(D,X) & aer(D,Y) & act(D,A) & tgt(D,T) & activates(E,D) )
+     => ? [Rho, Du, C] :
+          ( founds(E,Rho,D)
+          & duty(Du) & bearer(Du,X) & cnt(Du,A,T) & part_of(Du,Rho)
+          & claim(C) & bearer(C,Y)  & cnt(C,A,T)  & part_of(C,Rho) ) )).""",
+
+    "ax_correlativity_duty": """\
+fof(ax_correlativity_duty, axiom,
+    ! [Rho, A, T] :
+      ( odrl_rel(Rho)
+     => ( ( ? [D] : ( duty(D)  & part_of(D,Rho) & cnt(D,A,T) ) )
+        <=> ( ? [C] : ( claim(C) & part_of(C,Rho) & cnt(C,A,T)
+                      & ! [K] : ( ( claim(K) & part_of(K,Rho) & cnt(K,A,T) )
+                                 => K = C ) ) ) ) )).""",
+
+    "ax_correlativity_power": """\
+fof(ax_correlativity_power, axiom,
+    ! [Rho, A, T] :
+      ( odrl_rel(Rho)
+     => ( ( ? [Pw] : ( power(Pw)     & part_of(Pw,Rho) & cnt(Pw,A,T) ) )
+        <=> ( ? [S] : ( subjection(S) & part_of(S,Rho)  & cnt(S,A,T)
+                      & ! [S2] : ( ( subjection(S2) & part_of(S2,Rho) & cnt(S2,A,T) )
+                                  => S2 = S ) ) ) ) )).""",
+
+    "ax_correlativity_immunity": """\
+fof(ax_correlativity_immunity, axiom,
+    ! [Rho, A, T] :
+      ( odrl_rel(Rho)
+     => ( ( ? [Im] : ( immunity(Im)    & part_of(Im,Rho)  & cnt(Im,A,T) ) )
+        <=> ( ? [Db] : ( disability(Db) & part_of(Db,Rho) & cnt(Db,A,T)
+                       & ! [Db2] : ( ( disability(Db2) & part_of(Db2,Rho) & cnt(Db2,A,T) )
+                                    => Db2 = Db ) ) ) ) )).""",
+
+    "ax_unique_founding": """\
+fof(ax_unique_founding, axiom,
+    ! [R, E, Rho1, Rho2] :
+      ( ( founds(E,Rho1,R) & founds(E,Rho2,R) ) => Rho1 = Rho2 )).""",
+
+    "ax_conflict_detection": """\
+fof(ax_conflict_detection, axiom,
+    ! [Rho, L, D, X, A, T] :
+      ( ( part_of(L,Rho) & part_of(D,Rho)
+        & liberty(L) & duty(D)
+        & bearer(L,X) & bearer(D,X)
+        & cnt(L,A,T)  & cnt(D,rfr(A),T) )
+     => $false )).""",
+
+    "ax_A1": """\
+fof(ax_A1, axiom,
+    ! [X, A, T, Q] :
+      ( norm_state_change(X,A,T,Q)
+     => ? [E] : ( inst_event(E) & triggers(E,X,A,T,Q) ) )).""",
+
+    "ax_A2": """\
+fof(ax_A2, axiom,
+    ! [E] :
+      ( inst_event(E)
+     => ? [Y] : competent_for(Y,E) )).""",
+
+    "ax_A3": """\
+fof(ax_A3, axiom,
+    ! [Y, E] :
+      ( competent_for(Y,E)
+     => ? [Pw, S, X] :
+          ( power(Pw) & bearer(Pw,Y) & about_event(Pw,E)
+          & subjection(S) & bearer(S,X) & about_event(S,E) ) )).""",
+
+    "ax_B1": """\
+fof(ax_B1, axiom,
+    ! [F, X, A, T, B] :
+      ( ( proh(F) & has_rem(F) & act(F,A) & tgt(F,T) & aee(F,X) & does(X,A,T) )
+     => norm_state_change(X,B,T,duty_rem) )).""",
+
+    "ax_B2": """\
+fof(ax_B2, axiom,
+    ! [Pw, A, T, Rho, E, R] :
+      ( ( power(Pw) & cnt(Pw,decl(A),T) & part_of(Pw,Rho) & founds(E,Rho,R) )
+     => about_event(Pw,E) )).""",
+
+    "ax_B3": """\
+fof(ax_B3, axiom,
+    ! [S, A, T, Rho, E, R] :
+      ( ( subjection(S) & cnt(S,decl(A),T) & part_of(S,Rho) & founds(E,Rho,R) )
+     => about_event(S,E) )).""",
 }
 
 # ============================================================================

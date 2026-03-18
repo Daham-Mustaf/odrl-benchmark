@@ -1,0 +1,64 @@
+%--------------------------------------------------------------------------
+% File     : GRND014-corr-immunity-1.p
+% Domain   : Deontic Ontology / ODRL Grounding
+% Problem  : Correlativity: Immunity implies unique Disability in relator
+% Status   : Theorem
+% Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
+% Policy   : Policies/GRND014-corr-immunity-policy.ttl
+% Generated: 2026-03-18 by gen_foundation_problems.py v1.4
+%
+% % odrl_rel(rho1), Immunity(im) partOf rho1 => exists unique db. Disability(db) partOf rho1.
+%
+% ODRL Policy (Turtle) — see Policies/ for full file:
+% @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+% @prefix drk:    <http://w3id.org/drk/ontology/> .
+% @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+% 
+% # Correlativity: every Immunity in an ODRL relator has a unique correlative Disability.
+% # Grounded in a strong-permission relator over drk:MuseumCollectionAPI.
+%--------------------------------------------------------------------------
+
+% Layer 0: Signature (sorts, rfr/decl, position disjointness)
+include('Axioms/Layer0-Signature/GRND000-0.ax').
+
+% Layer 1: Problem-specific axioms (subset of Ax5.1-5.10)
+fof(ax_correlativity_immunity, axiom,
+    ! [Rho, A, T] :
+      ( odrl_rel(Rho)
+     => ( ( ? [Im] : ( immunity(Im)    & part_of(Im,Rho)  & cnt(Im,A,T) ) )
+        <=> ( ? [Db] : ( disability(Db) & part_of(Db,Rho) & cnt(Db,A,T)
+                       & ! [Db2] : ( ( disability(Db2) & part_of(Db2,Rho) & cnt(Db2,A,T) )
+                                    => Db2 = Db ) ) ) ) )).
+
+%--------------------------------------------------------------------------
+% Appendix A.0 extra predicates (declared via axiom context in Layer1)
+%   norm_state_change(X,A,T,Q)  -- position Q changes for X over (A,T)
+%   inst_event(E)               -- E is an institutional event
+%   triggers(E,X,A,T,Q)         -- E triggers the change of Q
+%   competent_for(Y,E)          -- Y is competent to perform E
+%   about_event(Pos,E)          -- position Pos concerns event E
+%   does(X,A,T)                 -- X performs A on T
+%   duty_rem                    -- constant: token for remedy-duty position
+%   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% Ground instance (gamma)
+%--------------------------------------------------------------------------
+fof(pos_im,    axiom, position(im)).
+fof(rel_rho1,  axiom, legal_relator(rho1)).
+fof(odrl_rho1, axiom, odrl_rel(rho1)).
+fof(immun_im,  axiom, immunity(im)).
+fof(partof_im, axiom, part_of(im, rho1)).
+fof(cnt_im,    axiom, cnt(im, some_action, some_target)).
+fof(some_action_typed, axiom, action(some_action)).
+fof(some_target_typed, axiom, target(some_target)).
+
+%--------------------------------------------------------------------------
+% Conjecture
+%--------------------------------------------------------------------------
+fof(conjecture, conjecture,
+    ( ? [Db] : ( disability(Db) & part_of(Db, rho1) & cnt(Db, some_action, some_target)
+         & ! [Db2] : ( ( disability(Db2) & part_of(Db2, rho1)
+                       & cnt(Db2, some_action, some_target) )
+                     => Db2 = Db ) ) )).
