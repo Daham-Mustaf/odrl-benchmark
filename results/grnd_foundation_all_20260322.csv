@@ -1,0 +1,55 @@
+problem,prover,mode,expected,result,time_s,pass
+GRND001,Vampire 5.0,portfolio --schedule casc_sat,Satisfiable,Satisfiable,0.548,PASS
+GRND002,Vampire 5.0,casc,Theorem,Theorem,0.073,PASS
+GRND003,Vampire 5.0,casc,Theorem,Theorem,0.071,PASS
+GRND004,Vampire 5.0,casc,Theorem,Theorem,0.076,PASS
+GRND005,Vampire 5.0,casc,Unsatisfiable,Unsatisfiable,0.069,PASS
+GRND006,Vampire 5.0,casc,Theorem,Theorem,0.092,PASS
+GRND007-open,Vampire 5.0,casc,Theorem,Theorem,0.073,PASS
+GRND007-closed,Vampire 5.0,portfolio --schedule casc_sat,Satisfiable,Satisfiable,0.483,PASS
+GRND008-sanctioned,Vampire 5.0,casc,Theorem,Theorem,0.072,PASS
+GRND008-regimented,Vampire 5.0,casc,Unsatisfiable,Unsatisfiable,0.072,PASS
+GRND009-immunity,Vampire 5.0,casc,Unsatisfiable,Unsatisfiable,0.071,PASS
+GRND009-no-immunity,Vampire 5.0,casc,Unsatisfiable,Unsatisfiable,0.073,PASS
+GRND010-strong-perm,Vampire 5.0,casc,Theorem,Theorem,0.072,PASS
+GRND011-obl-relator,Vampire 5.0,casc,Theorem,Theorem,0.07,PASS
+GRND012-corr-duty,Vampire 5.0,casc,Theorem,Theorem,0.091,PASS
+GRND013-corr-power,Vampire 5.0,casc,Theorem,Theorem,0.089,PASS
+GRND014-corr-immunity,Vampire 5.0,casc,Theorem,Theorem,0.091,PASS
+GRND015-unique-founding,Vampire 5.0,casc,Theorem,Theorem,0.071,PASS
+GRND016-conflict-relator,Vampire 5.0,casc,Unsatisfiable,Unsatisfiable,0.071,PASS
+GRND017-violation-chain,Vampire 5.0,casc,Theorem,Theorem,0.072,PASS
+GRND018-about-event,Vampire 5.0,casc,Theorem,Theorem,0.073,PASS
+GRND019-two-policy-conflict,Vampire 5.0,casc,Unsatisfiable,Unsatisfiable,0.07,PASS
+GRND020-strong-perm-full-h2,Vampire 5.0,casc,Unsatisfiable,Unsatisfiable,0.073,PASS
+GRND021-remedy-chain,Vampire 5.0,casc,Theorem,Theorem,0.074,PASS
+GRND022-corr-nonunique,Vampire 5.0,casc,Unsatisfiable,Unsatisfiable,0.072,PASS
+GRND023-policy-issuance,Vampire 5.0,casc,Theorem,Theorem,0.069,PASS
+GRND024-obl-proh-conflict,Vampire 5.0,portfolio --schedule casc_sat,Satisfiable,Satisfiable,0.486,PASS
+GRND001,Z3 4.15.4,default,sat,"(error ""line 204 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.076,FAIL
+GRND002,Z3 4.15.4,default,unsat,"(error ""line 204 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.082,FAIL
+GRND003,Z3 4.15.4,default,unsat,"(error ""line 204 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.068,FAIL
+GRND004,Z3 4.15.4,default,unsat,"(error ""line 210 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.254,FAIL
+GRND005,Z3 4.15.4,default,unsat,"(error ""line 201 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.106,FAIL
+GRND006,Z3 4.15.4,default,unsat,"(error ""line 204 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.097,FAIL
+GRND007-open,Z3 4.15.4,default,unsat,"(error ""line 197 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",0.092,FAIL
+GRND007-closed,Z3 4.15.4,default,sat,"(error ""line 197 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.064,FAIL
+GRND008-sanctioned,Z3 4.15.4,default,unsat,"(error ""line 209 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.07,FAIL
+GRND008-regimented,Z3 4.15.4,default,unsat,"(error ""line 203 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.069,FAIL
+GRND009-immunity,Z3 4.15.4,default,unsat,"(error ""line 207 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.07,FAIL
+GRND009-no-immunity,Z3 4.15.4,default,unsat,"(error ""line 211 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.066,FAIL
+GRND010-strong-perm,Z3 4.15.4,default,unsat,"(error ""line 206 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.073,FAIL
+GRND011-obl-relator,Z3 4.15.4,default,unsat,"(error ""line 202 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.113,FAIL
+GRND012-corr-duty,Z3 4.15.4,default,unsat,"(error ""line 194 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.1,FAIL
+GRND013-corr-power,Z3 4.15.4,default,unsat,"(error ""line 194 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",561.605,FAIL
+GRND014-corr-immunity,Z3 4.15.4,default,unsat,"(error ""line 194 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.106,FAIL
+GRND015-unique-founding,Z3 4.15.4,default,unsat,"(error ""line 194 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",0.076,FAIL
+GRND016-conflict-relator,Z3 4.15.4,default,unsat,"(error ""line 195 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.066,FAIL
+GRND017-violation-chain,Z3 4.15.4,default,unsat,"(error ""line 214 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.068,FAIL
+GRND018-about-event,Z3 4.15.4,default,unsat,"(error ""line 209 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",60.067,FAIL
+GRND019-two-policy-conflict,Z3 4.15.4,default,unsat,"(error ""line 220 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",199.057,FAIL
+GRND020-strong-perm-full-h2,Z3 4.15.4,default,unsat,"(error ""line 210 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",3047.302,FAIL
+GRND021-remedy-chain,Z3 4.15.4,default,unsat,"(error ""line 217 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",598.44,FAIL
+GRND022-corr-nonunique,Z3 4.15.4,default,unsat,"(error ""line 197 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",1770.271,FAIL
+GRND023-policy-issuance,Z3 4.15.4,default,unsat,"(error ""line 216 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",0.109,FAIL
+GRND024-obl-proh-conflict,Z3 4.15.4,default,sat,"(error ""line 215 column 38: Parsing function declaration. Expecting sort list '(': unknown sort 'Action'"")",6043.041,FAIL

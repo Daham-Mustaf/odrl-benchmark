@@ -1,0 +1,4 @@
+problem,prover,mode,expected,result,time_s,pass
+GRND002,Vampire 5.0,casc,Theorem,Theorem,0.24,PASS
+GRND002,Z3 4.12.2,default,unsat,unsat,0.156,PASS
+GRND002,E 3.2.5,auto-schedule,Theorem,Theorem,0.09,PASS
