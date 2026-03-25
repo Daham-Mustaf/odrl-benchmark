@@ -5,7 +5,7 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND017-violation-chain-policy.ttl
-% Generated: 2026-03-18 by gen_foundation_problems.py v1.4
+% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
 %
 % % proh(f1) + has_rem(f1) + does(alice,distribute,d1).
 % % B1: violation => NormStateChange.
@@ -19,7 +19,6 @@
 % @prefix drk:    <http://w3id.org/drk/ontology/> .
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % @prefix schema: <https://schema.org/> .
-% 
 % <drk:policy-violation-chain> a odrl:Agreement ;
 %     odrl:prohibition [ a odrl:Prohibition ;
 %         odrl:assignee <drk:MusicMarketplaceAG> ;
@@ -28,7 +27,6 @@
 %         odrl:target   <drk:ConcertRecordingDataset> ;
 %         odrl:remedy   [ a odrl:Duty ;
 %             odrl:action odrl:compensate ] ] .
-% 
 % <drk:ConcertRecordingDataset> a dcat:Dataset .
 % <drk:PhilharmonieBerlin>      a schema:Organization .
 % <drk:MusicMarketplaceAG>      a schema:Organization .
@@ -42,21 +40,22 @@
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
-% Layer 1: Problem-specific axioms (subset of Ax5.1-5.10)
+% Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
 fof(ax_proh_relator_basic, axiom,
     ! [F, X, Y, A, T, E] :
       ( ( proh(F) & aee(F,X) & aer(F,Y) & act(F,A) & tgt(F,T) & activates(E,F) )
      => ? [Rho, D, C] :
           ( founds(E,Rho,F)
           & duty(D)  & bearer(D,X) & cnt(D,rfr(A),T) & part_of(D,Rho)
-          & claim(C) & bearer(C,Y) & cnt(C,rfr(A),T) & part_of(C,Rho) ) )).
+          & right(C) & bearer(C,Y) & cnt(C,rfr(A),T) & part_of(C,Rho) ) )).
 fof(ax_proh_relator_remedy, axiom,
-    ! [F, X, Y, A, T, E, Rho] :
+    ! [F, X, Y, A, T, E] :
       ( ( proh(F) & has_rem(F) & aee(F,X) & aer(F,Y) & act(F,A) & tgt(F,T)
-        & activates(E,F) & founds(E,Rho,F) )
-     => ? [Pw, S] :
-          ( power(Pw)     & bearer(Pw,Y) & cnt(Pw,decl(A),T) & part_of(Pw,Rho)
-          & subjection(S) & bearer(S,X)  & cnt(S,decl(A),T)  & part_of(S,Rho) ) )).
+        & activates(E,F) )
+     => ? [RhoR, Pw, S] :
+          ( founds_rem(E,RhoR,F)
+          & power(Pw)     & bearer(Pw,Y) & cnt(Pw,decl(A),T) & part_of(Pw,RhoR)
+          & subjection(S) & bearer(S,X)  & cnt(S,decl(A),T)  & part_of(S,RhoR) ) )).
 fof(ax_A1, axiom,
     ! [X, A, T, Q] :
       ( norm_state_change(X,A,T,Q)
@@ -69,12 +68,12 @@ fof(ax_A3, axiom,
     ! [Y, E] :
       ( competent_for(Y,E)
      => ? [Pw, S, X] :
-          ( power(Pw) & bearer(Pw,Y) & about_event(Pw,E)
-          & subjection(S) & bearer(S,X) & about_event(S,E) ) )).
+          ( power(Pw)     & bearer(Pw,Y) & about_event(Pw,E)
+          & subjection(S) & bearer(S,X)  & about_event(S,E) ) )).
 fof(ax_B1, axiom,
-    ! [F, X, A, T, B] :
+    ! [F, X, A, T] :
       ( ( proh(F) & has_rem(F) & act(F,A) & tgt(F,T) & aee(F,X) & does(X,A,T) )
-     => norm_state_change(X,B,T,duty_rem) )).
+     => ? [B] : ( rem_act(F,B) & norm_state_change(X,B,T,duty_rem) ) )).
 
 %--------------------------------------------------------------------------
 % Appendix A.0 extra predicates (declared via axiom context in Layer1)
@@ -84,6 +83,15 @@ fof(ax_B1, axiom,
 %   competent_for(Y,E)          -- Y is competent to perform E
 %   about_event(Pos,E)          -- position Pos concerns event E
 %   does(X,A,T)                 -- X performs A on T
+%   rem_act(F,B)                -- B is the action of the remedy attached to F
+%   founds_rem(E,Rho,F)         -- E founds the competence relator rho_R for
+%                                  prohibition F with remedy; distinct from
+%                                  founds/3 so rho_F != rho_R.
+%                                  B2/B3 use founds_rem because Power and
+%                                  Subjection live in rho_R, not rho_F.
+%   founds_imm(E,Rho,P)         -- E founds the competence relator rho_I for
+%                                  strongly-permitted rule P; distinct from
+%                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
 %--------------------------------------------------------------------------

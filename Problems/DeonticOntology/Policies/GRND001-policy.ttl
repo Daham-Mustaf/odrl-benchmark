@@ -3,7 +3,7 @@
 # Domain   : Deontic Ontology / ODRL Grounding
 # Problem  : Full axiom set consistency
 # Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-# Generated: 2026-03-18 by gen_foundation_problems.py
+# Generated: 2026-03-25 by gen_foundation_problems.py
 # Links    : Consistency/GRND001-1.p
 #            Consistency/GRND001-1.smt2
 # ------------------------------------------------------------------------------
@@ -12,14 +12,12 @@
 @prefix drk:    <http://w3id.org/drk/ontology/> .
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 @prefix schema: <https://schema.org/> .
-
 <drk:policy-theater-read> a odrl:Agreement ;
     odrl:permission [ a odrl:Permission ;
         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
         odrl:assigner <drk:BerlinerEnsemble> ;
         odrl:action   odrl:read ;
         odrl:target   <drk:TheaterShowtimeDataset> ] .
-
 <drk:TheaterShowtimeDataset>          a dcat:Dataset ;
     schema:name "Berliner Ensemble Showtime Dataset" .
 <drk:BerlinerEnsemble>                a schema:Organization .

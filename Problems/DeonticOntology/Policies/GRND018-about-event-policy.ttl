@@ -3,7 +3,7 @@
 # Domain   : Deontic Ontology / ODRL Grounding
 # Problem  : B2+B3: Power and Subjection in relator concern founding event
 # Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-# Generated: 2026-03-18 by gen_foundation_problems.py
+# Generated: 2026-03-22 by gen_foundation_problems.py
 # Links    : Entailment/GRND018-about-event-1.p
 #            Entailment/GRND018-about-event-1.smt2
 # ------------------------------------------------------------------------------
@@ -12,7 +12,6 @@
 @prefix drk:    <http://w3id.org/drk/ontology/> .
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 @prefix schema: <https://schema.org/> .
-
 <drk:policy-about-event> a odrl:Agreement ;
     odrl:prohibition [ a odrl:Prohibition ;
         odrl:assignee <drk:MusicMarketplaceAG> ;
@@ -21,8 +20,8 @@
         odrl:target   <drk:ConcertRecordingDataset> ;
         odrl:remedy   [ a odrl:Duty ;
             odrl:action odrl:compensate ] ] .
-
 <drk:ConcertRecordingDataset> a dcat:Dataset .
 <drk:PhilharmonieBerlin>      a schema:Organization .
 <drk:MusicMarketplaceAG>      a schema:Organization .
-# The Power and Subjection constituted at activation concern the founding event.
+# The Power and Subjection are in rho_R (founded via founds_rem at activation).
+# B2/B3 link them to the founding event e1.

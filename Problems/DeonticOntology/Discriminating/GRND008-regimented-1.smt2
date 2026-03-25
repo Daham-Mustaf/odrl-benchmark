@@ -5,7 +5,7 @@
 ; Status   : unsat
 ; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 ; Policy   : Policies/GRND008-regimented-policy.ttl
-; Generated: 2026-03-18 by gen_foundation_problems.py v1.4
+; Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 ;
 ; Regimented axiom: ~does when prohibited.
 ; Ground witness: does(alice,distribute,d1). Contradiction.
@@ -15,13 +15,11 @@
 ; @prefix drk:    <http://w3id.org/drk/ontology/> .
 ; @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 ; @prefix schema: <https://schema.org/> .
-; 
 ; <drk:policy-regimented> a odrl:Agreement ;
 ;     odrl:prohibition [ a odrl:Prohibition ;
 ;         odrl:assignee <drk:MusicMarketplaceAG> ;
 ;         odrl:action   odrl:distribute ;
 ;         odrl:target   <drk:ConcertRecordingDataset> ] .
-; 
 ; <drk:ConcertRecordingDataset> a dcat:Dataset .
 ; <drk:MusicMarketplaceAG>      a schema:Organization .
 ; # Regimented reading: does(MusicMarketplaceAG, distribute) impossible.
@@ -30,173 +28,9 @@
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
 ; === Source: Axioms/Layer0-Signature/GRND000-0.smt2 ===
-; --------------------------------------------------------------------------
-; File     : GRND000-0.smt2
-; Domain   : Deontic Ontology / ODRL Grounding
-; Problem  : Signature preamble — sorts, functions, rfr/decl axioms
-; Version  : 1.4
-; English  : SMT-LIB preamble. SMT-LIB has NO include directive.
-;            Embedded verbatim at the top of every .smt2 problem file
-;            by the problem generators. Do NOT add (check-sat) here.
-;            Import in generators via:
-;              from gen_signature import generate_smt2 as _gen_smt2
-;              SMT2_PREAMBLE = _gen_smt2()
-;
-; Source   : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Generated: 2026-03-18 by gen_signature.py
-;
-; Correspondence with GRND000-0.ax (FOF):
-;   FOF guard predicate agent(X)     <->  (declare-sort Agent 0)
-;   FOF perm(R)                      <->  (declare-fun perm (Rule) Bool)
-;   FOF founds(E,Rho,R) [3-ary]      <->  (declare-fun founds (Event Relator Rule) Bool)
-;   FOF cnt/3 (action + forbearance) <->  cnt (Action) + cnt-f (Forbearance)
-;                                         Two predicates because Action and
-;                                         Forbearance are distinct SMT-LIB sorts.
-;   FOF odrl_rel(X)                  <->  (declare-fun odrl-rel (Relator) Bool)
-;   FOF strong(R)                    <->  (declare-fun strong (Rule) Bool)
-;   FOF issue/1                      <->  (declare-fun issue (Rule) Action)
-;
-; CHANGELOG v1.4:
-;   - version aligned with gen_foundation_problems.py v1.4
-;   - trailing whitespace removed from META fields
-;   - import path documented in header
-; CHANGELOG v1.1:
-;   - founds: 2-ary -> 3-ary (Event Relator Rule)
-;   - Added odrl-rel predicate
-;   - Added strong predicate
-;   - Added issue function
-; --------------------------------------------------------------------------
+; GRND000-0.smt2
 (set-logic UF)
 (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
-(set-info :status unknown)
-
-; --------------------------------------------------------------------------
-; SORTS — uninterpreted (closest to FOF guard predicates)
-; --------------------------------------------------------------------------
-(declare-sort Agent       0)
-(declare-sort Action      0)
-(declare-sort Forbearance 0)
-(declare-sort Target      0)
-(declare-sort Rule        0)
-(declare-sort Position    0)
-(declare-sort Relator     0)
-(declare-sort Event       0)
-
-; --------------------------------------------------------------------------
-; ODRL RULE TYPE PREDICATES
-; --------------------------------------------------------------------------
-(declare-fun perm    (Rule) Bool)
-(declare-fun proh    (Rule) Bool)
-(declare-fun obl     (Rule) Bool)     ; CANONICAL — paper Ax5.6
-(declare-fun has-rem (Rule) Bool)     ; CANONICAL — paper Ax5.4
-(declare-fun strong  (Rule) Bool)     ; Profile extension; not in ODRL 2.2
-(declare-fun aee (Rule Agent)  Bool)
-(declare-fun aer (Rule Agent)  Bool)
-(declare-fun act (Rule Action) Bool)
-(declare-fun tgt (Rule Target) Bool)
-(declare-fun activates (Event Rule) Bool)
-
-; --------------------------------------------------------------------------
-; UFO RELATOR AND POSITION PREDICATES
-; --------------------------------------------------------------------------
-; founds: 3-ary — matches paper axioms Ax5.1-Ax5.8
-; Third argument (Rule) individuates relator by rule-event pair (Ax5.5).
-(declare-fun founds  (Event Relator Rule)            Bool)
-(declare-fun part-of (Position Relator)              Bool)
-(declare-fun bearer  (Position Agent)                Bool)
-; cnt and cnt-f: two predicates because Action and Forbearance are
-; distinct SMT-LIB sorts. In FOF (GRND000-0.ax), a single cnt/3
-; handles both via action(A)/forbearance(A) type guards.
-(declare-fun cnt     (Position Action      Target)   Bool)
-(declare-fun cnt-f   (Position Forbearance Target)   Bool)
-; odrl-rel: relator founded by an ODRL rule activation.
-(declare-fun odrl-rel (Relator) Bool)
-; Hohfeldian position type predicates
-(declare-fun liberty    (Position) Bool)
-(declare-fun no-right   (Position) Bool)
-(declare-fun duty       (Position) Bool)
-(declare-fun claim      (Position) Bool)
-(declare-fun power      (Position) Bool)
-(declare-fun subjection (Position) Bool)
-(declare-fun immunity   (Position) Bool)
-(declare-fun disability (Position) Bool)
-
-; --------------------------------------------------------------------------
-; RFR FUNCTION  rfr : Action -> Forbearance
-; pos : Forbearance -> Action  (left-inverse of rfr)
-; RFR1 holds automatically — Action and Forbearance are distinct sorts.
-; RFR4, RFR5 hold by sort separation.
-; --------------------------------------------------------------------------
-(declare-fun rfr (Action)      Forbearance)
-(declare-fun pos (Forbearance) Action)
-; RFR2: Injectivity
-(assert (forall ((a Action) (b Action))
-  (=> (= (rfr a) (rfr b)) (= a b))))
-; RFR3: Left-inverse
-(assert (forall ((a Action))
-  (= (pos (rfr a)) a)))
-
-; --------------------------------------------------------------------------
-; DECL FUNCTION  decl : Action -> Action
-; decl(A) = institutional act of declaring a violation on action A.
-; Used in Ax5.4 (Power-Subjection for remedy).
-; --------------------------------------------------------------------------
-(declare-fun decl (Action) Action)
-; DECL2: Injectivity
-(assert (forall ((a Action) (b Action))
-  (=> (= (decl a) (decl b)) (= a b))))
-; DECL3: Distinctness from base action
-(assert (forall ((a Action))
-  (not (= (decl a) a))))
-
-; --------------------------------------------------------------------------
-; ISSUE FUNCTION  issue : Rule -> Action
-; issue(Pi) = institutional act of issuing policy Pi.
-; Used in P3-P4 normative hierarchy grounding.
-; --------------------------------------------------------------------------
-(declare-fun issue (Rule) Action)
-; ISSUE2: Injectivity
-(assert (forall ((a Rule) (b Rule))
-  (=> (= (issue a) (issue b)) (= a b))))
-
-; --------------------------------------------------------------------------
-; POSITION SORT DISJOINTNESS
-; Grounded in UFO disjointness of moment types.
-; --------------------------------------------------------------------------
-; Within conduct level
-(assert (forall ((p Position)) (not (and (liberty p)  (duty p)))))
-(assert (forall ((p Position)) (not (and (liberty p)  (claim p)))))
-(assert (forall ((p Position)) (not (and (liberty p)  (no-right p)))))
-(assert (forall ((p Position)) (not (and (duty p)     (claim p)))))
-(assert (forall ((p Position)) (not (and (duty p)     (no-right p)))))
-(assert (forall ((p Position)) (not (and (claim p)    (no-right p)))))
-; Within competence level
-(assert (forall ((p Position)) (not (and (power p)      (subjection p)))))
-(assert (forall ((p Position)) (not (and (power p)      (immunity p)))))
-(assert (forall ((p Position)) (not (and (power p)      (disability p)))))
-(assert (forall ((p Position)) (not (and (subjection p) (immunity p)))))
-(assert (forall ((p Position)) (not (and (subjection p) (disability p)))))
-(assert (forall ((p Position)) (not (and (immunity p)   (disability p)))))
-; Conduct vs competence
-(assert (forall ((p Position)) (not (and (liberty p)  (power p)))))
-(assert (forall ((p Position)) (not (and (liberty p)  (subjection p)))))
-(assert (forall ((p Position)) (not (and (liberty p)  (immunity p)))))
-(assert (forall ((p Position)) (not (and (liberty p)  (disability p)))))
-(assert (forall ((p Position)) (not (and (duty p)     (power p)))))
-(assert (forall ((p Position)) (not (and (duty p)     (subjection p)))))
-(assert (forall ((p Position)) (not (and (duty p)     (immunity p)))))
-(assert (forall ((p Position)) (not (and (duty p)     (disability p)))))
-(assert (forall ((p Position)) (not (and (claim p)    (power p)))))
-(assert (forall ((p Position)) (not (and (claim p)    (subjection p)))))
-(assert (forall ((p Position)) (not (and (claim p)    (immunity p)))))
-(assert (forall ((p Position)) (not (and (claim p)    (disability p)))))
-(assert (forall ((p Position)) (not (and (no-right p) (power p)))))
-(assert (forall ((p Position)) (not (and (no-right p) (subjection p)))))
-(assert (forall ((p Position)) (not (and (no-right p) (immunity p)))))
-(assert (forall ((p Position)) (not (and (no-right p) (disability p)))))
-; --------------------------------------------------------------------------
-; END OF PREAMBLE — problem files append axioms + conjecture after this
-; --------------------------------------------------------------------------
 
 ; === Appendix A.0 additional sorts/predicates ===
 ; Appendix A.0 additional sorts and predicates
@@ -208,10 +42,15 @@
 (declare-fun competent-for     (Agent Event) Bool)
 (declare-fun about-event       (Position Event) Bool)
 (declare-fun does              (Agent Action Target) Bool)
+(declare-fun rem-act           (Rule Action) Bool)
+(declare-fun founds-rem        (Event Relator Rule) Bool)
+(declare-fun founds-imm        (Event Relator Rule) Bool)
 (declare-const duty-rem        NormPos)
 
 
-; === Layer 1: Paper axioms (Ax5.1-5.10, A1-A3, B1-B3) ===
+; === Layer 1: ALL paper axioms embedded (28 formulae: 27 axioms + 1 corollary) ===
+; === Z3 does not timeout on the full set; FOF inlines per-problem subsets ===
+; === only (fof_axioms key) to avoid Vampire timeouts. Asymmetry intentional. ===
 ; === Authoritative source: Axioms/Layer1-Deontic/GRND-AX-1.smt2 ===
 ; === (SMT-LIB has no include directive — axioms embedded directly) ===
 
@@ -220,34 +59,34 @@
   (=> (and (perm p) (aee p x) (aer p y) (act p a) (tgt p t) (activates e p))
       (exists ((rho Relator) (l Position) (n Position))
         (and (founds e rho p)
-             (liberty l) (bearer l x) (cnt l a t) (part-of l rho)
-             (no-right n) (bearer n y) (cnt n a t) (part-of n rho))))))
+             (permission l) (bearer l x) (cnt l a t) (part-of l rho)
+             (no-right n)   (bearer n y) (cnt n a t) (part-of n rho))))))
 
 ; ax_perm_relator_strong
-(assert (forall ((p Rule) (x Agent) (y Agent) (a Action) (t Target)
-                 (e Event) (rho Relator))
+(assert (forall ((p Rule) (x Agent) (y Agent) (a Action) (t Target) (e Event))
   (=> (and (perm p) (strong p) (aee p x) (aer p y) (act p a) (tgt p t)
-           (activates e p) (founds e rho p))
-      (exists ((im Position) (db Position))
-        (and (immunity im)   (bearer im x) (cnt im a t)  (part-of im rho)
-             (disability db) (bearer db y) (cnt db a t)  (part-of db rho))))))
+           (activates e p))
+      (exists ((rho-i Relator) (im Position) (db Position))
+        (and (founds-imm e rho-i p)
+             (immunity im)   (bearer im x) (cnt im a t) (part-of im rho-i)
+             (disability db) (bearer db y) (cnt db a t) (part-of db rho-i))))))
 
 ; ax_proh_relator_basic
 (assert (forall ((f Rule) (x Agent) (y Agent) (a Action) (t Target) (e Event))
   (=> (and (proh f) (aee f x) (aer f y) (act f a) (tgt f t) (activates e f))
       (exists ((rho Relator) (d Position) (c Position))
         (and (founds e rho f)
-             (duty d)  (bearer d x) (cnt-f d (rfr a) t) (part-of d rho)
-             (claim c) (bearer c y) (cnt-f c (rfr a) t) (part-of c rho))))))
+             (duty d)  (bearer d x) (cnt d (rfr a) t) (part-of d rho)
+             (right c) (bearer c y) (cnt c (rfr a) t) (part-of c rho))))))
 
 ; ax_proh_relator_remedy
-(assert (forall ((f Rule) (x Agent) (y Agent) (a Action) (t Target)
-                 (e Event) (rho Relator))
+(assert (forall ((f Rule) (x Agent) (y Agent) (a Action) (t Target) (e Event))
   (=> (and (proh f) (has-rem f) (aee f x) (aer f y) (act f a) (tgt f t)
-           (activates e f) (founds e rho f))
-      (exists ((pw Position) (s Position))
-        (and (power pw)      (bearer pw y) (cnt pw (decl a) t) (part-of pw rho)
-             (subjection s)  (bearer s x)  (cnt s  (decl a) t) (part-of s rho))))))
+           (activates e f))
+      (exists ((rho-r Relator) (pw Position) (s Position))
+        (and (founds-rem e rho-r f)
+             (power pw)     (bearer pw y) (cnt pw (decl a) t) (part-of pw rho-r)
+             (subjection s) (bearer s x)  (cnt s  (decl a) t) (part-of s rho-r))))))
 
 ; ax_unique_founding
 (assert (forall ((r Rule) (e Event) (rho1 Relator) (rho2 Relator))
@@ -257,19 +96,29 @@
 (assert (forall ((r Rule) (e1 Event) (e2 Event) (rho Relator))
   (=> (and (founds e1 rho r) (founds e2 rho r)) (= e1 e2))))
 
+; ax_unique_founding_rem
+(assert (forall ((r Rule) (e Event) (rho1 Relator) (rho2 Relator))
+  (=> (and (founds-rem e rho1 r) (founds-rem e rho2 r))
+      (= rho1 rho2))))
+
+; ax_unique_founding_imm
+(assert (forall ((r Rule) (e Event) (rho1 Relator) (rho2 Relator))
+  (=> (and (founds-imm e rho1 r) (founds-imm e rho2 r))
+      (= rho1 rho2))))
+
 ; ax_obl_relator
 (assert (forall ((d Rule) (x Agent) (y Agent) (a Action) (t Target) (e Event))
   (=> (and (obl d) (aee d x) (aer d y) (act d a) (tgt d t) (activates e d))
       (exists ((rho Relator) (du Position) (c Position))
         (and (founds e rho d)
-             (duty du) (bearer du x) (cnt du a t)  (part-of du rho)
-             (claim c) (bearer c y)  (cnt c  a t)  (part-of c rho))))))
+             (duty du) (bearer du x) (cnt du a t) (part-of du rho)
+             (right c) (bearer c y)  (cnt c  a t) (part-of c rho))))))
 
-; ax_correlativity_liberty
+; ax_correlativity_permission
 (assert (forall ((rho Relator) (a Action) (t Target))
   (=> (odrl-rel rho)
       (= (exists ((l Position))
-           (and (liberty l) (part-of l rho) (cnt l a t)))
+           (and (permission l) (part-of l rho) (cnt l a t)))
          (exists ((n Position))
            (and (no-right n) (part-of n rho) (cnt n a t)
                 (forall ((m Position))
@@ -282,9 +131,9 @@
       (= (exists ((d Position))
            (and (duty d) (part-of d rho) (cnt d a t)))
          (exists ((c Position))
-           (and (claim c) (part-of c rho) (cnt c a t)
+           (and (right c) (part-of c rho) (cnt c a t)
                 (forall ((k Position))
-                  (=> (and (claim k) (part-of k rho) (cnt k a t))
+                  (=> (and (right k) (part-of k rho) (cnt k a t))
                       (= k c)))))))))
 
 ; ax_correlativity_power
@@ -313,15 +162,15 @@
 (assert (forall ((rho Relator) (l Position) (d Position)
                  (x Agent) (a Action) (t Target))
   (=> (and (part-of l rho) (part-of d rho)
-           (liberty l) (duty d)
+           (permission l) (duty d)
            (bearer l x) (bearer d x)
-           (cnt l a t) (cnt-f d (rfr a) t))
+           (cnt l a t) (cnt d (rfr a) t))
       false)))
 
 ; ax_cross_relator_consistency
 (assert (forall ((l Position) (d Position) (x Agent) (a Action) (t Target))
-  (=> (and (liberty l) (bearer l x) (cnt l a t)
-           (duty d)    (bearer d x) (cnt-f d (rfr a) t))
+  (=> (and (permission l) (bearer l x) (cnt l a t)
+           (duty d)       (bearer d x) (cnt d (rfr a) t))
       false)))
 
 ; ax_disability_block
@@ -329,6 +178,21 @@
   (=> (and (proh f) (aee f x) (aer f y) (act f a) (tgt f t))
       (not (exists ((db Position))
              (and (disability db) (bearer db y) (cnt db a t)))))))
+
+; ax_odrl_rel_typing
+(assert (forall ((e Event) (rho Relator) (r Rule))
+  (=> (and (founds e rho r) (or (perm r) (proh r) (obl r)))
+      (odrl-rel rho))))
+
+; ax_odrl_rel_typing_rem
+(assert (forall ((e Event) (rho Relator) (r Rule))
+  (=> (and (founds-rem e rho r) (proh r))
+      (odrl-rel rho))))
+
+; ax_odrl_rel_typing_imm
+(assert (forall ((e Event) (rho Relator) (r Rule))
+  (=> (and (founds-imm e rho r) (perm r))
+      (odrl-rel rho))))
 
 ; ax_A1
 (assert (forall ((x Agent) (a Action) (t Target) (q NormPos))
@@ -345,34 +209,35 @@
 (assert (forall ((y Agent) (e Event))
   (=> (competent-for y e)
       (exists ((pw Position) (s Position) (x Agent))
-        (and (power pw) (bearer pw y) (about-event pw e)
-             (subjection s) (bearer s x) (about-event s e))))))
+        (and (power pw)     (bearer pw y) (about-event pw e)
+             (subjection s) (bearer s x)  (about-event s e))))))
 
 ; ax_B1
-(assert (forall ((f Rule) (x Agent) (a Action) (t Target) (b Action))
+(assert (forall ((f Rule) (x Agent) (a Action) (t Target))
   (=> (and (proh f) (has-rem f) (act f a) (tgt f t) (aee f x) (does x a t))
-      (norm-state-change x b t duty-rem))))
+      (exists ((b Action))
+        (and (rem-act f b) (norm-state-change x b t duty-rem))))))
 
 ; ax_B2
 (assert (forall ((pw Position) (a Action) (t Target)
                  (rho Relator) (e Event) (r Rule))
-  (=> (and (power pw) (cnt pw (decl a) t) (part-of pw rho) (founds e rho r))
+  (=> (and (power pw) (cnt pw (decl a) t) (part-of pw rho) (founds-rem e rho r))
       (about-event pw e))))
 
 ; ax_B3
 (assert (forall ((s Position) (a Action) (t Target)
                  (rho Relator) (e Event) (r Rule))
-  (=> (and (subjection s) (cnt s (decl a) t) (part-of s rho) (founds e rho r))
+  (=> (and (subjection s) (cnt s (decl a) t) (part-of s rho) (founds-rem e rho r))
       (about-event s e))))
 
 ; === Ground instance (gamma) ===
 (declare-const alice      Agent)
-(declare-const distribute Action) (declare-const d1 Target)
+(declare-const distribute NormContent) (declare-const d1 Target)
 (declare-const f1         Rule)   (declare-const e1 Event)
 (assert (proh f1)) (assert (has-rem f1))
 (assert (act f1 distribute)) (assert (aee f1 alice))
 (assert (activates e1 f1))
-(assert (forall ((x Agent) (a Action) (t Target) (f2 Rule) (e2 Event))
+(assert (forall ((x Agent) (a NormContent) (t Target) (f2 Rule) (e2 Event))
   (=> (and (proh f2) (aee f2 x) (act f2 a) (activates e2 f2))
       (not (does x a t)))))
 (assert (does alice distribute d1))

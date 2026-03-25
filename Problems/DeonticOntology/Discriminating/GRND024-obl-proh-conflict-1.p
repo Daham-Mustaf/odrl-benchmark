@@ -1,27 +1,23 @@
 %--------------------------------------------------------------------------
 % File     : GRND024-obl-proh-conflict-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Obligation + Prohibition conflict: Duty(a) vs Duty(rfr(a))
+% Problem  : Obligation + Prohibition coexist: Duty(a) vs Duty(rfr(a)) distinct
 % Status   : Satisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND024-obl-proh-conflict-policy.ttl
-% Generated: 2026-03-18 by gen_foundation_problems.py v1.4
+% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
 %
-% % obl(d1)  activated at e1: creates Duty(alice, read, d1).
-% % proh(f1) activated at e2: creates Duty(alice, rfr(read), d1).
-% % ax_cross_relator_consistency does NOT fire directly
-% %   (it fires on Liberty+Duty, not Duty+Duty).
-% % But obl creates Duty(a) and proh creates Duty(rfr(a)).
-% % These are distinct content — no direct conflict axiom.
+% % obl(obl1) activated at e1: creates Duty(alice, read, d1).
+% % proh(f1)  activated at e2: creates Duty(alice, rfr(read), d1).
+% % ax_cross_relator_consistency fires on Permission+Duty(rfr), NOT Duty(a)+Duty(rfr(a)).
 % % Status: Satisfiable — the two duties coexist (different content).
-% % This is a DISCRIMINATING problem: shows obl and proh do NOT conflict.
+% % Discriminating: shows obl and proh do NOT directly conflict in the grounding.
 %
 % ODRL Policy (Turtle) — see Policies/ for full file:
 % @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
 % @prefix drk:    <http://w3id.org/drk/ontology/> .
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % @prefix schema: <https://schema.org/> .
-% 
 % # Obligation to read AND prohibition on reading coexist
 % # because their duties have different content: read vs rfr(read).
 % # This demonstrates obl+proh do NOT directly conflict in the grounding.
@@ -36,7 +32,6 @@
 %         odrl:assigner <drk:StaatlicheMuseenBerlin> ;
 %         odrl:action   odrl:read ;
 %         odrl:target   <drk:TheaterShowtimeDataset> ] .
-% 
 % <drk:TheaterShowtimeDataset>          a dcat:Dataset .
 % <drk:BerlinerEnsemble>                a schema:Organization .
 % <drk:StaatlicheMuseenBerlin>          a schema:Organization .
@@ -46,25 +41,25 @@
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
-% Layer 1: Problem-specific axioms (subset of Ax5.1-5.10)
+% Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
 fof(ax_obl_relator, axiom,
     ! [D, X, Y, A, T, E] :
       ( ( obl(D) & aee(D,X) & aer(D,Y) & act(D,A) & tgt(D,T) & activates(E,D) )
      => ? [Rho, Du, C] :
           ( founds(E,Rho,D)
           & duty(Du) & bearer(Du,X) & cnt(Du,A,T) & part_of(Du,Rho)
-          & claim(C) & bearer(C,Y)  & cnt(C,A,T)  & part_of(C,Rho) ) )).
+          & right(C) & bearer(C,Y)  & cnt(C,A,T)  & part_of(C,Rho) ) )).
 fof(ax_proh_relator_basic, axiom,
     ! [F, X, Y, A, T, E] :
       ( ( proh(F) & aee(F,X) & aer(F,Y) & act(F,A) & tgt(F,T) & activates(E,F) )
      => ? [Rho, D, C] :
           ( founds(E,Rho,F)
           & duty(D)  & bearer(D,X) & cnt(D,rfr(A),T) & part_of(D,Rho)
-          & claim(C) & bearer(C,Y) & cnt(C,rfr(A),T) & part_of(C,Rho) ) )).
+          & right(C) & bearer(C,Y) & cnt(C,rfr(A),T) & part_of(C,Rho) ) )).
 fof(ax_cross_relator_consistency, axiom,
     ! [L, D, X, A, T] :
-      ( ( liberty(L) & bearer(L,X) & cnt(L,A,T)
-        & duty(D)    & bearer(D,X) & cnt(D,rfr(A),T) )
+      ( ( permission(L) & bearer(L,X) & cnt(L,A,T)
+        & duty(D)       & bearer(D,X) & cnt(D,rfr(A),T) )
      => $false )).
 
 %--------------------------------------------------------------------------
@@ -75,6 +70,15 @@ fof(ax_cross_relator_consistency, axiom,
 %   competent_for(Y,E)          -- Y is competent to perform E
 %   about_event(Pos,E)          -- position Pos concerns event E
 %   does(X,A,T)                 -- X performs A on T
+%   rem_act(F,B)                -- B is the action of the remedy attached to F
+%   founds_rem(E,Rho,F)         -- E founds the competence relator rho_R for
+%                                  prohibition F with remedy; distinct from
+%                                  founds/3 so rho_F != rho_R.
+%                                  B2/B3 use founds_rem because Power and
+%                                  Subjection live in rho_R, not rho_F.
+%   founds_imm(E,Rho,P)         -- E founds the competence relator rho_I for
+%                                  strongly-permitted rule P; distinct from
+%                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
 %--------------------------------------------------------------------------
@@ -88,14 +92,14 @@ fof(agent_acme2,  axiom, agent(acme2)).
 fof(action_read,  axiom, action(read)).
 fof(target_d1,    axiom, target(d1)).
 % Obligation: alice must read d1
-fof(rule_d1,      axiom, rule(obl1)).
+fof(rule_obl1,    axiom, rule(obl1)).
 fof(event_e1,     axiom, event(e1)).
-fof(obl_d1,       axiom, obl(obl1)).
-fof(aee_d1,       axiom, aee(obl1, alice)).
-fof(aer_d1,       axiom, aer(obl1, acme1)).
-fof(act_d1,       axiom, act(obl1, read)).
-fof(tgt_d1,       axiom, tgt(obl1, d1)).
-fof(act_e1_d1,    axiom, activates(e1, obl1)).
+fof(obl_obl1,     axiom, obl(obl1)).
+fof(aee_obl1,     axiom, aee(obl1, alice)).
+fof(aer_obl1,     axiom, aer(obl1, acme1)).
+fof(act_obl1,     axiom, act(obl1, read)).
+fof(tgt_obl1,     axiom, tgt(obl1, d1)).
+fof(act_e1_obl1,  axiom, activates(e1, obl1)).
 % Prohibition: alice must not read d1
 fof(rule_f1,      axiom, rule(f1)).
 fof(event_e2,     axiom, event(e2)).

@@ -1,9 +1,9 @@
 # ------------------------------------------------------------------------------
 # File     : GRND009-immunity-policy.ttl
 # Domain   : Deontic Ontology / ODRL Grounding
-# Problem  : Strong permission: Liberty persists (Disability blocks prohibition)
+# Problem  : Strong permission: Permission persists (Disability blocks prohibition)
 # Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-# Generated: 2026-03-18 by gen_foundation_problems.py
+# Generated: 2026-03-25 by gen_foundation_problems.py
 # Links    : Discriminating/GRND009-immunity-1.p
 #            Discriminating/GRND009-immunity-1.smt2
 # ------------------------------------------------------------------------------
@@ -12,14 +12,12 @@
 @prefix drk:    <http://w3id.org/drk/ontology/> .
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 @prefix schema: <https://schema.org/> .
-
 <drk:policy-strong> a odrl:Agreement ;
     odrl:permission [ a odrl:Permission ;
         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
         odrl:assigner <drk:StaatlicheMuseenBerlin> ;
         odrl:action   odrl:read ;
         odrl:target   <drk:MuseumCollectionAPI> ] .
-
 <drk:MuseumCollectionAPI>             a dcat:DataService ;
     schema:name "Staatliche Museen Berlin Collection API" .
 <drk:StaatlicheMuseenBerlin>          a schema:Organization .

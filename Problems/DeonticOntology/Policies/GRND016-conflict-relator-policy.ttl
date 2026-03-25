@@ -1,9 +1,9 @@
 # ------------------------------------------------------------------------------
 # File     : GRND016-conflict-relator-policy.ttl
 # Domain   : Deontic Ontology / ODRL Grounding
-# Problem  : Conflict detection: Liberty and Duty in same relator
+# Problem  : Conflict detection: Permission and Duty in same relator
 # Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-# Generated: 2026-03-18 by gen_foundation_problems.py
+# Generated: 2026-03-22 by gen_foundation_problems.py
 # Links    : Entailment/GRND016-conflict-relator-1.p
 #            Entailment/GRND016-conflict-relator-1.smt2
 # ------------------------------------------------------------------------------
@@ -11,6 +11,5 @@
 @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
 @prefix drk:    <http://w3id.org/drk/ontology/> .
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-
-# Within-relator conflict: Liberty and Duty-to-refrain
+# Within-relator conflict: Permission and Duty-to-refrain
 # co-borne by drk:UniversitaetsbibliothekMuenchen in the same relator.

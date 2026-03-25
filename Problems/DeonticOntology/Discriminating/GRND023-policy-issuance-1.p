@@ -1,48 +1,55 @@
 %--------------------------------------------------------------------------
 % File     : GRND023-policy-issuance-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Policy issuance: Power to issue policy creates Subjection
+% Problem  : Policy issuance: issue/1 injectivity (distinct rules => distinct acts)
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND023-policy-issuance-policy.ttl
-% Generated: 2026-03-18 by gen_foundation_problems.py v1.4
+% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
 %
-% % Ground facts: Power(pw, issue(pi), d1) and Subjection(s, issue(pi), d1).
-% % issue/1 is injective and issue(R) is an action (from Layer0).
-% % Conjecture: action(issue(pi)) holds — issue function types correctly.
+% % Two distinct rules pi1 != pi2.
+% % Layer0 ISSUE2: issue(A)=issue(B) => A=B (injectivity).
+% % Conjecture (FOF): issue(pi1) != issue(pi2).
+% % SMT2 negated: (assert (= (issue pi1) (issue pi2))) with (assert (not (= pi1 pi2))).
+% % Injectivity forces pi1=pi2 => contradiction with distinctness.
 %
 % ODRL Policy (Turtle) — see Policies/ for full file:
 % @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
 % @prefix drk:    <http://w3id.org/drk/ontology/> .
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % @prefix schema: <https://schema.org/> .
-% 
-% # Policy issuance authority:
-% # PhilharmonieBerlin holds Power to issue policies over concert recordings.
-% # UniversitaetsbibliothekMuenchen holds Subjection to those issuances.
-% <drk:policy-issuance> a odrl:Agreement ;
+% # Policy issuance authority test.
+% # Two distinct policies — their issue() acts must be distinct.
+% <drk:policy-issuance-1> a odrl:Agreement ;
 %     odrl:obligation [ a odrl:Duty ;
 %         odrl:assignee <drk:PhilharmonieBerlin> ;
 %         odrl:assigner <drk:FraunhoferFIT> ;
 %         odrl:action   odrl:distribute ;
 %         odrl:target   <drk:ConcertRecordingDataset> ] .
-% 
+% <drk:policy-issuance-2> a odrl:Agreement ;
+%     odrl:obligation [ a odrl:Duty ;
+%         odrl:assignee <drk:StaatlicheMuseenBerlin> ;
+%         odrl:assigner <drk:FraunhoferFIT> ;
+%         odrl:action   odrl:read ;
+%         odrl:target   <drk:MuseumCollectionAPI> ] .
 % <drk:ConcertRecordingDataset> a dcat:Dataset .
+% <drk:MuseumCollectionAPI>     a dcat:DataService .
 % <drk:PhilharmonieBerlin>      a schema:Organization .
+% <drk:StaatlicheMuseenBerlin>  a schema:Organization .
 % <drk:FraunhoferFIT>           a schema:Organization .
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
-% Layer 1: Problem-specific axioms (subset of Ax5.1-5.10)
+% Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
 fof(ax_obl_relator, axiom,
     ! [D, X, Y, A, T, E] :
       ( ( obl(D) & aee(D,X) & aer(D,Y) & act(D,A) & tgt(D,T) & activates(E,D) )
      => ? [Rho, Du, C] :
           ( founds(E,Rho,D)
           & duty(Du) & bearer(Du,X) & cnt(Du,A,T) & part_of(Du,Rho)
-          & claim(C) & bearer(C,Y)  & cnt(C,A,T)  & part_of(C,Rho) ) )).
+          & right(C) & bearer(C,Y)  & cnt(C,A,T)  & part_of(C,Rho) ) )).
 
 %--------------------------------------------------------------------------
 % Appendix A.0 extra predicates (declared via axiom context in Layer1)
@@ -52,6 +59,15 @@ fof(ax_obl_relator, axiom,
 %   competent_for(Y,E)          -- Y is competent to perform E
 %   about_event(Pos,E)          -- position Pos concerns event E
 %   does(X,A,T)                 -- X performs A on T
+%   rem_act(F,B)                -- B is the action of the remedy attached to F
+%   founds_rem(E,Rho,F)         -- E founds the competence relator rho_R for
+%                                  prohibition F with remedy; distinct from
+%                                  founds/3 so rho_F != rho_R.
+%                                  B2/B3 use founds_rem because Power and
+%                                  Subjection live in rho_R, not rho_F.
+%   founds_imm(E,Rho,P)         -- E founds the competence relator rho_I for
+%                                  strongly-permitted rule P; distinct from
+%                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
 %--------------------------------------------------------------------------
@@ -59,24 +75,12 @@ fof(ax_obl_relator, axiom,
 %--------------------------------------------------------------------------
 % Ground instance (gamma)
 %--------------------------------------------------------------------------
-fof(rule_pi,      axiom, rule(pi)).
-fof(target_d1,    axiom, target(d1)).
-fof(pos_pw,       axiom, position(pw)).
-fof(pos_s,        axiom, position(s)).
-fof(rel_rho1,     axiom, legal_relator(rho1)).
-fof(power_pw,     axiom, power(pw)).
-fof(subjection_s, axiom, subjection(s)).
-fof(agent_alice,  axiom, agent(alice)).
-fof(agent_acme,   axiom, agent(acme)).
-fof(bearer_pw,    axiom, bearer(pw, acme)).
-fof(bearer_s,     axiom, bearer(s,  alice)).
-fof(cnt_pw,       axiom, cnt(pw, issue(pi), d1)).
-fof(cnt_s,        axiom, cnt(s,  issue(pi), d1)).
-fof(partof_pw,    axiom, part_of(pw, rho1)).
-fof(partof_s,     axiom, part_of(s,  rho1)).
+fof(rule_pi1,     axiom, rule(pi1)).
+fof(rule_pi2,     axiom, rule(pi2)).
+fof(pi1_neq_pi2,  axiom, pi1 != pi2).
 
 %--------------------------------------------------------------------------
 % Conjecture
 %--------------------------------------------------------------------------
 fof(conjecture, conjecture,
-    ( action(issue(pi)) )).
+    ( issue(pi1) != issue(pi2) )).

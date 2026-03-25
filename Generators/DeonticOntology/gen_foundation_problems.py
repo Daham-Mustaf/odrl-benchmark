@@ -3,7 +3,6 @@ gen_foundation_problems.py
 ==========================
 Generates FOF/TPTP (.p), SMT-LIB (.smt2), and Turtle (.ttl) files for the
 FOIS 2026 deontic grounding validation (Paper §6).
-
 Module structure:
   axiom_data.py        — FOF_AXIOM_DICT, SMT2_AXIOMS, shared constants
   problem_data.py      — PROBLEMS list (GRND001-009), write_ttl_policy()
@@ -11,10 +10,12 @@ Module structure:
   problem_data_hard.py — PROBLEMS_HARD (GRND019-024, hard)
   writers.py           — write_fof_problem(), write_smt2_problem()
   gen_foundation_problems.py  — this file: main() only
-
 CHANGELOG v1.5:
   - --ext flag: include extension problems GRND010-018
   - --hard flag: include hard problems GRND019-024
+  - Bug 1: --hard now implies --ext (hard problems depend on ext axioms)
+  - Bug 2: verify counts computed dynamically from actual problem lists
+  - Bug 4: file count corrects for None ttl_path
 CHANGELOG v1.4:
   - Split into modules: axiom_data, problem_data, writers
   - Real .ttl policy files written to Problems/DeonticOntology/Policies/
@@ -25,7 +26,6 @@ CHANGELOG v1.3:
   - Per-problem axiom inlining (fof_axioms key)
 CHANGELOG v1.2:
   - FOF files use include() for Layer0 + inline Layer1 subset
-
 Output layout:
   Problems/DeonticOntology/
     Axioms/
@@ -44,18 +44,17 @@ Output layout:
         GRND002-1.p / .smt2  ...
     Discriminating/
         GRND007-open-1.p / .smt2  ...
-
 Usage:
     # base problems only (GRND001-009)
-    uv run Generators/DeonticOntology/gen_foundation_problems.py \\
+    uv run Generators/DeonticOntology/gen_foundation_problems.py \
       --out-dir Problems/DeonticOntology
 
     # base + extension (GRND001-018)
-    uv run Generators/DeonticOntology/gen_foundation_problems.py \\
+    uv run Generators/DeonticOntology/gen_foundation_problems.py \
       --out-dir Problems/DeonticOntology --ext
 
-    # all problems (GRND001-024)
-    uv run Generators/DeonticOntology/gen_foundation_problems.py \\
+    # all problems (GRND001-024); --hard implies --ext automatically
+    uv run Generators/DeonticOntology/gen_foundation_problems.py \
       --out-dir Problems/DeonticOntology --ext --hard
 """
 import argparse
@@ -63,7 +62,6 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-
 from problem_data import PROBLEMS, write_ttl_policy
 from writers import write_fof_problem, write_smt2_problem
 
@@ -95,18 +93,25 @@ def main():
     parser.add_argument(
         "--hard",
         action="store_true",
-        help="Also generate hard problems GRND019-024",
+        help="Also generate hard problems GRND019-024 (implies --ext)",
     )
     # kept for backward compat with run_all.sh — values ignored
     parser.add_argument("--sig-ax",  default=None, help=argparse.SUPPRESS)
     parser.add_argument("--sig-smt", default=None, help=argparse.SUPPRESS)
     args = parser.parse_args()
 
+    # Bug 1 fix: --hard implies --ext; GRND019-024 depend on GRND010-018.
+    # Build problem list in correct order with no gaps.
     problems = PROBLEMS[:]
-    if args.ext:
-        problems += PROBLEMS_EXT
     if args.hard:
+        problems += PROBLEMS_EXT   # always include ext when hard is requested
         problems += PROBLEMS_HARD
+        tier = "base+ext+hard"
+    elif args.ext:
+        problems += PROBLEMS_EXT
+        tier = "base+ext"
+    else:
+        tier = "base"
 
     out_dir = Path(args.out_dir)
     written = []
@@ -123,18 +128,21 @@ def main():
         if ttl_path:
             print(f"  {'':30s}  TTL:             {ttl_path.name}")
 
-    n = len(written)
-    tier = "base"
-    if args.hard:
-        tier = "base+ext+hard"
-    elif args.ext:
-        tier = "base+ext"
-    print(f"\nTotal [{tier}]: {n} problem triples ({n * 3} files)")
+    # Bug 4 fix: count actual files written; ttl_path may be None for some problems.
+    n_problems = len(written)
+    n_files = sum(2 + (1 if ttl else 0) for _, _, ttl in written)
 
-    print("\nVerify base (22 checks):")
-    print("  bash verify_all.sh")
-    print("\nVerify ext (40 checks):")
-    print("  bash verify_all.sh --ext")
+    # Bug 2 fix: derive prover-check counts dynamically from actual problem lists,
+    # not hardcoded values. Each problem generates one FOF + one SMT-LIB check.
+    base_checks = len(PROBLEMS) * 2
+    ext_checks  = (len(PROBLEMS) + len(PROBLEMS_EXT)) * 2
+    hard_checks = (len(PROBLEMS) + len(PROBLEMS_EXT) + len(PROBLEMS_HARD)) * 2
+
+    print(f"\nTotal [{tier}]: {n_problems} problems ({n_files} files written)")
+    print(f"\nProver check counts (FOF + SMT-LIB per problem):")
+    print(f"  base          : {base_checks:3d} checks   bash verify_all.sh")
+    print(f"  base + ext    : {ext_checks:3d} checks   bash verify_all.sh --ext")
+    print(f"  base+ext+hard : {hard_checks:3d} checks   bash verify_all.sh --ext --hard")
 
 
 if __name__ == "__main__":
