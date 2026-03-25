@@ -1,0 +1,379 @@
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+@prefix odrl-l: <https://w3id.org/odrl-legal/> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:    <http://purl.org/dc/terms/> .
+
+# ============================================================
+# ODRL DEONTIC-LEGAL PROFILE
+# Grounding ODRL in Hohfeldian Positions, UFO-L Legal Relators,
+# and I/O Logic (out₃).
+#
+# Derived strictly from three formal vocabularies in the paper:
+#   V1 — Normative Content Sort  (§5.3, Appendix A.0)
+#   V2 — Legal Relator Grounding (Axioms 1–9, §5.2–5.3)
+#   V3 — Institutional Event     (§4, Axioms A1–A3 + bridges B1–B3)
+#
+# Namespace: https://w3id.org/odrl-legal/
+# Prefix   : odrl-l
+# ============================================================
+
+odrl-l: a owl:Ontology ;
+    dct:title        "ODRL Deontic-Legal Profile" ;
+    dct:description  """ODRL profile grounding permissions, prohibitions, and duties
+                        in Hohfeldian positions, UFO-L legal relators, and I/O Logic (out₃).
+                        Covers eight Hohfeldian positions (Liberty, NoRight, Duty, ClaimRight,
+                        Power, Subjection, Immunity, Disability), the legal relator
+                        structure, and the institutional event vocabulary required for the
+                        cross-level design principle.""" ;
+    owl:imports      <http://www.w3.org/ns/odrl/2/> .
+
+
+# ============================================================
+# V1 — NORMATIVE CONTENT SORT
+# Source: sort constraints in §5.3 and Appendix A.0
+# Predicates/functions: Act, Forbearance, rfr, decl
+# ============================================================
+
+odrl-l:NormativeContent a owl:Class ;
+    rdfs:label   "NormativeContent" ;
+    rdfs:comment """Superclass of Act and Forbearance — the two disjoint content sorts
+                    presupposed by ODRL's operational semantics but never stated formally.
+                    Motivated by the observation that ODRL operationalises prohibition
+                    over performed actions (violated by performance) and duty over
+                    performed actions (fulfilled by performance), making Act and
+                    Forbearance disjoint.""" .
+
+odrl-l:Act a owl:Class ;
+    rdfs:subClassOf odrl-l:NormativeContent ;
+    rdfs:label   "Act" ;
+    rdfs:comment "A performable action. Sort constraint: Act ∩ Forbearance = ∅." .
+
+odrl-l:Forbearance a owl:Class ;
+    rdfs:subClassOf odrl-l:NormativeContent ;
+    rdfs:label   "Forbearance" ;
+    rdfs:comment """Refraining from an Act. The normative content of the duty side
+                    of a Prohibition. Sort constraint: rfr(a) ≠ a, rfr injective.""" .
+
+[ a owl:AllDisjointClasses ;
+    owl:members ( odrl-l:Act odrl-l:Forbearance ) ] .
+
+# rfr : Act → Forbearance
+odrl-l:refrainFrom a owl:ObjectProperty ;
+    rdfs:label   "refrainFrom" ;
+    rdfs:domain  odrl-l:Act ;
+    rdfs:range   odrl-l:Forbearance ;
+    rdfs:comment """Encodes the rfr function: maps Act a to its Forbearance rfr(a).
+                    Injective (rfr(a)=rfr(b) → a=b) and irreflexive (rfr(a)≠a).
+                    Used in Axioms 3 and 4 (prohibition relators) to type the
+                    duty-to-refrain content.""" .
+
+# decl : Act → Act
+odrl-l:declareViolationOf a owl:ObjectProperty ;
+    rdfs:label   "declareViolationOf" ;
+    rdfs:domain  odrl-l:Act ;
+    rdfs:range   odrl-l:Act ;
+    rdfs:comment """Encodes the decl function: maps Act a to the institutional Act
+                    decl(a) of declaring violation of a prohibition over a.
+                    Sort constraint: Act(a) → Act(decl(a)).
+                    Used in Axioms 4 and 5 (Power/Subjection content).""" .
+
+
+# ============================================================
+# V2 — LEGAL RELATOR GROUNDING
+# Source: Axioms 1–9, §5.2–5.3
+# Predicates: Rel, ODRLRel, founds, activates, partOf,
+#             cnt, bearer, strong
+# Positions : Liberty, NoRight, Duty, ClaimRight,
+#             Power, Subjection, Immunity, Disability
+# ============================================================
+
+# --- Legal Positions (UFO-L Moments) -----------------------
+
+odrl-l:LegalPosition a owl:Class ;
+    rdfs:label   "LegalPosition" ;
+    rdfs:comment """A UFO-L moment borne by exactly one agent. Represents a
+                    Hohfeldian normative position. By the UFO non-migration
+                    principle (a67), a moment inheres in exactly one bearer
+                    and cannot be transferred.""" .
+
+odrl-l:ConductPosition a owl:Class ;
+    rdfs:subClassOf odrl-l:LegalPosition ;
+    rdfs:label   "ConductPosition" ;
+    rdfs:comment "Conduct-level Hohfeldian position. Regulates the performance of actions." .
+
+odrl-l:CompetencePosition a owl:Class ;
+    rdfs:subClassOf odrl-l:LegalPosition ;
+    rdfs:label   "CompetencePosition" ;
+    rdfs:comment "Competence-level Hohfeldian position. Regulates capacity to change normative relations." .
+
+## Conduct-level positions
+
+odrl-l:Liberty a owl:Class ;
+    rdfs:subClassOf odrl-l:ConductPosition ;
+    rdfs:label   "Liberty" ;
+    rdfs:comment """Hohfeldian Liberty: assignee is not duty-bound to refrain from a.
+                    Correlative: NoRight. Opposite: Duty.
+                    Created by Axiom 1 (Permission Relator — Basic) on rule activation.
+                    Bearer: assignee.""" .
+
+odrl-l:NoRight a owl:Class ;
+    rdfs:subClassOf odrl-l:ConductPosition ;
+    rdfs:label   "NoRight" ;
+    rdfs:comment """Hohfeldian No-Right: assigner holds no claim that assignee refrains.
+                    Correlative: Liberty. Opposite: ClaimRight.
+                    Surfaced by Axiom 1 — absent from ODRL evaluator output.""" .
+
+odrl-l:Duty a owl:Class ;
+    rdfs:subClassOf odrl-l:ConductPosition ;
+    rdfs:label   "Duty" ;
+    rdfs:comment """Hohfeldian Duty: assignee is obligated to perform or refrain.
+                    Correlative: ClaimRight. Opposite: Liberty.
+                    Created by Axioms 3 and 6 (Prohibition / Obligation relators).
+                    Note: odrl-l:Duty is a UFO-L moment position, distinct from
+                    the odrl:Duty rule class.""" .
+
+odrl-l:ClaimRight a owl:Class ;
+    rdfs:subClassOf odrl-l:ConductPosition ;
+    rdfs:label   "ClaimRight" ;
+    rdfs:comment """Hohfeldian Claim-Right: assigner's entitlement that assignee
+                    perform or refrain. Correlative: Duty. Opposite: NoRight.
+                    Surfaced by Axioms 3 and 6 — absent from ODRL evaluator output.""" .
+
+[ a owl:AllDisjointClasses ;
+    owl:members ( odrl-l:Liberty odrl-l:NoRight odrl-l:Duty odrl-l:ClaimRight ) ] .
+
+## Competence-level positions
+
+odrl-l:Power a owl:Class ;
+    rdfs:subClassOf odrl-l:CompetencePosition ;
+    rdfs:label   "Power" ;
+    rdfs:comment """Hohfeldian Power: capacity to alter normative relations.
+                    Correlative: Subjection. Opposite: Disability.
+                    Constituted at activation time by Axiom 4 (Prohibition Relator — Remedy)
+                    when prohibition carries odrl:remedy.
+                    Bearer: assigner. Content: decl(a).
+                    Note: the Power is constituted at activation, not at violation.""" .
+
+odrl-l:Subjection a owl:Class ;
+    rdfs:subClassOf odrl-l:CompetencePosition ;
+    rdfs:label   "Subjection" ;
+    rdfs:comment """Hohfeldian Subjection (Liability): susceptibility to normative
+                    change by the Power holder. Correlative: Power. Opposite: Immunity.
+                    Constituted at activation by Axiom 4. Bearer: assignee.""" .
+
+odrl-l:Immunity a owl:Class ;
+    rdfs:subClassOf odrl-l:CompetencePosition ;
+    rdfs:label   "Immunity" ;
+    rdfs:comment """Hohfeldian Immunity: protection against normative change.
+                    Correlative: Disability. Opposite: Subjection.
+                    Grounded by Axiom 2 (Permission Relator — Strong) when
+                    odrl-l:stronglyPermitted = true.
+                    Required for Theorem 2 (Strong Permission is Cross-Level).""" .
+
+odrl-l:Disability a owl:Class ;
+    rdfs:subClassOf odrl-l:CompetencePosition ;
+    rdfs:label   "Disability" ;
+    rdfs:comment """Hohfeldian Disability: lack of capacity to change the normative
+                    relation. Correlative: Immunity. Opposite: Power.
+                    Grounded by Axiom 2. Axiom 9 (Disability Precludes Prohibition
+                    Creation): if bearer(db,y) ∧ cnt(db,a,t), then no Prohibition
+                    by y over ⟨a,t⟩ can exist.""" .
+
+[ a owl:AllDisjointClasses ;
+    owl:members ( odrl-l:Power odrl-l:Subjection odrl-l:Immunity odrl-l:Disability ) ] .
+
+# --- Legal Relators -----------------------------------------
+
+odrl-l:LegalRelator a owl:Class ;
+    rdfs:label   "LegalRelator" ;
+    rdfs:comment """UFO-L relator: a moment that mediates between agents by bundling
+                    correlative Hohfeldian position pairs as mereological parts.
+                    Founded by a unique ActivationEvent (Axiom 5 — Unique Founding:
+                    each (event, rule) pair founds exactly one relator).""" .
+
+odrl-l:ODRLRelator a owl:Class ;
+    rdfs:subClassOf odrl-l:LegalRelator ;
+    rdfs:label   "ODRLRelator" ;
+    rdfs:comment """A LegalRelator founded by an ODRL rule activation event
+                    (Axiom 6 — ODRL Relator Typing). Three subtypes below.""" .
+
+odrl-l:PermissionRelator a owl:Class ;
+    rdfs:subClassOf odrl-l:ODRLRelator ;
+    rdfs:label   "PermissionRelator" ;
+    rdfs:comment """Founded by activation of odrl:Permission.
+                    Parts: Liberty(assignee, a, t) ∧ NoRight(assigner, a, t).
+                    Extended by Immunity + Disability when stronglyPermitted = true
+                    (Axiom 2).""" .
+
+odrl-l:ProhibitionRelator a owl:Class ;
+    rdfs:subClassOf odrl-l:ODRLRelator ;
+    rdfs:label   "ProhibitionRelator" ;
+    rdfs:comment """Founded by activation of odrl:Prohibition.
+                    Core parts: Duty(assignee, rfr(a), t) ∧ ClaimRight(assigner, rfr(a), t).
+                    Remedy parts (when hasRemedyAction present):
+                    Power(assigner, decl(a), t) ∧ Subjection(assignee, decl(a), t).""" .
+
+odrl-l:DutyRelator a owl:Class ;
+    rdfs:subClassOf odrl-l:ODRLRelator ;
+    rdfs:label   "DutyRelator" ;
+    rdfs:comment """Founded by activation of odrl:Duty rule.
+                    Parts: Duty(assignee, a, t) ∧ ClaimRight(assigner, a, t).""" .
+
+# --- Relator / Position Properties -------------------------
+
+odrl-l:founds a owl:ObjectProperty ;
+    rdfs:label   "founds" ;
+    rdfs:domain  odrl-l:ActivationEvent ;
+    rdfs:range   odrl-l:LegalRelator ;
+    rdfs:comment """Axiom 5 (Unique Founding): founds(e,ρ,r) ∧ founds(e,ρ',r) → ρ=ρ'.
+                    Each (event, rule) pair founds exactly one relator particular.""" .
+
+odrl-l:foundedBy a owl:ObjectProperty ;
+    owl:inverseOf odrl-l:founds ;
+    rdfs:label   "foundedBy" .
+
+odrl-l:activatesRule a owl:ObjectProperty ;
+    rdfs:label   "activatesRule" ;
+    rdfs:domain  odrl-l:ActivationEvent ;
+    rdfs:range   odrl:Rule ;
+    rdfs:comment """activates(e, r): holds iff all constraints of rule r are satisfied
+                    at event e (ODRL Formal Semantics §3.1).""" .
+
+odrl-l:partOf a owl:ObjectProperty ;
+    rdfs:label   "partOf" ;
+    rdfs:domain  odrl-l:LegalPosition ;
+    rdfs:range   odrl-l:LegalRelator ;
+    rdfs:comment """Mereological part-of: a LegalPosition is part of its founding
+                    LegalRelator. Axiom 7 (Hohfeldian Correlativity): each ODRLRelator
+                    contains exactly one position from each correlative pair over the
+                    same ⟨action, target⟩ content.""" .
+
+odrl-l:bearer a owl:ObjectProperty ;
+    rdfs:label   "bearer" ;
+    rdfs:domain  odrl-l:LegalPosition ;
+    rdfs:comment """The agent in whom this legal position inheres (UFO non-migration:
+                    bearer is unique and fixed).""" .
+
+odrl-l:normContent a owl:ObjectProperty ;
+    rdfs:label   "normContent" ;
+    rdfs:domain  odrl-l:LegalPosition ;
+    rdfs:range   odrl-l:NormativeContent ;
+    rdfs:comment "The cnt(l, a, t) predicate: action-target content of the position." .
+
+odrl-l:stronglyPermitted a owl:DatatypeProperty ;
+    rdfs:label   "stronglyPermitted" ;
+    rdfs:domain  odrl:Permission ;
+    rdfs:range   xsd:boolean ;
+    rdfs:comment """Encodes the strong(p) predicate (Axiom 2). When true, the Permission
+                    relator is extended with Immunity(assignee) + Disability(assigner).
+                    NOT derivable from ODRL 2.2 alone; must be asserted by a conforming
+                    profile. Required for Theorem 2 (Strong Permission is Cross-Level).""" .
+
+odrl-l:hasRemedyAction a owl:ObjectProperty ;
+    rdfs:label   "hasRemedyAction" ;
+    rdfs:domain  odrl:Prohibition ;
+    rdfs:range   odrl-l:Act ;
+    rdfs:comment """Encodes the remAct(f, b) predicate (Bridge axiom B1): links a
+                    Prohibition to the action of its remedy duty. Holds iff the
+                    Prohibition carries odrl:remedy. Triggers Axiom 4
+                    (Prohibition Relator — Remedy): constitutes Power + Subjection
+                    pair at activation time.""" .
+
+
+# ============================================================
+# V3 — INSTITUTIONAL EVENT VOCABULARY
+# Source: §4 (Cross-Level), Axioms A1–A3, bridges B1–B3
+# Predicates: NormStateChange, InstEvent, triggers,
+#             competentFor, aboutEvent, remAct
+# ============================================================
+
+odrl-l:ActivationEvent a owl:Class ;
+    rdfs:label   "ActivationEvent" ;
+    rdfs:comment """World-state transition at which the ODRL Evaluator first
+                    computes a rule's activation state as active (all constraints
+                    satisfied). Founds an ODRLRelator via odrl-l:founds.
+                    Corresponds to the token-level occurrence contrasted with the
+                    type-level LegalNormativeDescription (the ODRL Rule).""" .
+
+odrl-l:InstitutionalEvent a owl:Class ;
+    rdfs:label   "InstitutionalEvent" ;
+    rdfs:comment """A1: any NormStateChange requires a triggering InstitutionalEvent.
+                    A2: every InstitutionalEvent requires a competent agent.
+                    Exercises a Power constituted in a LegalRelator.""" .
+
+odrl-l:ViolationDeclaration a owl:Class ;
+    rdfs:subClassOf odrl-l:InstitutionalEvent ;
+    rdfs:label   "ViolationDeclaration" ;
+    rdfs:comment """Institutional act exercising Power(assigner, decl(a), t).
+                    The assigner declares that the assignee violated a Prohibition.
+                    Triggers NormStateChange activating the remedy Duty.
+                    Content: decl(a) — linked via odrl-l:declareViolationOf.""" .
+
+odrl-l:PolicyIssuance a owl:Class ;
+    rdfs:subClassOf odrl-l:InstitutionalEvent ;
+    rdfs:label   "PolicyIssuance" ;
+    rdfs:comment """Institutional act exercising Power(y, issue(π'), t).
+                    Grounds P3–P4: authorization hierarchies and delegation chains.""" .
+
+odrl-l:NormStateChange a owl:Class ;
+    rdfs:label   "NormStateChange" ;
+    rdfs:comment """A1: position q over ⟨a,t⟩ coming into or going out of existence
+                    for agent x. Requires triggering InstitutionalEvent.
+                    Bridge B1: performing a prohibited action instantiates a
+                    NormStateChange activating the reparative Duty over remedy action b.""" .
+
+odrl-l:triggersChange a owl:ObjectProperty ;
+    rdfs:label   "triggersChange" ;
+    rdfs:domain  odrl-l:InstitutionalEvent ;
+    rdfs:range   odrl-l:NormStateChange ;
+    rdfs:comment "triggers(e, x, a, t, q): the InstitutionalEvent triggers this NormStateChange." .
+
+odrl-l:competentAgent a owl:ObjectProperty ;
+    rdfs:label   "competentAgent" ;
+    rdfs:domain  odrl-l:InstitutionalEvent ;
+    rdfs:comment """A2: competentFor(y, e). The agent whose Power (A3) grounds
+                    competence to perform this InstitutionalEvent.""" .
+
+odrl-l:aboutEvent a owl:ObjectProperty ;
+    rdfs:label   "aboutEvent" ;
+    rdfs:domain  odrl-l:CompetencePosition ;
+    rdfs:range   odrl-l:InstitutionalEvent ;
+    rdfs:comment """Bridge axioms B2 and B3: links a Power or Subjection to the
+                    InstitutionalEvent it concerns. Power(pw) ∧ cnt(pw, decl(a), t)
+                    ∧ partOf(pw, ρ) ∧ founds(e, ρ, f) → aboutEvent(pw, e).""" .
+
+odrl-l:affectsPosition a owl:ObjectProperty ;
+    rdfs:label   "affectsPosition" ;
+    rdfs:domain  odrl-l:NormStateChange ;
+    rdfs:range   odrl-l:LegalPosition ;
+    rdfs:comment "The LegalPosition created or destroyed by this NormStateChange." .
+
+
+# ============================================================
+# CROSS-RELATOR DISJOINTNESS CONSTRAINT
+# Source: Axiom 8 (Cross-Relator Position Disjointness)
+# OWL encoding: Liberty and Duty are declared disjoint
+# (captured above in AllDisjointClasses); the content-typed
+# clash Liberty(x,a,t) ∧ Duty(x,rfr(a),t) → ⊥ is enforced
+# by the disjointness of Act and Forbearance as range types
+# of odrl-l:normContent combined with position disjointness.
+# Full enforcement requires SHACL (see constraints below).
+# ============================================================
+
+# ============================================================
+# SHACL SHAPES — key axiom constraints
+# (Requires sh: prefix; import separately if needed)
+# ============================================================
+
+# Shape for Axiom 7: correlativity within ODRLRelator
+# Shape for Axiom 9: disability precludes prohibition creation
+# Shape for Unique Founding (Axiom 5)
+# — Full SHACL shapes deferred to companion shapes graph.
+
+# ============================================================
+# END OF PROFILE
+# ============================================================

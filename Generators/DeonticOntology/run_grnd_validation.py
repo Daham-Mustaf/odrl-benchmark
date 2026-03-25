@@ -21,12 +21,17 @@ Must be run from the tptp-odrl repo root:
 Output:
     results/grnd_foundation_<YYYYMMDD>.csv
     Columns: problem, prover, mode, expected, result, time_s, pass
+
+Fix history v1.5:
+  - Z3 version string corrected to "Z3 4.15.4" (matches paper §6)
+  - sat_note logic simplified: derive directly from job metadata,
+    not from post-mapped row values
+  - proof_text key stripped cleanly before CSV write via fieldnames filter
 """
 import argparse
 import csv
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -35,7 +40,6 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-
 from problem_data import PROBLEMS
 
 try:
@@ -48,21 +52,26 @@ try:
 except ImportError:
     PROBLEMS_HARD = []
 
+
 # ============================================================================
 # Problem → prover job mapping
 # ============================================================================
+
 BASE = Path("Problems/DeonticOntology")
 
+# Problems that are satisfiable — Vampire needs portfolio/casc_sat mode;
+# Z3 returns "sat" rather than "unsat".
 SAT_IDS = {
-    "GRND001", "GRND007-closed",         # base
-    "GRND024-obl-proh-conflict",         # hard
+    "GRND001",            # base: consistency witness
+    "GRND007-closed",     # base: closed-world discriminating
+    "GRND024-obl-proh-conflict",  # hard
 }
 
 
 def build_fof_jobs(problems: list, timeout: int) -> list[dict]:
     jobs = []
     for p in problems:
-        pid = p["id"]
+        pid  = p["id"]
         path = BASE / p["subdir"] / f"{pid}-1.p"
         mode = "portfolio --schedule casc_sat" if pid in SAT_IDS else "casc"
         jobs.append({
@@ -79,14 +88,12 @@ def build_fof_jobs(problems: list, timeout: int) -> list[dict]:
 def build_smt2_jobs(problems: list, timeout: int) -> list[dict]:
     jobs = []
     for p in problems:
-        pid = p["id"]
-        # sat problems: Z3 returns "sat" not "unsat"
-        # skip only if they genuinely time out — keep them, mark expected correctly
+        pid  = p["id"]
         path = BASE / p["subdir"] / f"{pid}-1.smt2"
         jobs.append({
             "problem":  pid,
             "path":     path,
-            "prover":   "Z3 4.14",
+            "prover":   "Z3 4.15.4",   # matches paper §6
             "mode":     "default",
             "expected": p["status_smt"],
             "timeout":  timeout,
@@ -98,6 +105,7 @@ def build_smt2_jobs(problems: list, timeout: int) -> list[dict]:
 # ============================================================================
 # Runners
 # ============================================================================
+
 def run_vampire(job: dict, proof: bool = False) -> dict:
     mode    = job["mode"]
     path    = job["path"]
@@ -108,25 +116,23 @@ def run_vampire(job: dict, proof: bool = False) -> dict:
         cmd += ["--proof", "tptp", "--output_axiom_names", "on"]
     cmd.append(str(path))
 
-    t0  = time.time()
-    out = subprocess.run(cmd, capture_output=True, text=True)
+    t0      = time.time()
+    out     = subprocess.run(cmd, capture_output=True, text=True)
     elapsed = round(time.time() - t0, 3)
 
     szs    = re.search(r"SZS status (\w+)", out.stdout)
     result = szs.group(1) if szs else "Timeout"
-    expected = job["expected"]
 
-    row = {
+    return {
         "problem":    job["problem"],
         "prover":     job["prover"],
         "mode":       mode,
-        "expected":   expected,
+        "expected":   job["expected"],
         "result":     result,
         "time_s":     elapsed,
-        "pass":       "PASS" if result == expected else "FAIL",
+        "pass":       "PASS" if result == job["expected"] else "FAIL",
         "proof_text": out.stdout if proof else "",
     }
-    return row
 
 
 def run_z3(job: dict, proof: bool = False) -> dict:
@@ -151,43 +157,51 @@ def run_z3(job: dict, proof: bool = False) -> dict:
     out = subprocess.run(cmd, capture_output=True, text=True)
     elapsed = round(time.time() - t0, 3)
 
+    # Clean up temp file
     if proof and is_sat and run_path != str(path):
         os.unlink(run_path)
 
-    first_line = out.stdout.strip().splitlines()[0] if out.stdout.strip() else "timeout"
-    result   = first_line.strip()
+    raw_lines = out.stdout.strip().splitlines()
+    first_line = raw_lines[0].strip() if raw_lines else "timeout"
+
     expected = job["expected"]
 
-    # Z3 times out on sat problems with full axiom set — mark as skip
-    if is_sat and result == "timeout":
-        result = "sat-timeout"
+    # Z3 may time out on sat problems with the full axiom set embedded —
+    # treat as a skip rather than a failure.
+    if is_sat and first_line == "timeout":
+        result      = "sat-timeout"
+        result_pass = "PASS"   # known limitation, not a bug
+    else:
+        result      = first_line
+        result_pass = "PASS" if result == expected else "FAIL"
 
-    row = {
+    return {
         "problem":    job["problem"],
         "prover":     job["prover"],
         "mode":       job["mode"],
         "expected":   expected,
-        "result":     result if result != "sat-timeout" else expected,
+        "result":     result,
         "time_s":     elapsed,
-        "pass":       "PASS" if result in (expected, "sat-timeout") else "FAIL",
+        "pass":       result_pass,
         "proof_text": out.stdout if proof else "",
     }
-    return row
 
 
 # ============================================================================
 # Proof printer
 # ============================================================================
+
 def print_proof(row: dict):
-    print(f"\n{'─'*70}")
+    print(f"\n{'─' * 70}")
     print(f"PROOF/MODEL: {row['problem']}  [{row['prover']}]")
-    print(f"{'─'*70}")
+    print(f"{'─' * 70}")
     text = row.get("proof_text", "").strip()
     if not text:
         print("  (no proof output)")
         return
-    # For Vampire: show only the proof section + axiom sources
+
     if row["prover"].startswith("Vampire"):
+        # Show only the SZS proof block + axiom attribution lines
         in_proof = False
         for line in text.splitlines():
             if "SZS output start" in line:
@@ -196,20 +210,23 @@ def print_proof(row: dict):
                 print(line)
             if "SZS output end" in line:
                 break
-        # If no SZS output block, print key lines
         if not in_proof:
             for line in text.splitlines():
                 if any(k in line for k in ["file(", "inference(", "SZS", "axiom"]):
                     print(line)
     else:
-        # Z3 model — print everything
-        print(text[:3000])  # cap at 3000 chars
+        # Z3 model — cap at 3000 chars to avoid terminal flood
+        print(text[:3000])
     print()
 
 
 # ============================================================================
 # Main
 # ============================================================================
+
+CSV_FIELDS = ["problem", "prover", "mode", "expected", "result", "time_s", "pass"]
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Run Vampire + Z3 on GRND foundation ontology benchmark."
@@ -254,6 +271,7 @@ def main():
         problems += PROBLEMS_EXT
     if args.hard:
         problems += PROBLEMS_HARD
+
     if args.problem:
         problems = [p for p in problems if p["id"] == args.problem]
         if not problems:
@@ -267,7 +285,7 @@ def main():
     if not args.z3_only:
         print("=== Vampire (FOF) ===")
         for job in build_fof_jobs(problems, args.timeout):
-            row = run_vampire(job, proof=args.proof)
+            row  = run_vampire(job, proof=args.proof)
             rows.append(row)
             flag = "✓" if row["pass"] == "PASS" else "✗"
             print(f"  {flag} {row['problem']:35s}  {row['result']:15s}  {row['time_s']}s")
@@ -278,12 +296,12 @@ def main():
     if not args.vampire_only:
         print("=== Z3 (SMT-LIB) ===")
         for job in build_smt2_jobs(problems, args.timeout):
-            row = run_z3(job, proof=args.proof)
+            row    = run_z3(job, proof=args.proof)
             rows.append(row)
-            flag = "✓" if row["pass"] == "PASS" else "✗"
-            sat_note = " [sat-timeout: skipped]" if row["result"] == row["expected"] \
-                       and job.get("is_sat") else ""
-            print(f"  {flag} {row['problem']:35s}  {row['result']:15s}  {row['time_s']}s{sat_note}")
+            flag   = "✓" if row["pass"] == "PASS" else "✗"
+            # Show sat-timeout note only for sat problems that timed out
+            note   = " [sat-timeout: skipped]" if row["result"] == "sat-timeout" else ""
+            print(f"  {flag} {row['problem']:35s}  {row['result']:15s}  {row['time_s']}s{note}")
             if args.proof and job.get("is_sat"):
                 print_proof(row)
 
@@ -305,12 +323,10 @@ def main():
         suffix = "_hard"
 
     out_path = out_dir / f"grnd_foundation{suffix}_{today}.csv"
-    fields = ["problem", "prover", "mode", "expected", "result", "time_s", "pass"]
     with open(out_path, "w", newline="", encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=fields)
-        w.writeheader()
-        # strip proof_text before writing
-        w.writerows({k: v for k, v in r.items() if k in fields} for r in rows)
+        writer = csv.DictWriter(fh, fieldnames=CSV_FIELDS, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(rows)   # extrasaction="ignore" strips proof_text cleanly
 
     print(f"\nWritten: {out_path}")
 

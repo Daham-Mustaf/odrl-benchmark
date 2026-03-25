@@ -1,0 +1,191 @@
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+@prefix odrl-l: <https://w3id.org/odrl-legal/> .
+@prefix dct:    <http://purl.org/dc/terms/> .
+
+odrl-l: a owl:Ontology ;
+    dct:title "ODRL Deontic-Legal Profile" ;
+    owl:imports <http://www.w3.org/ns/odrl/2/> .
+
+# ── 8 Legal Position classes ──────────────────────────────
+
+odrl-l:LegalPosition a owl:Class ;
+    rdfs:label "LegalPosition" .
+
+odrl-l:ConductPosition a owl:Class ;
+    rdfs:subClassOf odrl-l:LegalPosition ;
+    rdfs:label "ConductPosition" .
+
+odrl-l:CompetencePosition a owl:Class ;
+    rdfs:subClassOf odrl-l:LegalPosition ;
+    rdfs:label "CompetencePosition" .
+
+# Conduct level
+odrl-l:Permission a owl:Class ;
+    rdfs:subClassOf odrl-l:ConductPosition ;
+    rdfs:label "Permission" ;
+    rdfs:comment "Bearer: assignee. Correlative: NoRight. Source: Ax5.1." .
+
+odrl-l:NoRight a owl:Class ;
+    rdfs:subClassOf odrl-l:ConductPosition ;
+    rdfs:label "NoRight" ;
+    rdfs:comment "Bearer: assigner. Correlative: Permission. Source: Ax5.1." .
+
+odrl-l:Duty a owl:Class ;
+    rdfs:subClassOf odrl-l:ConductPosition ;
+    rdfs:label "Duty" ;
+    rdfs:comment "Bearer: assignee. Correlative: Right. Source: Ax5.3, Ax5.6." .
+
+odrl-l:Right a owl:Class ;
+    rdfs:subClassOf odrl-l:ConductPosition ;
+    rdfs:label "Right" ;
+    rdfs:comment "Bearer: assigner. Correlative: Duty. Source: Ax5.3, Ax5.6." .
+
+# Competence level
+odrl-l:Power a owl:Class ;
+    rdfs:subClassOf odrl-l:CompetencePosition ;
+    rdfs:label "Power" ;
+    rdfs:comment "Bearer: assigner. Correlative: Subjection. Source: Ax5.4." .
+
+odrl-l:Subjection a owl:Class ;
+    rdfs:subClassOf odrl-l:CompetencePosition ;
+    rdfs:label "Subjection" ;
+    rdfs:comment "Bearer: assignee. Correlative: Power. Source: Ax5.4." .
+
+odrl-l:Immunity a owl:Class ;
+    rdfs:subClassOf odrl-l:CompetencePosition ;
+    rdfs:label "Immunity" ;
+    rdfs:comment "Bearer: assignee. Correlative: Disability. Source: Ax5.2." .
+
+odrl-l:Disability a owl:Class ;
+    rdfs:subClassOf odrl-l:CompetencePosition ;
+    rdfs:label "Disability" ;
+    rdfs:comment "Bearer: assigner. Correlative: Immunity. Source: Ax5.2, Ax5.11." .
+
+# Issue 2 fix: was (Ax5.8) which is Correlativity.
+# Position sort disjointness comes from UFO moment-type disjointness.
+[ a owl:AllDisjointClasses ;
+    owl:members ( odrl-l:Permission odrl-l:NoRight
+                  odrl-l:Duty       odrl-l:Right
+                  odrl-l:Power      odrl-l:Subjection
+                  odrl-l:Immunity   odrl-l:Disability ) ] .
+# UFO moment-type disjointness (gen_signature FOF_POSITION_DISJOINTNESS;
+# paper §3, Guizzardi2022-PORUUF).
+
+# ── 5 Relator classes ─────────────────────────────────────
+
+# Issue 3 fix: was "Source: Ax5.6" — Ax5.6 is the obligation relator.
+# Relator typing comes from Ax5.7 (ODRL Relator Typing).
+odrl-l:ODRLRelator a owl:Class ;
+    rdfs:label "ODRLRelator" ;
+    rdfs:comment "Founded by activation of an ODRL rule. Source: Ax5.7 (ODRL Relator Typing)." .
+
+# Issue 1 fix: PermissionRelator comment updated to reflect two-relator architecture.
+odrl-l:PermissionRelator a owl:Class ;
+    rdfs:subClassOf odrl-l:ODRLRelator ;
+    rdfs:label "PermissionRelator" ;
+    rdfs:comment "rho_P: Permission + NoRight. Founded via founds. When stronglyPermitted, a separate ImmunityRelator (rho_I) is founded via foundsImm." .
+
+# Issue 1 fix: ProhibitionRelator comment updated to reflect two-relator architecture.
+odrl-l:ProhibitionRelator a owl:Class ;
+    rdfs:subClassOf odrl-l:ODRLRelator ;
+    rdfs:label "ProhibitionRelator" ;
+    rdfs:comment "rho_F: Duty + Right over rfr(a). Founded via founds. When hasRemedy, a separate RemedyRelator (rho_R) is founded via foundsRem." .
+
+odrl-l:DutyRelator a owl:Class ;
+    rdfs:subClassOf odrl-l:ODRLRelator ;
+    rdfs:label "DutyRelator" ;
+    rdfs:comment "Duty + Right over act." .
+
+# Issue 1 fix: new class for the immunity-competence relator (rho_I).
+odrl-l:ImmunityRelator a owl:Class ;
+    rdfs:subClassOf odrl-l:ODRLRelator ;
+    rdfs:label "ImmunityRelator" ;
+    rdfs:comment "rho_I: Immunity + Disability. Founded via foundsImm when stronglyPermitted. Distinct from PermissionRelator so rho_P != rho_I." .
+
+# Issue 1 fix: new class for the remedy-competence relator (rho_R).
+odrl-l:RemedyRelator a owl:Class ;
+    rdfs:subClassOf odrl-l:ODRLRelator ;
+    rdfs:label "RemedyRelator" ;
+    rdfs:comment "rho_R: Power + Subjection. Founded via foundsRem when hasRemedy. Distinct from ProhibitionRelator so rho_F != rho_R." .
+
+# ── 3 Event classes ───────────────────────────────────────
+
+odrl-l:ActivationEvent a owl:Class ;
+    rdfs:label "ActivationEvent" ;
+    rdfs:comment "Event e in founds(e,rho,r). Founds an ODRLRelator." .
+
+odrl-l:ViolationDeclaration a owl:Class ;
+    rdfs:label "ViolationDeclaration" ;
+    rdfs:comment "Exercises Power(assigner,decl(a),t). Source: Ax5.4, B1." .
+
+odrl-l:PolicyIssuance a owl:Class ;
+    rdfs:label "PolicyIssuance" ;
+    rdfs:comment "Grounds P3-P4." .
+
+# ── Properties ────────────────────────────────────────────
+
+odrl-l:bearer a owl:ObjectProperty ;
+    rdfs:domain odrl-l:LegalPosition ;
+    rdfs:range  odrl:Party ;
+    rdfs:label  "bearer" .
+
+odrl-l:partOf a owl:ObjectProperty ;
+    rdfs:domain odrl-l:LegalPosition ;
+    rdfs:range  odrl-l:ODRLRelator ;
+    rdfs:label  "partOf" .
+
+odrl-l:founds a owl:ObjectProperty ;
+    rdfs:domain odrl-l:ActivationEvent ;
+    rdfs:range  odrl-l:ODRLRelator ;
+    rdfs:label  "founds" ;
+    rdfs:comment "Approximates founds/3. Founds a conduct relator (PermissionRelator, ProhibitionRelator, or DutyRelator)." .
+
+# Issue 1 fix: new founding property for the immunity relator.
+odrl-l:foundsImm a owl:ObjectProperty ;
+    rdfs:domain odrl-l:ActivationEvent ;
+    rdfs:range  odrl-l:ImmunityRelator ;
+    rdfs:label  "foundsImm" ;
+    rdfs:comment "Approximates founds_imm/3. Founds rho_I for strongly-permitted rule." .
+
+# Issue 1 fix: new founding property for the remedy relator.
+odrl-l:foundsRem a owl:ObjectProperty ;
+    rdfs:domain odrl-l:ActivationEvent ;
+    rdfs:range  odrl-l:RemedyRelator ;
+    rdfs:label  "foundsRem" ;
+    rdfs:comment "Approximates founds_rem/3. Founds rho_R for prohibition with remedy." .
+
+odrl-l:activatesRule a owl:ObjectProperty ;
+    rdfs:domain odrl-l:ActivationEvent ;
+    rdfs:range  odrl:Rule ;
+    rdfs:label  "activatesRule" .
+
+odrl-l:normContent a owl:ObjectProperty ;
+    rdfs:domain odrl-l:LegalPosition ;
+    rdfs:label  "normContent" ;
+    rdfs:comment "Binary split of cnt(m,a,t): the action/forbearance argument." .
+
+odrl-l:normTarget a owl:ObjectProperty ;
+    rdfs:domain odrl-l:LegalPosition ;
+    rdfs:range  odrl:Asset ;
+    rdfs:label  "normTarget" ;
+    rdfs:comment "Binary split of cnt(m,a,t): the target argument." .
+
+# ── 2 ODRL extension points ───────────────────────────────
+
+# Issue 4 fix: comment updated to reflect separate ImmunityRelator.
+odrl-l:stronglyPermitted a owl:DatatypeProperty ;
+    rdfs:domain odrl:Permission ;
+    rdfs:range  xsd:boolean ;
+    rdfs:label  "stronglyPermitted" ;
+    rdfs:comment "Profile flag triggering Ax5.2: a separate ImmunityRelator (rho_I) is founded via foundsImm alongside the PermissionRelator (rho_P)." .
+
+# Issue 4 fix: comment updated to reflect separate RemedyRelator.
+odrl-l:hasRemedy a owl:DatatypeProperty ;
+    rdfs:domain odrl:Prohibition ;
+    rdfs:range  xsd:boolean ;
+    rdfs:label  "hasRemedy" ;
+    rdfs:comment "Profile flag triggering Ax5.4: a separate RemedyRelator (rho_R) is founded via foundsRem alongside the ProhibitionRelator (rho_F)." .
