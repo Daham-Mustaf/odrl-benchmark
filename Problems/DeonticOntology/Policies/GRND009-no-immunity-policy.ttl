@@ -28,3 +28,6 @@
 <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
 # Weak permission (no Immunity/Disability).
 # Prohibition creates Duty(rfr(read)) => Permission + Duty conflict => False.
+# Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+#   museen=drk:StaatlicheMuseenBerlin, read=odrl:read,
+#   museum_api=drk:MuseumCollectionAPI

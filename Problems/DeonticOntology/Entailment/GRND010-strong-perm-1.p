@@ -5,12 +5,15 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND010-strong-perm-policy.ttl
-% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
 % % perm(p1) + strong(p1) + activates(e1,p1).
 % % Ax5.2 existentially founds rho_I via founds_imm.
-% % Entails Immunity(alice,read,d1) and Disability(acme,read,d1)
+% % Entails Immunity(bibliothek,read,museum_api) and Disability(museen,read,museum_api)
 % % in the fresh immunity relator rho_I.
+% % Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+% %   museen=drk:StaatlicheMuseenBerlin, read=odrl:read,
+% %   museum_api=drk:MuseumCollectionAPI
 %
 % ODRL Policy (Turtle) — see Policies/ for full file:
 % @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
@@ -18,22 +21,17 @@
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % @prefix schema: <https://schema.org/> .
 % # strong(p1) asserted by profile extension (not ODRL 2.2 alone).
-% <drk:policy-strong-read> a odrl:Agreement ;
-%     odrl:permission [ a odrl:Permission ;
-%         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
-%         odrl:assigner <drk:StaatlicheMuseenBerlin> ;
-%         odrl:action   odrl:read ;
-%         odrl:target   <drk:MuseumCollectionAPI> ] .
-% <drk:MuseumCollectionAPI>             a dcat:DataService .
-% <drk:StaatlicheMuseenBerlin>          a schema:Organization .
-% <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
+% ... (11 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
-fof(ax_perm_relator_basic, axiom,
+% NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
+% Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
+% timeout on the full set). This asymmetry is intentional.
+fof(ax_perm_relator_weak, axiom,
     ! [P, X, Y, A, T, E] :
       ( ( perm(P) & aee(P,X) & aer(P,Y) & act(P,A) & tgt(P,T) & activates(E,P) )
      => ? [Rho, L, N] :
@@ -68,24 +66,25 @@ fof(ax_perm_relator_strong, axiom,
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 % Ground instance (gamma)
 %--------------------------------------------------------------------------
-fof(agent_alice, axiom, agent(alice)).
-fof(agent_acme,  axiom, agent(acme)).
-fof(action_read, axiom, action(read)).
-fof(target_d1,   axiom, target(d1)).
-fof(rule_p1,     axiom, rule(p1)).
-fof(event_e1,    axiom, event(e1)).
-fof(perm_p1,     axiom, perm(p1)).
-fof(strong_p1,   axiom, strong(p1)).
-fof(aee_p1,      axiom, aee(p1, alice)).
-fof(aer_p1,      axiom, aer(p1, acme)).
-fof(act_p1,      axiom, act(p1, read)).
-fof(tgt_p1,      axiom, tgt(p1, d1)).
-fof(act_e1_p1,   axiom, activates(e1, p1)).
+fof(agent_bibliothek, axiom, agent(bibliothek)).
+fof(agent_museen,     axiom, agent(museen)).
+fof(action_read,      axiom, action(read)).
+fof(target_museum,    axiom, target(museum_api)).
+fof(rule_p1,          axiom, rule(p1)).
+fof(event_e1,         axiom, event(e1)).
+fof(perm_p1,          axiom, perm(p1)).
+fof(strong_p1,        axiom, strong(p1)).
+fof(aee_p1,           axiom, aee(p1, bibliothek)).
+fof(aer_p1,           axiom, aer(p1, museen)).
+fof(act_p1,           axiom, act(p1, read)).
+fof(tgt_p1,           axiom, tgt(p1, museum_api)).
+fof(act_e1_p1,        axiom, activates(e1, p1)).
 
 %--------------------------------------------------------------------------
 % Conjecture
@@ -93,5 +92,5 @@ fof(act_e1_p1,   axiom, activates(e1, p1)).
 fof(conjecture, conjecture,
     ( ? [RhoI, Im, Db] :
   ( founds_imm(e1, RhoI, p1)
-  & immunity(Im)   & bearer(Im, alice) & cnt(Im, read, d1) & part_of(Im, RhoI)
-  & disability(Db) & bearer(Db, acme)  & cnt(Db, read, d1) & part_of(Db, RhoI) ) )).
+  & immunity(Im)   & bearer(Im, bibliothek) & cnt(Im, read, museum_api) & part_of(Im, RhoI)
+  & disability(Db) & bearer(Db, museen)     & cnt(Db, read, museum_api) & part_of(Db, RhoI) ) )).

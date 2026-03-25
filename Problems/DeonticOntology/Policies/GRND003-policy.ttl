@@ -22,3 +22,6 @@
     schema:name "Staatliche Museen Berlin Collection API" .
 <drk:StaatlicheMuseenBerlin> a schema:Organization .
 <drk:StreamingPortalGmbH>    a schema:Organization .
+# Abstract constants: portal=drk:StreamingPortalGmbH,
+#   museen=drk:StaatlicheMuseenBerlin, distrib=odrl:distribute,
+#   museum_api=drk:MuseumCollectionAPI

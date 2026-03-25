@@ -85,3 +85,51 @@ print('OK: preamble is v1.5')
 { cat Problems/DeonticOntology/Entailment/GRND004-1.smt2; } | z3 -in
 # expected: unsat
 ```
+
+Clear dependency chain, bottom to top:
+
+```
+gen_layer0_signature.py
+│
+│  generates: GRND000-0.ax  (FOF preamble, included by all .p files)
+│             GRND000-0.smt2 (SMT2 preamble, embedded by writers.py)
+│
+├──► axiom_data.py
+│      │  contains: FOF_AXIOM_DICT, SMT2_AXIOMS, SMT2_APPENDIX_SORTS
+│      │  depends on: nothing (standalone data module)
+│      │
+│      ├──► gen_layer1_deontic.py
+│      │      imports: axiom_data.SMT2_AXIOMS
+│      │      generates: GRND-AX-1.ax  (FOF axiom file)
+│      │                 GRND-AX-1.smt2 (reference copy only)
+│      │
+│      ├──► problem_data.py
+│      │      imports: axiom_data.FOF_AXIOM_DICT (via writers.py key lookup)
+│      │      contains: PROBLEMS list (GRND001-009)
+│      │
+│      ├──► problem_data_ext.py    (GRND010-018)
+│      ├──► problem_data_hard.py   (GRND019-024)
+│      │
+│      └──► writers.py
+│             imports: axiom_data.FOF_AXIOM_DICT
+│                      axiom_data.SMT2_AXIOMS
+│                      axiom_data.SMT2_APPENDIX_SORTS
+│             imports preamble from: gen_layer0_signature.generate_smt2()
+│             writes: .p files (include Layer0 + inline Layer1 subset)
+│                     .smt2 files (preamble + appendix + axioms + problem)
+│                     (problem content comes from problem_data.py dicts)
+│
+└──► gen_foundation_problems.py
+       imports: problem_data.PROBLEMS
+                problem_data_ext.PROBLEMS_EXT
+                problem_data_hard.PROBLEMS_HARD
+                writers.write_fof_problem, write_smt2_problem
+                problem_data.write_ttl_policy
+       role: main() only — orchestrates everything
+```
+
+**The single source of truth chain:**
+
+`axiom_data.py` → `writers.py` → `.p` / `.smt2` files
+
+If axiom_data changes, writers.py picks it up automatically. `gen_layer1_deontic.py` and `writers.py` must stay in sync with axiom_data — that's where all the naming bugs cascaded from.

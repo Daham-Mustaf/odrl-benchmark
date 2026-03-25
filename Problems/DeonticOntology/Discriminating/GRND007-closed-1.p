@@ -7,8 +7,10 @@
 % Policy   : Policies/GRND007-closed-policy.ttl
 % Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
-% % No perm rule for 'modify'. No open-world closure.
-% % Permission(alice,modify,d1) is NOT derivable — consistent with its negation.
+% % No perm rule for modify_act. No open-world closure.
+% % Permission(portal,modify_act,theater_ds) is NOT derivable.
+% % Abstract constants: portal=drk:StreamingPortalGmbH,
+% %   modify_act=odrl:modify, theater_ds=drk:TheaterShowtimeDataset
 %
 % ODRL Policy (Turtle) — see Policies/ for full file:
 % @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
@@ -16,8 +18,7 @@
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % # behaviour=closed policy over drk:TheaterShowtimeDataset.
 % # No permission for odrl:modify declared.
-% # => Permission(drk:StreamingPortalGmbH, modify,
-% #               drk:TheaterShowtimeDataset) NOT derivable.
+% ... (4 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
@@ -47,13 +48,14 @@ include('Axioms/Layer0-Signature/GRND000-0.ax').
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 % Ground instance (gamma)
 %--------------------------------------------------------------------------
-fof(agent_alice,         axiom, agent(alice)).
-fof(action_modify,       axiom, action(modify)).
-fof(target_d1,           axiom, target(d1)).
-fof(no_permission_modify, axiom,
-    ~ ? [L] : ( permission(L) & bearer(L, alice) & cnt(L, modify, d1) )).
+fof(agent_portal,           axiom, agent(portal)).
+fof(action_modify,          axiom, action(modify_act)).
+fof(target_theater,         axiom, target(theater_ds)).
+fof(no_permission_modify,   axiom,
+    ~ ? [L] : ( permission(L) & bearer(L, portal) & cnt(L, modify_act, theater_ds) )).

@@ -13,5 +13,7 @@
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 # behaviour=closed policy over drk:TheaterShowtimeDataset.
 # No permission for odrl:modify declared.
-# => Permission(drk:StreamingPortalGmbH, modify,
-#               drk:TheaterShowtimeDataset) NOT derivable.
+# => Permission(drk:StreamingPortalGmbH, modify, drk:TheaterShowtimeDataset)
+#    NOT derivable.
+# Abstract constants: portal=drk:StreamingPortalGmbH,
+#   modify_act=odrl:modify, theater_ds=drk:TheaterShowtimeDataset

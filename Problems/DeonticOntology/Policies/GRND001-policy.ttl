@@ -22,3 +22,6 @@
     schema:name "Berliner Ensemble Showtime Dataset" .
 <drk:BerlinerEnsemble>                a schema:Organization .
 <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
+# Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+#   ensemble=drk:BerlinerEnsemble, read=odrl:read,
+#   theater_ds=drk:TheaterShowtimeDataset

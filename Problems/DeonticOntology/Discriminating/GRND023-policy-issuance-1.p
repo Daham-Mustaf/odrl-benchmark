@@ -5,13 +5,14 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND023-policy-issuance-policy.ttl
-% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
 % % Two distinct rules pi1 != pi2.
-% % Layer0 ISSUE2: issue(A)=issue(B) => A=B (injectivity).
+% % Layer0 issue_injective: issue(A)=issue(B) => A=B.
 % % Conjecture (FOF): issue(pi1) != issue(pi2).
-% % SMT2 negated: (assert (= (issue pi1) (issue pi2))) with (assert (not (= pi1 pi2))).
+% % SMT2 negated: (assert (= (issue pi1) (issue pi2))) with pi1 != pi2.
 % % Injectivity forces pi1=pi2 => contradiction with distinctness.
+% % NOTE: issue/1 is a PAAR benchmark function; not used in GRND001-024 paper problems.
 %
 % ODRL Policy (Turtle) — see Policies/ for full file:
 % @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
@@ -19,37 +20,16 @@
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % @prefix schema: <https://schema.org/> .
 % # Policy issuance authority test.
-% # Two distinct policies — their issue() acts must be distinct.
-% <drk:policy-issuance-1> a odrl:Agreement ;
-%     odrl:obligation [ a odrl:Duty ;
-%         odrl:assignee <drk:PhilharmonieBerlin> ;
-%         odrl:assigner <drk:FraunhoferFIT> ;
-%         odrl:action   odrl:distribute ;
-%         odrl:target   <drk:ConcertRecordingDataset> ] .
-% <drk:policy-issuance-2> a odrl:Agreement ;
-%     odrl:obligation [ a odrl:Duty ;
-%         odrl:assignee <drk:StaatlicheMuseenBerlin> ;
-%         odrl:assigner <drk:FraunhoferFIT> ;
-%         odrl:action   odrl:read ;
-%         odrl:target   <drk:MuseumCollectionAPI> ] .
-% <drk:ConcertRecordingDataset> a dcat:Dataset .
-% <drk:MuseumCollectionAPI>     a dcat:DataService .
-% <drk:PhilharmonieBerlin>      a schema:Organization .
-% <drk:StaatlicheMuseenBerlin>  a schema:Organization .
-% <drk:FraunhoferFIT>           a schema:Organization .
+% ... (18 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
-fof(ax_obl_relator, axiom,
-    ! [D, X, Y, A, T, E] :
-      ( ( obl(D) & aee(D,X) & aer(D,Y) & act(D,A) & tgt(D,T) & activates(E,D) )
-     => ? [Rho, Du, C] :
-          ( founds(E,Rho,D)
-          & duty(Du) & bearer(Du,X) & cnt(Du,A,T) & part_of(Du,Rho)
-          & right(C) & bearer(C,Y)  & cnt(C,A,T)  & part_of(C,Rho) ) )).
+% NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
+% Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
+% timeout on the full set). This asymmetry is intentional.
 
 %--------------------------------------------------------------------------
 % Appendix A.0 extra predicates (declared via axiom context in Layer1)
@@ -70,6 +50,7 @@ fof(ax_obl_relator, axiom,
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------

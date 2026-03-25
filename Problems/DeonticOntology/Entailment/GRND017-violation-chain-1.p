@@ -5,43 +5,35 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND017-violation-chain-policy.ttl
-% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
-% % proh(f1) + has_rem(f1) + does(alice,distribute,d1).
+% % proh(f1) + has_rem(f1) + does(marketplace,distrib,concert_ds).
 % % B1: violation => NormStateChange.
 % % A1: NormStateChange => InstEvent.
 % % A2: InstEvent => competent agent.
 % % A3: competence => Power+Subjection pair.
-% % Conjecture: exists Power pw and Subjection s about some event.
+% % Conjecture: Power+Subjection in fresh rho_R founded via founds_rem at e1.
+% % Abstract constants: marketplace=drk:MusicMarketplaceAG,
+% %   philharmonie=drk:PhilharmonieBerlin, distrib=odrl:distribute,
+% %   concert_ds=drk:ConcertRecordingDataset
 %
 % ODRL Policy (Turtle) — see Policies/ for full file:
 % @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
 % @prefix drk:    <http://w3id.org/drk/ontology/> .
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % @prefix schema: <https://schema.org/> .
-% <drk:policy-violation-chain> a odrl:Agreement ;
-%     odrl:prohibition [ a odrl:Prohibition ;
-%         odrl:assignee <drk:MusicMarketplaceAG> ;
-%         odrl:assigner <drk:PhilharmonieBerlin> ;
-%         odrl:action   odrl:distribute ;
-%         odrl:target   <drk:ConcertRecordingDataset> ;
-%         odrl:remedy   [ a odrl:Duty ;
-%             odrl:action odrl:compensate ] ] .
-% <drk:ConcertRecordingDataset> a dcat:Dataset .
-% <drk:PhilharmonieBerlin>      a schema:Organization .
-% <drk:MusicMarketplaceAG>      a schema:Organization .
-% # drk:MusicMarketplaceAG violates the prohibition.
-% # The violation triggers a normative state change (B1),
-% # which requires an institutional event (A1),
-% # which requires a competent agent (A2),
-% # whose competence is a Power-Subjection pair (A3).
+% drk:policy-violation-chain a odrl:Agreement ;
+% ... (18 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
-fof(ax_proh_relator_basic, axiom,
+% NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
+% Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
+% timeout on the full set). This asymmetry is intentional.
+fof(ax_proh_relator_conduct, axiom,
     ! [F, X, Y, A, T, E] :
       ( ( proh(F) & aee(F,X) & aer(F,Y) & act(F,A) & tgt(F,T) & activates(E,F) )
      => ? [Rho, D, C] :
@@ -74,6 +66,14 @@ fof(ax_B1, axiom,
     ! [F, X, A, T] :
       ( ( proh(F) & has_rem(F) & act(F,A) & tgt(F,T) & aee(F,X) & does(X,A,T) )
      => ? [B] : ( rem_act(F,B) & norm_state_change(X,B,T,duty_rem) ) )).
+fof(ax_B2, axiom,
+    ! [Pw, A, T, Rho, E, R] :
+      ( ( power(Pw) & cnt(Pw,decl(A),T) & part_of(Pw,Rho) & founds_rem(E,Rho,R) )
+     => about_event(Pw,E) )).
+fof(ax_B3, axiom,
+    ! [S, A, T, Rho, E, R] :
+      ( ( subjection(S) & cnt(S,decl(A),T) & part_of(S,Rho) & founds_rem(E,Rho,R) )
+     => about_event(S,E) )).
 
 %--------------------------------------------------------------------------
 % Appendix A.0 extra predicates (declared via axiom context in Layer1)
@@ -94,30 +94,32 @@ fof(ax_B1, axiom,
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 % Ground instance (gamma)
 %--------------------------------------------------------------------------
-fof(agent_alice,       axiom, agent(alice)).
-fof(agent_acme,        axiom, agent(acme)).
-fof(action_distribute, axiom, action(distribute)).
-fof(target_d1,         axiom, target(d1)).
-fof(rule_f1,           axiom, rule(f1)).
-fof(event_e1,          axiom, event(e1)).
-fof(proh_f1,           axiom, proh(f1)).
-fof(rem_f1,            axiom, has_rem(f1)).
-fof(aee_f1,            axiom, aee(f1, alice)).
-fof(aer_f1,            axiom, aer(f1, acme)).
-fof(act_f1,            axiom, act(f1, distribute)).
-fof(tgt_f1,            axiom, tgt(f1, d1)).
-fof(act_e1_f1,         axiom, activates(e1, f1)).
-fof(alice_does,        axiom, does(alice, distribute, d1)).
+fof(agent_marketplace,  axiom, agent(marketplace)).
+fof(agent_philharmonie, axiom, agent(philharmonie)).
+fof(action_distrib,     axiom, action(distrib)).
+fof(target_concert,     axiom, target(concert_ds)).
+fof(rule_f1,            axiom, rule(f1)).
+fof(event_e1,           axiom, event(e1)).
+fof(proh_f1,            axiom, proh(f1)).
+fof(rem_f1,             axiom, has_rem(f1)).
+fof(aee_f1,             axiom, aee(f1, marketplace)).
+fof(aer_f1,             axiom, aer(f1, philharmonie)).
+fof(act_f1,             axiom, act(f1, distrib)).
+fof(tgt_f1,             axiom, tgt(f1, concert_ds)).
+fof(act_e1_f1,          axiom, activates(e1, f1)).
+fof(marketplace_does,   axiom, does(marketplace, distrib, concert_ds)).
 
 %--------------------------------------------------------------------------
 % Conjecture
 %--------------------------------------------------------------------------
 fof(conjecture, conjecture,
-    ( ? [Pw, S, Y, X, Ev] :
-  ( power(Pw) & bearer(Pw, Y) & about_event(Pw, Ev)
-  & subjection(S) & bearer(S, X) & about_event(S, Ev) ) )).
+    ( ? [RhoR, Pw, S] :
+  ( founds_rem(e1, RhoR, f1)
+  & power(Pw)     & bearer(Pw, philharmonie) & cnt(Pw, decl(distrib), concert_ds) & part_of(Pw, RhoR) & about_event(Pw, e1)
+  & subjection(S) & bearer(S,  marketplace)  & cnt(S,  decl(distrib), concert_ds) & part_of(S,  RhoR) & about_event(S,  e1) ) )).

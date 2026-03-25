@@ -23,5 +23,8 @@
 <drk:StaatlicheMuseenBerlin>          a schema:Organization .
 <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
 # strong(p) asserted (profile extension, not ODRL 2.2).
-# Immunity(Bibliothek) + Disability(Museen).
-# StaatlicheMuseenBerlin attempts prohibition => blocked by Disability.
+# Immunity(bibliothek) + Disability(museen).
+# museen attempts prohibition => blocked by Disability (Ax5.10).
+# Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+#   museen=drk:StaatlicheMuseenBerlin, read=odrl:read,
+#   museum_api=drk:MuseumCollectionAPI

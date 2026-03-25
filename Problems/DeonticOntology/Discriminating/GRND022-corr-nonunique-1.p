@@ -5,7 +5,7 @@
 % Status   : Unsatisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND022-corr-nonunique-policy.ttl
-% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
 % % odrl_rel(rho1) + Permission(l) partOf rho1.
 % % Two distinct no_right positions n1 != n2 both partOf rho1 with same content.
@@ -17,17 +17,22 @@
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % # Correlativity uniqueness test:
 % # A relator cannot contain two distinct NoRight positions
-% # with the same content — correlativity requires exactly one.
+% ... (1 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
+% NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
+% Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
+% timeout on the full set). This asymmetry is intentional.
 fof(ax_correlativity_permission, axiom,
     ! [Rho, A, T] :
       ( odrl_rel(Rho)
-     => ( ( ? [L] : ( permission(L) & part_of(L,Rho) & cnt(L,A,T) ) )
+     => ( ( ? [L] : ( permission(L) & part_of(L,Rho) & cnt(L,A,T)
+                    & ! [L2] : ( ( permission(L2) & part_of(L2,Rho) & cnt(L2,A,T) )
+                                => L2 = L ) ) )
         <=> ( ? [N] : ( no_right(N) & part_of(N,Rho) & cnt(N,A,T)
                       & ! [M] : ( ( no_right(M) & part_of(M,Rho) & cnt(M,A,T) )
                                  => M = N ) ) ) ) )).
@@ -51,6 +56,7 @@ fof(ax_correlativity_permission, axiom,
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -73,3 +79,6 @@ fof(cnt_n2,        axiom, cnt(n2, some_action, some_target)).
 fof(action_typed,  axiom, action(some_action)).
 fof(target_typed,  axiom, target(some_target)).
 fof(n1_neq_n2,     axiom, n1 != n2).
+fof(perm_l_unique, axiom,
+    ! [L2] : ( ( permission(L2) & part_of(L2, rho1) & cnt(L2, some_action, some_target) )
+              => L2 = l )).

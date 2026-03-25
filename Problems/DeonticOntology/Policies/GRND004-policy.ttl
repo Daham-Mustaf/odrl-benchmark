@@ -26,3 +26,6 @@
 <drk:MusicMarketplaceAG>  a schema:Organization .
 # Power(drk:PhilharmonieBerlin, decl(distribute)) constituted at activation
 # in fresh competence relator rho_R (Ax5.4 via founds_rem).
+# Abstract constants: marketplace=drk:MusicMarketplaceAG,
+#   philharmonie=drk:PhilharmonieBerlin, distrib=odrl:distribute,
+#   concert_ds=drk:ConcertRecordingDataset

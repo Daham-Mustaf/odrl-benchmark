@@ -1,56 +1,17 @@
 (* ============================================================
-   ODRLDeonticOntology.thy
+   ODRLDeonticOntology.thy  —  Stage 1
    FOIS 2026 — "What Does ODRL Mean?"
-   Mechanized verification of the formal deontic grounding
-   of ODRL in UFO-L and Input/Output Logic.
-
-   **Axioms:**
-   - rfr_irreflexive, rfr_injective
-   - decl_injective, decl_rfr_disjoint
-   - perm_relator_basic     (Paper Axiom 5.1)
-   - perm_relator_strong    (Paper Axiom 5.2)
-   - proh_relator_basic     (Paper Axiom 5.3)
-   - proh_relator_remedy    (Paper Axiom 5.4)
-   - unique_founding        (Paper Axiom 5.5)
-   - unique_relator_per_event (converse of 5.5)
-   - obl_relator            (Paper Axiom 5.6)
-   - correlativity_liberty/duty/power/immunity (Paper Axiom 5.7)
-   - conflict_detection     (Paper Axiom 5.8)
-   - cross_relator_consistency (Paper Axiom 5.9)
-   - disability_block       (Paper Axiom 5.10)
-   - A1, A2, A3             (Appendix A.0 cross-level axioms)
-   - B1, B2, B3             (Appendix A.0 bridge axioms)
-
-   **Lemmas (11 groups):**
-   - 1:    perm_creates_liberty
-   - 2:    proh_creates_duty
-   - 3:    proh_remedy_creates_power
-   - 4:    disability_blocks_proh
-   - 5/5b: conflict_is_unsat, conflict_cross_relator
-   - 6a/b: immunity_blocks_duty, strong_perm_persists
-   - 7a-d: violation_triggers_normstate,
-           normstate_requires_event,
-           event_requires_competence,
-           competence_grounds_power
-   - 8:    full_lifecycle
-   - 9:    liberty_unique_noright, duty_unique_claim,
-           power_unique_subj, immunity_unique_disability
-   - 10:   unique_founding_determines_relator,
-           two_activations_two_relators
-   - 11:   grounding_surfaces_noright/claim/immunity/disability
-
-   Build:
-     isabelle build -D Isabelle/
+   Stage 1: Signature + 4 sort axioms only.
+   Goal: theory loads without errors.
+   run isabelle build -D /Users/dahammhamad/Desktop/tptp-odrl/Isabelle/ -v
    ============================================================ *)
-
 theory ODRLDeonticOntology
   imports Main
 begin
 
 (* ── Sorts ──────────────────────────────────────────────────
-   Seven base types covering the ODRL signature.
-   All are abstract (typedecl) -- no structure assumed
-   beyond what the axioms impose.
+   Seven base types.  All abstract — no structure beyond
+   what axioms impose.
    ─────────────────────────────────────────────────────────── *)
 typedecl Agent
 typedecl Action
@@ -60,34 +21,67 @@ typedecl Position
 typedecl LegalRelator
 typedecl Event
 
-(* ── Position classifiers ───────────────────────────────────
-   Eight Hohfeldian positions at two levels:
-     Conduct:    Liberty, Duty, Claim, NoRight
-     Competence: Power, Subj, Immunity, Disability
+(* ── Hohfeldian position classifiers ────────────────────────
+   Conduct:    Permission  Duty  Right  NoRight
+   Competence: Power    Subj  Immunity  Disability
    ─────────────────────────────────────────────────────────── *)
 consts
-  Liberty    :: "Position => bool"
+  Permission    :: "Position => bool"
   Duty       :: "Position => bool"
-  Claim      :: "Position => bool"
+  Right      :: "Position => bool"
   NoRight    :: "Position => bool"
   Power      :: "Position => bool"
   Subj       :: "Position => bool"
   Immunity   :: "Position => bool"
   Disability :: "Position => bool"
 
+consts
+  remAct :: "Rule => Action => bool"
 (* ── Rule classifiers ───────────────────────────────────────
-   ODRL rule types and flags.
+   Perm / Proh / obl: ODRL rule types
+     obl:     ODRL Duty rule (lowercase: distinct from the
+              Hohfeldian Duty position above)
+   has_rem:   prohibition carries odrl:remedy
+              (paper: \hasrem, abbreviation list §5)
+   strong:    permission marked as strongly-permitted
+              (profile extension point, not in ODRL 2.2 core)
    ─────────────────────────────────────────────────────────── *)
 consts
-  Perm   :: "Rule => bool"
-  Proh   :: "Rule => bool"
-  Obl    :: "Rule => bool"
-  rem    :: "Rule => bool"
-  strong :: "Rule => bool"
+  Perm    :: "Rule => bool"
+  Proh    :: "Rule => bool"
+  obl     :: "Rule => bool"
+  has_rem :: "Rule => bool"
+  strong  :: "Rule => bool"
+
+(* ── Relator classifiers ────────────────────────────────────
+   Rel:      ρ is a legal relator
+             (paper: \mathit{Rel}(\rho) in every relator axiom)
+   ODRLRel:  ρ is a relator founded by an ODRL rule activation.
+             Required by ax:odrl-rel-typing (Ax5.6) to gate
+             correlativity (Ax5.7).  Without this predicate
+             correlativity applies to all relators universally,
+             which is unsound.
+   ─────────────────────────────────────────────────────────── *)
+consts
+  Rel     :: "LegalRelator => bool"
+  ODRLRel :: "LegalRelator => bool"
 
 (* ── Structural relations ───────────────────────────────────
-   Core predicates connecting rules, positions, relators,
-   events, agents, actions, and targets.
+   aee / aer / act / tgt: rule parameters
+   activates:  event e activates rule r
+               (all constraints of r satisfied at e)
+   founds:     Event => LegalRelator => Rule => bool
+               TERNARY — paper uses founds(e, ρ, r):
+                 e   = activation event
+                 ρ   = legal relator founded
+                 r   = ODRL rule
+               The rule argument is essential:
+               two distinct rules activated by the SAME event
+               must found TWO distinct relators.
+               Binary founds would collapse them to one.
+   bearer:     position p is borne by agent x
+   cnt:        position p has content (action a, target t)
+   partOf:     position p is a mereological part of relator ρ
    ─────────────────────────────────────────────────────────── *)
 consts
   aee       :: "Rule => Agent => bool"
@@ -95,118 +89,112 @@ consts
   act       :: "Rule => Action => bool"
   tgt       :: "Rule => Target => bool"
   activates :: "Event => Rule => bool"
-  founds    :: "Event => LegalRelator => bool"
-  isRel     :: "LegalRelator => bool"
+  founds    :: "Event => LegalRelator => Rule => bool"
   bearer    :: "Position => Agent => bool"
   cnt       :: "Position => Action => Target => bool"
   partOf    :: "Position => LegalRelator => bool"
 
-(* ── rfr function (injective, irreflexive) ──────────────────
-   rfr : Action -> Action maps an act to its forbearance.
-   Declared over Action -> Action; irreflexivity enforces the
-   Act/Forbearance distinction semantically.
+(* ── rfr : Action -> Action  (injective, irreflexive) ───────
+   Maps a regulated action to its forbearance.
+   rfr(a) ≠ a enforces Act/Forbearance sort disjointness
+   that UFO-L presupposes but FOF/HOL cannot express as types.
    Prohibitions impose Duty over rfr(a), not a directly.
    ─────────────────────────────────────────────────────────── *)
 consts rfr :: "Action => Action"
 
 axiomatization where
-  rfr_irreflexive : "ALL a.   rfr a ~= a" and
+  rfr_irreflexive : "ALL a.   rfr a ~= a"       and
   rfr_injective   : "ALL a b. rfr a = rfr b --> a = b"
 
-(* ── decl function (injective, disjoint from rfr) ───────────
-   decl : Action -> Action maps a regulated action to the
-   institutional act of declaring its violation.
-   Must be disjoint from rfr to prevent collapse between
-   proh_relator_basic and proh_relator_remedy.
+(* ── decl : Action -> Action  (injective, disjoint from rfr) ─
+   Maps a regulated action to the institutional act of
+   declaring its violation.
+   decl(a) ≠ rfr(a) prevents collapse between
+   proh_relator_basic (Duty/Right over rfr(a)) and
+   proh_relator_remedy (Power/Subj over decl(a)).
    ─────────────────────────────────────────────────────────── *)
 consts decl :: "Action => Action"
 
 axiomatization where
-  decl_injective   : "ALL a b. decl a = decl b --> a = b" and
-  decl_rfr_disjoint: "ALL a.   decl a ~= rfr a"
+  decl_injective    : "ALL a b. decl a = decl b --> a = b" and
+  decl_rfr_disjoint : "ALL a.   decl a ~= rfr a"
 
-(* ══════════════════════════════════════════════════════════════
-   ax:perm-relator-basic  (Paper Axiom 5.1)
-
-   When a Permission activates, it founds a fresh relator with:
-     - Liberty borne by assignee over (a, t)
-     - NoRight borne by assigner over (a, t)
-
-   ODRL example:
-     ex:perm1 odrl:Permission Alice read D1
-   --> Liberty(Alice, read, D1), NoRight(Acme, read, D1) in rho
-
+(* ── Ax 5.1  Permission Relator — Weak ─────────────────────
+   Paper: ax:perm-relator-basic
+   Perm(p) activated at e founds a relator ρ containing:
+     - Permission  l  borne by assignee x over ⟨a,t⟩
+     - NoRight  n  borne by assigner y over ⟨a,t⟩
    NoRight is a surfaced correlative absent from any
    ODRL evaluator output (Table 2, row 2).
-   ══════════════════════════════════════════════════════════════ *)
+   ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  perm_relator_basic:
-  "ALL p x y a t e.
-     Perm p & aee p x & aer p y & act p a & tgt p t & activates e p
-     --> (EX rho l n.
-           isRel rho & founds e rho
-         & Liberty l & bearer l x & cnt l a t & partOf l rho
-         & NoRight n & bearer n y & cnt n a t & partOf n rho)"
+  ax_perm_relator_weak :
+    "ALL p x y a t e.
+       Perm p & aee p x & aer p y & act p a & tgt p t & activates e p
+       -->
+       (EX rho l n.
+          Rel rho & founds e rho p
+          & Permission l & bearer l x & cnt l a t & partOf l rho
+          & NoRight n & bearer n y & cnt n a t & partOf n rho)"
 
-(* ══════════════════════════════════════════════════════════════
-   ax:perm-relator-strong  (Paper Axiom 5.2)
-
-   When a strongly-permitted Permission activates and rho
-   already exists (founded by perm_relator_basic), adds to rho:
-     - Immunity borne by assignee over (a, t)
-     - Disability borne by assigner over (a, t)
-
-   The Disability prevents the assigner from later issuing a
-   conflicting prohibition (ax:disability-block fires).
-   rho is universally quantified -- this EXTENDS an existing
-   relator. Caller must supply founds e rho.
-
-   ODRL example:
-     ex:perm2 odrl:Permission + ex:stronglyPermitted true
-   --> Immunity(Alice, read, D1), Disability(Acme, read, D1)
-   ══════════════════════════════════════════════════════════════ *)
+(* ── Ax 5.2  Permission Relator — Strong ───────────────────
+   Paper: ax:perm-relator-strong
+   If Perm(p) is strongly-permitted and already founds ρ,
+   that same ρ additionally contains:
+     - Immunity   im  borne by assignee x over ⟨a,t⟩
+     - Disability db  borne by assigner y over ⟨a,t⟩
+   Note: ρ is universally quantified (not existential) —
+   the relator is already given by ax_perm_relator_weak;
+   this axiom augments it with competence-level positions.
+   strong(p) is a profile extension point, not in ODRL 2.2.
+   ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  perm_relator_strong:
-  "ALL p x y a t e rho.
-     Perm p & strong p & aee p x & aer p y & act p a & tgt p t
-     & activates e p & founds e rho
-     --> (EX im db.
-           Immunity im & bearer im x & cnt im a t & partOf im rho
-         & Disability db & bearer db y & cnt db a t & partOf db rho)"
-
-(* ══════════════════════════════════════════════════════════════
-   ax:proh-relator-basic  (Paper Axiom 5.3)
-
-   When a Prohibition activates, it founds a fresh relator with:
+  ax_perm_relator_strong :
+    "ALL p x y a t e rho.
+       Perm p & strong p & aee p x & aer p y & act p a & tgt p t
+       & activates e p & founds e rho p
+       -->
+       (EX im db.
+          Immunity im & bearer im x & cnt im a t & partOf im rho
+          & Disability db & bearer db y & cnt db a t & partOf db rho)"
+(* ── Ax 5.3  Prohibition Relator — Conduct ─────────────────
+    When a Prohibition activates, it founds a fresh relator with:
+    Proh(f) activated at e founds a relator ρ containing:
      - Duty borne by assignee over (rfr(a), t)  -- duty to REFRAIN
-     - Claim borne by assigner over (rfr(a), t)
-
+     - Right borne by assigner over (rfr(a), t)
    Key: cnt takes rfr(a) not a. Prohibitions regulate the
    omission (forbearance), not the act itself.
    Contrast with obl_relator which uses cnt du a t.
-
    ODRL example:
      ex:proh1 odrl:Prohibition Alice distribute D1
    --> Duty(Alice, rfr(distribute), D1),
-       Claim(Acme, rfr(distribute), D1) in rho
-   ══════════════════════════════════════════════════════════════ *)
+       Right(Acme, rfr(distribute), D1) in rho
+   Note: content is rfr(a), not a directly.
+   rfr(a) ≠ a guaranteed by rfr_irreflexive (Stage 1).
+   ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  proh_relator_basic:
-  "ALL f x y a t e.
-     Proh f & aee f x & aer f y & act f a & tgt f t & activates e f
-     --> (EX rho d c.
-           isRel rho & founds e rho
-         & Duty d & bearer d x & cnt d (rfr a) t & partOf d rho
-         & Claim c & bearer c y & cnt c (rfr a) t & partOf c rho)"
-
-(* ══════════════════════════════════════════════════════════════
-   ax:proh-relator-remedy  (Paper Axiom 5.4)
-
-   When a Prohibition with remedy activates and rho already
-   exists (from proh_relator_basic), adds to rho:
-     - Power borne by assigner over (decl(a), t)
-     - Subj borne by assignee over (decl(a), t)
-
+  ax_proh_relator_conduct :
+    "ALL f x y a t e.
+       Proh f & aee f x & aer f y & act f a & tgt f t & activates e f
+       -->
+       (EX rho d c.
+          Rel rho & founds e rho f
+          & Duty d & bearer d x & cnt d (rfr a) t & partOf d rho
+          & Right c & bearer c y & cnt c (rfr a) t & partOf c rho)"
+(* ── Ax 5.4  Prohibition Relator — Remedy ──────────────────
+   Paper: ax:proh-relator-remedy
+   If Proh(f) carries has_rem and already founds ρ,
+   that same ρ additionally contains:
+     - Power pw  borne by assigner y over ⟨decl(a),t⟩
+     - Subj  s   borne by assignee x over ⟨decl(a),t⟩
+   Note: ρ is universally quantified — relator already exists
+   from ax_proh_relator_conduct; this axiom augments it with
+   competence-level positions gated on has_rem(f).
+   Content is decl(a), not rfr(a) or a:
+     rfr(a)  = duty to refrain       (conduct level, Ax 5.3)
+     decl(a) = power to declare viol (competence level, Ax 5.4)
+   decl(a) ≠ rfr(a) guaranteed by decl_rfr_disjoint (Stage 1).
+   Power constituted at activation, not at violation.
    TIMING: Power is constituted at ACTIVATION, not at violation.
    It is a standing position licensing a future institutional
    act. rho is universally quantified -- EXTENDS existing relator.
@@ -215,226 +203,266 @@ axiomatization where
      ex:proh1 odrl:Prohibition ... odrl:remedy ex:remedy1
    --> Power(Acme, decl(distribute), D1),
        Subj(Alice, decl(distribute), D1) added to rho
-
    Without rem(f): only proh_relator_basic fires.
-   ══════════════════════════════════════════════════════════════ *)
+   ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  proh_relator_remedy:
-  "ALL f x y a t e rho.
-     Proh f & rem f & aee f x & aer f y & act f a & tgt f t
-     & activates e f & founds e rho
-     --> (EX pw s.
-           Power pw & bearer pw y & cnt pw (decl a) t & partOf pw rho
-         & Subj s  & bearer s  x & cnt s  (decl a) t & partOf s  rho)"
-
-(* ══════════════════════════════════════════════════════════════
-   ax:unique-founding  (Paper Axiom 5.5)
-
-   Every legal relator was founded by exactly one activation
-   event. Direction: same relator -> same event.
-
-   UFO-L basis (UFO axiom a77): a relator is founded by a
-   unique event. Two distinct activations of the same rule
-   produce TWO distinct relators.
-
-   ODRL example:
+  ax_proh_relator_remedy :
+    "ALL f x y a t e rho.
+       Proh f & has_rem f & aee f x & aer f y & act f a & tgt f t
+       & activates e f & founds e rho f
+       -->
+       (EX pw s.
+          Power pw & bearer pw y & cnt pw (decl a) t & partOf pw rho
+          & Subj s  & bearer s  x & cnt s  (decl a) t & partOf s  rho)"
+(* ── Ax 5.5  Unique Founding ────────────────────────────────
+   Paper: ax:unique-founding
+   Two directions, one axiom:
+   (1) each (e, r) pair founds at most one relator:
+       founds(e,ρ1,r) ∧ founds(e,ρ2,r) → ρ1 = ρ2
+   (2) each (ρ, r) pair is founded by at most one event:
+       founds(e1,ρ,r) ∧ founds(e2,ρ,r) → e1 = e2
+   Together: ρ is individuated by the (e,r) pair — UFO
+   principle of particular individuation.
+   Distinct rules activated by the same event found
+   numerically distinct relators.
+      ODRL example:
      Alice requests D1 Monday --> e1 --> rho1
      Alice requests D1 Friday --> e2 --> rho2
    rho1 ~= rho2: Skolem terms are fresh per activation event.
-   ══════════════════════════════════════════════════════════════ *)
-axiomatization where
-  unique_founding:
-  "ALL rho e1 e2.
-     founds e1 rho & founds e2 rho --> e1 = e2"
-
-(* ── unique_relator_per_event ────────────────────────────────
-   Converse of unique_founding.
-   Direction: same event -> same relator.
-
-   Needed in full_lifecycle (Lemma 8) to identify the fresh
-   rho' introduced by proh_relator_basic with the assumed rho:
-     founds e rho' & founds e rho --> rho' = rho
-
-   In UFO-L: an activation event is a complete founding cause
-   of exactly one relator instance.
    ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  unique_relator_per_event:
-  "ALL e rho1 rho2.
-     founds e rho1 & founds e rho2 --> rho1 = rho2"
+  ax_unique_founding_relator :
+    "ALL r rho1 rho2 e.
+       founds e rho1 r & founds e rho2 r
+       --> rho1 = rho2"
+  and
+  ax_unique_founding_event :
+    "ALL r e1 e2 rho.
+       founds e1 rho r & founds e2 rho r
+       --> e1 = e2"
+(* ── Ax 5.6  ODRL Relator Typing ───────────────────────────
+   Paper: ax:odrl-rel-typing
+   Every relator founded by an ODRL rule activation is
+   an ODRL relator:
+     founds(e,ρ,r) ∧ (Perm(r) ∨ Proh(r) ∨ obl(r)) → ODRLRel(ρ)
+   Required to gate ax:correlativity (Ax 5.7):
+   without this predicate, correlativity would apply to
+   all relators universally, which is unsound.
+   Policy π:
+  p1 = Permission [ Alice, DataProvider, read, MedicalDB ]
+  f1 = Prohibition [ Alice, DataProvider, share, MedicalDB ]
 
-(* ══════════════════════════════════════════════════════════════
-   ax:obl-relator  (Paper Axiom 5.6)
+Direction 1 — same rule, two events → two distinct relators
+Monday:  Alice satisfies constraints of p1 → activation event e1 → founds e1 rho1 p1
+Friday:  Alice satisfies constraints of p1 → activation event e2 → founds e2 rho2 p1
 
-   When an ODRL Duty rule activates, it founds a fresh relator:
-     - Duty borne by assignee over (a, t)  -- duty to PERFORM
-     - Claim borne by assigner over (a, t)
+By ax_unique_founding_relator:
+  founds e1 rho1 p1  ∧  founds e1 rho2 p1  →  rho1 = rho2   (same event, same rule)
+But e1 ≠ e2, so no such collapse occurs.
+rho1 ≠ rho2 — Monday's Permission is a distinct particular from Friday's Permission.
 
-   Key contrast with proh_relator_basic:
-     proh_relator_basic : cnt d (rfr a) t  -- duty to REFRAIN
-     obl_relator        : cnt du a t       -- duty to PERFORM
+Direction 2 — same event, two rules → two distinct relators
+Monday:  both p1 and f1 activate simultaneously at e1
+  founds e1 rho_p p1   →  rho_p contains Permission(Alice, read,  MedicalDB)
+  founds e1 rho_f f1   →  rho_f contains Duty(Alice,  rfr(share), MedicalDB)
 
-   Variable 'du' (Hohfeldian Duty position) distinct from
-   'd' (ODRL Duty rule variable) to avoid shadowing.
+By ax_unique_founding_event:
+  founds e1 rho p1  ∧  founds e2 rho p1  →  e1 = e2   (same relator, same rule)
 
-   ODRL example:
-     ex:duty1 odrl:Duty Alice compensate D1
-   --> Duty(Alice, compensate, D1), Claim(Acme, compensate, D1)
-   ══════════════════════════════════════════════════════════════ *)
+rho_p ≠ rho_f — the permission relator and prohibition relator
+are numerically distinct even though born at the same moment.
+   ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  obl_relator:
-  "ALL d x y a t e.
-     Obl d & aee d x & aer d y & act d a & tgt d t & activates e d
-     --> (EX rho du c.
-           isRel rho & founds e rho
-         & Duty du & bearer du x & cnt du a t & partOf du rho
-         & Claim c  & bearer c  y & cnt c  a t & partOf c  rho)"
+  ax_odrl_rel_typing :
+    "ALL e rho r.
+       founds e rho r & (Perm r | Proh r | obl r)
+       --> ODRLRel rho"
+(* ── Ax 5.7  Obligation Relator ─────────────────────────────
+   Paper: ax:obl-relator
+   obl(d) activated at e founds a relator ρ containing:
+     - Duty  du  borne by assignee x over ⟨a,t⟩
+     - Right c   borne by assigner y over ⟨a,t⟩
+   Note: content is a directly — duty to perform the action.
+   Contrast with ax_proh_relator_conduct where content is
+   rfr(a) — duty to refrain from the action.
+   Policy π:
+  d1 = Duty [ Alice, DataProvider, attributeSource, MedicalDB ]
+Activation: constraints satisfied → event e1
+founds e1 rho_d d1
+rho_d contains:
+  Duty  du  bearer=Alice        cnt=(attributeSource, MedicalDB)
+  Right c   bearer=DataProvider cnt=(attributeSource, MedicalDB)
+  f1 = Prohibition [ Alice, DataProvider, share, MedicalDB ]
+  → rho_f: Duty over rfr(share)   ← duty to refrain
 
-(* ══════════════════════════════════════════════════════════════
-   ax:correlativity  (Paper Axiom 5.7)
-
-   Every Hohfeldian position in a relator has exactly ONE
-   correlative partner in that relator -- not zero, not two.
-
-   Four biconditional pairs:
-     Liberty  <-> NoRight    (conduct level)
-     Duty     <-> Claim      (conduct level)
-     Power    <-> Subj       (competence level)
-     Immunity <-> Disability (competence level)
-
-   Biconditional (=) enforces BOTH directions:
-     --> position in rho requires exactly one correlative
-     <-- correlative in rho requires its partner
-
-   EX! expanded manually to avoid Isabelle parsing issues.
-   UFO-L: correlatives are co-constituted parts of a relator.
-   ══════════════════════════════════════════════════════════════ *)
+  d1 = Duty [ Alice, DataProvider, attributeSource, MedicalDB ]
+  → rho_d: Duty over attributeSource  ← duty to perform
+   ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  correlativity_liberty:
-  "ALL l rho.
-     (Liberty l & partOf l rho)
-     = (EX n. NoRight n & partOf n rho
-              & (ALL m. NoRight m & partOf m rho --> m = n))"
-and
-  correlativity_duty:
-  "ALL d rho.
-     (Duty d & partOf d rho)
-     = (EX c. Claim c & partOf c rho
-              & (ALL k. Claim k & partOf k rho --> k = c))"
-and
-  correlativity_power:
-  "ALL pw rho.
-     (Power pw & partOf pw rho)
-     = (EX s. Subj s & partOf s rho
-              & (ALL s2. Subj s2 & partOf s2 rho --> s2 = s))"
-and
-  correlativity_immunity:
-  "ALL im rho.
-     (Immunity im & partOf im rho)
-     = (EX db. Disability db & partOf db rho
-               & (ALL db2. Disability db2 & partOf db2 rho --> db2 = db))"
-
-(* ══════════════════════════════════════════════════════════════
-   ax:conflict  (Paper Axiom 5.8)
-
-   No relator can bundle Liberty and Duty-to-refrain over the
-   same (a, t) for the same bearer. Single-relator conflict.
-
-   Why rfr(a) is essential:
-     Liberty over a    = licensed to perform
-     Duty over rfr(a)  = obliged to refrain
-     Only Liberty + Duty-to-refrain is a conflict.
-     Liberty + Duty-to-perform is NOT.
-
-   ODRL example:
-     perm_relator_basic: Liberty(Alice, read, D1) in rho
-     proh_relator_basic: Duty(Alice, rfr(read), D1) in rho
-   Both in same rho --> False (Vampire: SZS Unsatisfiable).
-
-   Contrast with ax:disability-block:
-     ax:conflict      -- post-hoc (within a relator)
-     disability-block -- up front (prevents creation)
-   ══════════════════════════════════════════════════════════════ *)
+  ax_obl_relator :
+    "ALL d x y a t e.
+       obl d & aee d x & aer d y & act d a & tgt d t & activates e d
+       -->
+       (EX rho du c.
+          Rel rho & founds e rho d
+          & Duty du & bearer du x & cnt du a t & partOf du rho
+          & Right c  & bearer c  y & cnt c  a t & partOf c  rho)"
+(* ── Ax 5.8  Hohfeldian Correlativity ──────────────────────
+   Paper: ax:correlativity
+   Each ODRL legal relator ρ contains exactly one position
+   from each correlative pair over the same ⟨a,t⟩ content.
+   Four biconditionals — one per correlative pair:
+     Permission   ↔ NoRight      (conduct)
+     Duty      ↔ Right        (conduct)
+     Power     ↔ Subj         (competence)
+     Immunity  ↔ Disability   (competence)
+   EX! = unique existence in Isabelle/HOL.
+   Gated on ODRLRel(ρ) — set by ax_odrl_rel_typing (Ax 5.6).
+   ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  conflict_detection:
+  ax_correlativity_permission_noright :
+    "ALL rho a t.
+       ODRLRel rho -->
+       ((EX! l. Permission l & partOf l rho & cnt l a t)
+        =
+        (EX! n. NoRight n & partOf n rho & cnt n a t))"
+  and
+  ax_correlativity_duty_right :
+    "ALL rho a t.
+       ODRLRel rho -->
+       ((EX! d. Duty d  & partOf d rho & cnt d a t)
+        =
+        (EX! c. Right c & partOf c rho & cnt c a t))"
+  and
+  ax_correlativity_power_subj :
+    "ALL rho a t.
+       ODRLRel rho -->
+       ((EX! pw. Power pw & partOf pw rho & cnt pw a t)
+        =
+        (EX! s.  Subj  s  & partOf s  rho & cnt s  a t))"
+  and
+  ax_correlativity_immunity_disability :
+    "ALL rho a t.
+       ODRLRel rho -->
+       ((EX! im. Immunity   im & partOf im rho & cnt im a t)
+        =
+        (EX! db. Disability db & partOf db rho & cnt db a t))"
+(* ── Ax 5.9  Cross-Relator Position Disjointness ───────────
+   Paper: ax:cross-relator
+   Foundational claim grounded in UFO disjointness of
+   Permission and Duty as moment types.
+   A Permission and a Duty-to-refrain over the same ⟨a,t⟩
+   cannot be co-borne by the same agent in any relator:
+     Permission(l) ∧ bearer(l,x) ∧ cnt(l,a,t)
+     ∧ Duty(d)  ∧ bearer(d,x) ∧ cnt(d,rfr(a),t)
+     → ⊥
+   Content arguments a and rfr(a) are of distinct types
+   (Act and Forbearance); rfr(a) ≠ a enforced by
+   rfr_irreflexive (Stage 1).
+   ─────────────────────────────────────────────────────────── *)
+axiomatization where
+  ax_cross_relator :
+    "ALL l d x a t.
+       Permission l & bearer l x & cnt l a t
+       & Duty d  & bearer d x & cnt d (rfr a) t
+       --> False"
+
+(* ── Corollary 5.9a  Permission–Duty Conflict Within a Relator ─
+   Paper: ax:conflict
+   Within-relator instance of ax_cross_relator.
+   partOf premises are additional constraints on the same
+   antecedent: co-instantiation impossible in any bearer
+   regardless of relator membership, hence impossible within
+   a single relator in particular.
+   Directly applicable to ODRL conflict detection when two
+   rules activate under the same policy.
+   ─────────────────────────────────────────────────────────── *)
+lemma conflict_within_relator :
   "ALL rho l d x a t.
-     partOf l rho & partOf d rho
-     & Liberty l & Duty d
-     & bearer l x & bearer d x
-     & cnt l a t & cnt d (rfr a) t
+     ODRLRel rho
+     & Permission l & bearer l x & cnt l a t & partOf l rho
+     & Duty d    & bearer d x & cnt d (rfr a) t & partOf d rho
      --> False"
-
-(* ══════════════════════════════════════════════════════════════
-   ax:cross-relator  (Paper Axiom 5.9)
-
-   Strengthens ax:conflict to model-level: Liberty and
-   Duty-to-refrain cannot be co-borne by the same agent in
-   ANY relators -- not just within one relator.
-
-   Needed for Theorem 4.1 / Appendix A.2 Part 1:
-     rho1 (permission) --> Liberty(Alice, read, D1)
-     rho2 (prohibition) --> Duty(Alice, rfr(read), D1)
-   rho1 ~= rho2, so conflict_detection cannot fire.
-   But cross_relator_consistency still derives False.
-
-   UFO: Liberty and Duty are disjoint moment types.
-   An agent cannot bear both over the same (a,t).
-
-   [simp del] prevents blast from looping on this axiom
-   when Liberty and Duty facts are in context (full_lifecycle).
-   Always cite explicitly.
-   ══════════════════════════════════════════════════════════════ *)
+  using ax_cross_relator by blast
+(* ── Ax 5.10  Disability Precludes Prohibition Creation ────
+   Paper: ax:disability-block
+   No prohibition by y over ⟨a,t⟩ can exist while y holds
+   a Disability over that same pair.
+   Disability denies y the competence to create such a
+   position.
+   Constraint axiom: does not generate positions but
+   precludes combinations inconsistent with strong
+   permission. Required for A to be complete with respect
+   to the grounding of thm:strong-crosslevel.
+   ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  cross_relator_consistency [simp del]:
-  "Liberty l --> bearer l x --> cnt l a t -->
-   Duty d    --> bearer d x --> cnt d (rfr a) t -->
-   False"
+  ax_disability_block :
+    "ALL f x y a t.
+       Proh f & aee f x & aer f y & act f a & tgt f t
+       --> ~ (EX db. Disability db & bearer db y & cnt db a t)"
 
-(* ══════════════════════════════════════════════════════════════
-   ax:disability-block  (Paper Axiom 5.10)
+(* ── Proposition: Evaluator Faithfulness ───────────────────
+   Paper: prop:faithfulness
+   Three directions verified mechanically:
+   (F1) closed-world permission activation → Permission(x,a,t)
+   (F2) prohibition activation → Duty(x,rfr(a),t)
+   (F3) prohibition + has_rem activation → Power(y,decl(a),t)
+   The converse fails: grounding additionally entails
+   NoRight, Right, Immunity, Disability.
+   Open-world Permission requires a default axiom — future work.
+Example — Ax 5.10
+Strong permission:  p1 = Permission+strong [ Alice, DataProvider, read, MedicalDB ]
+→ rho_p: Immunity(Alice) + Disability(DataProvider) over ⟨read, MedicalDB⟩
 
-   If a Prohibition by y over (a, t) exists, then y cannot
-   simultaneously hold a Disability over the same (a, t).
-   Disability means y lacks competence to create that
-   prohibition -- the two cannot coexist.
+Now DataProvider tries to issue:
+  f1 = Prohibition [ Alice, DataProvider, read, MedicalDB ]
 
-   ODRL example:
-     perm_relator_strong adds Disability(Acme, read, D1).
-     Acme tries: ex:proh1 odrl:Prohibition Alice read D1.
-     --> False: the prohibition is blocked.
+ax_disability_block fires:
+  Proh(f1) ∧ aer(f1, DataProvider) ∧ act(f1, read) ∧ tgt(f1, MedicalDB)
+  → ¬∃db. Disability(db) ∧ bearer(db, DataProvider) ∧ cnt(db, read, MedicalDB)
 
-   Mechanized basis for Theorem 4.1:
-     H1 = {Liberty, NoRight}: inadequate (prohibition can be added).
-     H2 = H1 + {Immunity, Disability}: adequate (this axiom
-     blocks the prohibition from being created).
-   ══════════════════════════════════════════════════════════════ *)
-axiomatization where
-  disability_block:
-  "ALL f x y a t.
-     Proh f & aee f x & aer f y & act f a & tgt f t
-     --> ~(EX db. Disability db & bearer db y & cnt db a t)"
+But Disability(DataProvider, read, MedicalDB) already exists → contradiction.
+Prohibition cannot be created. Alice's strong permission is preserved.
+   ─────────────────────────────────────────────────────────── *)
+lemma faithfulness_F1 :
+  "ALL p x y a t e.
+     Perm p & aee p x & aer p y & act p a & tgt p t & activates e p
+     --> (EX l. Permission l & bearer l x & cnt l a t)"
+  using ax_perm_relator_weak by blast
 
-(* ══════════════════════════════════════════════════════════════
-   A.0 — Appendix predicates: A1--A3 + bridges B1--B3
+lemma faithfulness_F2 :
+  "ALL f x y a t e.
+     Proh f & aee f x & aer f y & act f a & tgt f t & activates e f
+     --> (EX d. Duty d & bearer d x & cnt d (rfr a) t)"
+  using ax_proh_relator_conduct by blast
 
-   Paper: Appendix A.0. These predicates and axioms underlie
-   the cross-level design principle (Section 4, Theorems
-   4.1--4.3). Imported into the TPTP/FOF and SMT-LIB encodings.
+lemma faithfulness_F3 :
+  "ALL f x y a t e.
+     Proh f & has_rem f & aee f x & aer f y & act f a & tgt f t
+     & activates e f
+     --> (EX rho. founds e rho f &
+          (EX pw. Power pw & bearer pw y & cnt pw (decl a) t))"
+  by (meson ax_proh_relator_conduct ax_proh_relator_remedy)
 
-   New sort:
-     NormPos  -- abstract witness type for normative positions
-
-   New predicates:
-     NormStateChange(x,a,t,q) -- position q changes for x
-     InstEvent(e)             -- e is an institutional event
-     triggers(e,x,a,t,q)     -- e triggers the change of q
-     competentFor(y,e)        -- y is competent to perform e
-     aboutEvent(pw,e)         -- Power/Subj pw concerns event e
-     does(x,a,t)              -- x performs a on t
-     Duty_rem                 -- witness token for remedy-duty
-   ══════════════════════════════════════════════════════════════ *)
+(* ── Appendix A.2 — Abstract normative position witness ────
+   NormPos is the type of abstract normative position tokens
+   used in A1--A3 and bridge axioms B1--B3.
+   Distinct from Position (Hohfeldian individuals in §5):
+     Position  = concrete Hohfeldian moment (Permission, Duty, ...)
+     NormPos   = abstract witness for "a normative position
+                 comes into or goes out of existence"
+   ─────────────────────────────────────────────────────────── *)
 typedecl NormPos
 
+(* ── Appendix A.2 — Predicates for A1--A3 and B1--B3 ───────
+   NormStateChange x a t q  :  position q over ⟨a,t⟩ changes for x
+   InstEvent e              :  e is an institutional event
+   triggers e x a t q       :  e triggers the change of q for x
+   competentFor y e         :  y is competent to perform e
+   aboutEvent pw e          :  Power/Subj pw concerns event e
+   does x a t               :  x performs action a on target t
+   Duty_rem                 :  abstract token for remedy-duty position
+   ─────────────────────────────────────────────────────────── *)
 consts
   NormStateChange :: "Agent => Action => Target => NormPos => bool"
   InstEvent       :: "Event => bool"
@@ -444,186 +472,411 @@ consts
   does            :: "Agent => Action => Target => bool"
   Duty_rem        :: NormPos
 
-(* ── A1: Normative State Changes Require an Institutional Event
-   A normative state change requires a triggering institutional
-   event. The change cannot happen spontaneously.
-
-   ODRL motivation: Alice distributes D1 despite ex:proh1.
-   The remedy duty must become active. A1 requires a triggering
-   event -- specifically, Acme performing declareViolation.
-   Forces WHO triggers it --> A2.
-
-   Used in: normstate_requires_event (Lemma 7b), full_lifecycle.
+(* ── Appendix A.2 — Axiom A1 ───────────────────────────────
+   Paper: ax:A1  "NormStateChange requires InstEvent"
+   Any normative position q coming into or going out of
+   existence for agent x over action a on target t requires
+   a triggering institutional event e.
+   Motivation: prohibitions are sanctioned (Prop. 3.2) —
+   violation activates a remedy duty. A1 forces that
+   activation to be grounded in a concrete institutional
+   act rather than occurring spontaneously.
+   Scope: regulative UFO-L reading only; does not apply
+   to constitutive norm activation.
    ─────────────────────────────────────────────────────────── *)
 axiomatization where
-  A1:
-  "ALL x a t q.
-     NormStateChange x a t q
-     --> (EX e. InstEvent e & triggers e x a t q)"
-
-(* ── A2: Institutional Events Require a Competent Agent
-   No institutional event without a competent agent.
-
-   ODRL motivation: declareViolation cannot occur in a vacuum.
-   Some y must be competentFor(y, e). In the ODRL scenario,
-   y = Acme. In multi-party spaces: forces delegation questions.
-   Forces WHAT is that competence --> A3.
-
-   Used in: event_requires_competence (Lemma 7c), full_lifecycle.
+  ax_A1 :
+    "ALL x a t q.
+       NormStateChange x a t q
+       --> (EX e. InstEvent e & triggers e x a t q)"
+(* ── Appendix A.2 — Axiom A2 ───────────────────────────────
+   Paper: ax:A2  "InstEvent requires competent agent"
+   No institutional event occurs without an agent holding
+   the relevant competence to bring it about.
+   Note: the paper writes Agent(y) as a FOL predicate.
+   In this theory Agent is a type (typedecl Agent), so
+   y :: Agent already carries that constraint — the
+   predicate is absorbed by the type system and dropped.
+   Motivation: chains from A1 — once a normative state
+   change requires an institutional event (A1), A2 forces
+   that event to be anchored to a responsible agent.
+   Together A1--A2 prevent normative changes from arising
+   without an identifiable actor.
+   Scope: regulative UFO-L reading only.
    ─────────────────────────────────────────────────────────── *)
-and A2:
-  "ALL e.
-     InstEvent e
-     --> (EX y. competentFor y e)"
+axiomatization where
+  ax_A2 :
+    "ALL e.
+       InstEvent e
+       --> (EX y. competentFor y e)"
 
-(* ── A3: Competence Is a Power-Subjection Pair
-   Competence is grounded in a Power-Subjection pair.
-   The competent agent y holds the Power; some x holds the
-   correlative Subjection. Not a primitive.
-
-   ODRL motivation: Acme competentFor declareViolation.
-   A3 grounds this in the Power/Subj pair from
-   proh_relator_remedy -- created at activation time.
-
-   Key step in Theorem 4.2: conduct-level positions alone
-   cannot provide this Power-Subjection pair.
-
-   Used in: competence_grounds_power (Lemma 7d), full_lifecycle.
+(* ── Appendix A.2 — Axiom A3 ───────────────────────────────
+   Paper: ax:A3  "Competence is a Power--Subjection pair"
+   Competence to perform institutional event e is grounded
+   in a Power--Subjection pair: y holds the Power, some x
+   holds the correlative Subjection. Both concern e via
+   aboutEvent.
+   Note: Power and Subj are Hohfeldian position individuals
+   (type Position) declared in §5. aboutEvent links them to
+   the institutional event, connecting the competence-level
+   grounding (A3) back to the relator structure (Ax5.4).
+   Motivation: closes the A1--A2--A3 chain —
+     A1: normative change requires institutional event
+     A2: institutional event requires competent agent
+     A3: competence IS a Power--Subjection pair
+   Together they force any normative state change to be
+   grounded in an explicit competence-level relator structure,
+   which is the ontological basis for Theorems 4.1--4.3.
+   Scope: regulative UFO-L reading only.
    ─────────────────────────────────────────────────────────── *)
-and A3:
-  "ALL y e.
-     competentFor y e
-     --> (EX pw s x.
-           Power pw & bearer pw y &
-           Subj s   & bearer s  x &
-           aboutEvent pw e & aboutEvent s e)"
-
-(* ── B1: Performing a Prohibited Action Is a NormStateChange
-   Bridge connecting does() to A1. Performing a prohibited
-   action with remedy constitutes a NormStateChange.
-
-   Without B1: A1 never fires for ODRL violations.
-   B1 is the entry point of the B1->A1->A2->A3 chain.
-
-   ODRL example: does(Alice, distribute, D1) with rem(f)
-   --> NormStateChange(Alice, distribute, D1, Duty_rem)
-
-   Used in: violation_triggers_normstate (Lemma 7), full_lifecycle.
+axiomatization where
+  ax_A3 :
+    "ALL y e.
+       competentFor y e
+       --> (EX pw s x.
+              Power pw & bearer pw y & aboutEvent pw e
+              & Subj s  & bearer s  x & aboutEvent s  e)"
+(* ── Appendix A.2 — Bridge Axiom B1 ────────────────────────
+   Paper: B1  "Violation is a normative state change"
+   Performing action a in violation of prohibition f (which
+   carries a remedy) constitutes a normative state change:
+   the reparative duty over the remedy action b becomes active.
+   remAct(f,b): b is the action of the remedy attached to f.
+   Duty_rem:    abstract NormPos token for the remedy duty.
+   Connects: does (main-body) --> NormStateChange (A1 chain).
    ─────────────────────────────────────────────────────────── *)
-and B1:
-  "ALL f x a t b.
-     Proh f & rem f & act f a & tgt f t & aee f x &
-     does x a t
-     --> NormStateChange x b t Duty_rem"
+axiomatization where
+  ax_B1 :
+    "ALL f x a t.
+       Proh f & has_rem f & act f a & tgt f t & aee f x
+       & does x a t
+       --> (EX b. remAct f b & NormStateChange x b t Duty_rem)"
 
-(* ── B2: Power Content Links to Founding Event
-   Bridge connecting relator structure (partOf/founds) to
-   the event structure (aboutEvent) required by A3.
-
-   proh_relator_remedy created: Power pw, partOf pw rho, founds e rho
-   B2 derives: aboutEvent(pw, e)
-
-   Without B2: the chain B1->A1->A2->A3 breaks at A3 because
-   the Power from proh_relator_remedy is not connected to
-   the institutional event.
-
-   Used in: full_lifecycle (Lemma 8) implicitly via A3.
+(* ── Appendix A.2 — Bridge Axiom B2 ────────────────────────
+   Paper: B2  "Power content links to founding event"
+   A Power whose content is decl(a) over target t, bundled
+   in relator rho founded by event e, concerns event e.
+   Connects: partOf + founds (main-body) --> aboutEvent (A3).
+   Note: f (the prohibition rule) added to quantifier prefix —
+   the paper omits it from ∀ but uses it in founds(e,rho,f);
+   universally quantifying f is required for well-formed FOL.
    ─────────────────────────────────────────────────────────── *)
-and B2:
-  "ALL pw a t rho e.
-     Power pw & cnt pw (decl a) t &
-     partOf pw rho & founds e rho
-     --> aboutEvent pw e"
+axiomatization where
+  ax_B2 :
+    "ALL pw a t rho e f.
+       Power pw & cnt pw (decl a) t
+       & partOf pw rho & founds e rho f
+       --> aboutEvent pw e"
 
-(* ── B3: Subjection Content Links to Founding Event
-   Mirror of B2 for the Subj position. Together B2 and B3
-   ensure the Power-Subjection pair in the relator is the
-   same pair A3 identifies as grounding competence.
-
-   Without B3: A3 could introduce a fresh unrelated pair
-   disconnected from the ODRL policy structure.
-
-   Used in: full_lifecycle (Lemma 8) implicitly via A3.
+(* ── Appendix A.2 — Bridge Axiom B3 ────────────────────────
+   Paper: B3  "Subjection content links to founding event"
+   A Subjection whose content is decl(a) over target t,
+   bundled in relator rho founded by event e, concerns e.
+   Connects: partOf + founds (main-body) --> aboutEvent (A3).
+   Note: same f-quantifier fix as B2.
    ─────────────────────────────────────────────────────────── *)
-and B3:
-  "ALL s a t rho e.
-     Subj s & cnt s (decl a) t &
-     partOf s rho & founds e rho
-     --> aboutEvent s e"
+axiomatization where
+  ax_B3 :
+    "ALL s a t rho e f.
+       Subj s & cnt s (decl a) t
+       & partOf s rho & founds e rho f
+       --> aboutEvent s e"
+(* ── Proposition prop:sanctioned — Sanctioned direction ────
+   Paper: prop:sanctioned (§3)
+   ODRL prohibition is SANCTIONED: performing the prohibited
+   action triggers normative consequences (NormStateChange).
+   This is the consequential direction of sanctioned vs.
+   regimented. The non-regimented direction (does x a t is
+   consistent with Proh f) is a satisfiability claim confirmed by Vampire GRND008-sanctioned (SZS: Theorem) — it cannot
+   be proved as a theorem within this theory.
+   Proof: direct chain B1 --> A1.
+   ─────────────────────────────────────────────────────────── *)
+lemma prop_sanctioned :
+  assumes "Proh f" "has_rem f"
+          "act f a" "tgt f t" "aee f x"
+          "does x a t"
+  shows "EX e b. InstEvent e & remAct f b
+                 & NormStateChange x b t Duty_rem
+                 & triggers e x b t Duty_rem"
+proof -
+  from assms ax_B1
+    obtain b where B: "remAct f b & NormStateChange x b t Duty_rem"
+      by blast
+  from B ax_A1
+    obtain e where E: "InstEvent e & triggers e x b t Duty_rem"
+      by blast
+  show ?thesis
+    using B E by blast
+qed
+
+(* ── Proposition prop:weak-complete ────────────────────────
+   Paper: prop:weak-complete (§4)
+   Weak permission is adequately characterised at conduct
+   level by {Permission(x,a,t), NoRight(y,a,t)}.
+   No competence-level positions (Power, Immunity, Disability)
+   are required.
+   Two directions:
+   (a) weak perm activation produces Permission + NoRight
+       -- direct from ax_perm_relator_weak
+   (b) weak perm activation does NOT produce Immunity or
+       Disability -- ax_perm_relator_strong requires
+       strong(p); without it no competence positions are
+       generated. Disability is further blocked from
+       coexisting with any prohibition by
+       ax_disability_block.
+   ─────────────────────────────────────────────────────────── *)
+
+(* Direction (a): Permission and NoRight are entailed *)
+lemma prop_weak_complete_conduct :
+  assumes "Perm p" "aee p x" "aer p y"
+          "act p a" "tgt p t" "activates e p"
+  shows "EX rho l n.
+           Permission l & bearer l x & cnt l a t & partOf l rho
+           & NoRight n & bearer n y & cnt n a t & partOf n rho"
+  using assms ax_perm_relator_weak by blast
+
+(* Direction (b): conduct-level pair suffices — no competence
+   axiom needed. The proof closes using only
+   ax_perm_relator_weak, without invoking ax_perm_relator_strong,
+   ax_A1, ax_A2, or ax_A3. *)
+lemma prop_weak_complete_no_competence_needed :
+  assumes "Perm p" "aee p x" "aer p y"
+          "act p a" "tgt p t" "activates e p"
+  shows "EX l n.
+           Permission l & bearer l x & cnt l a t
+           & NoRight n & bearer n y & cnt n a t"
+  using assms ax_perm_relator_weak by blast
+
+(* ── Theorem thm:strong-crosslevel ─────────────────────────
+   Paper: thm:strong-crosslevel (§4)
+   Strong permission is cross-level: no conduct-level
+   characterization is adequate.
+   Two parts matching the paper proof:
+   Part 1 (H1 inadequate): Permission + NoRight alone fails.
+     Extending with a prohibition by y adds Duty(x,rfr(a),t)
+     via ax_proh_relator_conduct. Then Permission(x,a,t) and
+     Duty(x,rfr(a),t) co-exist for same bearer x -- False
+     by ax_cross_relator. H1 cannot persist.
+   Part 2 (H2 adequate): adding Immunity + Disability
+     blocks the prohibition entirely via ax_disability_block.
+     Permission(x,a,t) is preserved under any extension.
+   ─────────────────────────────────────────────────────────── *)
+
+(* Part 1: H1 = {Permission, NoRight} is inadequate.
+   Adding a prohibition by y destroys Permission via
+   ax_proh_relator_conduct + ax_cross_relator.           *)
+lemma thm_strong_crosslevel_H1_inadequate :
+  assumes
+    "Permission l" "bearer l x" "cnt l a t"
+    "Proh f" "aee f x" "aer f y" "act f a" "tgt f t"
+    "activates e f"
+  shows "False"
+proof -
+  from assms ax_proh_relator_conduct
+    obtain rho d c where
+      D: "Duty d" "bearer d x" "cnt d (rfr a) t"
+      by blast
+  from assms(1,2,3) D ax_cross_relator
+  show ?thesis by blast
+qed
+
+(* Part 2: H2 = {Permission, NoRight, Immunity, Disability}
+   is adequate. Disability blocks any prohibition by y
+   via ax_disability_block, preserving Permission.          *)
+lemma thm_strong_crosslevel_H2_adequate :
+  assumes
+    "Permission l"     "bearer l x"  "cnt l a t"
+    "Disability db" "bearer db y" "cnt db a t"
+    "Proh f" "aee f x" "aer f y" "act f a" "tgt f t"
+  shows "False"
+proof -
+  from assms ax_disability_block
+  have "~ (EX db. Disability db & bearer db y & cnt db a t)"
+    by blast
+  with assms show ?thesis by blast
+qed
+
+(* ── Theorem thm:sanctioned-crosslevel ─────────────────────
+   Paper: thm:sanctioned-crosslevel (§4)
+   Sanctioned prohibition is cross-level: no conduct-level
+   characterization is adequate.
+   Part 1 (H3 inadequate): {Duty, Right} alone provides no
+     mechanism for the violation-to-remedy transition.
+     does(x,a,t) via B1 --> NormStateChange --> A1 requires
+     InstEvent --> A2 requires competentFor --> A3 requires
+     Power-Subjection pair. H3 contains none. Contradiction.
+   Part 2 (H4 adequate): adding Power(y,decl(a),t) and
+     Subj(x,decl(a),t) grounds the full chain via B1+A1.
+     Part 1: H3 = {Duty, Right} is inadequate.
+   violation occurs (B1) --> NormStateChange (A1) -->
+   InstEvent --> competentFor (A2) --> Power-Subjection (A3).
+   H3 provides no such Power -- contradiction via A3.
+   ─────────────────────────────────────────────────────────── *)
+
+   (* ── Theorem thm:sanctioned-crosslevel ─────────────────────
+  Part 1: H3 = {Duty, Right} is inadequate.
+   violation occurs (B1) --> NormStateChange (A1) -->
+   InstEvent --> competentFor (A2) --> Power-Subjection (A3).
+   H3 provides no such Power -- contradiction via A3.
+   ─────────────────────────────────────────────────────────── *)
+
+lemma thm_sanctioned_crosslevel_H3_inadequate :
+  assumes
+    "Proh f" "has_rem f"
+    "act f a" "tgt f t" "aee f x"
+    "does x a t"
+    (* H3: conduct only — no Power with aboutEvent *)
+    "ALL pw. ~ (Power pw & bearer pw y & aboutEvent pw e')"
+    "InstEvent e'"
+    "competentFor y e'"
+  shows "False"
+proof -
+  from assms(9) ax_A3
+    obtain pw s z where
+      PW: "Power pw" "bearer pw y" "aboutEvent pw e'"
+      by blast
+  from assms(7) PW show ?thesis by blast
+qed
+  (* ── Theorem thm:sanctioned-crosslevel ─────────────────────
+  Part 2: H4 = H3 + {Power, Subj} is adequate.
+   Power pw with cnt pw (decl a) t in rho founded by e.
+   Full chain: B1 --> A1 both grounded without contradiction. 
+   ─────────────────────────────────────────────────────────── *)
+lemma thm_sanctioned_crosslevel_H4_adequate :
+  assumes
+    "Proh f" "has_rem f"
+    "act f a" "tgt f t" "aee f x" "aer f y"
+    "activates e f" "founds e rho f"
+    "does x a t"
+    "Power pw" "bearer pw y" "cnt pw (decl a) t" "partOf pw rho"
+    "Subj s"   "bearer s x"  "cnt s  (decl a) t" "partOf s  rho"
+  shows
+    "EX e' b. InstEvent e'
+              & remAct f b
+              & NormStateChange x b t Duty_rem
+              & triggers e' x b t Duty_rem"
+proof -
+  from assms ax_B1
+    obtain b where B1: "remAct f b" "NormStateChange x b t Duty_rem"
+      by blast
+  from B1(2) ax_A1
+    obtain e' where A1: "InstEvent e'" "triggers e' x b t Duty_rem"
+      by blast
+  show ?thesis
+    using B1 A1 by blast
+qed
+
+(* ── Theorem thm:crosslevel ─────────────────────────────────
+   Paper: thm:crosslevel (§4)
+   "Violable Norms Require Both Levels"
+   Any norm that is (i) violable and (ii) consequential has
+   no adequate characterization using conduct-level positions
+   alone.
+   Proof strategy:
+     consequential norm --> violation activates reparative
+     position --> NormStateChange (by definition of
+     consequential). By A1: NormStateChange requires
+     InstEvent. By A2: InstEvent requires competentFor.
+     By A3: competentFor requires Power-Subjection pair.
+     Power and Subj are competence-level. Contradiction
+     with conduct-only assumption.
+   ODRL instance: ODRL prohibition is sanctioned
+     (prop:sanctioned) and remedies are normative
+     consequences --> theorem applies directly to ODRL.
+   ─────────────────────────────────────────────────────────── *)
+
+(* Core: NormStateChange chains through A1-A2-A3 to
+   force a Power-Subjection pair into existence.
+   Any assumption that only conduct-level positions exist
+   is refuted.     
+                                           *)
+lemma thm_crosslevel :
+  assumes
+    (* norm is consequential: violation gives NormStateChange *)
+    "NormStateChange x a t q"
+    (* conduct-only assumption: no Power exists *)
+    "ALL pw. ~ (Power pw & bearer pw y & aboutEvent pw e)"
+    (* A2 witness: competent agent exists for e *)
+    "InstEvent e"
+    "competentFor y e"
+  shows "False"
+proof -
+  from assms(4) ax_A3
+    obtain pw s z where
+      PW: "Power pw" "bearer pw y" "aboutEvent pw e"
+      by blast
+  from assms(2) PW show ?thesis by blast
+qed
+
+(* ODRL instance: applies thm_crosslevel to ODRL prohibition.
+   Combines prop:sanctioned (B1 chain) with thm_crosslevel.
+   The evaluator implicitly plays the competent authority;
+   this lemma makes that explicit.                         *)
+lemma thm_crosslevel_odrl_instance :
+  assumes
+    "Proh f" "has_rem f"
+    "act f a" "tgt f t" "aee f x"
+    "does x a t"
+    "InstEvent e" "competentFor y e"
+    "ALL pw. ~ (Power pw & bearer pw y & aboutEvent pw e)"
+  shows "False"
+proof -
+  from assms ax_B1
+    obtain b where NSC: "NormStateChange x b t Duty_rem"
+      by blast
+  from NSC assms(7,8,9) thm_crosslevel
+  show ?thesis by blast
+qed
 
 (* ══════════════════════════════════════════════════════════════
-   Lemma 1: Permission creates Liberty
-   Paper: Proposition 5.1 (Faithfulness, direction i)
-
-   Evaluator permits a for x on t
-   --> Liberty(x,a,t) in Ground(pi,e)
-
-   Proof: direct unfolding of perm_relator_basic.
-   NoRight n also exists in rho but is dropped here.
+   Lemma 1: Permission creates Permission
+   Paper: prop:faithfulness direction F1
    ══════════════════════════════════════════════════════════════ *)
-lemma perm_creates_liberty:
+lemma perm_creates_Permission:
   assumes "Perm p" "aee p x" "aer p y" "act p a" "tgt p t" "activates e p"
-  shows "EX rho l. isRel rho & founds e rho &
-                   Liberty l & bearer l x & cnt l a t & partOf l rho"
+  shows "EX rho l. Rel rho & founds e rho p &
+                   Permission l & bearer l x & cnt l a t & partOf l rho"
 proof -
-  from assms perm_relator_basic
+  from assms ax_perm_relator_weak
   obtain rho l n where
-    "isRel rho" "founds e rho"
-    "Liberty l" "bearer l x" "cnt l a t" "partOf l rho"
+    "Rel rho" "founds e rho p"
+    "Permission l" "bearer l x" "cnt l a t" "partOf l rho"
     "NoRight n" "bearer n y" "cnt n a t" "partOf n rho"
     by blast
   thus ?thesis by blast
 qed
 
 (* ══════════════════════════════════════════════════════════════
-   Lemma 2: Prohibition creates Duty + Claim
-   Paper: Proposition 5.1 (Faithfulness, direction ii)
-
-   Evaluator activates prohibition on a for x on t
-   --> Duty(x, rfr(a), t)  in Ground(pi,e)
-   --> Claim(y, rfr(a), t) in Ground(pi,e)
-
-   Both over rfr(a): prohibition regulates the forbearance.
-   Both Duty and Claim retained (both are correlatives).
-   Mechanized basis for conflict detection (if Liberty also
-   exists in rho, conflict_detection fires --> False).
+   Lemma 2: Prohibition creates Duty + Right
+   Paper: prop:faithfulness direction F2
    ══════════════════════════════════════════════════════════════ *)
 lemma proh_creates_duty:
   assumes "Proh f" "aee f x" "aer f y" "act f a" "tgt f t" "activates e f"
-  shows "EX rho d c. isRel rho & founds e rho &
+  shows "EX rho d c. Rel rho & founds e rho f &
                      Duty d & bearer d x & cnt d (rfr a) t & partOf d rho &
-                     Claim c & bearer c y & cnt c (rfr a) t & partOf c rho"
+                     Right c & bearer c y & cnt c (rfr a) t & partOf c rho"
 proof -
-  from assms proh_relator_basic
+  from assms ax_proh_relator_conduct
   obtain rho d c where
-    "isRel rho" "founds e rho"
+    "Rel rho" "founds e rho f"
     "Duty d"  "bearer d x" "cnt d (rfr a) t" "partOf d rho"
-    "Claim c" "bearer c y" "cnt c (rfr a) t" "partOf c rho"
+    "Right c" "bearer c y" "cnt c (rfr a) t" "partOf c rho"
     by blast
   thus ?thesis by blast
 qed
 
 (* ══════════════════════════════════════════════════════════════
    Lemma 3: Prohibition with remedy creates Power + Subj
-   Paper: Proposition 5.1 (Faithfulness, direction iii)
-
-   Evaluator activates prohibition with remedy
-   --> Power(y, decl(a), t) in Ground(pi,e)
-   --> Subj(x, decl(a), t)  in Ground(pi,e)
-
-   rho is given in assumptions -- EXTENDS the relator from
-   Lemma 2. Caller must supply founds e rho.
-   TIMING: Power is constituted at activation, not violation.
-   Mechanized basis for Theorem 4.2 (H4 adequacy).
+   Paper: prop:faithfulness direction F3
    ══════════════════════════════════════════════════════════════ *)
 lemma proh_remedy_creates_power:
-  assumes "Proh f" "rem f"
+  assumes "Proh f" "has_rem f"
           "aee f x" "aer f y" "act f a" "tgt f t"
-          "activates e f" "founds e rho"
+          "activates e f" "founds e rho f"
   shows "EX pw s. Power pw & bearer pw y & cnt pw (decl a) t & partOf pw rho &
                   Subj s  & bearer s  x & cnt s  (decl a) t & partOf s  rho"
 proof -
-  from assms proh_relator_remedy
+  from assms ax_proh_relator_remedy
   obtain pw s where
     "Power pw" "bearer pw y" "cnt pw (decl a) t" "partOf pw rho"
     "Subj s"   "bearer s  x" "cnt s  (decl a) t" "partOf s  rho"
@@ -633,77 +886,44 @@ qed
 
 (* ══════════════════════════════════════════════════════════════
    Lemma 4: Disability precludes prohibition creation
-   Paper: Theorem 4.1 mechanized consequence (ax:disability-block)
-
-   If y holds Disability over (a,t) then no prohibition by y
-   over (a,t) can exist -- they are mutually inconsistent.
-
-   Proof: disability_block gives ~(EX db. Disability db & ...)
-   Assumptions give a witness db. Contradiction by blast.
-
-   Key step in Theorem 4.1: H2 = {Liberty, NoRight, Immunity,
-   Disability} is adequate because this lemma blocks the
-   prohibition from being created.
+   Paper: ax:disability-block consequence / thm:strong-crosslevel
    ══════════════════════════════════════════════════════════════ *)
 lemma disability_blocks_proh:
   assumes "Proh f" "aee f x" "aer f y" "act f a" "tgt f t"
           "Disability db" "bearer db y" "cnt db a t"
   shows "False"
 proof -
-  from assms disability_block
-  have "~(EX db. Disability db & bearer db y & cnt db a t)"
+  from assms ax_disability_block
+  have "~ (EX db. Disability db & bearer db y & cnt db a t)"
     by blast
   with assms show ?thesis by blast
 qed
 
 (* ══════════════════════════════════════════════════════════════
-   Lemma 5: Liberty-Duty conflict within one relator
-   Paper: ax:conflict (Axiom 5.8) mechanized
-
-   If Liberty(x,a,t) and Duty(x,rfr(a),t) are in the SAME
-   relator rho, derives False. Single-relator conflict.
-   Vampire gives SZS Unsatisfiable.
-
-   For cross-relator conflict, see Lemma 5b.
+   Lemma 5: Permission-Duty conflict within one relator
+   Paper: Corollary ax:conflict / GRND005
    ══════════════════════════════════════════════════════════════ *)
 lemma conflict_is_unsat:
   assumes "partOf l rho" "partOf d rho"
-          "Liberty l" "Duty d"
+          "Permission l" "Duty d"
           "bearer l x" "bearer d x"
           "cnt l a t" "cnt d (rfr a) t"
   shows "False"
-proof -
-  from assms conflict_detection
-  show ?thesis by blast
-qed
+  using assms ax_cross_relator by blast
 
 (* ══════════════════════════════════════════════════════════════
-   Lemma 5b: Liberty-Duty conflict across any relators
-   Paper: ax:cross-relator (Axiom 5.9) / Appendix A.2 Part 1
-
-   Strengthens Lemma 5 to model-level. Liberty and
-   Duty-to-refrain cannot be co-borne regardless of relators.
-
-   Mechanized basis for Appendix A.2 Part 1:
-   "extending H1 with a prohibition makes the model
-   inconsistent -- even across separate relators."
-
-   Note: cross_relator_consistency is [simp del] -- must cite
-   explicitly (prevents blast looping in full_lifecycle).
+   Lemma 5b: Permission-Duty conflict across any relators
+   Paper: ax:cross-relator / Appendix A.4 Part 1
    ══════════════════════════════════════════════════════════════ *)
 lemma conflict_cross_relator:
-  assumes "Liberty l" "bearer l x" "cnt l a t"
+  assumes "Permission l" "bearer l x" "cnt l a t"
           "Duty d"    "bearer d x" "cnt d (rfr a) t"
   shows "False"
-  using assms cross_relator_consistency by blast
+  using assms ax_cross_relator by blast
 
 (* ══════════════════════════════════════════════════════════════
    Lemma 6a: Immunity + Disability blocks new Duty
-   Paper: Appendix A.2 Part 2 (intermediate step)
-
-   When x holds Immunity and y holds Disability over (a,t),
-   y cannot issue a prohibition (Disability fires, Lemma 4).
-   Immunity in assumptions confirms H2 is fully in scope.
+   Paper: Appendix A.4 Part 2 intermediate step
    ══════════════════════════════════════════════════════════════ *)
 lemma immunity_blocks_duty:
   assumes "Immunity im" "bearer im x" "cnt im a t"
@@ -714,20 +934,11 @@ lemma immunity_blocks_duty:
 
 (* ══════════════════════════════════════════════════════════════
    Lemma 6b: Strong permission persists under model extension
-   Paper: Theorem 4.1 / Appendix A.2 Part 2
-
-   H2 = {Liberty, NoRight, Immunity, Disability} is adequate:
-   no prohibition by y over (a,t) can coexist with H2.
-   Liberty survives under ANY model extension.
-
-   Contrast with H1 (Lemma 5b -- inadequacy):
-     H1: extension with prohibition makes model inconsistent
-         POST-HOC. Liberty destroyed. H1 inadequate.
-     H2: prohibition cannot be CREATED. H2 adequate.
+   Paper: thm:strong-crosslevel / Appendix A.4 Part 2
    ══════════════════════════════════════════════════════════════ *)
 lemma strong_perm_persists:
   assumes
-    "Liberty l"     "bearer l x"  "cnt l a t"
+    "Permission l"     "bearer l x"  "cnt l a t"
     "Immunity im"   "bearer im x" "cnt im a t"
     "Disability db" "bearer db y" "cnt db a t"
     "Proh f" "aee f x" "aer f y" "act f a" "tgt f t"
@@ -736,309 +947,241 @@ lemma strong_perm_persists:
   using assms disability_blocks_proh by blast
 
 (* ══════════════════════════════════════════════════════════════
-   Lemma 7: Violation triggers NormStateChange  (B1)
-   Paper: Appendix A.3 Part 1 -- B1 entry point
-
-   First step in B1->A1->A2->A3.
-   does(x,a,t) with Proh + rem(f) --> NormStateChange via B1.
-   Without B1: A1 never fires for ODRL violations.
+   Lemma 7: Violation triggers NormStateChange  (ax_B1)
+   Paper: Appendix A.5 Part 1 -- B1 entry point
    ══════════════════════════════════════════════════════════════ *)
 lemma violation_triggers_normstate:
-  assumes "Proh f" "rem f"
+  assumes "Proh f" "has_rem f"
           "act f a" "tgt f t" "aee f x"
           "does x a t"
-  shows "NormStateChange x b t Duty_rem"
-  using assms B1 by blast
+  shows "EX b. remAct f b & NormStateChange x b t Duty_rem"
+  using assms ax_B1 by blast
 
 (* ══════════════════════════════════════════════════════════════
-   Lemma 7b: NormStateChange requires institutional event  (A1)
-   Paper: Appendix A.3 Part 1 -- A1 step
-
-   NormStateChange requires a triggering institutional event.
-   Forces: WHO performs it? --> Lemma 7c (A2).
+   Lemma 7b: NormStateChange requires institutional event (ax_A1)
+   Paper: Appendix A.5 Part 1 -- A1 step
    ══════════════════════════════════════════════════════════════ *)
 lemma normstate_requires_event:
   assumes "NormStateChange x b t Duty_rem"
   shows "EX e. InstEvent e & triggers e x b t Duty_rem"
-  using assms A1 by blast
+  using assms ax_A1 by blast
 
 (* ══════════════════════════════════════════════════════════════
-   Lemma 7c: Institutional event requires competent agent  (A2)
-   Paper: Appendix A.3 Part 1 -- A2 step
-
-   No institutional event without a competent agent.
-   Forces: WHAT IS that competence? --> Lemma 7d (A3).
+   Lemma 7c: Institutional event requires competent agent (ax_A2)
+   Paper: Appendix A.5 Part 1 -- A2 step
    ══════════════════════════════════════════════════════════════ *)
 lemma event_requires_competence:
   assumes "InstEvent e"
   shows "EX y. competentFor y e"
-  using assms A2 by blast
+  using assms ax_A2 by blast
 
 (* ══════════════════════════════════════════════════════════════
-   Lemma 7d: Competence grounded in Power-Subjection  (A3)
-   Paper: Appendix A.3 Part 1 -- A3 step (final link)
-
-   Competence is grounded in a Power-Subjection pair via A3.
-   This Power is what proh_relator_remedy created at activation.
-
-   Full chain:
-     does(x,a,t)              [Lemma 7 / B1]
-     --> NormStateChange       [A1, Lemma 7b]
-     --> InstEvent(e')         [A2, Lemma 7c]
-     --> competentFor(y', e') [A3, Lemma 7d]
-     --> Power(y') + Subj(x')
-
-   H3 = {Duty, Claim} cannot provide this --> H3 inadequate.
-   H4 = H3 + {Power, Subj} IS adequate (Lemma 8).
+   Lemma 7d: Competence grounded in Power-Subjection (ax_A3)
+   Paper: Appendix A.5 Part 1 -- A3 step
    ══════════════════════════════════════════════════════════════ *)
 lemma competence_grounds_power:
   assumes "competentFor y e"
   shows "EX pw s x. Power pw & bearer pw y &
                     Subj s   & bearer s  x &
                     aboutEvent pw e & aboutEvent s e"
-  using assms A3 by blast
+  using assms ax_A3 by blast
 
 (* ══════════════════════════════════════════════════════════════
    Lemma 8: Full sanctioned-prohibition lifecycle
-   Paper: Theorem 4.2 / Appendix A.3 Part 2 (adequacy of H4)
-
-   Master lemma combining Lemmas 2, 3, 7a--7d.
-   Witnesses all six steps: duty -> violation -> declaration
-   -> remedy active.
-
-   ODRL example:
-     ex:proh1 Prohibition Alice distribute D1 + remedy
-     Activation e fires. Alice performs does(Alice,distribute,D1).
-
-   Six conclusions:
-     (1) Duty + Claim in rho          [proh_relator_basic]
-     (2) Power + Subj in rho          [proh_relator_remedy]
-     (3) NormStateChange(Alice,...)   [B1 / Lemma 7]
-     (4) InstEvent(e')                [A1 / Lemma 7b]
-     (5) competentFor(y', e')         [A2 / Lemma 7c]
-     (6) Power(y') + Subj aboutEvent  [A3 / Lemma 7d]
-
-   Proof strategy:
-     - proh_relator_basic introduces fresh rho'; unify with
-       assumed rho via unique_relator_per_event.
-     - Pre-substitute into dc_rho/ps_rho (isolates from
-       Liberty/Duty facts to prevent cross_relator looping).
-     - Name each conjunction part g1..g6.
-     - Final blast on g1..g6 assembles the conjunction.
-     - cross_relator_consistency is [simp del] so never fires
-       automatically in this proof context.
+   Paper: §6 Validation "Lemma 8" — explicitly named
    ══════════════════════════════════════════════════════════════ *)
 lemma full_lifecycle:
   assumes
-    "Proh f" "rem f"
+    "Proh f" "has_rem f"
     "aee f x" "aer f y" "act f a" "tgt f t"
-    "activates e f" "founds e rho"
+    "activates e f" "founds e rho f"
     "does x a t"
   shows
     "(EX d c.
        Duty d  & bearer d x & cnt d (rfr a) t & partOf d rho &
-       Claim c & bearer c y & cnt c (rfr a) t & partOf c rho) &
+       Right c & bearer c y & cnt c (rfr a) t & partOf c rho) &
     (EX pw s.
        Power pw & bearer pw y & cnt pw (decl a) t & partOf pw rho &
        Subj s   & bearer s  x & cnt s  (decl a) t & partOf s  rho) &
-    (NormStateChange x a t Duty_rem) &
-    (EX e'. InstEvent e' & triggers e' x a t Duty_rem &
-            (EX y'. competentFor y' e' &
-                    (EX pw' s' x''.
-                       Power pw' & bearer pw' y' &
-                       Subj s'   & bearer s'  x'' &
-                       aboutEvent pw' e' & aboutEvent s' e')))"
+    (EX b. remAct f b & NormStateChange x b t Duty_rem) &
+    (EX e' b. InstEvent e' & remAct f b & triggers e' x b t Duty_rem &
+              (EX y'. competentFor y' e' &
+                      (EX pw' s' x''.
+                         Power pw' & bearer pw' y' &
+                         Subj s'   & bearer s'  x'' &
+                         aboutEvent pw' e' & aboutEvent s' e')))"
 proof -
-  (* Step 1: Duty + Claim from proh_relator_basic *)
   obtain rho' d c where dc:
-    "isRel rho'" "founds e rho'"
+    "Rel rho'" "founds e rho' f"
     "Duty d"  "bearer d x" "cnt d (rfr a) t" "partOf d rho'"
-    "Claim c" "bearer c y" "cnt c (rfr a) t" "partOf c rho'"
-    using assms proh_relator_basic by blast
+    "Right c" "bearer c y" "cnt c (rfr a) t" "partOf c rho'"
+    using assms ax_proh_relator_conduct by blast
   have rho_eq: "rho' = rho"
-    using dc(2) assms(8) unique_relator_per_event by blast
+    using dc(2) assms(8) ax_unique_founding_relator by blast
   have dc_rho:
     "Duty d & bearer d x & cnt d (rfr a) t & partOf d rho &
-     Claim c & bearer c y & cnt c (rfr a) t & partOf c rho"
+     Right c & bearer c y & cnt c (rfr a) t & partOf c rho"
     using dc rho_eq by simp
-  (* Step 2: Power + Subj from proh_relator_remedy *)
   obtain rho'' pw s where ps:
-    "founds e rho''"
+    "founds e rho'' f"
     "Power pw" "bearer pw y" "cnt pw (decl a) t" "partOf pw rho''"
     "Subj s"   "bearer s  x" "cnt s  (decl a) t" "partOf s  rho''"
-    using assms proh_relator_remedy by blast
+    using assms ax_proh_relator_remedy by blast
   have rho_eq2: "rho'' = rho"
-    using ps(1) assms(8) unique_relator_per_event by blast
+    using ps(1) assms(8) ax_unique_founding_relator by blast
   have ps_rho:
     "Power pw & bearer pw y & cnt pw (decl a) t & partOf pw rho &
      Subj s & bearer s x & cnt s (decl a) t & partOf s rho"
     using ps rho_eq2 by simp
-  (* Step 3: NormStateChange via B1 *)
-  have nsc: "NormStateChange x a t Duty_rem"
-    using assms violation_triggers_normstate by blast
-  (* Step 4: institutional event via A1 *)
+  obtain b where B:
+    "remAct f b" "NormStateChange x b t Duty_rem"
+    using assms ax_B1 by blast
   obtain e' where ev:
-    "InstEvent e'" "triggers e' x a t Duty_rem"
-    using nsc normstate_requires_event by blast
-  (* Step 5: competent agent via A2 *)
+    "InstEvent e'" "triggers e' x b t Duty_rem"
+    using B(2) ax_A1 by blast
   obtain y' where comp: "competentFor y' e'"
-    using ev(1) event_requires_competence by blast
-  (* Step 6: Power-Subjection grounding via A3 *)
+    using ev(1) ax_A2 by blast
   obtain pw' s' x'' where psa:
     "Power pw'" "bearer pw' y'"
     "Subj s'"   "bearer s'  x''"
     "aboutEvent pw' e'" "aboutEvent s' e'"
-    using comp competence_grounds_power by blast
-  (* Assemble conjuncts -- each isolated to prevent
-     cross_relator_consistency from firing *)
+    using comp ax_A3 by blast
   have g1: "EX d c.
       Duty d  & bearer d x & cnt d (rfr a) t & partOf d rho &
-      Claim c & bearer c y & cnt c (rfr a) t & partOf c rho"
+      Right c & bearer c y & cnt c (rfr a) t & partOf c rho"
     using dc_rho by blast
   have g2: "EX pw s.
       Power pw & bearer pw y & cnt pw (decl a) t & partOf pw rho &
       Subj s   & bearer s  x & cnt s  (decl a) t & partOf s  rho"
     using ps_rho by blast
-  have g3: "NormStateChange x a t Duty_rem" using nsc .
-  have g4: "EX e'. InstEvent e' & triggers e' x a t Duty_rem &
+  have g3: "EX b. remAct f b & NormStateChange x b t Duty_rem"
+    using B by blast
+  have g4: "EX e' b. InstEvent e' & remAct f b &
+              triggers e' x b t Duty_rem &
               (EX y'. competentFor y' e' &
                       (EX pw' s' x''.
                          Power pw' & bearer pw' y' &
                          Subj s'   & bearer s'  x'' &
                          aboutEvent pw' e' & aboutEvent s' e'))"
-    using ev comp psa by blast
+    using ev B comp psa by blast
   show ?thesis
-    apply (intro conjI)
-    using g1 apply assumption
-    using g2 apply assumption
-    using g3 apply assumption
-    using g4 apply assumption
-    done
+    using g1 g2 g3 g4 by blast
 qed
+
 (* ══════════════════════════════════════════════════════════════
    Lemma 9: Correlativity uniqueness
-   Paper: ax:correlativity (Axiom 5.7) consequences
-
-   Each Hohfeldian position has exactly ONE correlative partner
-   in the same relator -- not zero, not two.
-
-   Four sub-lemmas projecting biconditional axioms into
-   existential-uniqueness direction.
-
-   ODRL example: Liberty(l) in rho --> exactly one NoRight in rho.
-   Two NoRights would be structurally incoherent in UFO-L.
+   Paper: ax:correlativity (Ax5.8) / GRND006
+   Assumes EX! on left side to fire the biconditional.
    ══════════════════════════════════════════════════════════════ *)
-lemma liberty_unique_noright:
-  assumes "Liberty l" "partOf l rho"
-  shows "EX! n. NoRight n & partOf n rho"
-  using assms correlativity_liberty by blast
+lemma permission_unique_noright:
+  assumes "ODRLRel rho"
+          "EX! l. Permission l & partOf l rho & cnt l a t"
+  shows "EX! n. NoRight n & partOf n rho & cnt n a t"
+proof -
+  from ax_correlativity_permission_noright
+  have inst: "ODRLRel rho -->
+    ((EX! l. Permission l & partOf l rho & cnt l a t) =
+     (EX! n. NoRight n & partOf n rho & cnt n a t))"
+    by (elim allE[where x=rho] allE[where x=a] allE[where x=t])
+  with assms show ?thesis by simp
+qed
 
-lemma duty_unique_claim:
-  assumes "Duty d" "partOf d rho"
-  shows "EX! c. Claim c & partOf c rho"
-  using assms correlativity_duty by blast
+lemma duty_unique_right:
+  assumes "ODRLRel rho"
+          "EX! d. Duty d & partOf d rho & cnt d a t"
+  shows "EX! c. Right c & partOf c rho & cnt c a t"
+proof -
+  from ax_correlativity_duty_right
+  have inst: "ODRLRel rho -->
+    ((EX! d. Duty d & partOf d rho & cnt d a t) =
+     (EX! c. Right c & partOf c rho & cnt c a t))"
+    by (elim allE[where x=rho] allE[where x=a] allE[where x=t])
+  with assms show ?thesis by simp
+qed
 
 lemma power_unique_subj:
-  assumes "Power pw" "partOf pw rho"
-  shows "EX! s. Subj s & partOf s rho"
-  using assms correlativity_power by blast
+  assumes "ODRLRel rho"
+          "EX! pw. Power pw & partOf pw rho & cnt pw a t"
+  shows "EX! s. Subj s & partOf s rho & cnt s a t"
+proof -
+  from ax_correlativity_power_subj
+  have inst: "ODRLRel rho -->
+    ((EX! pw. Power pw & partOf pw rho & cnt pw a t) =
+     (EX! s. Subj s & partOf s rho & cnt s a t))"
+    by (elim allE[where x=rho] allE[where x=a] allE[where x=t])
+  with assms show ?thesis by simp
+qed
 
 lemma immunity_unique_disability:
-  assumes "Immunity im" "partOf im rho"
-  shows "EX! db. Disability db & partOf db rho"
-  using assms correlativity_immunity by blast
-
+  assumes "ODRLRel rho"
+          "EX! im. Immunity im & partOf im rho & cnt im a t"
+  shows "EX! db. Disability db & partOf db rho & cnt db a t"
+proof -
+  from ax_correlativity_immunity_disability
+  have inst: "ODRLRel rho -->
+    ((EX! im. Immunity im & partOf im rho & cnt im a t) =
+     (EX! db. Disability db & partOf db rho & cnt db a t))"
+    by (elim allE[where x=rho] allE[where x=a] allE[where x=t])
+  with assms show ?thesis by simp
+qed
 (* ══════════════════════════════════════════════════════════════
    Lemma 10: Unique founding consequences
-   Paper: ax:unique-founding (Axiom 5.5) mechanized
-
-   10a: same event founds same relator (deterministic founding)
-   10b: distinct events produce distinct relators (freshness)
-
-   ODRL example:
-     Alice requests D1 Monday --> e1 --> rho1
-     Alice requests D1 Friday --> e2 --> rho2
-     e1 ~= e2 --> rho1 ~= rho2
-   Each activation creates fresh position individuals per
-   UFO axiom a77. Essential for Skolem term freshness.
-
-   10b uses BOTH unique_relator_per_event (e -> rho) and
-   unique_founding (rho -> e) to derive rho1 ~= rho2.
+   Paper: ax:unique-founding (Ax5.5)
    ══════════════════════════════════════════════════════════════ *)
 lemma unique_founding_determines_relator:
-  assumes "founds e rho1" "founds e rho2"
+  assumes "founds e rho1 r" "founds e rho2 r"
   shows "rho1 = rho2"
-  using assms unique_relator_per_event by blast
+  using assms ax_unique_founding_relator by blast
 
 lemma two_activations_two_relators:
-  assumes "founds e1 rho1" "founds e2 rho2" "e1 ~= e2"
+  assumes "founds e1 rho1 r" "founds e2 rho2 r" "e1 ~= e2"
   shows "rho1 ~= rho2"
 proof -
-  from assms unique_relator_per_event
-  have "rho1 = rho2 --> founds e1 rho2" by blast
-  with assms unique_founding
+  from assms ax_unique_founding_relator
+  have "rho1 = rho2 --> founds e1 rho2 r" by blast
+  with assms ax_unique_founding_event
   have "rho1 = rho2 --> e1 = e2" by blast
   with assms show ?thesis by blast
 qed
 
 (* ══════════════════════════════════════════════════════════════
    Lemma 11: Grounding strictly richer than ODRL evaluator
-   Paper: Proposition 5.1 converse / Table 2 rows 2, 4, 7, 8
-
-   ODRL evaluator produces (rows 1, 3, 5):
-     Permission  --> Liberty
-     Prohibition --> Duty
-     Remedy      --> Power
-
-   Grounding additionally entails (rows 2, 4, 7, 8):
-     NoRight    -- surfaced correlative of Liberty
-     Claim      -- surfaced correlative of Duty
-     Immunity   -- added for strong permission
-     Disability -- added for strong permission
-
-   ODRL examples:
-     ex:perm1  --> Evaluator: PERMITTED
-                   Grounding: + NoRight(Acme, read, D1)
-     ex:proh1  --> Evaluator: PROHIBITED
-                   Grounding: + Claim(Acme, rfr(distribute), D1)
-     ex:perm2 + strong
-               --> Evaluator: PERMITTED
-                   Grounding: + Immunity(Alice) + Disability(Acme)
+   Paper: prop:faithfulness converse / Table 1 rows 2,4,7,8
    ══════════════════════════════════════════════════════════════ *)
 lemma grounding_surfaces_noright:
   assumes "Perm p" "aee p x" "aer p y" "act p a" "tgt p t" "activates e p"
-  shows "EX rho n. isRel rho & founds e rho &
+  shows "EX rho n. Rel rho & founds e rho p &
                    NoRight n & bearer n y & cnt n a t & partOf n rho"
 proof -
-  from assms perm_relator_basic
+  from assms ax_perm_relator_weak
   obtain rho l n where
-    "isRel rho" "founds e rho"
-    "Liberty l" "bearer l x" "cnt l a t" "partOf l rho"
+    "Rel rho" "founds e rho p"
+    "Permission l" "bearer l x" "cnt l a t" "partOf l rho"
     "NoRight n" "bearer n y" "cnt n a t" "partOf n rho"
     by blast
   thus ?thesis by blast
 qed
 
-lemma grounding_surfaces_claim:
+lemma grounding_surfaces_right:
   assumes "Proh f" "aee f x" "aer f y" "act f a" "tgt f t" "activates e f"
-  shows "EX rho c. isRel rho & founds e rho &
-                   Claim c & bearer c y & cnt c (rfr a) t & partOf c rho"
+  shows "EX rho c. Rel rho & founds e rho f &
+                   Right c & bearer c y & cnt c (rfr a) t & partOf c rho"
 proof -
-  from assms proh_relator_basic
+  from assms ax_proh_relator_conduct
   obtain rho d c where
-    "isRel rho" "founds e rho"
+    "Rel rho" "founds e rho f"
     "Duty d"  "bearer d x" "cnt d (rfr a) t" "partOf d rho"
-    "Claim c" "bearer c y" "cnt c (rfr a) t" "partOf c rho"
+    "Right c" "bearer c y" "cnt c (rfr a) t" "partOf c rho"
     by blast
   thus ?thesis by blast
 qed
 
 lemma grounding_surfaces_immunity:
   assumes "Perm p" "strong p" "aee p x" "aer p y"
-          "act p a" "tgt p t" "activates e p" "founds e rho"
+          "act p a" "tgt p t" "activates e p" "founds e rho p"
   shows "EX im. Immunity im & bearer im x & cnt im a t & partOf im rho"
 proof -
-  from assms perm_relator_strong
+  from assms ax_perm_relator_strong
   obtain im db where
     "Immunity im"   "bearer im x"  "cnt im a t"  "partOf im rho"
     "Disability db" "bearer db y"  "cnt db a t"  "partOf db rho"
@@ -1048,15 +1191,14 @@ qed
 
 lemma grounding_surfaces_disability:
   assumes "Perm p" "strong p" "aee p x" "aer p y"
-          "act p a" "tgt p t" "activates e p" "founds e rho"
+          "act p a" "tgt p t" "activates e p" "founds e rho p"
   shows "EX db. Disability db & bearer db y & cnt db a t & partOf db rho"
 proof -
-  from assms perm_relator_strong
+  from assms ax_perm_relator_strong
   obtain im db where
     "Immunity im"   "bearer im x"  "cnt im a t"  "partOf im rho"
     "Disability db" "bearer db y"  "cnt db a t"  "partOf db rho"
     by blast
   thus ?thesis by blast
 qed
-
 end

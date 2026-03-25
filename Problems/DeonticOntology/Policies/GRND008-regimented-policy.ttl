@@ -20,4 +20,7 @@
 <drk:ConcertRecordingDataset> a dcat:Dataset .
 <drk:MusicMarketplaceAG>      a schema:Organization .
 # Regimented reading: does(MusicMarketplaceAG, distribute) impossible.
-# Ground witness asserts it => contradiction.
+# No remedy — regimentation makes violation structurally impossible.
+# Ground witness asserts does => contradiction.
+# Abstract constants: marketplace=drk:MusicMarketplaceAG,
+#   distrib=odrl:distribute, concert_ds=drk:ConcertRecordingDataset

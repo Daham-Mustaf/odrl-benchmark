@@ -25,5 +25,7 @@
 <drk:PhilharmonieBerlin> a schema:Organization .
 <drk:MusicMarketplaceAG> a schema:Organization .
 # drk:MusicMarketplaceAG performs distribute => violation reachable.
-# Power(drk:PhilharmonieBerlin, decl(distribute)) constituted at activation
-# in fresh competence relator rho_R (Ax5.4 via founds_rem).
+# Power(drk:PhilharmonieBerlin, decl(distribute)) constituted at activation.
+# Abstract constants: marketplace=drk:MusicMarketplaceAG,
+#   philharmonie=drk:PhilharmonieBerlin, distrib=odrl:distribute,
+#   concert_ds=drk:ConcertRecordingDataset

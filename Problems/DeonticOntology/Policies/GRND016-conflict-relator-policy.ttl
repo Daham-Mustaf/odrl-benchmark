@@ -3,7 +3,7 @@
 # Domain   : Deontic Ontology / ODRL Grounding
 # Problem  : Conflict detection: Permission and Duty in same relator
 # Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-# Generated: 2026-03-22 by gen_foundation_problems.py
+# Generated: 2026-03-25 by gen_foundation_problems.py
 # Links    : Entailment/GRND016-conflict-relator-1.p
 #            Entailment/GRND016-conflict-relator-1.smt2
 # ------------------------------------------------------------------------------
@@ -13,3 +13,5 @@
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 # Within-relator conflict: Permission and Duty-to-refrain
 # co-borne by drk:UniversitaetsbibliothekMuenchen in the same relator.
+# Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+#   read=odrl:read, theater_ds=drk:TheaterShowtimeDataset

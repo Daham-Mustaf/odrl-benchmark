@@ -8,7 +8,10 @@
 % Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
 % % H2 = {Permission, NoRight, Immunity, Disability}.
-% % Acme attempts proh(f2). Ax5.11: Disability + proh => False.
+% % museen attempts proh(f2). Ax5.10: Disability + proh => False.
+% % Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+% %   museen=drk:StaatlicheMuseenBerlin, read=odrl:read,
+% %   museum_api=drk:MuseumCollectionAPI
 %
 % ODRL Policy (Turtle) — see Policies/ for full file:
 % @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
@@ -16,18 +19,7 @@
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % @prefix schema: <https://schema.org/> .
 % <drk:policy-strong> a odrl:Agreement ;
-%     odrl:permission [ a odrl:Permission ;
-%         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
-%         odrl:assigner <drk:StaatlicheMuseenBerlin> ;
-%         odrl:action   odrl:read ;
-%         odrl:target   <drk:MuseumCollectionAPI> ] .
-% <drk:MuseumCollectionAPI>             a dcat:DataService ;
-%     schema:name "Staatliche Museen Berlin Collection API" .
-% <drk:StaatlicheMuseenBerlin>          a schema:Organization .
-% <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
-% # strong(p) asserted (profile extension, not ODRL 2.2).
-% # Immunity(Bibliothek) + Disability(Museen).
-% # StaatlicheMuseenBerlin attempts prohibition => blocked by Disability.
+% ... (15 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
@@ -61,35 +53,37 @@ fof(ax_disability_block, axiom,
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 % Ground instance (gamma)
 %--------------------------------------------------------------------------
-fof(agent_alice,   axiom, agent(alice)).
-fof(agent_acme,    axiom, agent(acme)).
-fof(action_read,   axiom, action(read)).
-fof(target_d1,     axiom, target(d1)).
-fof(pos_l,         axiom, position(l)).
-fof(pos_n,         axiom, position(n)).
-fof(pos_im,        axiom, position(im)).
-fof(pos_db,        axiom, position(db)).
-fof(rel_rho1,      axiom, legal_relator(rho1)).
-fof(permission_l,  axiom, permission(l)).
-fof(no_right_n,    axiom, no_right(n)).
-fof(immunity_im,   axiom, immunity(im)).
-fof(disability_db, axiom, disability(db)).
-fof(bearer_l,      axiom, bearer(l,  alice)).
-fof(bearer_n,      axiom, bearer(n,  acme)).
-fof(bearer_im,     axiom, bearer(im, alice)).
-fof(bearer_db,     axiom, bearer(db, acme)).
-fof(cnt_l,         axiom, cnt(l,  read, d1)).
-fof(cnt_n,         axiom, cnt(n,  read, d1)).
-fof(cnt_im,        axiom, cnt(im, read, d1)).
-fof(cnt_db,        axiom, cnt(db, read, d1)).
-fof(rule_f2,       axiom, rule(f2)).
-fof(proh_f2,       axiom, proh(f2)).
-fof(aee_f2,        axiom, aee(f2, alice)).
-fof(aer_f2,        axiom, aer(f2, acme)).
-fof(act_f2,        axiom, act(f2, read)).
-fof(tgt_f2,        axiom, tgt(f2, d1)).
+fof(agent_bibliothek, axiom, agent(bibliothek)).
+fof(agent_museen,     axiom, agent(museen)).
+fof(action_read,      axiom, action(read)).
+fof(target_museum,    axiom, target(museum_api)).
+fof(pos_l,            axiom, position(l)).
+fof(pos_n,            axiom, position(n)).
+fof(pos_im,           axiom, position(im)).
+fof(pos_db,           axiom, position(db)).
+fof(rel_rho1,         axiom, legal_relator(rho1)).
+fof(odrl_rho1,        axiom, odrl_rel(rho1)).
+fof(permission_l,     axiom, permission(l)).
+fof(no_right_n,       axiom, no_right(n)).
+fof(immunity_im,      axiom, immunity(im)).
+fof(disability_db,    axiom, disability(db)).
+fof(bearer_l,         axiom, bearer(l,  bibliothek)).
+fof(bearer_n,         axiom, bearer(n,  museen)).
+fof(bearer_im,        axiom, bearer(im, bibliothek)).
+fof(bearer_db,        axiom, bearer(db, museen)).
+fof(cnt_l,            axiom, cnt(l,  read, museum_api)).
+fof(cnt_n,            axiom, cnt(n,  read, museum_api)).
+fof(cnt_im,           axiom, cnt(im, read, museum_api)).
+fof(cnt_db,           axiom, cnt(db, read, museum_api)).
+fof(rule_f2,          axiom, rule(f2)).
+fof(proh_f2,          axiom, proh(f2)).
+fof(aee_f2,           axiom, aee(f2, bibliothek)).
+fof(aer_f2,           axiom, aer(f2, museen)).
+fof(act_f2,           axiom, act(f2, read)).
+fof(tgt_f2,           axiom, tgt(f2, museum_api)).

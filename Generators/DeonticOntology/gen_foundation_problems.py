@@ -12,15 +12,18 @@ Module structure:
   gen_foundation_problems.py  — this file: main() only
 CHANGELOG v1.5:
   - --ext flag: include extension problems GRND010-018
-  - --hard flag: include hard problems GRND019-024
+  - --hard flag: include hard problems GRND019-024; implies --ext automatically
   - Bug 1: --hard now implies --ext (hard problems depend on ext axioms)
   - Bug 2: verify counts computed dynamically from actual problem lists
+  - Bug 3: dead ax_list assignment removed (was computed but never printed)
   - Bug 4: file count corrects for None ttl_path
+  - Usage comment corrected: --hard alone is sufficient for all problems
+  - verify_all.sh print aligned: --hard alone shown (not --ext --hard)
 CHANGELOG v1.4:
   - Split into modules: axiom_data, problem_data, writers
   - Real .ttl policy files written to Problems/DeonticOntology/Policies/
   - Policy link added to every .p and .smt2 header
-  - SMT2_PREAMBLE imported from gen_signature.generate_smt2()
+  - SMT2_PREAMBLE imported from gen_layer0_signature.generate_smt2()
   - TTL uses real Turtle syntax
 CHANGELOG v1.3:
   - Per-problem axiom inlining (fof_axioms key)
@@ -55,7 +58,7 @@ Usage:
 
     # all problems (GRND001-024); --hard implies --ext automatically
     uv run Generators/DeonticOntology/gen_foundation_problems.py \
-      --out-dir Problems/DeonticOntology --ext --hard
+      --out-dir Problems/DeonticOntology --hard
 """
 import argparse
 import sys
@@ -74,6 +77,11 @@ try:
     from problem_data_hard import PROBLEMS_HARD
 except ImportError:
     PROBLEMS_HARD = []
+
+try:
+    from problem_data_coverage import PROBLEMS_COVERAGE
+except ImportError:
+    PROBLEMS_COVERAGE = []
 
 
 def main():
@@ -95,15 +103,25 @@ def main():
         action="store_true",
         help="Also generate hard problems GRND019-024 (implies --ext)",
     )
+    parser.add_argument(
+        "--coverage",
+        action="store_true",
+        help="Also generate coverage problems GRND025-034 (implies --hard)",
+    )
     # kept for backward compat with run_all.sh — values ignored
     parser.add_argument("--sig-ax",  default=None, help=argparse.SUPPRESS)
     parser.add_argument("--sig-smt", default=None, help=argparse.SUPPRESS)
     args = parser.parse_args()
 
-    # Bug 1 fix: --hard implies --ext; GRND019-024 depend on GRND010-018.
+    # --hard implies --ext; GRND019-024 depend on GRND010-018.
     # Build problem list in correct order with no gaps.
     problems = PROBLEMS[:]
-    if args.hard:
+    if args.coverage:
+        problems += PROBLEMS_EXT
+        problems += PROBLEMS_HARD
+        problems += PROBLEMS_COVERAGE
+        tier = "base+ext+hard+coverage"
+    elif args.hard:
         problems += PROBLEMS_EXT   # always include ext when hard is requested
         problems += PROBLEMS_HARD
         tier = "base+ext+hard"
@@ -122,27 +140,28 @@ def main():
         smt2_path = write_smt2_problem(p, out_dir)
         written.append((fof_path, smt2_path, ttl_path))
 
-        ax_list = ", ".join(p.get("fof_axioms", [])) or "(none)"
         print(f"  {p['id']:30s}  FOF:{p['status_fof']:16s}  {fof_path.name}")
         print(f"  {'':30s}  SMT:{p['status_smt']:16s}  {smt2_path.name}")
         if ttl_path:
             print(f"  {'':30s}  TTL:             {ttl_path.name}")
 
-    # Bug 4 fix: count actual files written; ttl_path may be None for some problems.
+    # Count actual files written; ttl_path may be None for some problems.
     n_problems = len(written)
     n_files = sum(2 + (1 if ttl else 0) for _, _, ttl in written)
 
-    # Bug 2 fix: derive prover-check counts dynamically from actual problem lists,
-    # not hardcoded values. Each problem generates one FOF + one SMT-LIB check.
+    # Derive prover-check counts dynamically from actual problem lists.
+    # Each problem generates one FOF + one SMT-LIB check.
     base_checks = len(PROBLEMS) * 2
     ext_checks  = (len(PROBLEMS) + len(PROBLEMS_EXT)) * 2
     hard_checks = (len(PROBLEMS) + len(PROBLEMS_EXT) + len(PROBLEMS_HARD)) * 2
 
     print(f"\nTotal [{tier}]: {n_problems} problems ({n_files} files written)")
+    coverage_checks = (len(PROBLEMS) + len(PROBLEMS_EXT) + len(PROBLEMS_HARD) + len(PROBLEMS_COVERAGE)) * 2
     print(f"\nProver check counts (FOF + SMT-LIB per problem):")
-    print(f"  base          : {base_checks:3d} checks   bash verify_all.sh")
-    print(f"  base + ext    : {ext_checks:3d} checks   bash verify_all.sh --ext")
-    print(f"  base+ext+hard : {hard_checks:3d} checks   bash verify_all.sh --ext --hard")
+    print(f"  base              : {base_checks:3d} checks   bash verify_all.sh")
+    print(f"  base + ext        : {ext_checks:3d} checks   bash verify_all.sh --ext")
+    print(f"  base+ext+hard     : {hard_checks:3d} checks   bash verify_all.sh --hard")
+    print(f"  base+ext+hard+cov : {coverage_checks:3d} checks   bash verify_all.sh --coverage")
 
 
 if __name__ == "__main__":

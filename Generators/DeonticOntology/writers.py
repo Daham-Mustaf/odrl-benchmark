@@ -10,10 +10,17 @@ Exported functions:
 Imported by: gen_foundation_problems.py
 Fix history:
   v1.5 — import corrected from gen_layer0_signature (Bug 1 — was gen_signature);
-          axiom count corrected to 28 formulae: 27 axioms + 1 corollary (Bug 2);
+          _get_axiom helper added for diagnostic KeyError on missing axiom keys
+            (Bug 2 — was silent KeyError with no problem/key context);
+          SMT2 axiom count computed dynamically from len(SMT2_AXIOMS)
+            (Bug 3 — was hardcoded 28, actual count is len(SMT2_AXIOMS));
+          TTL header truncated to 5 lines in FOF/SMT2 for Vampire readability
+            (Observation 1);
+          SMT2 description strip uses removeprefix logic not lstrip('% ')
+            (Observation 2 — lstrip is character-set not prefix-strip).
           SMT2 writer asymmetry documented — full axiom set always embedded
           because Z3 does not timeout on full set; FOF uses per-problem subsets
-          to avoid Vampire timeouts (Bug 3 — was undocumented).
+          to avoid Vampire timeouts (was undocumented).
 """
 import sys
 import textwrap
@@ -23,7 +30,7 @@ from datetime import date
 # Import preamble from gen_layer0_signature so it never diverges from the
 # generated GRND000-0.smt2 file.
 sys.path.insert(0, str(Path(__file__).parent))
-from gen_layer0_signature import generate_smt2 as _gen_smt2   # Bug 1 fix
+from gen_layer0_signature import generate_smt2 as _gen_smt2
 from axiom_data import (
     FOF_AXIOM_DICT,
     SMT2_AXIOMS,
@@ -34,6 +41,45 @@ from axiom_data import (
 VERSION = "1.5"
 GENERATOR = f"gen_foundation_problems.py v{VERSION}"
 SMT2_PREAMBLE = _gen_smt2()
+
+# Maximum TTL lines inlined into problem file headers.
+# Full policy is always in Policies/<id>-policy.ttl.
+_TTL_HEADER_MAX_LINES = 5
+
+
+# ============================================================================
+# HELPERS
+# ============================================================================
+
+def _get_axiom(key: str, problem_id: str) -> str:
+    """Look up a FOF axiom by key with a diagnostic error if missing."""
+    if key not in FOF_AXIOM_DICT:
+        raise KeyError(
+            f"Problem {problem_id}: axiom key '{key}' not found in FOF_AXIOM_DICT. "
+            f"Available keys: {sorted(FOF_AXIOM_DICT)}"
+        )
+    return FOF_AXIOM_DICT[key]
+
+
+def _ttl_header_lines(ttl: str, prefix: str) -> list[str]:
+    """Return TTL lines for embedding in a .p or .smt2 header, truncated."""
+    all_lines = ttl.strip().splitlines()
+    shown = all_lines[:_TTL_HEADER_MAX_LINES]
+    result = [f"{prefix}{line}" for line in shown]
+    if len(all_lines) > _TTL_HEADER_MAX_LINES:
+        remaining = len(all_lines) - _TTL_HEADER_MAX_LINES
+        result.append(f"{prefix}... ({remaining} more lines — see Policies/ file)")
+    return result
+
+
+def _strip_fof_comment_prefix(line: str) -> str:
+    """Strip a single leading '% ' prefix (not character-set lstrip)."""
+    if line.startswith("% "):
+        return line[2:]
+    if line.startswith("%"):
+        return line[1:]
+    return line
+
 
 # ============================================================================
 # FOF WRITER
@@ -59,12 +105,11 @@ def write_fof_problem(p: dict, out_dir: Path) -> Path:
     for line in textwrap.dedent(p["description"]).strip().splitlines():
         lines.append(f"% {line}")
 
-    # TTL summary in header
+    # TTL summary in header — truncated for Vampire --proof readability
     if p.get("ttl"):
         lines.append("%")
         lines.append("% ODRL Policy (Turtle) — see Policies/ for full file:")
-        for ttl_line in p["ttl"].strip().splitlines():
-            lines.append(f"% {ttl_line}")
+        lines.extend(_ttl_header_lines(p["ttl"], "% "))
 
     lines += [
         "%--------------------------------------------------------------------------",
@@ -76,7 +121,7 @@ def write_fof_problem(p: dict, out_dir: Path) -> Path:
         "% NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid",
         "% Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not",
         "% timeout on the full set). This asymmetry is intentional.",
-        *[FOF_AXIOM_DICT[ax] for ax in p.get("fof_axioms", [])],
+        *[_get_axiom(ax, p["id"]) for ax in p.get("fof_axioms", [])],
         "",
         FOF_APPENDIX_DECLS,
         "%--------------------------------------------------------------------------",
@@ -120,15 +165,15 @@ def write_smt2_problem(p: dict, out_dir: Path) -> Path:
         ";",
     ]
     for line in textwrap.dedent(p["description"]).strip().splitlines():
-        lines.append(f"; {line.lstrip('% ')}")
+        lines.append(f"; {_strip_fof_comment_prefix(line)}")
 
-    # TTL summary in header
+    # TTL summary in header — truncated for readability
     if p.get("ttl"):
         lines.append(";")
         lines.append("; ODRL Policy (Turtle) — see Policies/ for full file:")
-        for ttl_line in p["ttl"].strip().splitlines():
-            lines.append(f"; {ttl_line}")
+        lines.extend(_ttl_header_lines(p["ttl"], "; "))
 
+    skip_axioms = p.get("skip_smt2_axioms", False)
     lines += [
         "; --------------------------------------------------------------------------",
         "",
@@ -138,18 +183,27 @@ def write_smt2_problem(p: dict, out_dir: Path) -> Path:
         "; === Appendix A.0 additional sorts/predicates ===",
         SMT2_APPENDIX_SORTS,
         "",
-        "; === Layer 1: ALL paper axioms embedded (28 formulae: 27 axioms + 1 corollary) ===",
-        "; === Z3 does not timeout on the full set; FOF inlines per-problem subsets ===",
-        "; === only (fof_axioms key) to avoid Vampire timeouts. Asymmetry intentional. ===",
-        "; === Authoritative source: Axioms/Layer1-Deontic/GRND-AX-1.smt2 ===",
-        "; === (SMT-LIB has no include directive — axioms embedded directly) ===",
-        "",
     ]
 
-    for name, formula in SMT2_AXIOMS:
-        lines.append(f"; {name}")
-        lines.append(formula)
-        lines.append("")
+    if skip_axioms:
+        lines += [
+            "; === Layer 1: axioms omitted (skip_smt2_axioms=True) ===",
+            "; === Problem is self-contained in smt2_extra_decls. ===",
+            "",
+        ]
+    else:
+        lines += [
+            f"; === Layer 1: ALL paper axioms embedded ({len(SMT2_AXIOMS)} formulae) ===",
+            "; === Z3 does not timeout on the full set; FOF inlines per-problem subsets ===",
+            "; === only (fof_axioms key) to avoid Vampire timeouts. Asymmetry intentional. ===",
+            "; === Authoritative source: Axioms/Layer1-Deontic/GRND-AX-1.smt2 ===",
+            "; === (SMT-LIB has no include directive — axioms embedded directly) ===",
+            "",
+        ]
+        for name, formula in SMT2_AXIOMS:
+            lines.append(f"; {name}")
+            lines.append(formula)
+            lines.append("")
 
     lines += [
         "; === Ground instance (gamma) ===",

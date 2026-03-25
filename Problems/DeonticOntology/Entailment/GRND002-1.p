@@ -7,24 +7,19 @@
 % Policy   : Policies/GRND002-policy.ttl
 % Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
-% % perm(p1) activated by e1 entails Permission(alice,read,d1) and NoRight(acme,read,d1).
+% % perm(p1) activated by e1 entails Permission(bibliothek,read,theater_ds)
+% % and NoRight(ensemble,read,theater_ds).
+% % Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+% %   ensemble=drk:BerlinerEnsemble, read=odrl:read,
+% %   theater_ds=drk:TheaterShowtimeDataset
 %
 % ODRL Policy (Turtle) — see Policies/ for full file:
 % @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
 % @prefix drk:    <http://w3id.org/drk/ontology/> .
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % @prefix schema: <https://schema.org/> .
-% # Same policy as GRND001 — different question asked (entailment)
 % <drk:policy-theater-read> a odrl:Agreement ;
-%     odrl:permission [ a odrl:Permission ;
-%         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
-%         odrl:assigner <drk:BerlinerEnsemble> ;
-%         odrl:action   odrl:read ;
-%         odrl:target   <drk:TheaterShowtimeDataset> ] .
-% <drk:TheaterShowtimeDataset>          a dcat:Dataset ;
-%     schema:name "Berliner Ensemble Showtime Dataset" .
-% <drk:BerlinerEnsemble>                a schema:Organization .
-% <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
+% ... (12 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
@@ -34,7 +29,7 @@ include('Axioms/Layer0-Signature/GRND000-0.ax').
 % NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
 % Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
 % timeout on the full set). This asymmetry is intentional.
-fof(ax_perm_relator_basic, axiom,
+fof(ax_perm_relator_weak, axiom,
     ! [P, X, Y, A, T, E] :
       ( ( perm(P) & aee(P,X) & aer(P,Y) & act(P,A) & tgt(P,T) & activates(E,P) )
      => ? [Rho, L, N] :
@@ -61,23 +56,24 @@ fof(ax_perm_relator_basic, axiom,
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 % Ground instance (gamma)
 %--------------------------------------------------------------------------
-fof(agent_alice, axiom, agent(alice)).
-fof(agent_acme,  axiom, agent(acme)).
-fof(action_read, axiom, action(read)).
-fof(target_d1,   axiom, target(d1)).
-fof(rule_p1,     axiom, rule(p1)).
-fof(event_e1,    axiom, event(e1)).
-fof(perm_p1,     axiom, perm(p1)).
-fof(aee_p1,      axiom, aee(p1, alice)).
-fof(aer_p1,      axiom, aer(p1, acme)).
-fof(act_p1,      axiom, act(p1, read)).
-fof(tgt_p1,      axiom, tgt(p1, d1)).
-fof(act_e1_p1,   axiom, activates(e1, p1)).
+fof(agent_bibliothek, axiom, agent(bibliothek)).
+fof(agent_ensemble,   axiom, agent(ensemble)).
+fof(action_read,      axiom, action(read)).
+fof(target_theater,   axiom, target(theater_ds)).
+fof(rule_p1,          axiom, rule(p1)).
+fof(event_e1,         axiom, event(e1)).
+fof(perm_p1,          axiom, perm(p1)).
+fof(aee_p1,           axiom, aee(p1, bibliothek)).
+fof(aer_p1,           axiom, aer(p1, ensemble)).
+fof(act_p1,           axiom, act(p1, read)).
+fof(tgt_p1,           axiom, tgt(p1, theater_ds)).
+fof(act_e1_p1,        axiom, activates(e1, p1)).
 
 %--------------------------------------------------------------------------
 % Conjecture
@@ -85,5 +81,5 @@ fof(act_e1_p1,   axiom, activates(e1, p1)).
 fof(conjecture, conjecture,
     ( ? [Rho, L, N] :
   ( founds(e1, Rho, p1)
-  & permission(L) & bearer(L, alice) & cnt(L, read, d1) & part_of(L, Rho)
-  & no_right(N)   & bearer(N, acme)  & cnt(N, read, d1) & part_of(N, Rho) ) )).
+  & permission(L) & bearer(L, bibliothek) & cnt(L, read, theater_ds) & part_of(L, Rho)
+  & no_right(N)   & bearer(N, ensemble)   & cnt(N, read, theater_ds) & part_of(N, Rho) ) )).

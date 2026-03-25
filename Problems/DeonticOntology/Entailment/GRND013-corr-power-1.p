@@ -5,7 +5,7 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND013-corr-power-policy.ttl
-% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
 % % odrl_rel(rho1), Power(pw) partOf rho1 => exists unique s. Subjection(s) partOf rho1.
 %
@@ -21,11 +21,16 @@
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
+% NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
+% Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
+% timeout on the full set). This asymmetry is intentional.
 fof(ax_correlativity_power, axiom,
     ! [Rho, A, T] :
       ( odrl_rel(Rho)
-     => ( ( ? [Pw] : ( power(Pw)     & part_of(Pw,Rho) & cnt(Pw,A,T) ) )
-        <=> ( ? [S] : ( subjection(S) & part_of(S,Rho)  & cnt(S,A,T)
+     => ( ( ? [Pw] : ( power(Pw) & part_of(Pw,Rho) & cnt(Pw,A,T)
+                      & ! [Pw2] : ( ( power(Pw2) & part_of(Pw2,Rho) & cnt(Pw2,A,T) )
+                                   => Pw2 = Pw ) ) )
+        <=> ( ? [S] : ( subjection(S) & part_of(S,Rho) & cnt(S,A,T)
                       & ! [S2] : ( ( subjection(S2) & part_of(S2,Rho) & cnt(S2,A,T) )
                                   => S2 = S ) ) ) ) )).
 
@@ -48,6 +53,7 @@ fof(ax_correlativity_power, axiom,
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -61,6 +67,9 @@ fof(partof_pw,         axiom, part_of(pw, rho1)).
 fof(cnt_pw,            axiom, cnt(pw, some_action, some_target)).
 fof(some_action_typed, axiom, action(some_action)).
 fof(some_target_typed, axiom, target(some_target)).
+fof(power_pw_unique,   axiom,
+    ! [Pw2] : ( ( power(Pw2) & part_of(Pw2, rho1) & cnt(Pw2, some_action, some_target) )
+               => Pw2 = pw )).
 
 %--------------------------------------------------------------------------
 % Conjecture

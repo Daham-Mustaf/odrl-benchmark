@@ -5,7 +5,7 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND014-corr-immunity-policy.ttl
-% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
 % % odrl_rel(rho1), Immunity(im) partOf rho1 => exists unique db. Disability(db) partOf rho1.
 %
@@ -21,11 +21,16 @@
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
+% NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
+% Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
+% timeout on the full set). This asymmetry is intentional.
 fof(ax_correlativity_immunity, axiom,
     ! [Rho, A, T] :
       ( odrl_rel(Rho)
-     => ( ( ? [Im] : ( immunity(Im)    & part_of(Im,Rho)  & cnt(Im,A,T) ) )
-        <=> ( ? [Db] : ( disability(Db) & part_of(Db,Rho)  & cnt(Db,A,T)
+     => ( ( ? [Im] : ( immunity(Im) & part_of(Im,Rho) & cnt(Im,A,T)
+                      & ! [Im2] : ( ( immunity(Im2) & part_of(Im2,Rho) & cnt(Im2,A,T) )
+                                   => Im2 = Im ) ) )
+        <=> ( ? [Db] : ( disability(Db) & part_of(Db,Rho) & cnt(Db,A,T)
                        & ! [Db2] : ( ( disability(Db2) & part_of(Db2,Rho) & cnt(Db2,A,T) )
                                     => Db2 = Db ) ) ) ) )).
 
@@ -48,6 +53,7 @@ fof(ax_correlativity_immunity, axiom,
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -61,6 +67,9 @@ fof(partof_im,         axiom, part_of(im, rho1)).
 fof(cnt_im,            axiom, cnt(im, some_action, some_target)).
 fof(some_action_typed, axiom, action(some_action)).
 fof(some_target_typed, axiom, target(some_target)).
+fof(immun_im_unique,   axiom,
+    ! [Im2] : ( ( immunity(Im2) & part_of(Im2, rho1) & cnt(Im2, some_action, some_target) )
+               => Im2 = im )).
 
 %--------------------------------------------------------------------------
 % Conjecture

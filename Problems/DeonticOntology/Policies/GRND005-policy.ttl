@@ -13,9 +13,9 @@
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 # Conflict witness — not a valid standalone policy.
 # Ground instance asserts:
-#   Permission(drk:UniversitaetsbibliothekMuenchen,
-#              read, drk:TheaterShowtimeDataset)
+#   Permission(drk:UniversitaetsbibliothekMuenchen, read, drk:TheaterShowtimeDataset)
 # AND
-#   Duty(drk:UniversitaetsbibliothekMuenchen,
-#        rfr(read), drk:TheaterShowtimeDataset)
-# in the same relator. Ax5.10 derives False.
+#   Duty(drk:UniversitaetsbibliothekMuenchen, rfr(read), drk:TheaterShowtimeDataset)
+# in the same relator. ax:conflict (Corollary of Ax5.9) derives False.
+# Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+#   read=odrl:read, theater_ds=drk:TheaterShowtimeDataset

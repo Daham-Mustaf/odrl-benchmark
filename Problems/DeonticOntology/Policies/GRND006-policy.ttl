@@ -23,3 +23,6 @@
 <drk:BerlinerEnsemble>                a schema:Organization .
 <drk:UniversitaetsbibliothekMuenchen> a schema:Organization .
 # Permission(Bibliothek) entails unique NoRight(Ensemble) in relator.
+# Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+#   ensemble=drk:BerlinerEnsemble, use_act=odrl:use,
+#   play_ds=drk:PlayProductionMetadataDataset

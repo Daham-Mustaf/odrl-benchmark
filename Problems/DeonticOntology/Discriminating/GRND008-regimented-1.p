@@ -8,7 +8,10 @@
 % Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
 % % Regimented axiom: ~does when prohibited.
-% % Ground witness: does(alice,distribute,d1). Contradiction.
+% % Ground witness: does(marketplace,distrib,concert_ds). Contradiction.
+% % has_rem NOT asserted — regimented reading presupposes no remedy.
+% % Abstract constants: marketplace=drk:MusicMarketplaceAG,
+% %   distrib=odrl:distribute, concert_ds=drk:ConcertRecordingDataset
 %
 % ODRL Policy (Turtle) — see Policies/ for full file:
 % @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
@@ -16,14 +19,7 @@
 % @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 % @prefix schema: <https://schema.org/> .
 % <drk:policy-regimented> a odrl:Agreement ;
-%     odrl:prohibition [ a odrl:Prohibition ;
-%         odrl:assignee <drk:MusicMarketplaceAG> ;
-%         odrl:action   odrl:distribute ;
-%         odrl:target   <drk:ConcertRecordingDataset> ] .
-% <drk:ConcertRecordingDataset> a dcat:Dataset .
-% <drk:MusicMarketplaceAG>      a schema:Organization .
-% # Regimented reading: does(MusicMarketplaceAG, distribute) impossible.
-% # Ground witness asserts it => contradiction.
+% ... (11 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
@@ -53,23 +49,23 @@ include('Axioms/Layer0-Signature/GRND000-0.ax').
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 % Ground instance (gamma)
 %--------------------------------------------------------------------------
-fof(agent_alice,       axiom, agent(alice)).
-fof(action_distribute, axiom, action(distribute)).
-fof(target_d1,         axiom, target(d1)).
-fof(rule_f1,           axiom, rule(f1)).
-fof(event_e1,          axiom, event(e1)).
-fof(proh_f1,           axiom, proh(f1)).
-fof(rem_f1,            axiom, has_rem(f1)).
-fof(act_f1,            axiom, act(f1, distribute)).
-fof(aee_f1,            axiom, aee(f1, alice)).
-fof(act_e1_f1,         axiom, activates(e1, f1)).
-fof(regimented, axiom,
+fof(agent_marketplace,  axiom, agent(marketplace)).
+fof(action_distrib,     axiom, action(distrib)).
+fof(target_concert,     axiom, target(concert_ds)).
+fof(rule_f1,            axiom, rule(f1)).
+fof(event_e1,           axiom, event(e1)).
+fof(proh_f1,            axiom, proh(f1)).
+fof(act_f1,             axiom, act(f1, distrib)).
+fof(aee_f1,             axiom, aee(f1, marketplace)).
+fof(act_e1_f1,          axiom, activates(e1, f1)).
+fof(regimented,         axiom,
     ! [X, A, T, F, E] :
       ( ( proh(F) & aee(F,X) & act(F,A) & activates(E,F) )
      => ~ does(X,A,T) )).
-fof(alice_does, axiom, does(alice, distribute, d1)).
+fof(marketplace_does,   axiom, does(marketplace, distrib, concert_ds)).

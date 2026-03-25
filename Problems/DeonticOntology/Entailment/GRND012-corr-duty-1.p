@@ -5,7 +5,7 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND012-corr-duty-policy.ttl
-% Generated: 2026-03-22 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
 %
 % % odrl_rel(rho1), Duty(d) partOf rho1 => exists unique c. Right(c) partOf rho1.
 %
@@ -21,10 +21,15 @@
 include('Axioms/Layer0-Signature/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
+% NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
+% Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
+% timeout on the full set). This asymmetry is intentional.
 fof(ax_correlativity_duty, axiom,
     ! [Rho, A, T] :
       ( odrl_rel(Rho)
-     => ( ( ? [D] : ( duty(D)  & part_of(D,Rho) & cnt(D,A,T) ) )
+     => ( ( ? [D] : ( duty(D) & part_of(D,Rho) & cnt(D,A,T)
+                    & ! [D2] : ( ( duty(D2) & part_of(D2,Rho) & cnt(D2,A,T) )
+                                => D2 = D ) ) )
         <=> ( ? [C] : ( right(C) & part_of(C,Rho) & cnt(C,A,T)
                       & ! [K] : ( ( right(K) & part_of(K,Rho) & cnt(K,A,T) )
                                  => K = C ) ) ) ) )).
@@ -48,6 +53,7 @@ fof(ax_correlativity_duty, axiom,
 %                                  founds/3 so rho_P != rho_I
 %   duty_rem                    -- constant: token for remedy-duty position
 %   odrl_rel(Rho)               -- Rho is a relator founded by an ODRL rule
+%   legal_relator(Rho)          -- Rho is a UFO legal relator (subsumes odrl_rel)
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -61,6 +67,9 @@ fof(partof_d,          axiom, part_of(d, rho1)).
 fof(cnt_d,             axiom, cnt(d, some_action, some_target)).
 fof(some_action_typed, axiom, action(some_action)).
 fof(some_target_typed, axiom, target(some_target)).
+fof(duty_d_unique,     axiom,
+    ! [D2] : ( ( duty(D2) & part_of(D2, rho1) & cnt(D2, some_action, some_target) )
+              => D2 = d )).
 
 %--------------------------------------------------------------------------
 % Conjecture
