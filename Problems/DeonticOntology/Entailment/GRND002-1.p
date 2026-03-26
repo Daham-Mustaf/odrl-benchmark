@@ -5,7 +5,7 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND002-policy.ttl
-% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-26 by gen_foundation_problems.py v1.5
 %
 % % perm(p1) activated by e1 entails Permission(bibliothek,read,theater_ds)
 % % and NoRight(ensemble,read,theater_ds).

@@ -133,3 +133,21 @@ gen_layer0_signature.py
 `axiom_data.py` → `writers.py` → `.p` / `.smt2` files
 
 If axiom_data changes, writers.py picks it up automatically. `gen_layer1_deontic.py` and `writers.py` must stay in sync with axiom_data — that's where all the naming bugs cascaded from.
+
+
+cd /Users/dahammhamad/Desktop/tptp-odrl/Generators/DeonticOntology
+
+# 1. Layer 0 signature
+uv run gen_layer0_signature.py \
+  --out-dir ../../Problems/DeonticOntology/Axioms/Layer0-Signature
+
+# 2. Layer 1 axioms
+uv run gen_layer1_deontic.py \
+  --out-dir ../../Problems/DeonticOntology/Axioms/Layer1-Deontic
+
+# 3. All 37 problems
+uv run gen_foundation_problems.py \
+  --out-dir ../../Problems/DeonticOntology --coverage
+
+# 4. Full validation (74 checks)
+uv run run_grnd_validation.py --coverage --timeout 10

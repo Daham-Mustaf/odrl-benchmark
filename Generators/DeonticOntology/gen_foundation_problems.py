@@ -83,6 +83,11 @@ try:
 except ImportError:
     PROBLEMS_COVERAGE = []
 
+try:
+    from problem_data_dualrule import PROBLEMS_DUALRULE
+except ImportError:
+    PROBLEMS_DUALRULE = []
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -108,6 +113,11 @@ def main():
         action="store_true",
         help="Also generate coverage problems GRND025-034 (implies --hard)",
     )
+    parser.add_argument(
+        "--dualrule",
+        action="store_true",
+        help="Also generate dual-rule DRK problems GRND035-036 (implies --coverage)",
+    )
     # kept for backward compat with run_all.sh — values ignored
     parser.add_argument("--sig-ax",  default=None, help=argparse.SUPPRESS)
     parser.add_argument("--sig-smt", default=None, help=argparse.SUPPRESS)
@@ -116,7 +126,13 @@ def main():
     # --hard implies --ext; GRND019-024 depend on GRND010-018.
     # Build problem list in correct order with no gaps.
     problems = PROBLEMS[:]
-    if args.coverage:
+    if args.dualrule:
+        problems += PROBLEMS_EXT
+        problems += PROBLEMS_HARD
+        problems += PROBLEMS_COVERAGE
+        problems += PROBLEMS_DUALRULE
+        tier = "base+ext+hard+coverage+dualrule"
+    elif args.coverage:
         problems += PROBLEMS_EXT
         problems += PROBLEMS_HARD
         problems += PROBLEMS_COVERAGE
@@ -157,11 +173,13 @@ def main():
 
     print(f"\nTotal [{tier}]: {n_problems} problems ({n_files} files written)")
     coverage_checks = (len(PROBLEMS) + len(PROBLEMS_EXT) + len(PROBLEMS_HARD) + len(PROBLEMS_COVERAGE)) * 2
+    dualrule_checks = coverage_checks + len(PROBLEMS_DUALRULE) * 2
     print(f"\nProver check counts (FOF + SMT-LIB per problem):")
     print(f"  base              : {base_checks:3d} checks   bash verify_all.sh")
     print(f"  base + ext        : {ext_checks:3d} checks   bash verify_all.sh --ext")
     print(f"  base+ext+hard     : {hard_checks:3d} checks   bash verify_all.sh --hard")
     print(f"  base+ext+hard+cov : {coverage_checks:3d} checks   bash verify_all.sh --coverage")
+    print(f"  +dualrule         : {dualrule_checks:3d} checks   bash verify_all.sh --dualrule")
 
 
 if __name__ == "__main__":

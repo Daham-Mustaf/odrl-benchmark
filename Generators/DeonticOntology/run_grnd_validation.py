@@ -66,6 +66,11 @@ try:
 except ImportError:
     PROBLEMS_COVERAGE = []
 
+try:
+    from problem_data_dualrule import PROBLEMS_DUALRULE
+except ImportError:
+    PROBLEMS_DUALRULE = []
+
 # ============================================================================
 # Problem → prover job mapping
 # ============================================================================
@@ -310,6 +315,10 @@ def main():
         help="Include coverage problems GRND025-034 (implies --hard)",
     )
     parser.add_argument(
+        "--dualrule", action="store_true",
+        help="Include dual-rule DRK problems GRND035-036 (implies --coverage)",
+    )
+    parser.add_argument(
         "--vampire-only", action="store_true",
         help="Run Vampire only",
     )
@@ -331,9 +340,14 @@ def main():
     )
     args = parser.parse_args()
 
-    # Build problem list — --coverage implies --hard implies --ext
+    # Build problem list — --dualrule implies --coverage implies --hard implies --ext
     problems = PROBLEMS[:]
-    if args.coverage:
+    if args.dualrule:
+        problems += PROBLEMS_EXT
+        problems += PROBLEMS_HARD
+        problems += PROBLEMS_COVERAGE
+        problems += PROBLEMS_DUALRULE
+    elif args.coverage:
         problems += PROBLEMS_EXT
         problems += PROBLEMS_HARD
         problems += PROBLEMS_COVERAGE
@@ -395,7 +409,9 @@ def main():
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     suffix = ""
-    if args.coverage:
+    if args.dualrule:
+        suffix = "_dualrule"
+    elif args.coverage:
         suffix = "_full"
     elif args.hard:
         suffix = "_all"

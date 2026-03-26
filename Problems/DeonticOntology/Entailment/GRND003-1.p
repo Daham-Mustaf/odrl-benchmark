@@ -5,7 +5,7 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND003-policy.ttl
-% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-26 by gen_foundation_problems.py v1.5
 %
 % % proh(f1) activated by e1 entails Duty(portal,rfr(distrib),museum_api)
 % % and Right(museen,rfr(distrib),museum_api).

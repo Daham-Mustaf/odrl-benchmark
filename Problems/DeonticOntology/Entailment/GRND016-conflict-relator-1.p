@@ -5,7 +5,7 @@
 % Status   : Unsatisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND016-conflict-relator-policy.ttl
-% Generated: 2026-03-25 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-26 by gen_foundation_problems.py v1.5
 %
 % % Permission(l) and Duty(d) both partOf rho1, same bearer, same content.
 % % Corollary ax:conflict derives False (within-relator check).
