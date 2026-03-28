@@ -1,11 +1,6 @@
 (* ============================================================
-   ODRLDeonticOntology.thy  --  Stage 1
-   FOIS 2026 -- "What Does ODRL Mean?"
-   run isabelle build -D /Users/dahammhamad/Desktop/tptp-odrl/Isabelle/ -v
-   ============================================================ *)
-(* ============================================================
    ODRLDeonticOntology.thy
-   FOIS 2026 -- "What Does ODRL Mean?"
+   FOIS 2026 — "What Does ODRL Mean?"
    All axioms Ax5.1–5.11, A1–A3, B1–B3, lemmas F1–F3,
    and named theorems/lemmas.
    run: isabelle build -D /Users/dahammhamad/Desktop/tptp-odrl/Isabelle/ -v
@@ -15,7 +10,7 @@ theory ODRLDeonticOntology
 begin
 
 (* ── Sorts ──────────────────────────────────────────────────
-   Seven base types.  All abstract -- no structure beyond
+   Seven base types.  All abstract — no structure beyond
    what axioms impose.
    ─────────────────────────────────────────────────────────── *)
 typedecl Agent
@@ -90,8 +85,8 @@ consts
   tgt        :: "Rule => Target => bool"
   activates  :: "Event => Rule => bool"
   founds     :: "Event => LegalRelator => Rule => bool"
-  founds_rem :: "Event => LegalRelator => Rule => bool"   (* FIX 1 -- added *)
-  founds_imm :: "Event => LegalRelator => Rule => bool"   (* FIX 1 -- added *)
+  founds_rem :: "Event => LegalRelator => Rule => bool"   (* FIX 1 — added *)
+  founds_imm :: "Event => LegalRelator => Rule => bool"   (* FIX 1 — added *)
   bearer     :: "Position => Agent => bool"
   cnt        :: "Position => Action => Target => bool"
   partOf     :: "Position => LegalRelator => bool"
@@ -120,7 +115,7 @@ axiomatization where
   decl_injective    : "ALL a b. decl a = decl b --> a = b" and
   decl_rfr_disjoint : "ALL a.   decl a ~= rfr a"
 
-(* ── Ax 5.1  Permission Relator -- Weak ─────────────────────
+(* ── Ax 5.1  Permission Relator — Weak ─────────────────────
    Paper: ax:perm-relator-weak
    Perm(p) activated at e founds conduct relator rho_P containing:
      - Permission l  borne by assignee x over <a,t>
@@ -136,7 +131,7 @@ axiomatization where
           & Permission l & bearer l x & cnt l a t & partOf l rho
           & NoRight n   & bearer n y & cnt n a t & partOf n rho)"
 
-(* ── Ax 5.2  Permission Relator -- Strong ───────────────────
+(* ── Ax 5.2  Permission Relator — Strong ───────────────────
    Paper: ax:perm-relator-strong
    FIX 2: Strong permission founds a SECOND distinct simple relator rho_I
    via founds_imm (not founds), bundling Immunity--Disability.
@@ -145,7 +140,7 @@ axiomatization where
    Conduct relator rho_P is founded by Ax5.1 (founds).
    Competence relator rho_I is founded here (founds_imm).
    strong(p) is a profile extension point (not in ODRL 2.2 core).
-   Immunity is not exclusive to strong permission -- open-world (paper note).
+   Immunity is not exclusive to strong permission — open-world (paper note).
    ─────────────────────────────────────────────────────────── *)
 axiomatization where
   ax_perm_relator_strong :
@@ -157,7 +152,7 @@ axiomatization where
           & Immunity   im & bearer im x & cnt im a t & partOf im rho_I
           & Disability db & bearer db y & cnt db a t & partOf db rho_I)"
 
-(* ── Ax 5.3  Prohibition Relator -- Conduct ─────────────────
+(* ── Ax 5.3  Prohibition Relator — Conduct ─────────────────
    Paper: ax:proh-relator-conduct
    Proh(f) activated at e founds conduct relator rho_F containing:
      - Duty d  borne by assignee x over <rfr(a),t>  (duty to OMIT)
@@ -174,7 +169,7 @@ axiomatization where
           & Duty d  & bearer d x & cnt d (rfr a) t & partOf d rho
           & Right c & bearer c y & cnt c (rfr a) t & partOf c rho)"
 
-(* ── Ax 5.4  Prohibition Relator -- Remedy ──────────────────
+(* ── Ax 5.4  Prohibition Relator — Remedy ──────────────────
    Paper: ax:proh-relator-remedy
    FIX 3: A prohibition carrying has_rem founds a SECOND distinct simple
    relator rho_R via founds_rem (not founds), bundling Power--Subj.
@@ -201,7 +196,7 @@ axiomatization where
    obl(d) activated at e founds conduct relator rho containing:
      - Duty du  borne by assignee x over <a,t>  (duty to PERFORM)
      - Right c  borne by assigner y over <a,t>  (correlative)
-   Content is a directly -- duty to act, not to refrain.
+   Content is a directly — duty to act, not to refrain.
    Contrast with Ax5.3 where content is rfr(a).
    ─────────────────────────────────────────────────────────── *)
 axiomatization where
@@ -250,7 +245,7 @@ axiomatization where
 
 (* ── Ax 5.7  ODRL Relator Typing ───────────────────────────
    Paper: ax:odrl-rel-typing  (paper Ax5.7; was mislabelled Ax5.6 before)
-   FIX 5: Three instances -- one per founding predicate:
+   FIX 5: Three instances — one per founding predicate:
      founds     & (Perm | Proh | obl) --> ODRLRel
      founds_rem & Proh                --> ODRLRel
      founds_imm & Perm                --> ODRLRel
@@ -281,7 +276,7 @@ axiomatization where
      Duty       <-> Right        (conduct)
      Power      <-> Subj         (competence)
      Immunity   <-> Disability   (competence)
-   Gated on ODRLRel(rho) -- set by Ax5.7.
+   Gated on ODRLRel(rho) — set by Ax5.7.
    ─────────────────────────────────────────────────────────── *)
 axiomatization where
   ax_correlativity_permission_noright :
@@ -317,7 +312,7 @@ axiomatization where
    FIX 7 (comment): This is a NORMATIVE fact, independent of UFO type
    disjointness.  UFO type disjointness governs whether a single moment
    individual can have two types.  This axiom governs whether a BEARER
-   can hold two distinct moments of incompatible types -- which requires
+   can hold two distinct moments of incompatible types — which requires
    a separate normative axiom (paper §5, Ax5.9 note).
    No agent can simultaneously bear a Permission to Act and a
    Duty to Omit over the same <a,t>.
@@ -406,7 +401,7 @@ lemma faithfulness_F3 :
           & Power pw & bearer pw y & cnt pw (decl a) t & partOf pw rho_R)"
   using ax_proh_relator_remedy by blast
 
-(* ── Appendix A.2 -- Abstract normative position witness ────
+(* ── Appendix A.2 — Abstract normative position witness ────
    NormPos: abstract type for A1--A3 and B1--B3.
    Distinct from Position (concrete Hohfeldian moment).
    ─────────────────────────────────────────────────────────── *)
@@ -421,7 +416,7 @@ consts
   does            :: "Agent => Action => Target => bool"
   Duty_rem        :: NormPos
 
-(* ── Appendix A.2 -- Axiom A1 ───────────────────────────────
+(* ── Appendix A.2 — Axiom A1 ───────────────────────────────
    Paper: ax:A1
    Any normative state change requires a triggering institutional event.
    ─────────────────────────────────────────────────────────── *)
@@ -431,7 +426,7 @@ axiomatization where
        NormStateChange x a t q
        --> (EX e. InstEvent e & triggers e x a t q)"
 
-(* ── Appendix A.2 -- Axiom A2 ───────────────────────────────
+(* ── Appendix A.2 — Axiom A2 ───────────────────────────────
    Paper: ax:A2
    No institutional event occurs without a competent agent.
    Agent(y) absorbed by type system (y :: Agent).
@@ -442,7 +437,7 @@ axiomatization where
        InstEvent e
        --> (EX y. competentFor y e)"
 
-(* ── Appendix A.2 -- Axiom A3 ───────────────────────────────
+(* ── Appendix A.2 — Axiom A3 ───────────────────────────────
    Paper: ax:A3
    Competence to perform institutional event e is grounded in
    a Power--Subjection pair.
@@ -455,7 +450,7 @@ axiomatization where
               Power pw & bearer pw y & aboutEvent pw e
               & Subj s  & bearer s  x & aboutEvent s  e)"
 
-(* ── Appendix A.2 -- Bridge Axiom B1 ────────────────────────
+(* ── Appendix A.2 — Bridge Axiom B1 ────────────────────────
    Paper: B1
    Performing action a in violation of prohibition f (with remedy)
    constitutes a normative state change activating the remedy duty.
@@ -467,7 +462,7 @@ axiomatization where
        & does x a t
        --> (EX b. remAct f b & NormStateChange x b t Duty_rem)"
 
-(* ── Appendix A.2 -- Bridge Axiom B2 ────────────────────────
+(* ── Appendix A.2 — Bridge Axiom B2 ────────────────────────
    Paper: B2
    FIX 8: Uses founds_rem (not founds): the remedy Power is in rho_R,
    which is founded by founds_rem.  B2 links that relator to aboutEvent.
@@ -479,7 +474,7 @@ axiomatization where
        & partOf pw rho & founds_rem e rho f
        --> aboutEvent pw e"
 
-(* ── Appendix A.2 -- Bridge Axiom B3 ────────────────────────
+(* ── Appendix A.2 — Bridge Axiom B3 ────────────────────────
    Paper: B3
    FIX 8: Uses founds_rem (not founds): the remedy Subj is in rho_R.
    ─────────────────────────────────────────────────────────── *)
@@ -517,7 +512,7 @@ qed
    Paper: prop:weak-complete (§4)
    Weak permission is adequately characterised at conduct level.
    Direction (a): Permission + NoRight are entailed.
-   Direction (b): no competence axiom needed -- proof closes
+   Direction (b): no competence axiom needed — proof closes
    using only ax_perm_relator_weak.
    ─────────────────────────────────────────────────────────── *)
 lemma prop_weak_complete_conduct :
@@ -854,7 +849,6 @@ proof -
     subgoal using eE bB comp psa by blast
     done
 qed
-
 (* ══════════════════════════════════════════════════════════════
    Lemma 9: Correlativity uniqueness  (Ax5.8 / GRND006)
    ══════════════════════════════════════════════════════════════ *)
@@ -928,6 +922,18 @@ proof -
   have "rho1 = rho2 --> e1 = e2" by blast
   with assms show ?thesis by blast
 qed
+
+(* Two prohibitions with remedy at same event found distinct relators *)
+lemma two_prohibitions_two_remedy_relators:
+  assumes "founds_rem e rhoR1 r1" "founds_rem e rhoR2 r2" "r1 ~= r2"
+  shows "rhoR1 ~= rhoR2"
+proof -
+  (* rhoR1 = rhoR2 would force same founding event for both rules,
+     but ax_unique_founding_relator_rem only equates relators for
+     the SAME rule; different rules may produce different relators. *)
+  (* This is a satisfiability / model-level claim; the uniqueness
+     axioms only constrain same-rule pairs.  We assert it directly. *)
+  oops  (* requires a discriminating model — verified by GRND036 externally *)
 
 (* ══════════════════════════════════════════════════════════════
    Lemma 11: Grounding strictly richer than ODRL evaluator

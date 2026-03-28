@@ -5,7 +5,7 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND035-dual-rule-remedy-chain-policy.ttl
-% Generated: 2026-03-26 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-28 by gen_foundation_problems.py v1.5
 %
 % % Two prohibitions with distinct remedies from two DRK providers:
 % %   pol1: ensemble prohibits bibliothek from distributing theater_ds
@@ -40,13 +40,6 @@ include('Axioms/Layer0-Signature/GRND000-0.ax').
 % NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
 % Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
 % timeout on the full set). This asymmetry is intentional.
-fof(ax_proh_relator_conduct, axiom,
-    ! [F, X, Y, A, T, E] :
-      ( ( proh(F) & aee(F,X) & aer(F,Y) & act(F,A) & tgt(F,T) & activates(E,F) )
-     => ? [Rho, D, C] :
-          ( founds(E,Rho,F)
-          & duty(D)  & bearer(D,X) & cnt(D,rfr(A),T) & part_of(D,Rho)
-          & right(C) & bearer(C,Y) & cnt(C,rfr(A),T) & part_of(C,Rho) ) )).
 fof(ax_proh_relator_remedy, axiom,
     ! [F, X, Y, A, T, E] :
       ( ( proh(F) & has_rem(F) & aee(F,X) & aer(F,Y) & act(F,A) & tgt(F,T)

@@ -5,7 +5,7 @@
 % Status   : Unsatisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND008-regimented-policy.ttl
-% Generated: 2026-03-26 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-28 by gen_foundation_problems.py v1.5
 %
 % % Regimented axiom: ~does when prohibited.
 % % Ground witness: does(marketplace,distrib,concert_ds). Contradiction.

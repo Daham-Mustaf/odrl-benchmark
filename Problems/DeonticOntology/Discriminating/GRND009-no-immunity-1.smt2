@@ -5,7 +5,7 @@
 ; Status   : unsat
 ; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 ; Policy   : Policies/GRND009-no-immunity-policy.ttl
-; Generated: 2026-03-26 by gen_foundation_problems.py v1.5
+; Generated: 2026-03-28 by gen_foundation_problems.py v1.5
 ;
 ; H1 = {Permission, NoRight} — no Immunity/Disability.
 ; museen adds proh(f2): Ax5.3 creates Duty(bibliothek,rfr(read),museum_api).
@@ -37,7 +37,7 @@
 ;              SMT2_PREAMBLE = _gen_smt2()
 ;
 ; Source   : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Generated: 2026-03-26 by gen_layer0_signature.py
+; Generated: 2026-03-28 by gen_layer0_signature.py
 ;
 ; Key design decisions:
 ;   NormContent (Issue 1): replaces separate Action + Forbearance sorts.

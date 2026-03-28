@@ -31,7 +31,6 @@ PROBLEMS_DUALRULE = [
         "status_fof": "Theorem",
         "status_smt": "unsat",
         "fof_axioms": [
-            "ax_proh_relator_conduct",
             "ax_proh_relator_remedy",
             "ax_B2",
         ],
@@ -202,4 +201,5 @@ fof(founds_rem2,   axiom, founds_rem(e1, rhoR2, pol1)).
 """,
         "smt2_conjecture": "(assert (not (= rho-r1 rho-r2)))",
     },
+
 ]

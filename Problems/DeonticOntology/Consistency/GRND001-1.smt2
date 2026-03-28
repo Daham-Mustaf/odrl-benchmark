@@ -5,7 +5,7 @@
 ; Status   : sat
 ; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 ; Policy   : Policies/GRND001-policy.ttl
-; Generated: 2026-03-26 by gen_foundation_problems.py v1.5
+; Generated: 2026-03-28 by gen_foundation_problems.py v1.5
 ;
 ; The full axiom set (Ax5.1-5.11, A1-A3, B1-B3) is satisfiable.
 ; Minimal model: one perm rule, one agent pair, one action, one target.
@@ -36,7 +36,7 @@
 ;              SMT2_PREAMBLE = _gen_smt2()
 ;
 ; Source   : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Generated: 2026-03-26 by gen_layer0_signature.py
+; Generated: 2026-03-28 by gen_layer0_signature.py
 ;
 ; Key design decisions:
 ;   NormContent (Issue 1): replaces separate Action + Forbearance sorts.

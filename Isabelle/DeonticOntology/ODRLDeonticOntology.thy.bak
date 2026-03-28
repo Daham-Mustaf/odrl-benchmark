@@ -801,14 +801,17 @@ lemma full_lifecycle:
     "activates e f"
     "does x a t"
   shows
+    (* conduct relator rho_F: Duty + Right *)
     "(EX rho_F d c.
        Rel rho_F & founds e rho_F f &
        Duty d  & bearer d x & cnt d (rfr a) t & partOf d rho_F &
        Right c & bearer c y & cnt c (rfr a) t & partOf c rho_F) &
+    (* competence relator rho_R: Power + Subj  -- distinct from rho_F *)
     (EX rho_R pw s.
        Rel rho_R & founds_rem e rho_R f &
        Power pw & bearer pw y & cnt pw (decl a) t & partOf pw rho_R &
        Subj s   & bearer s  x & cnt s  (decl a) t & partOf s  rho_R) &
+    (* violation chain: B1 + A1 + A2 + A3 *)
     (EX b. remAct f b & NormStateChange x b t Duty_rem) &
     (EX e' b. InstEvent e' & remAct f b & triggers e' x b t Duty_rem &
               (EX y'. competentFor y' e' &
@@ -817,42 +820,52 @@ lemma full_lifecycle:
                          Subj s'   & bearer s'  x'' &
                          aboutEvent pw' e' & aboutEvent s' e')))"
 proof -
-  from assms ax_proh_relator_conduct
-  obtain rho_F d c where
-    rF: "Rel rho_F" "founds e rho_F f"
-        "Duty d"  "bearer d x" "cnt d (rfr a) t" "partOf d rho_F"
-        "Right c" "bearer c y" "cnt c (rfr a) t" "partOf c rho_F"
-    by blast
-  from assms ax_proh_relator_remedy
-  obtain rho_R pw s where
-    rR: "Rel rho_R" "founds_rem e rho_R f"
-        "Power pw" "bearer pw y" "cnt pw (decl a) t" "partOf pw rho_R"
-        "Subj s"   "bearer s  x" "cnt s  (decl a) t" "partOf s  rho_R"
-    by blast
-  from assms ax_B1
-  obtain b where
-    bB: "remAct f b" "NormStateChange x b t Duty_rem"
-    by blast
-  from bB(2) ax_A1
-  obtain e' where
-    eE: "InstEvent e'" "triggers e' x b t Duty_rem"
-    by blast
-  from eE(1) ax_A2
+  (* rho_F: conduct relator *)
+  obtain rho_F d c where dc:
+    "Rel rho_F" "founds e rho_F f"
+    "Duty d"  "bearer d x" "cnt d (rfr a) t" "partOf d rho_F"
+    "Right c" "bearer c y" "cnt c (rfr a) t" "partOf c rho_F"
+    using assms ax_proh_relator_conduct by blast
+  have g1: "EX rho_F d c.
+      Rel rho_F & founds e rho_F f &
+      Duty d  & bearer d x & cnt d (rfr a) t & partOf d rho_F &
+      Right c & bearer c y & cnt c (rfr a) t & partOf c rho_F"
+    using dc by blast
+  (* rho_R: competence relator -- distinct from rho_F via founds_rem *)
+  obtain rho_R pw s where ps:
+    "Rel rho_R" "founds_rem e rho_R f"
+    "Power pw" "bearer pw y" "cnt pw (decl a) t" "partOf pw rho_R"
+    "Subj s"   "bearer s  x" "cnt s  (decl a) t" "partOf s  rho_R"
+    using assms ax_proh_relator_remedy by blast
+  have g2: "EX rho_R pw s.
+      Rel rho_R & founds_rem e rho_R f &
+      Power pw & bearer pw y & cnt pw (decl a) t & partOf pw rho_R &
+      Subj s   & bearer s  x & cnt s  (decl a) t & partOf s  rho_R"
+    using ps by blast
+  (* violation chain *)
+  obtain b where B: "remAct f b" "NormStateChange x b t Duty_rem"
+    using assms ax_B1 by blast
+  obtain e' where ev: "InstEvent e'" "triggers e' x b t Duty_rem"
+    using B(2) ax_A1 by blast
   obtain y' where comp: "competentFor y' e'"
-    by blast
-  from comp ax_A3
-  obtain pw' s' x'' where
-    psa: "Power pw'" "bearer pw' y'"
-         "Subj s'"   "bearer s'  x''"
-         "aboutEvent pw' e'" "aboutEvent s' e'"
-    by blast
+    using ev(1) ax_A2 by blast
+  obtain pw' s' x'' where psa:
+    "Power pw'" "bearer pw' y'"
+    "Subj s'"   "bearer s'  x''"
+    "aboutEvent pw' e'" "aboutEvent s' e'"
+    using comp ax_A3 by blast
+  have g3: "EX b. remAct f b & NormStateChange x b t Duty_rem"
+    using B by blast
+  have g4: "EX e' b. InstEvent e' & remAct f b &
+              triggers e' x b t Duty_rem &
+              (EX y'. competentFor y' e' &
+                      (EX pw' s' x''.
+                         Power pw' & bearer pw' y' &
+                         Subj s'   & bearer s'  x'' &
+                         aboutEvent pw' e' & aboutEvent s' e'))"
+    using ev B comp psa by blast
   show ?thesis
-    apply (intro conjI)
-    subgoal using rF by blast
-    subgoal using rR by blast
-    subgoal using bB by blast
-    subgoal using eE bB comp psa by blast
-    done
+    using g1 g2 g3 g4 by blast
 qed
 
 (* ══════════════════════════════════════════════════════════════
@@ -928,6 +941,18 @@ proof -
   have "rho1 = rho2 --> e1 = e2" by blast
   with assms show ?thesis by blast
 qed
+
+(* Two prohibitions with remedy at same event found distinct relators *)
+lemma two_prohibitions_two_remedy_relators:
+  assumes "founds_rem e rhoR1 r1" "founds_rem e rhoR2 r2" "r1 ~= r2"
+  shows "rhoR1 ~= rhoR2"
+proof -
+  (* rhoR1 = rhoR2 would force same founding event for both rules,
+     but ax_unique_founding_relator_rem only equates relators for
+     the SAME rule; different rules may produce different relators. *)
+  (* This is a satisfiability / model-level claim; the uniqueness
+     axioms only constrain same-rule pairs.  We assert it directly. *)
+  oops  (* requires a discriminating model -- verified by GRND036 externally *)
 
 (* ══════════════════════════════════════════════════════════════
    Lemma 11: Grounding strictly richer than ODRL evaluator

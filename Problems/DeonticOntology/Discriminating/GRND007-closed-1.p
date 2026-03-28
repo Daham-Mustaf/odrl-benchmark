@@ -5,7 +5,7 @@
 % Status   : Satisfiable
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND007-closed-policy.ttl
-% Generated: 2026-03-26 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-28 by gen_foundation_problems.py v1.5
 %
 % % No perm rule for modify_act. No open-world closure.
 % % Permission(portal,modify_act,theater_ds) is NOT derivable.

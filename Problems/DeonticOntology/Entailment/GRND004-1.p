@@ -5,7 +5,7 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND004-policy.ttl
-% Generated: 2026-03-26 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-28 by gen_foundation_problems.py v1.5
 %
 % % proh(f1) + has_rem(f1) + activates(e1,f1).
 % % Ax5.4 existentially founds rho_R via founds_rem.
