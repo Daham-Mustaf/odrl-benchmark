@@ -1,2 +1,0 @@
-problem,prover,mode,expected,result,time_s,pass
-GRND002,Vampire 5.0,casc,Theorem,Timeout,0.104,FAIL
