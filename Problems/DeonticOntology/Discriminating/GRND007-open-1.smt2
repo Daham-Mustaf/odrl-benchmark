@@ -2,10 +2,11 @@
 ; File     : GRND007-open-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
 ; Problem  : Open-world: uncovered action entails Permission by default
+; Version  : 1.6
 ; Status   : unsat
 ; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Policy   : Policies/GRND007-open-policy.ttl
-; Generated: 2026-03-31 by gen_foundation_problems.py v1.5
+; Source   : Mohammed, D. (2026)
+; Names    : GRND007-open-1.smt2
 ;
 ; Open-world closure added. No proh for modify_act.
 ; Permission(portal,modify_act,theater_ds) is derivable.
@@ -23,7 +24,7 @@
 ; --------------------------------------------------------------------------
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
-; === Source: Axioms/Layer0-Signature/GRND000-0.smt2 ===
+; === Source: Axioms/GRND000-0.smt2 ===
 ; --------------------------------------------------------------------------
 ; File     : GRND000-0.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding

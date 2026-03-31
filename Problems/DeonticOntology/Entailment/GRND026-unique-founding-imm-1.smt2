@@ -2,10 +2,11 @@
 ; File     : GRND026-unique-founding-imm-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
 ; Problem  : Unique founding imm: same event+rule founds at most one immunity relator
+; Version  : 1.6
 ; Status   : unsat
 ; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Policy   : Policies/GRND026-unique-founding-imm-policy.ttl
-; Generated: 2026-03-31 by gen_foundation_problems.py v1.5
+; Source   : Mohammed, D. (2026)
+; Names    : GRND026-unique-founding-imm-1.smt2
 ;
 ; founds_imm(e1,rho1,p1) and founds_imm(e1,rho2,p1) => rho1 = rho2.
 ; UFO uniqueness for immunity relator — mirrors GRND015 for founds_imm.
@@ -18,7 +19,7 @@
 ; --------------------------------------------------------------------------
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
-; === Source: Axioms/Layer0-Signature/GRND000-0.smt2 ===
+; === Source: Axioms/GRND000-0.smt2 ===
 ; --------------------------------------------------------------------------
 ; File     : GRND000-0.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
@@ -227,11 +228,9 @@
 (declare-const duty-rem         NormPos)
 
 
-; === Layer 1: ALL paper axioms embedded (28 formulae) ===
-; === Z3 does not timeout on the full set; FOF inlines per-problem subsets ===
-; === only (fof_axioms key) to avoid Vampire timeouts. Asymmetry intentional. ===
-; === Authoritative source: Axioms/Layer1-Deontic/GRND-AX-1.smt2 ===
-; === (SMT-LIB has no include directive — axioms embedded directly) ===
+; === Layer 1: ALL 28 axioms embedded ===
+; === Z3 handles full set; FOF inlines subsets only (Vampire timeout avoidance) ===
+; === Authoritative source: Axioms/GRND-AX-1.smt2 ===
 
 ; ax_perm_relator_weak
 (assert (forall ((p Rule) (x Agent) (y Agent) (a NormContent) (t Target) (e Event))

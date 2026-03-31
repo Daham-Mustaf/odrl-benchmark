@@ -2,10 +2,11 @@
 ; File     : GRND032-odrl-rel-typing-rem-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
 ; Problem  : Ax5.7 rem: founds_rem + proh => odrl_rel
+; Version  : 1.6
 ; Status   : unsat
 ; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Policy   : Policies/GRND032-odrl-rel-typing-rem-policy.ttl
-; Generated: 2026-03-31 by gen_foundation_problems.py v1.5
+; Source   : Mohammed, D. (2026)
+; Names    : GRND032-odrl-rel-typing-rem-1.smt2
 ;
 ; founds_rem(e1,rho1,f1) & proh(f1) => odrl_rel(rho1).
 ; Ax5.7 remedy variant tested in isolation.
@@ -17,7 +18,7 @@
 ; --------------------------------------------------------------------------
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
-; === Source: Axioms/Layer0-Signature/GRND000-0.smt2 ===
+; === Source: Axioms/GRND000-0.smt2 ===
 ; --------------------------------------------------------------------------
 ; File     : GRND000-0.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
@@ -226,11 +227,9 @@
 (declare-const duty-rem         NormPos)
 
 
-; === Layer 1: ALL paper axioms embedded (28 formulae) ===
-; === Z3 does not timeout on the full set; FOF inlines per-problem subsets ===
-; === only (fof_axioms key) to avoid Vampire timeouts. Asymmetry intentional. ===
-; === Authoritative source: Axioms/Layer1-Deontic/GRND-AX-1.smt2 ===
-; === (SMT-LIB has no include directive — axioms embedded directly) ===
+; === Layer 1: ALL 28 axioms embedded ===
+; === Z3 handles full set; FOF inlines subsets only (Vampire timeout avoidance) ===
+; === Authoritative source: Axioms/GRND-AX-1.smt2 ===
 
 ; ax_perm_relator_weak
 (assert (forall ((p Rule) (x Agent) (y Agent) (a NormContent) (t Target) (e Event))

@@ -2,27 +2,37 @@
 % File     : GRND028-unique-event-imm-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Unique event imm: same relator+rule founded by at most one event
+% Version  : 1.6
+% English : founds_imm(e1,rho1,p1) and founds_imm(e2,rho1,p1) => e1 = e2.
+%          : UFO uniqueness (event side) for immunity relator.
+%
+% Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+% Source   : Mohammed, D. (2026)
+% Names    : GRND028-unique-event-imm-1.p
+%
 % Status   : Theorem
-% Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-% Policy   : Policies/GRND028-unique-event-imm-policy.ttl
-% Generated: 2026-03-31 by gen_foundation_problems.py v1.5
+% Syntax   : Number of formulae    :    8  (7 axm; 1 cnj)
+%            Number of atoms       :    8
+%            Number of variables   :    4
+%            Maximal formula depth :    4
+% SPC      : FOF_THM_RFN
 %
-% % founds_imm(e1,rho1,p1) and founds_imm(e2,rho1,p1) => e1 = e2.
-% % UFO uniqueness (event side) for immunity relator.
-%
-% ODRL Policy (Turtle) — see Policies/ for full file:
-% @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-% @prefix drk:  <http://w3id.org/drk/ontology/> .
-% # An immunity relator is individuated by a unique founding event.
+% Comments: Foundational ontology tier. FOIS 2026 benchmark.
+%          : Requires Axioms/GRND000-0.ax (Layer 0) and
+%          : inline Layer 1 axiom subset (fof_axioms key).
+%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%          : Policy source: Policies/GRND028-unique-event-imm-policy.ttl
+%          : @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+%          : @prefix drk:  <http://w3id.org/drk/ontology/> .
+%          : # An immunity relator is individuated by a unique founding event.
 %--------------------------------------------------------------------------
+
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
 include('Axioms/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
-% NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
-% Vampire timeouts. SMT-LIB embeds the full axiom set (Z3 does not
-% timeout on the full set). This asymmetry is intentional.
 fof(ax_unique_event_imm, axiom,
     ! [R, E1, E2, Rho] :
       ( ( founds_imm(E1,Rho,R) & founds_imm(E2,Rho,R) ) => E1 = E2 )).
