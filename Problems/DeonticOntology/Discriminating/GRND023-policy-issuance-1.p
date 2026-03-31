@@ -5,7 +5,7 @@
 % Status   : Theorem
 % Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
 % Policy   : Policies/GRND023-policy-issuance-policy.ttl
-% Generated: 2026-03-28 by gen_foundation_problems.py v1.5
+% Generated: 2026-03-31 by gen_foundation_problems.py v1.5
 %
 % % Two distinct rules pi1 != pi2.
 % % Layer0 issue_injective: issue(A)=issue(B) => A=B.
@@ -24,7 +24,7 @@
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
-include('Axioms/Layer0-Signature/GRND000-0.ax').
+include('Axioms/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
 % NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid

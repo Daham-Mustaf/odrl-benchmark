@@ -28,7 +28,7 @@
 %--------------------------------------------------------------------------
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
-include('Axioms/Layer0-Signature/GRND000-0.ax').
+include('Axioms/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
 % NOTE: FOF inlines per-problem subsets only (fof_axioms key) to avoid
