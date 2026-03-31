@@ -2,12 +2,13 @@
 ; File     : GRND-AX-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
 ; Version  : 1.5
-; Axioms   : Layer 1 deontic grounding axioms (Ax5.1-5.10, A1-A3, B1-B3)
+; Axioms   : Layer 1 deontic grounding axioms (Ax5.1-5.11, A1-A3, B1-B3)
 ; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Generated: 2026-03-31 by gen_layer1_deontic.py
+; Source   : Mohammed, D. (2026)
+; Names    : GRND-AX-1.smt2
 ;
 ; NOTE: SMT-LIB 2 has no include directive.
-; These axioms are embedded directly in each .smt2 problem file.
+; These axioms are embedded directly into each .smt2 problem file.
 ; This file is the authoritative reference — generated from
 ; axiom_data.SMT2_AXIOMS to guarantee identity with embedded content.
 ; --------------------------------------------------------------------------

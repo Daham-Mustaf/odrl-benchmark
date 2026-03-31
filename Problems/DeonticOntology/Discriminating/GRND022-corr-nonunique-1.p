@@ -3,9 +3,9 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Correlativity violated: two NoRight positions in same relator
 % Version  : 1.6
-% English : odrl_rel(rho1) + Permission(l) partOf rho1.
-%          : Two distinct no_right positions n1 != n2 both partOf rho1 with same content.
-%          : ax_correlativity_permission requires unique NoRight => contradiction.
+% English  : odrl_rel(rho1) + Permission(l) partOf rho1.
+%           : Two distinct no_right positions n1 != n2 both partOf rho1 with same content.
+%           : ax_correlativity_permission requires unique NoRight => contradiction.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -18,18 +18,18 @@
 %            Maximal formula depth :    8
 % SPC      : FOF_UNS_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND022-corr-nonunique-policy.ttl
-%          : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:    <http://w3id.org/drk/ontology/> .
-%          : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-%          : # Correlativity uniqueness test:
-%          : # A relator cannot contain two distinct NoRight positions
-%          : ... (1 more lines — see Policies/ file)
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND022-corr-nonunique-policy.ttl
+%           : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:    <http://w3id.org/drk/ontology/> .
+%           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+%           : # Correlativity uniqueness test:
+%           : # A relator cannot contain two distinct NoRight positions
+%           : ... (1 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 

@@ -3,7 +3,7 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Correlativity: Duty implies unique Right in relator
 % Version  : 1.6
-% English : odrl_rel(rho1), Duty(d) partOf rho1 => exists unique c. Right(c) partOf rho1.
+% English  : odrl_rel(rho1), Duty(d) partOf rho1 => exists unique c. Right(c) partOf rho1.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -16,17 +16,17 @@
 %            Maximal formula depth :    8
 % SPC      : FOF_THM_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND012-corr-duty-policy.ttl
-%          : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:    <http://w3id.org/drk/ontology/> .
-%          : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-%          : # Correlativity: every Duty in an ODRL relator has a unique correlative Right.
-%          : # Tested on drk:TheaterShowtimeDataset prohibition relator.
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND012-corr-duty-policy.ttl
+%           : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:    <http://w3id.org/drk/ontology/> .
+%           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+%           : # Correlativity: every Duty in an ODRL relator has a unique correlative Right.
+%           : # Tested on drk:TheaterShowtimeDataset prohibition relator.
 %--------------------------------------------------------------------------
 
 

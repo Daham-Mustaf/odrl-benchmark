@@ -3,19 +3,19 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Full remedy chain: violation triggers Power-licensed institutional act
 % Version  : 1.6
-% English : proh(f1) + has_rem(f1) + activates(e1,f1) + does(marketplace,distrib,concert_ds).
-%          : Ax5.4 (founds_rem): creates rho_R with Power(philharmonie,decl(distrib),concert_ds)
-%          : and Subjection(marketplace,decl(distrib),concert_ds).
-%          : B1: does(marketplace,...) => NormStateChange.
-%          : A1: NormStateChange => exists InstEvent(ev) triggers it.
-%          : B2: Power(pw) partOf rho_R & founds_rem(e1,rho_R,f1) => about_event(pw,e1).
-%          : B3: Subjection(s,...) => about_event(s,e1).
-%          : A2: InstEvent => competent agent.
-%          : A3: competence => Power+Subjection pair about ev.
-%          : Conjecture: exists pw, s, ev such that about_event(pw,ev) and about_event(s,ev).
-%          : Abstract constants: marketplace=drk:MusicMarketplaceAG,
-%          : philharmonie=drk:PhilharmonieBerlin, distrib=odrl:distribute,
-%          : concert_ds=drk:ConcertRecordingDataset
+% English  : proh(f1) + has_rem(f1) + activates(e1,f1) + does(marketplace,distrib,concert_ds).
+%           : Ax5.4 (founds_rem): creates rho_R with Power(philharmonie,decl(distrib),concert_ds)
+%           : and Subjection(marketplace,decl(distrib),concert_ds).
+%           : B1: does(marketplace,...) => NormStateChange.
+%           : A1: NormStateChange => exists InstEvent(ev) triggers it.
+%           : B2: Power(pw) partOf rho_R & founds_rem(e1,rho_R,f1) => about_event(pw,e1).
+%           : B3: Subjection(s,...) => about_event(s,e1).
+%           : A2: InstEvent => competent agent.
+%           : A3: competence => Power+Subjection pair about ev.
+%           : Conjecture: exists pw, s, ev such that about_event(pw,ev) and about_event(s,ev).
+%           : Abstract constants: marketplace=drk:MusicMarketplaceAG,
+%           : philharmonie=drk:PhilharmonieBerlin, distrib=odrl:distribute,
+%           : concert_ds=drk:ConcertRecordingDataset
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -28,18 +28,18 @@
 %            Maximal formula depth :    5
 % SPC      : FOF_THM_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND021-remedy-chain-policy.ttl
-%          : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:    <http://w3id.org/drk/ontology/> .
-%          : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-%          : @prefix schema: <https://schema.org/> .
-%          : # Full violation-to-remedy chain.
-%          : ... (16 more lines — see Policies/ file)
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND021-remedy-chain-policy.ttl
+%           : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:    <http://w3id.org/drk/ontology/> .
+%           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+%           : @prefix schema: <https://schema.org/> .
+%           : # Full violation-to-remedy chain.
+%           : ... (16 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 

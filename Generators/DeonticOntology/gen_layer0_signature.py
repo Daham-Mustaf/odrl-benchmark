@@ -1,11 +1,13 @@
 """
 gen_layer0_signature.py
-================
+=======================
 Generates TWO signature files for the FOIS 2026 deontic grounding:
   Problems/DeonticOntology/Axioms/GRND000-0.ax     — FOF/TPTP  (Vampire)
   Problems/DeonticOntology/Axioms/GRND000-0.smt2   — SMT-LIB   (Z3)
+
 FOF file:
   Used via include() at the top of every .p problem file.
+
 SMT-LIB file:
   SMT-LIB has NO include directive.
   This file is a PREAMBLE TEMPLATE embedded verbatim by every
@@ -13,60 +15,24 @@ SMT-LIB file:
   Import via:
       from gen_layer0_signature import generate_smt2 as _gen_smt2
       SMT2_PREAMBLE = _gen_smt2()
+
 Usage:
     uv run Generators/DeonticOntology/gen_layer0_signature.py \
-      --out-dir Problems/DeonticOntology/Axioms/Layer0-Signature
+      --out-dir Problems/DeonticOntology/Axioms
 """
+
 import argparse
-import textwrap
+import sys
 from pathlib import Path
-from datetime import date
 
-META = {
-    "domain":  "Deontic Ontology / ODRL Grounding",
-    "source":  "Mohammed et al., What Does ODRL Mean? FOIS 2026",
-    "version": "1.5",
-}
+sys.path.insert(0, str(Path(__file__).parent))
+from header import AXHeader
+
+VERSION = "1.5"
 
 # ============================================================================
-# FOF
+# FOF BODY SECTIONS
 # ============================================================================
-
-def fof_header() -> str:
-    return textwrap.dedent(f"""\
-        %--------------------------------------------------------------------------
-        % File     : GRND000-0.ax
-        % Domain   : {META['domain']}
-        % Problem  : Signature — sorts, predicates, rfr/decl functions
-        % Version  : {META['version']}
-        % English  : FOF signature. Include in ALL DeonticOntology .p files via:
-        %              include('Problems/DeonticOntology/Axioms').
-        %
-        % Source   : {META['source']}
-        % Generated: {date.today().isoformat()} by gen_layer0_signature.py
-        %
-        % Sorts (unary guard predicates — FOF has no native sorts):
-        %   agent, action, target, rule, position, legal_relator, event,
-        %   forbearance
-        %
-        % Functions:
-        %   rfr/1   : Act -> Forbearance   (refrain from action)
-        %   pos/1   : Forbearance -> Act   (left-inverse of rfr)
-        %   decl/1  : Act -> Act           (declare-violation institutional act)
-        %   issue/1 : Rule -> Act          (issue-policy institutional act)
-        %                                  [FIX Bug6: was Policy -> Act]
-        %
-        % CHANGELOG v1.5:
-        %   - Issue 2: liberty -> permission, claim -> right throughout
-        %     (UFO-L terms; consistent with paper and axiom_data.py)
-        %   - Issue 3: founds_rem and founds_imm added to relator predicates
-        % CHANGELOG v1.4:
-        %   - version aligned with gen_foundation_problems.py v1.4
-        % CHANGELOG v1.1:
-        %   - founds/2 -> founds/3 (event, relator, rule)
-        %   - Added odrl_rel/1, strong/1, issue/1
-        %--------------------------------------------------------------------------
-    """)
 
 FOF_SORT_GUARDS = """\
 %--------------------------------------------------------------------------
@@ -124,7 +90,6 @@ FOF_RELATOR_PREDICATES = """\
 %   cnt(Pos, A, T)    — Pos has normative content A on target T [CANONICAL]
 %                       A in Act union Forbearance; distinguished by
 %                       action(A) / forbearance(A) guards.
-%
 %--------------------------------------------------------------------------
 """
 
@@ -163,7 +128,6 @@ FOF_ISSUE = """\
 %--------------------------------------------------------------------------
 % ISSUE FUNCTION  issue : Rule -> Act
 % issue(Pi) = institutional act of issuing policy Pi.
-%
 % NOTE: issue/1 is NOT used in GRND001-024 (FOIS paper problems).
 % Present for PAAR 2026 benchmark only.
 %--------------------------------------------------------------------------
@@ -225,56 +189,53 @@ fof(cn_16, axiom, ! [P] : ~ ( no_right(P)   & disability(P) )).
 % End of GRND000-0.ax
 """
 
+FOF_BODY = "\n".join([
+    FOF_SORT_GUARDS,
+    FOF_RULE_PREDICATES,
+    FOF_RELATOR_PREDICATES,
+    FOF_RFR,
+    FOF_DECL,
+    FOF_ISSUE,
+    FOF_NORMCONTENT,
+    FOF_POSITION_DISJOINTNESS,
+])
+
 def generate_fof() -> str:
-    return "\n".join([
-        fof_header(),
-        FOF_SORT_GUARDS,
-        FOF_RULE_PREDICATES,
-        FOF_RELATOR_PREDICATES,
-        FOF_RFR,
-        FOF_DECL,
-        FOF_ISSUE,
-        FOF_NORMCONTENT,
-        FOF_POSITION_DISJOINTNESS,
-    ])
+    header = AXHeader(
+        file     = "GRND000-0.ax",
+        domain   = "foundational",
+        title    = "Signature — sorts, predicates, rfr/decl/issue functions",
+        version  = VERSION,
+        english  = (
+            "FOF signature for all DeonticOntology problems.\n"
+            "Include via: include('Axioms/GRND000-0.ax').\n"
+            "Sorts encoded as unary guard predicates (FOF has no native sorts).\n"
+            "Guards are NOT asserted here — problem files assert them per constant."
+        ),
+        refs     = ["fois2026"],
+        comments = (
+            "UFO-L terms throughout: permission/right replace liberty/claim.\n"
+            "Three founding predicates: founds, founds_rem, founds_imm.\n"
+            "rfr/1: Act -> Forbearance (refrain). pos/1: left-inverse of rfr.\n"
+            "decl/1: institutional act of declaring a violation.\n"
+            "issue/1: present for PAAR 2026 benchmark — not used in GRND001-024."
+        ),
+        fof_text = FOF_BODY,
+    ).render()
+    return header + "\n" + FOF_BODY
 
 # ============================================================================
-# SMT-LIB
+# SMT-LIB BODY SECTIONS
 # ============================================================================
 
-def smt2_header() -> str:
-    return textwrap.dedent(f"""\
-        ; --------------------------------------------------------------------------
-        ; File     : GRND000-0.smt2
-        ; Domain   : {META['domain']}
-        ; Problem  : Signature preamble — sorts, functions, rfr/decl axioms
-        ; Version  : {META['version']}
-        ; English  : SMT-LIB preamble embedded verbatim into every .smt2 file.
-        ;            Do NOT add (check-sat) here.
-        ;            Import via:
-        ;              from gen_layer0_signature import generate_smt2 as _gen_smt2
-        ;              SMT2_PREAMBLE = _gen_smt2()
-        ;
-        ; Source   : {META['source']}
-        ; Generated: {date.today().isoformat()} by gen_layer0_signature.py
-        ;
-        ; Key design decisions:
-        ;   NormContent (Issue 1): replaces separate Action + Forbearance sorts.
-        ;     rfr : NormContent -> NormContent. cnt : (Position NormContent Target).
-        ;     cnt-f removed. rfr_distinctness (rfr(a)!=a) carries the
-        ;     act/forbearance distinction instead of separate sort disjointness.
-        ;   permission/right (Issue 2): UFO-L terms replace liberty/claim.
-        ;   founds-rem, founds-imm (Issue 3): declared here alongside founds.
-        ;
-        ; CHANGELOG v1.5:
-        ;   - Issue 1: NormContent sort; cnt unified; cnt-f removed.
-        ;   - Issue 2: liberty->permission, claim->right.
-        ;   - Issue 3: founds-rem and founds-imm in SMT2_RELATOR_PREDICATES.
-        ; --------------------------------------------------------------------------
-        (set-logic UF)
-        (set-info :source |{META['source']}|)
-        (set-info :status unknown)
-    """)
+SMT2_PREAMBLE_HEADER = """\
+; (set-logic UF)
+; (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
+; (set-info :status unknown)
+(set-logic UF)
+(set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
+(set-info :status unknown)
+"""
 
 SMT2_SORTS = """\
 ; --------------------------------------------------------------------------
@@ -312,18 +273,9 @@ SMT2_RULE_PREDICATES = """\
 SMT2_RELATOR_PREDICATES = """\
 ; --------------------------------------------------------------------------
 ; UFO RELATOR AND POSITION PREDICATES
-;
-; Three founding predicates for three kinds of simple legal relator:
-;   founds     — conduct relator (Duty-Right or Permission-NoRight)
-;   founds-rem — competence relator rho_R for prohibition+remedy (Ax5.4)
-;   founds-imm — competence relator rho_I for strong permission (Ax5.2)
-; Unique Founding applies independently within each predicate.
-;
-; cnt: single predicate (Position NormContent Target).
-;   rfr(a) and a are distinct NormContent values (rfr_distinctness).
-;   cnt-f is removed entirely.
-;
-; UFO-L position terms (Issue 2): permission/right replace liberty/claim.
+; founds     — conduct relator (Duty-Right or Permission-NoRight)
+; founds-rem — competence relator rho_R for prohibition+remedy (Ax5.4)
+; founds-imm — competence relator rho_I for strong permission (Ax5.2)
 ; --------------------------------------------------------------------------
 (declare-fun founds     (Event Relator Rule) Bool)
 (declare-fun founds-rem (Event Relator Rule) Bool)
@@ -346,22 +298,13 @@ SMT2_RELATOR_PREDICATES = """\
 SMT2_RFR = """\
 ; --------------------------------------------------------------------------
 ; RFR FUNCTION  rfr : NormContent -> NormContent
-; pos = left-inverse of rfr.
-; rfr_distinctness replaces the sort-level guarantee that formerly held
-; when Action and Forbearance were distinct sorts.
-; NOTE: pos(rfr(x))=x is asserted universally over all NormContent —
-; this is conservative (stronger than the FOF action-guarded version)
-; but never unsound: it cannot produce false unsat.
 ; --------------------------------------------------------------------------
 (declare-fun rfr (NormContent) NormContent)
 (declare-fun pos (NormContent) NormContent)
-; Injectivity
 (assert (forall ((a NormContent) (b NormContent))
   (=> (= (rfr a) (rfr b)) (= a b))))
-; Left-inverse (universal; conservative over FOF action-guarded version)
 (assert (forall ((a NormContent))
   (= (pos (rfr a)) a)))
-; Distinctness: rfr(a) != a
 (assert (forall ((a NormContent))
   (not (= (rfr a) a))))
 """
@@ -369,18 +312,12 @@ SMT2_RFR = """\
 SMT2_DECL = """\
 ; --------------------------------------------------------------------------
 ; DECL FUNCTION  decl : NormContent -> NormContent
-; decl(a) = institutional act of declaring a violation on action a.
 ; --------------------------------------------------------------------------
 (declare-fun decl (NormContent) NormContent)
-; Injectivity
 (assert (forall ((a NormContent) (b NormContent))
   (=> (= (decl a) (decl b)) (= a b))))
-; Distinctness from base content
 (assert (forall ((a NormContent))
   (not (= (decl a) a))))
-; decl(a) != rfr(a): no sort separation in unified NormContent;
-; in FOF this is guaranteed by decl_range_action + rfr_range_forbearance
-; + forbearance_not_action; here it must be explicit.
 (assert (forall ((a NormContent))
   (not (= (decl a) (rfr a)))))
 """
@@ -388,12 +325,9 @@ SMT2_DECL = """\
 SMT2_ISSUE = """\
 ; --------------------------------------------------------------------------
 ; ISSUE FUNCTION  issue : Rule -> NormContent
-;
-; NOTE: issue/1 is NOT used in GRND001-024 (FOIS paper problems).
-; Present for PAAR 2026 benchmark only.
+; NOTE: not used in GRND001-024. Present for PAAR 2026 benchmark only.
 ; --------------------------------------------------------------------------
 (declare-fun issue (Rule) NormContent)
-; Injectivity
 (assert (forall ((a Rule) (b Rule))
   (=> (= (issue a) (issue b)) (= a b))))
 """
@@ -401,11 +335,6 @@ SMT2_ISSUE = """\
 SMT2_NORMCONTENT = """\
 ; --------------------------------------------------------------------------
 ; NORMCONTENT TYPE DISTINCTION
-; A position cannot bear both action-content and forbearance-content
-; (i.e., a and rfr(a)) over the same target.
-; Mirrors FOF cnt_content_unique_type; encodes Ax5.9 at the cnt level.
-; A position bears content of exactly one type over a given target,
-; following UFO moment typing and paper Ax5.9.
 ; --------------------------------------------------------------------------
 (assert (forall ((p Position) (a NormContent) (t Target))
   (not (and (cnt p a t) (cnt p (rfr a) t)))))
@@ -415,21 +344,18 @@ SMT2_POSITION_DISJOINTNESS = """\
 ; --------------------------------------------------------------------------
 ; POSITION SORT DISJOINTNESS (UFO-L terms)
 ; --------------------------------------------------------------------------
-; Within conduct level
 (assert (forall ((p Position)) (not (and (permission p) (duty p)))))
 (assert (forall ((p Position)) (not (and (permission p) (right p)))))
 (assert (forall ((p Position)) (not (and (permission p) (no-right p)))))
 (assert (forall ((p Position)) (not (and (duty p)       (right p)))))
 (assert (forall ((p Position)) (not (and (duty p)       (no-right p)))))
 (assert (forall ((p Position)) (not (and (right p)      (no-right p)))))
-; Within competence level
 (assert (forall ((p Position)) (not (and (power p)      (subjection p)))))
 (assert (forall ((p Position)) (not (and (power p)      (immunity p)))))
 (assert (forall ((p Position)) (not (and (power p)      (disability p)))))
 (assert (forall ((p Position)) (not (and (subjection p) (immunity p)))))
 (assert (forall ((p Position)) (not (and (subjection p) (disability p)))))
 (assert (forall ((p Position)) (not (and (immunity p)   (disability p)))))
-; Conduct vs competence (16 pairs)
 (assert (forall ((p Position)) (not (and (permission p) (power p)))))
 (assert (forall ((p Position)) (not (and (permission p) (subjection p)))))
 (assert (forall ((p Position)) (not (and (permission p) (immunity p)))))
@@ -446,14 +372,16 @@ SMT2_POSITION_DISJOINTNESS = """\
 (assert (forall ((p Position)) (not (and (no-right p)   (subjection p)))))
 (assert (forall ((p Position)) (not (and (no-right p)   (immunity p)))))
 (assert (forall ((p Position)) (not (and (no-right p)   (disability p)))))
-; --------------------------------------------------------------------------
 ; END OF PREAMBLE — problem files append axioms + conjecture after this
-; --------------------------------------------------------------------------
 """
 
 def generate_smt2() -> str:
+    """
+    Returns the SMT-LIB preamble string embedded verbatim into every .smt2
+    problem file. Do NOT add (check-sat) here.
+    """
     return "\n".join([
-        smt2_header(),
+        SMT2_PREAMBLE_HEADER,
         SMT2_SORTS,
         SMT2_RULE_PREDICATES,
         SMT2_RELATOR_PREDICATES,
@@ -496,13 +424,12 @@ def main():
     fof_path  = out_dir / "GRND000-0.ax"
     smt2_path = out_dir / "GRND000-0.smt2"
 
-    fof_path.write_text(fof_content,  encoding="utf-8")
+    fof_path.write_text(fof_content,   encoding="utf-8")
     smt2_path.write_text(smt2_content, encoding="utf-8")
 
     fof_axioms  = fof_content.count("fof(")
     smt2_assert = smt2_content.count("(assert")
     smt2_decl   = smt2_content.count("(declare-")
-
     print(f"Written: {fof_path}")
     print(f"  Lines: {fof_content.count(chr(10))}  FOF axioms: {fof_axioms}")
     print(f"Written: {smt2_path}")

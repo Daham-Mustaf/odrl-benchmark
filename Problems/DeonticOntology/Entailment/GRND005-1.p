@@ -3,10 +3,10 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Permission-Duty conflict detection (single relator)
 % Version  : 1.6
-% English : Permission(l,bibliothek,read,theater_ds) and Duty(d,bibliothek,rfr(read),theater_ds)
-%          : in same relator rho1. Corollary ax:conflict derives False.
-%          : Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
-%          : read=odrl:read, theater_ds=drk:TheaterShowtimeDataset
+% English  : Permission(l,bibliothek,read,theater_ds) and Duty(d,bibliothek,rfr(read),theater_ds)
+%           : in same relator rho1. Corollary ax:conflict derives False.
+%           : Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+%           : read=odrl:read, theater_ds=drk:TheaterShowtimeDataset
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -19,18 +19,18 @@
 %            Maximal formula depth :    5
 % SPC      : FOF_UNS_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND005-policy.ttl
-%          : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:    <http://w3id.org/drk/ontology/> .
-%          : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-%          : # Conflict witness — not a valid standalone policy.
-%          : # Ground instance asserts:
-%          : ... (6 more lines — see Policies/ file)
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND005-policy.ttl
+%           : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:    <http://w3id.org/drk/ontology/> .
+%           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+%           : # Conflict witness — not a valid standalone policy.
+%           : # Ground instance asserts:
+%           : ... (6 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 

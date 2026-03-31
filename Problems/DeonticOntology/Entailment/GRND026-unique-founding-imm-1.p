@@ -3,8 +3,8 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Unique founding imm: same event+rule founds at most one immunity relator
 % Version  : 1.6
-% English : founds_imm(e1,rho1,p1) and founds_imm(e1,rho2,p1) => rho1 = rho2.
-%          : UFO uniqueness for immunity relator — mirrors GRND015 for founds_imm.
+% English  : founds_imm(e1,rho1,p1) and founds_imm(e1,rho2,p1) => rho1 = rho2.
+%           : UFO uniqueness for immunity relator — mirrors GRND015 for founds_imm.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -17,16 +17,16 @@
 %            Maximal formula depth :    4
 % SPC      : FOF_THM_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND026-unique-founding-imm-policy.ttl
-%          : @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:  <http://w3id.org/drk/ontology/> .
-%          : # Uniqueness: activating the same strong permission at the same event
-%          : # cannot produce two distinct immunity relators.
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND026-unique-founding-imm-policy.ttl
+%           : @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:  <http://w3id.org/drk/ontology/> .
+%           : # Uniqueness: activating the same strong permission at the same event
+%           : # cannot produce two distinct immunity relators.
 %--------------------------------------------------------------------------
 
 

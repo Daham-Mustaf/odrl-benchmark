@@ -3,14 +3,14 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Obligation + Prohibition coexist: Duty(a) vs Duty(rfr(a)) distinct
 % Version  : 1.6
-% English : obl(obl1) activated at e1: creates Duty(bibliothek, read, theater_ds).
-%          : proh(f1)  activated at e2: creates Duty(bibliothek, rfr(read), theater_ds).
-%          : ax_cross_relator fires on Permission+Duty(rfr), NOT Duty(a)+Duty(rfr(a)).
-%          : Status: Satisfiable — the two duties coexist (different content).
-%          : Discriminating: shows obl and proh do NOT directly conflict in the grounding.
-%          : Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
-%          : ensemble=drk:BerlinerEnsemble, museen=drk:StaatlicheMuseenBerlin,
-%          : read=odrl:read, theater_ds=drk:TheaterShowtimeDataset
+% English  : obl(obl1) activated at e1: creates Duty(bibliothek, read, theater_ds).
+%           : proh(f1)  activated at e2: creates Duty(bibliothek, rfr(read), theater_ds).
+%           : ax_cross_relator fires on Permission+Duty(rfr), NOT Duty(a)+Duty(rfr(a)).
+%           : Status: Satisfiable — the two duties coexist (different content).
+%           : Discriminating: shows obl and proh do NOT directly conflict in the grounding.
+%           : Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+%           : ensemble=drk:BerlinerEnsemble, museen=drk:StaatlicheMuseenBerlin,
+%           : read=odrl:read, theater_ds=drk:TheaterShowtimeDataset
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -23,18 +23,18 @@
 %            Maximal formula depth :    5
 % SPC      : FOF_SAT_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND024-obl-proh-coexist-policy.ttl
-%          : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:    <http://w3id.org/drk/ontology/> .
-%          : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-%          : @prefix schema: <https://schema.org/> .
-%          : # Obligation to read AND prohibition on reading coexist
-%          : ... (19 more lines — see Policies/ file)
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND024-obl-proh-coexist-policy.ttl
+%           : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:    <http://w3id.org/drk/ontology/> .
+%           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+%           : @prefix schema: <https://schema.org/> .
+%           : # Obligation to read AND prohibition on reading coexist
+%           : ... (19 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 

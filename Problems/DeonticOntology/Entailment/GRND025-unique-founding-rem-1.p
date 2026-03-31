@@ -3,8 +3,8 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Unique founding rem: same event+rule founds at most one remedy relator
 % Version  : 1.6
-% English : founds_rem(e1,rho1,f1) and founds_rem(e1,rho2,f1) => rho1 = rho2.
-%          : UFO uniqueness for remedy relator — mirrors GRND015 for founds_rem.
+% English  : founds_rem(e1,rho1,f1) and founds_rem(e1,rho2,f1) => rho1 = rho2.
+%           : UFO uniqueness for remedy relator — mirrors GRND015 for founds_rem.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -17,16 +17,16 @@
 %            Maximal formula depth :    4
 % SPC      : FOF_THM_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND025-unique-founding-rem-policy.ttl
-%          : @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:  <http://w3id.org/drk/ontology/> .
-%          : # Uniqueness: activating the same prohibition-with-remedy at the same event
-%          : # cannot produce two distinct remedy relators.
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND025-unique-founding-rem-policy.ttl
+%           : @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:  <http://w3id.org/drk/ontology/> .
+%           : # Uniqueness: activating the same prohibition-with-remedy at the same event
+%           : # cannot produce two distinct remedy relators.
 %--------------------------------------------------------------------------
 
 

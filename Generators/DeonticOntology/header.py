@@ -157,14 +157,9 @@ def compute_stats(fof_text: str) -> dict:
 # =============================================================================
 
 def _wrap(label: str, text: str, width: int = 65) -> str:
-    """
-    Render a multi-line TPTP header field.
-    First line: "% Label   : text"
-    Continuation: "%          : text"
-    """
     lines = text.strip().split("\n")
-    pad = " " * (len("% Comments : ") - 3)  # align continuation
-    out = f"% {label:<8s}: {lines[0]}"
+    pad   = " " * 11          # "% Comments : " minus "% " = 11 chars
+    out   = f"% {label:<9s}: {lines[0]}"   # 9-char label field
     for line in lines[1:]:
         out += f"\n%{pad}: {line.strip()}"
     return out

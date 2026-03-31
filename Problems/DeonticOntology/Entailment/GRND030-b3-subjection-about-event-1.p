@@ -3,9 +3,9 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : B3 alone: Subjection in remedy relator concerns founding event
 % Version  : 1.6
-% English : Subjection(s) with cnt(s,decl(some_action),some_target) partOf rho_R,
-%          : and founds_rem(e1,rho_R,f1) => about_event(s, e1).
-%          : B3 tested in isolation (not combined with B2 or A-axioms).
+% English  : Subjection(s) with cnt(s,decl(some_action),some_target) partOf rho_R,
+%           : and founds_rem(e1,rho_R,f1) => about_event(s, e1).
+%           : B3 tested in isolation (not combined with B2 or A-axioms).
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -18,15 +18,15 @@
 %            Maximal formula depth :    5
 % SPC      : FOF_THM_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND030-b3-subjection-about-event-policy.ttl
-%          : @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:  <http://w3id.org/drk/ontology/> .
-%          : # B3 standalone: Subjection in a remedy relator concerns the founding event.
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND030-b3-subjection-about-event-policy.ttl
+%           : @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:  <http://w3id.org/drk/ontology/> .
+%           : # B3 standalone: Subjection in a remedy relator concerns the founding event.
 %--------------------------------------------------------------------------
 
 

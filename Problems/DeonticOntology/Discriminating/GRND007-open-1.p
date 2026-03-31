@@ -3,11 +3,11 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Open-world: uncovered action entails Permission by default
 % Version  : 1.6
-% English : Open-world closure added. No proh for modify_act.
-%          : Permission(portal,modify_act,theater_ds) is derivable.
-%          : Abstract constants: portal=drk:StreamingPortalGmbH,
-%          : ensemble=drk:BerlinerEnsemble, modify_act=odrl:modify,
-%          : theater_ds=drk:TheaterShowtimeDataset
+% English  : Open-world closure added. No proh for modify_act.
+%           : Permission(portal,modify_act,theater_ds) is derivable.
+%           : Abstract constants: portal=drk:StreamingPortalGmbH,
+%           : ensemble=drk:BerlinerEnsemble, modify_act=odrl:modify,
+%           : theater_ds=drk:TheaterShowtimeDataset
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -20,18 +20,18 @@
 %            Maximal formula depth :    5
 % SPC      : FOF_THM_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND007-open-policy.ttl
-%          : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:    <http://w3id.org/drk/ontology/> .
-%          : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-%          : # behaviour=open policy over drk:TheaterShowtimeDataset.
-%          : # No prohibition on odrl:modify declared.
-%          : ... (5 more lines — see Policies/ file)
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND007-open-policy.ttl
+%           : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:    <http://w3id.org/drk/ontology/> .
+%           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+%           : # behaviour=open policy over drk:TheaterShowtimeDataset.
+%           : # No prohibition on odrl:modify declared.
+%           : ... (5 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 

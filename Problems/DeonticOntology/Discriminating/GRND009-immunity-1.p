@@ -3,11 +3,11 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Strong permission: Permission persists (Disability blocks prohibition)
 % Version  : 1.6
-% English : H2 = {Permission, NoRight, Immunity, Disability}.
-%          : museen attempts proh(f2). Ax5.10: Disability + proh => False.
-%          : Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
-%          : museen=drk:StaatlicheMuseenBerlin, read=odrl:read,
-%          : museum_api=drk:MuseumCollectionAPI
+% English  : H2 = {Permission, NoRight, Immunity, Disability}.
+%           : museen attempts proh(f2). Ax5.10: Disability + proh => False.
+%           : Abstract constants: bibliothek=drk:UniversitaetsbibliothekMuenchen,
+%           : museen=drk:StaatlicheMuseenBerlin, read=odrl:read,
+%           : museum_api=drk:MuseumCollectionAPI
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -20,18 +20,18 @@
 %            Maximal formula depth :    4
 % SPC      : FOF_UNS_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND009-immunity-policy.ttl
-%          : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:    <http://w3id.org/drk/ontology/> .
-%          : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-%          : @prefix schema: <https://schema.org/> .
-%          : <drk:policy-strong> a odrl:Agreement ;
-%          : ... (15 more lines — see Policies/ file)
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND009-immunity-policy.ttl
+%           : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:    <http://w3id.org/drk/ontology/> .
+%           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+%           : @prefix schema: <https://schema.org/> .
+%           : <drk:policy-strong> a odrl:Agreement ;
+%           : ... (15 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 

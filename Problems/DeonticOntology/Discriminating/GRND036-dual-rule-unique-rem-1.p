@@ -3,10 +3,10 @@
 % Domain   : Deontic Ontology / ODRL Grounding
 % Problem  : Dual-rule unique rem: same event+rule founds at most one remedy relator
 % Version  : 1.6
-% English : Real DRK scenario: pol1 = BerlinerEnsemble prohibition with remedy.
-%          : founds_rem(e1,rhoR1,pol1) and founds_rem(e1,rhoR2,pol1) => rhoR1=rhoR2.
-%          : ax_unique_founding_rem fires: same event e1 + same rule pol1.
-%          : Mirrors GRND025 but grounded in actual DRK culture-dataspace entities.
+% English  : Real DRK scenario: pol1 = BerlinerEnsemble prohibition with remedy.
+%           : founds_rem(e1,rhoR1,pol1) and founds_rem(e1,rhoR2,pol1) => rhoR1=rhoR2.
+%           : ax_unique_founding_rem fires: same event e1 + same rule pol1.
+%           : Mirrors GRND025 but grounded in actual DRK culture-dataspace entities.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mohammed, D. (2026)
@@ -19,18 +19,18 @@
 %            Maximal formula depth :    4
 % SPC      : FOF_THM_RFN
 %
-% Comments: Foundational ontology tier. FOIS 2026 benchmark.
-%          : Requires Axioms/GRND000-0.ax (Layer 0) and
-%          : inline Layer 1 axiom subset (fof_axioms key).
-%          : FOF inlines per-problem subsets only to avoid Vampire timeouts.
-%          : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
-%          : Policy source: Policies/GRND036-dual-rule-unique-rem-policy.ttl
-%          : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-%          : @prefix drk:    <http://w3id.org/drk/ontology/> .
-%          : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-%          : @prefix schema: <https://schema.org/> .
-%          : # Uniqueness test: same rule pol1 at same event e1 => same remedy relator.
-%          : ... (12 more lines — see Policies/ file)
+% Comments : Foundational ontology tier. FOIS 2026 benchmark.
+%           : Requires Axioms/GRND000-0.ax (Layer 0) and
+%           : inline Layer 1 axiom subset (fof_axioms key).
+%           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
+%           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
+%           : Policy source: Policies/GRND036-dual-rule-unique-rem-policy.ttl
+%           : @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+%           : @prefix drk:    <http://w3id.org/drk/ontology/> .
+%           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+%           : @prefix schema: <https://schema.org/> .
+%           : # Uniqueness test: same rule pol1 at same event e1 => same remedy relator.
+%           : ... (12 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
 
