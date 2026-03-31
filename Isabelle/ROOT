@@ -1,3 +1,3 @@
-session DeonticOntology in "DeonticOntology" = HOL +
+session ODRLDeonticOntology in "DeonticOntology" = HOL +
   theories
-    "ODRLDeonticOntology"
+    ODRLDeonticOntology

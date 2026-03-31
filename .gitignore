@@ -13,3 +13,6 @@ __pycache__/
 
 # Build artifacts
 build/
+.python-versiontptp-utils*.jar
+tptp-utils*.jar
+tptp-utils*.jar
