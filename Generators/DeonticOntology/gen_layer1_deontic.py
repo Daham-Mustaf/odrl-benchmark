@@ -388,7 +388,7 @@ def main():
     )
     parser.add_argument(
         "--out-dir",
-        default="Problems/DeonticOntology/Axioms/Layer1-Deontic",
+        default="Problems/DeonticOntology/Axioms",
     )
     parser.add_argument("--stdout", action="store_true")
     args = parser.parse_args()
@@ -411,7 +411,7 @@ def main():
     print(f"  Lines : {content.count(chr(10))}")
     print(f"  Formulae: {axiom_count} ({axiom_count - 1} axioms, 1 corollary)")
     print(f"\nInclude in problem files with:")
-    print(f"  include('Axioms/Layer1-Deontic/GRND-AX-1.ax').")
+    print(f"  include('Axioms/GRND-AX-1.ax').")
 
     # Write SMT-LIB reference copy
     # SMT2_AXIOMS imported from axiom_data.py — guaranteed identical to

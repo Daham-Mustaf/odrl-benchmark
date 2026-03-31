@@ -2,8 +2,8 @@
 gen_layer0_signature.py
 ================
 Generates TWO signature files for the FOIS 2026 deontic grounding:
-  Problems/DeonticOntology/Axioms/Layer0-Signature/GRND000-0.ax     — FOF/TPTP  (Vampire)
-  Problems/DeonticOntology/Axioms/Layer0-Signature/GRND000-0.smt2   — SMT-LIB   (Z3)
+  Problems/DeonticOntology/Axioms/GRND000-0.ax     — FOF/TPTP  (Vampire)
+  Problems/DeonticOntology/Axioms/GRND000-0.smt2   — SMT-LIB   (Z3)
 FOF file:
   Used via include() at the top of every .p problem file.
 SMT-LIB file:
@@ -40,7 +40,7 @@ def fof_header() -> str:
         % Problem  : Signature — sorts, predicates, rfr/decl functions
         % Version  : {META['version']}
         % English  : FOF signature. Include in ALL DeonticOntology .p files via:
-        %              include('Axioms/Layer0-Signature/GRND000-0.ax').
+        %              include('Problems/DeonticOntology/Axioms').
         %
         % Source   : {META['source']}
         % Generated: {date.today().isoformat()} by gen_layer0_signature.py
@@ -474,7 +474,7 @@ def main():
     )
     parser.add_argument(
         "--out-dir",
-        default="Problems/DeonticOntology/Axioms/Layer0-Signature",
+        default="Problems/DeonticOntology/Axioms",
     )
     parser.add_argument("--stdout-fof",  action="store_true")
     parser.add_argument("--stdout-smt2", action="store_true")
