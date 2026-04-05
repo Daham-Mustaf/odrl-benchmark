@@ -3,10 +3,11 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : width > 600 vs width ≤ 600: mirror boundary
 % Version  : 1.0
-% English  : width gt 600   → (600, ∞)
-%           : width lteq 600 → (0, 600]
-%           : (600, ∞) ∩ (0, 600] = ∅ → Conflict
-%           : Symmetric to ODRL302. Requires density.
+% English  : width gt 600   → (600, ∞)   [def:interval-denotation, gt]
+%           : width lteq 600 → (0, 600]   [def:interval-denotation, lteq]
+%           : (600, ∞) ∩ (0, 600] = ∅
+%           : Conflict Criterion (co): u2=600 closed, l1=600 open → u2 ≤ l1.
+%           : Symmetric to ODRL302. Proof is order contradiction; density not needed.
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -19,10 +20,10 @@
 %           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
 %           : Policy source: Policies/ODRL303-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
+% v0 = domain lower bound (excluded); v600 = constraint value
 fof(val_v0,      axiom, val(v0)).
 fof(val_v600,    axiom, val(v600)).
 fof(ord_v0_v600, axiom, less(v0, v600)).

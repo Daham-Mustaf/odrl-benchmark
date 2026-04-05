@@ -3,9 +3,10 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : {400} ⊆ (0,600]: point inside interval
 % Version  : 1.0
-% English  : width eq 400   → {400}
-%           : width lteq 600 → (0, 600]
-%           : {400} ⊆ (0, 600] → Compatible (subsumption)
+% English  : width eq 400   → {400}       [def:interval-denotation, eq]
+%           : width lteq 600 → (0, 600]    [def:interval-denotation, lteq]
+%           : {400} ⊆ (0, 600]             [def:box-containment, Compatible]
+%           : since less(v0,v400) and less(v400,v600) → v400 ∈ (0,600].
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -21,6 +22,7 @@
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
+% v0 = domain lower bound (excluded); v400, v600 = constraint values
 fof(val_v0,        axiom, val(v0)).
 fof(val_v400,      axiom, val(v400)).
 fof(val_v600,      axiom, val(v600)).

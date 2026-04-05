@@ -68,3 +68,7 @@ Problems/ODRL/Axioms/COMPL000-0.ax
 Problems/ODRL/Axioms/PREC000-0.ax
 Problems/ODRL/Axioms/PROJ000-0.ax
 Problems/ODRL/Axioms/WF000-0.ax
+
+.DS_Store
+.gitignore
+.DS_Store
