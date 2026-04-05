@@ -1,66 +1,35 @@
 %--------------------------------------------------------------------------
-% File     : ODRL325-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : Both axes touch → single-point box Compatible
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : Box2D
-% Difficulty: Medium
+% File     : ODRL325-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : Both axes touch at boundary → single-point box Compatible
+% Version  : 1.0
+% English  : Width:  lteq 600 → (0,600]  ∩  gteq 600 → [600,∞) = {600} ≠ ∅  Compatible
+%           : Height: lteq 400 → (0,400]  ∩  gteq 400 → [400,∞) = {400} ≠ ∅  Compatible
+%           : box_verdict(Compatible, Compatible) = Compatible  [def:box-verdict Rule 2]
+%           : Witness: (X=v600, Y=v400). Box intersection is a single point.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL325-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "400"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "400"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ] .
-%
-% Formal   : width lteq 600  →  (0, 600]
-%            width gteq 600  →  [600, ∞)
-%            (0, 600] ∩ [600, ∞) ≠ ∅  →  Compatible
-% Notes    : Witness: (600, 400). Box intersection is a single point.
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL325-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
-fof(val_v0, axiom, val(v0)).
-fof(val_v400, axiom, val(v400)).
-fof(val_v600, axiom, val(v600)).
-fof(ord_v0_v400, axiom, less(v0, v400)).
-fof(ord_v0_v600, axiom, less(v0, v600)).
+fof(val_v0,        axiom, val(v0)).
+fof(val_v400,      axiom, val(v400)).
+fof(val_v600,      axiom, val(v600)).
+fof(ord_v0_v400,   axiom, less(v0,   v400)).
+fof(ord_v0_v600,   axiom, less(v0,   v600)).
 fof(ord_v400_v600, axiom, less(v400, v600)).
-fof(distinct, axiom, $distinct(v0, v400, v600)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+fof(distinct,      axiom, $distinct(v0, v400, v600)).
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl325, conjecture,
     ?[X,Y]: (in_lopen(X, v0, v600) & leq(v600, X) &
           in_lopen(Y, v0, v400) & leq(v400, Y))).
