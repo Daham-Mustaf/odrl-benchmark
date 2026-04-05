@@ -1,59 +1,53 @@
 %--------------------------------------------------------------------------
-% File     : ODRL341-1.p
+% File     : ODRL353-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : Width conflict × height+depth compatible → box Conflict
+% Problem  : prop:monotone in 3D: narrowing width propagates Conflict
 % Version  : 1.0
-% English  : Width:  lteq 600  → (0,600]  ∩  gteq 1200 → [1200,∞) = ∅  Conflict
-%           : Height: lteq 800  → (0,800]  ∩  gteq 200  → [200,∞)  ≠ ∅  Compatible
-%           : Depth:  lteq 32   → (0,32]   ∩  gteq 8    → [8,∞)    ≠ ∅  Compatible
-%           : box_verdict(Conflict, box_verdict(Compatible, Compatible)) = Conflict
+% English  : axis_subsumes(v200,v600, v0,v800): [200,600] ⊆ [0,800]
+%           : axis_conflict(v0,v800, v900,v1200): [0,800] ∩ [900,1200] = ∅
+%           : prop:monotone → axis_conflict(v200,v600, v900,v1200)
+%           : Tests Section B predicates directly — consequent is axis_conflict,
+%           : not raw interval arithmetic (forces Vampire to use Section B axioms).
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
-% Names    : ODRL341-1.p
+% Names    : ODRL353-1.p
 %
 % Status   : Theorem
 % SPC      : FOF_THM_RFN
 %
 % Comments : Axis decomposition tier. PAAR 2026 benchmark.
 %           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
-%           : Policy source: Policies/ODRL341-policy.ttl
+%           : Policy source: Policies/ODRL353-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0,         axiom, val(v0)).
-fof(val_v8,         axiom, val(v8)).
-fof(val_v32,        axiom, val(v32)).
 fof(val_v200,       axiom, val(v200)).
 fof(val_v600,       axiom, val(v600)).
 fof(val_v800,       axiom, val(v800)).
+fof(val_v900,       axiom, val(v900)).
 fof(val_v1200,      axiom, val(v1200)).
-fof(ord_v0_v8,      axiom, less(v0,   v8)).
-fof(ord_v0_v32,     axiom, less(v0,   v32)).
 fof(ord_v0_v200,    axiom, less(v0,   v200)).
 fof(ord_v0_v600,    axiom, less(v0,   v600)).
 fof(ord_v0_v800,    axiom, less(v0,   v800)).
+fof(ord_v0_v900,    axiom, less(v0,   v900)).
 fof(ord_v0_v1200,   axiom, less(v0,   v1200)).
-fof(ord_v8_v32,     axiom, less(v8,   v32)).
-fof(ord_v8_v200,    axiom, less(v8,   v200)).
-fof(ord_v8_v600,    axiom, less(v8,   v600)).
-fof(ord_v8_v800,    axiom, less(v8,   v800)).
-fof(ord_v8_v1200,   axiom, less(v8,   v1200)).
-fof(ord_v32_v200,   axiom, less(v32,  v200)).
-fof(ord_v32_v600,   axiom, less(v32,  v600)).
-fof(ord_v32_v800,   axiom, less(v32,  v800)).
-fof(ord_v32_v1200,  axiom, less(v32,  v1200)).
 fof(ord_v200_v600,  axiom, less(v200, v600)).
 fof(ord_v200_v800,  axiom, less(v200, v800)).
+fof(ord_v200_v900,  axiom, less(v200, v900)).
 fof(ord_v200_v1200, axiom, less(v200, v1200)).
 fof(ord_v600_v800,  axiom, less(v600, v800)).
+fof(ord_v600_v900,  axiom, less(v600, v900)).
 fof(ord_v600_v1200, axiom, less(v600, v1200)).
+fof(ord_v800_v900,  axiom, less(v800, v900)).
 fof(ord_v800_v1200, axiom, less(v800, v1200)).
-fof(distinct, axiom, $distinct(v0, v8, v32, v200, v600, v800, v1200)).
+fof(ord_v900_v1200, axiom, less(v900, v1200)).
+fof(distinct, axiom, $distinct(v0, v200, v600, v800, v900, v1200)).
 % ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl341, conjecture,
-    ~?[X,Y,Z]: (in_lopen(X, v0, v600)  & leq(v1200, X) &
-            in_lopen(Y, v0, v800)  & leq(v200,  Y) &
-            in_lopen(Z, v0, v32)   & leq(v8,    Z))).
+fof(odrl353, conjecture,
+    (axis_subsumes(v200, v600, v0, v800) &
+ axis_conflict(v0, v800, v900, v1200))
+=> axis_conflict(v200, v600, v900, v1200)).
 %--------------------------------------------------------------------------
