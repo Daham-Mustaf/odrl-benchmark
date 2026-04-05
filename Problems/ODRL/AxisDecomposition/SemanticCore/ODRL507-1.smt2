@@ -1,0 +1,10 @@
+; ODRL507 — thm:projection — 2D box membership iff per-axis membership holds
+(set-logic QF_LRA)
+(declare-const x Real)
+(declare-const y Real)
+(assert (> x 0.0))
+(assert (<= x 600.0))
+(assert (> y 0.0))
+(assert (<= y 400.0))
+(assert (not (and (<= x 600.0) (<= y 400.0))))
+(check-sat)
