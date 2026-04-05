@@ -1,69 +1,26 @@
 %--------------------------------------------------------------------------
-% File     : ODRL416-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : ★★★★★ Very Hard: 4D single-point witness (600,480,16,72)
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : PolicyQuality
-% Difficulty: Very Hard
+% File     : ODRL416-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : 4D all-touch single point Compatible (5 constants)
+% Version  : 1.0
+% English  : Width:  lteq 600 ∩ gteq 600 = {600} ≠ ∅ Compatible
+%           : Height: lteq 480 ∩ gteq 480 = {480} ≠ ∅ Compatible
+%           : Depth:  lteq 16  ∩ gteq 16  = {16}  ≠ ∅ Compatible
+%           : Alt:    lteq 72  ∩ gteq 72  = {72}  ≠ ∅ Compatible
+%           : Box intersection is a single point in R⁴.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL416-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "480"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "16"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "72"^^xsd:decimal ] ;
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "480"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "16"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "72"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : width lteq 600  →  (0, 600]
-%            width gteq 600  →  [600, ∞)
-%            (0, 600] ∩ [600, ∞) ≠ ∅  →  Compatible
-% Notes    : Box intersection is the single point (600,480,16,72). Prover must find the unique 4D witness.
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL416-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -82,11 +39,10 @@ fof(ord_v72_v480, axiom, less(v72, v480)).
 fof(ord_v72_v600, axiom, less(v72, v600)).
 fof(ord_v480_v600, axiom, less(v480, v600)).
 fof(distinct, axiom, $distinct(v0, v16, v72, v480, v600)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl416, conjecture,
     ?[X,Y,Z,W]: (in_lopen(X, v0, v600) & leq(v600, X) &
-          in_lopen(Y, v0, v480) & leq(v480, Y) &
-          in_lopen(Z, v0, v16) & leq(v16, Z) &
-          in_lopen(W, v0, v72) & leq(v72, W))).
+           in_lopen(Y, v0, v480) & leq(v480, Y) &
+           in_lopen(Z, v0, v16)  & leq(v16,  Z) &
+           in_lopen(W, v0, v72)  & leq(v72,  W))).
 %--------------------------------------------------------------------------

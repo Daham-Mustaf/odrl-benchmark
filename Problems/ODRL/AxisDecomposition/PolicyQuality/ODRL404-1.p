@@ -1,53 +1,24 @@
 %--------------------------------------------------------------------------
-% File     : ODRL404-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : ★★★☆☆ Medium: 2 axes, open/closed boundary, density
-% Expected : Theorem
-% Verdict  : Conflict
-% Category : PolicyQuality
-% Difficulty: Medium
+% File     : ODRL404-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : 2D oc boundary conflict × compatible (4 constants)
+% Version  : 1.0
+% English  : Width: lt 600 → (0,600) ∩ gteq 600 → [600,∞) = ∅ Conflict (oc)
+%           : Height: lteq 800 ∩ gteq 200 = [200,800] ≠ ∅ Compatible
+%           : Proof: order contradiction (X<600 & X≥600), no density.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL404-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lt ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "800"^^xsd:decimal ] ;
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "200"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : width lt 600  →  (0, 600)
-%            width gteq 600  →  [600, ∞)
-%            (0, 600) ∩ [600, ∞) ∅  →  Conflict
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL404-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
-include('Axioms/Layer0-DomainKB/ORD001-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -61,9 +32,8 @@ fof(ord_v200_v600, axiom, less(v200, v600)).
 fof(ord_v200_v800, axiom, less(v200, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v200, v600, v800)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl404, conjecture,
     ~?[X,Y]: (in_open(X, v0, v600) & leq(v600, X) &
-          in_lopen(Y, v0, v800) & leq(v200, Y))).
+            in_lopen(Y, v0, v800) & leq(v200, Y))).
 %--------------------------------------------------------------------------
