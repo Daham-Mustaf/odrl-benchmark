@@ -3,11 +3,11 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : prop:monotone in 3D: narrowing width propagates Conflict
 % Version  : 1.0
-% English  : axis_subsumes(v200,v600, v0,v800): [200,600] ⊆ [0,800]  (narrow ⊆ wide)
-%           : axis_conflict(v0,v800, v900,v1200): [0,800] ∩ [900,1200] = ∅  (wide conflicts)
-%           : Height+Depth: compatible on both policies
-%           : prop:monotone → axis_conflict(v200,v600, v900,v1200) → box Conflict
-%           : Uses Section B predicates. No new axioms needed.
+% English  : axis_subsumes(v200,v600, v0,v800): [200,600] ⊆ [0,800]
+%           : axis_conflict(v0,v800, v900,v1200): [0,800] ∩ [900,1200] = ∅
+%           : prop:monotone → axis_conflict(v200,v600, v900,v1200)
+%           : Tests Section B predicates directly — consequent is axis_conflict,
+%           : not raw interval arithmetic (forces Vampire to use Section B axioms).
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -23,67 +23,31 @@
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
-fof(val_v0,          axiom, val(v0)).
-fof(val_v8,          axiom, val(v8)).
-fof(val_v32,         axiom, val(v32)).
-fof(val_v100,        axiom, val(v100)).
-fof(val_v200,        axiom, val(v200)).
-fof(val_v400,        axiom, val(v400)).
-fof(val_v600,        axiom, val(v600)).
-fof(val_v800,        axiom, val(v800)).
-fof(val_v900,        axiom, val(v900)).
-fof(val_v1200,       axiom, val(v1200)).
-fof(ord_v0_v8,       axiom, less(v0,   v8)).
-fof(ord_v0_v32,      axiom, less(v0,   v32)).
-fof(ord_v0_v100,     axiom, less(v0,   v100)).
-fof(ord_v0_v200,     axiom, less(v0,   v200)).
-fof(ord_v0_v400,     axiom, less(v0,   v400)).
-fof(ord_v0_v600,     axiom, less(v0,   v600)).
-fof(ord_v0_v800,     axiom, less(v0,   v800)).
-fof(ord_v0_v900,     axiom, less(v0,   v900)).
-fof(ord_v0_v1200,    axiom, less(v0,   v1200)).
-fof(ord_v8_v32,      axiom, less(v8,   v32)).
-fof(ord_v8_v100,     axiom, less(v8,   v100)).
-fof(ord_v8_v200,     axiom, less(v8,   v200)).
-fof(ord_v8_v400,     axiom, less(v8,   v400)).
-fof(ord_v8_v600,     axiom, less(v8,   v600)).
-fof(ord_v8_v800,     axiom, less(v8,   v800)).
-fof(ord_v8_v900,     axiom, less(v8,   v900)).
-fof(ord_v8_v1200,    axiom, less(v8,   v1200)).
-fof(ord_v32_v100,    axiom, less(v32,  v100)).
-fof(ord_v32_v200,    axiom, less(v32,  v200)).
-fof(ord_v32_v400,    axiom, less(v32,  v400)).
-fof(ord_v32_v600,    axiom, less(v32,  v600)).
-fof(ord_v32_v800,    axiom, less(v32,  v800)).
-fof(ord_v32_v900,    axiom, less(v32,  v900)).
-fof(ord_v32_v1200,   axiom, less(v32,  v1200)).
-fof(ord_v100_v200,   axiom, less(v100, v200)).
-fof(ord_v100_v400,   axiom, less(v100, v400)).
-fof(ord_v100_v600,   axiom, less(v100, v600)).
-fof(ord_v100_v800,   axiom, less(v100, v800)).
-fof(ord_v100_v900,   axiom, less(v100, v900)).
-fof(ord_v100_v1200,  axiom, less(v100, v1200)).
-fof(ord_v200_v400,   axiom, less(v200, v400)).
-fof(ord_v200_v600,   axiom, less(v200, v600)).
-fof(ord_v200_v800,   axiom, less(v200, v800)).
-fof(ord_v200_v900,   axiom, less(v200, v900)).
-fof(ord_v200_v1200,  axiom, less(v200, v1200)).
-fof(ord_v400_v600,   axiom, less(v400, v600)).
-fof(ord_v400_v800,   axiom, less(v400, v800)).
-fof(ord_v400_v900,   axiom, less(v400, v900)).
-fof(ord_v400_v1200,  axiom, less(v400, v1200)).
-fof(ord_v600_v800,   axiom, less(v600, v800)).
-fof(ord_v600_v900,   axiom, less(v600, v900)).
-fof(ord_v600_v1200,  axiom, less(v600, v1200)).
-fof(ord_v800_v900,   axiom, less(v800, v900)).
-fof(ord_v800_v1200,  axiom, less(v800, v1200)).
-fof(ord_v900_v1200,  axiom, less(v900, v1200)).
-fof(distinct, axiom, $distinct(v0, v8, v32, v100, v200, v400, v600, v800, v900, v1200)).
+fof(val_v0,         axiom, val(v0)).
+fof(val_v200,       axiom, val(v200)).
+fof(val_v600,       axiom, val(v600)).
+fof(val_v800,       axiom, val(v800)).
+fof(val_v900,       axiom, val(v900)).
+fof(val_v1200,      axiom, val(v1200)).
+fof(ord_v0_v200,    axiom, less(v0,   v200)).
+fof(ord_v0_v600,    axiom, less(v0,   v600)).
+fof(ord_v0_v800,    axiom, less(v0,   v800)).
+fof(ord_v0_v900,    axiom, less(v0,   v900)).
+fof(ord_v0_v1200,   axiom, less(v0,   v1200)).
+fof(ord_v200_v600,  axiom, less(v200, v600)).
+fof(ord_v200_v800,  axiom, less(v200, v800)).
+fof(ord_v200_v900,  axiom, less(v200, v900)).
+fof(ord_v200_v1200, axiom, less(v200, v1200)).
+fof(ord_v600_v800,  axiom, less(v600, v800)).
+fof(ord_v600_v900,  axiom, less(v600, v900)).
+fof(ord_v600_v1200, axiom, less(v600, v1200)).
+fof(ord_v800_v900,  axiom, less(v800, v900)).
+fof(ord_v800_v1200, axiom, less(v800, v1200)).
+fof(ord_v900_v1200, axiom, less(v900, v1200)).
+fof(distinct, axiom, $distinct(v0, v200, v600, v800, v900, v1200)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl353, conjecture,
     (axis_subsumes(v200, v600, v0, v800) &
  axis_conflict(v0, v800, v900, v1200))
-=> ~?[X,Y,Z]: (in_lopen(X, v0, v600) & leq(v900,  X) &
-               in_lopen(Y, v0, v400) & leq(v100,  Y) &
-               in_lopen(Z, v0, v32)  & leq(v8,    Z))).
+=> axis_conflict(v200, v600, v900, v1200)).
 %--------------------------------------------------------------------------
