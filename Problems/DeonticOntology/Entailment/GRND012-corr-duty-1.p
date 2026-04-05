@@ -1,20 +1,16 @@
 %--------------------------------------------------------------------------
 % File     : GRND012-corr-duty-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Correlativity: Duty implies unique Right in relator
+% Axioms   : Correlativity: Duty implies unique Right in relator
 % Version  : 1.6
 % English  : odrl_rel(rho1), Duty(d) partOf rho1 => exists unique c. Right(c) partOf rho1.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND012-corr-duty-1.p
 %
-% Status   : Theorem
-% Syntax   : Number of formulae    :   11  (10 axm; 1 cnj)
-%            Number of atoms       :   30
-%            Number of variables   :    7
-%            Maximal formula depth :    8
-% SPC      : FOF_THM_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

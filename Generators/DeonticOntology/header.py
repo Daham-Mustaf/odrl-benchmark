@@ -239,23 +239,21 @@ class Header:
             return SPC["sat"]
         return "FOF_UNK_RFN"
 
-    def render(self) -> str:
-        stats = _stats_block(compute_stats(self.fof_text)) if self.fof_text else ""
+    def render(self):
         return (
             f"%--------------------------------------------------------------------------\n"
             f"% File     : {self.file}\n"
             f"% Domain   : {DOMAINS[self.domain]}\n"
-            f"% Problem  : {self.title}\n"
+            f"% Axioms   : {self.title}\n"
             f"% Version  : {self.version}\n"
             f"{_wrap('English', self.english)}\n"
             f"%\n"
             f"{_refs_block(self.refs)}\n"
-            f"% Source   : Mohammed, D. (2026)\n"
+            f"% Source   : Mustafa, D. (2026)\n"
             f"% Names    : {self.file}\n"
             f"%\n"
-            f"% Status   : {self.status}\n"
-            f"{stats}"
-            f"% SPC      : {self._infer_spc()}\n"
+            f"% Status   : Satisfiable\n"
+            f"% SPC      : {self.spc}\n"
             f"%\n"
             f"{_wrap('Comments', self.comments)}\n"
             f"%--------------------------------------------------------------------------\n"

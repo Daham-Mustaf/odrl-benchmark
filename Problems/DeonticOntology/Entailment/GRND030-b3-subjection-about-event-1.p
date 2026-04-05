@@ -1,22 +1,18 @@
 %--------------------------------------------------------------------------
 % File     : GRND030-b3-subjection-about-event-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : B3 alone: Subjection in remedy relator concerns founding event
+% Axioms   : B3 alone: Subjection in remedy relator concerns founding event
 % Version  : 1.6
 % English  : Subjection(s) with cnt(s,decl(some_action),some_target) partOf rho_R,
 %           : and founds_rem(e1,rho_R,f1) => about_event(s, e1).
 %           : B3 tested in isolation (not combined with B2 or A-axioms).
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND030-b3-subjection-about-event-1.p
 %
-% Status   : Theorem
-% Syntax   : Number of formulae    :   12  (11 axm; 1 cnj)
-%            Number of atoms       :   18
-%            Number of variables   :    6
-%            Maximal formula depth :    5
-% SPC      : FOF_THM_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

@@ -175,7 +175,6 @@ class AXHeader:
     fof_text: str = ""
 
     def render(self):
-        stats = _stats_block(compute_stats(self.fof_text)) if self.fof_text else ""
         return (
             f"%--------------------------------------------------------------------------\n"
             f"% File     : {self.file}\n"
@@ -189,7 +188,6 @@ class AXHeader:
             f"% Names    : {self.file}\n"
             f"%\n"
             f"% Status   : Satisfiable\n"
-            f"{stats}"
             f"% SPC      : {self.spc}\n"
             f"%\n"
             f"{_wrap('Comments', self.comments)}\n"

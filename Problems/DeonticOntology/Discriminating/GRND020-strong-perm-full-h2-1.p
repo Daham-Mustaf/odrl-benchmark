@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND020-strong-perm-full-h2-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Strong permission full H2: Disability blocks same assigner prohibition
+% Axioms   : Strong permission full H2: Disability blocks same assigner prohibition
 % Version  : 1.6
 % English  : perm(p1) + strong(p1) + activates(e1,p1).
 %           : Ax5.2 (founds_imm): creates rho_I with Immunity(bibliothek,read,museum_api)
@@ -13,15 +13,11 @@
 %           : museum_api=drk:MuseumCollectionAPI
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND020-strong-perm-full-h2-1.p
 %
-% Status   : Unsatisfiable
-% Syntax   : Number of formulae    :   24  (24 axm)
-%            Number of atoms       :   60
-%            Number of variables   :   13
-%            Maximal formula depth :    4
-% SPC      : FOF_UNS_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

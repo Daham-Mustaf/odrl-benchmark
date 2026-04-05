@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND018-about-event-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : B2+B3: Power and Subjection in relator concern founding event
+% Axioms   : B2+B3: Power and Subjection in relator concern founding event
 % Version  : 1.6
 % English  : proh(f1) + has_rem(f1) + activates(e1,f1).
 %           : Ax5.4 existentially founds rho_R via founds_rem.
@@ -12,15 +12,11 @@
 %           : concert_ds=drk:ConcertRecordingDataset
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND018-about-event-1.p
 %
-% Status   : Theorem
-% Syntax   : Number of formulae    :   17  (16 axm; 1 cnj)
-%            Number of atoms       :   52
-%            Number of variables   :   11
-%            Maximal formula depth :    5
-% SPC      : FOF_THM_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

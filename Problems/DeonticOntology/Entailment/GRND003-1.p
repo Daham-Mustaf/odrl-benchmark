@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND003-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Prohibition creates Duty and Right over rfr(a)
+% Axioms   : Prohibition creates Duty and Right over rfr(a)
 % Version  : 1.6
 % English  : proh(f1) activated by e1 entails Duty(portal,rfr(distrib),museum_api)
 %           : and Right(museen,rfr(distrib),museum_api).
@@ -10,15 +10,11 @@
 %           : museum_api=drk:MuseumCollectionAPI
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND003-1.p
 %
-% Status   : Theorem
-% Syntax   : Number of formulae    :   14  (13 axm; 1 cnj)
-%            Number of atoms       :   40
-%            Number of variables   :    9
-%            Maximal formula depth :    5
-% SPC      : FOF_THM_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

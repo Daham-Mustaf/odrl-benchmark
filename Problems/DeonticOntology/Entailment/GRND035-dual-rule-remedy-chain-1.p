@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND035-dual-rule-remedy-chain-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Dual-rule: Power in remedy relator concerns founding event (B2)
+% Axioms   : Dual-rule: Power in remedy relator concerns founding event (B2)
 % Version  : 1.6
 % English  : Two prohibitions with distinct remedies from two DRK providers:
 %           : pol1: ensemble prohibits bibliothek from distributing theater_ds
@@ -21,15 +21,11 @@
 %           : delete_act = odrl:delete
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND035-dual-rule-remedy-chain-1.p
 %
-% Status   : Theorem
-% Syntax   : Number of formulae    :   29  (28 axm; 1 cnj)
-%            Number of atoms       :   57
-%            Number of variables   :   13
-%            Maximal formula depth :    5
-% SPC      : FOF_THM_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and
