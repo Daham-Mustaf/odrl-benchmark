@@ -1,66 +1,25 @@
 %--------------------------------------------------------------------------
-% File     : ODRL466-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : 3-axis XONE(A)×AND(B): exactly arm 1 holds → Compatible
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : LogicalXone
-% Difficulty: Hard
+% File     : ODRL466-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : 3-branch xone-A vs and-B: A_x branch alone compatible → Compatible
+% Version  : 1.0
+% English  : PolicyA: xone3(width lteq 600, height lteq 400, depth lteq 200)
+%           : PolicyB: and(width lteq 400, height gteq 500, depth gteq 300)
+%           : Branch (A_x&~A_y&~A_z): X∈(0,400], Y≥500>400→Y∉(0,400]✓, Z≥300>200→Z∉(0,200]✓
+%           : Witness: X=v300, Y=v500, Z=v300. verdictXone=Compatible
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL466-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         a odrl:LogicalConstraint ;
-%         odrl:xone (
-%           [ odrl:leftOperand oax:absoluteSizeWidth ;
-%             odrl:operator odrl:lteq ;
-%             odrl:rightOperand "600"^^xsd:decimal ]
-%           [ odrl:leftOperand oax:absoluteSizeHeight ;
-%             odrl:operator odrl:lteq ;
-%             odrl:rightOperand "400"^^xsd:decimal ]
-%           [ odrl:leftOperand oax:absoluteSizeDepth ;
-%             odrl:operator odrl:lteq ;
-%             odrl:rightOperand "200"^^xsd:decimal ]
-%         )
-%       ]
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "400"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "500"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "300"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : width lteq 600  →  (0, 600]
-%            width lteq 400  →  (0, 400]
-%            (0, 600] ∩ (0, 400] ≠ ∅  →  Compatible
-% Notes    : B: w≤400 → arm1 ✓; h≥500 → arm2 ✗; d≥300 → arm3 ✗. Exactly one holds. Witness: (300, 600, 400).
-% Connect. : Policy A = odrl:xone
-%            Policy B = AND (implicit)
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL466-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -85,8 +44,7 @@ fof(ord_v400_v500, axiom, less(v400, v500)).
 fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(ord_v500_v600, axiom, less(v500, v600)).
 fof(distinct, axiom, $distinct(v0, v200, v300, v400, v500, v600)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl466, conjecture,
     ?[X,Y,Z]: (((in_lopen(X, v0, v600) & ~(in_lopen(Y, v0, v400)) & ~(in_lopen(Z, v0, v200))) |
               (~(in_lopen(X, v0, v600)) & in_lopen(Y, v0, v400) & ~(in_lopen(Z, v0, v200))) |

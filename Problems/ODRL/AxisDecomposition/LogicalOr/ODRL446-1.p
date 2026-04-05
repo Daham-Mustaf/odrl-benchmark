@@ -1,67 +1,25 @@
 %--------------------------------------------------------------------------
-% File     : ODRL446-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : 3-axis OR(A)×AND(B): depth arm rescues → Compatible
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : LogicalOr
-% Difficulty: Hard
+% File     : ODRL446-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : 3-branch or: depth branch overlaps → Compatible
+% Version  : 1.0
+% English  : PolicyA: width lteq 200 OR height lteq 100 OR depth lteq 200 (odrl:or)
+%           : PolicyB: width gteq 400 AND height gteq 200 AND depth gteq 100 (odrl:and)
+%           : Branch (A3,B): Z∈(0,200]∩[100,∞)=[100,200] ≠ ∅ → Compatible
+%           : Witness: X=400, Y=200, Z=100 (named constants).
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL446-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         a odrl:LogicalConstraint ;
-%         odrl:or (
-%           [ odrl:leftOperand oax:absoluteSizeWidth ;
-%             odrl:operator odrl:lteq ;
-%             odrl:rightOperand "200"^^xsd:decimal ]
-%           [ odrl:leftOperand oax:absoluteSizeHeight ;
-%             odrl:operator odrl:lteq ;
-%             odrl:rightOperand "100"^^xsd:decimal ]
-%           [ odrl:leftOperand oax:absoluteSizeDepth ;
-%             odrl:operator odrl:lteq ;
-%             odrl:rightOperand "200"^^xsd:decimal ]
-%         )
-%       ]
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "400"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "200"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "100"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : width lteq 200  →  (0, 200]
-%            width gteq 400  →  [400, ∞)
-%            (0, 200] ∩ [400, ∞) ≠ ∅  →  Compatible
-% Notes    : Width and height arms conflict, but depth arm (≤200 ∩ ≥100) is compatible. Witness: (400, 200, 150).
-% Connect. : Policy A = odrl:or
-%            Policy B = AND (implicit)
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL446-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
-include('Axioms/Layer0-DomainKB/ORD001-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -75,9 +33,8 @@ fof(ord_v100_v200, axiom, less(v100, v200)).
 fof(ord_v100_v400, axiom, less(v100, v400)).
 fof(ord_v200_v400, axiom, less(v200, v400)).
 fof(distinct, axiom, $distinct(v0, v100, v200, v400)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl446, conjecture,
     ?[X,Y,Z]: ((in_lopen(X, v0, v200) | in_lopen(Y, v0, v100) | in_lopen(Z, v0, v200)) &
-          (leq(v400, X) & leq(v200, Y) & leq(v100, Z)))).
+           (leq(v400, X) & leq(v200, Y) & leq(v100, Z)))).
 %--------------------------------------------------------------------------
