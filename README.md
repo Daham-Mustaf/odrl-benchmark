@@ -1,25 +1,3 @@
-This is the **old README** — it describes the deleted architecture. It needs to be completely rewritten to match the current repo. Here is what is wrong:
-
----
-
-## What the old README describes vs current state
-
-| Old README | Current repo |
-|---|---|
-| 146 KBGrounding problems | Deleted |
-| 165 SelfContained SMT2 problems | Deleted |
-| `Problems/ODRL/KBGrounding/` | Deleted |
-| `Problems/ODRL/SelfContained/` | Deleted |
-| Layer0-DomainKB, Layer1-ODRLCore | Deleted |
-| gen_spatial_suite.py etc. | Deleted |
-| Two-layer stack | Replaced by AxisDecomposition |
-
----
-
-## New README to write
-
-```bash
-cat > README.md << 'EOF'
 # TPTP-ODRL Benchmark Suite
 **Automated Reasoning for ODRL Policy Conflict Detection**
 Mustafa, D. & Sutcliffe, G. (2026)
@@ -118,9 +96,3 @@ uv run Generators/DeonticOntology/gen_foundation_problems.py --out-dir Problems/
 
 **Authors:** Daham Mustafa (RWTH Aachen / Fraunhofer FIT), Geoff Sutcliffe (University of Miami)
 **License:** MIT
-EOF
-
-git add README.md
-git commit -m "docs: rewrite README for current benchmark structure (UC1+UC2, 165 problems)"
-git push
-```
