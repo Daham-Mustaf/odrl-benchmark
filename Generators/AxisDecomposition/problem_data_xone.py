@@ -897,4 +897,132 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800)).
 (assert (or (>= x 800.0) (>= y 200.0)))""",
     },
 
+    # ─────────────────────────────────────────────────────────────────
+    # ODRL470 — xone-A vs xone-B Conflict: all branch-pair intersections empty
+    # ─────────────────────────────────────────────────────────────────
+    {
+        "id":            "ODRL470",
+        "subdir":        "LogicalXone",
+        "name":          "xone-A vs xone-B: all 4 branch-pair intersections empty → Conflict",
+        "relation":      "conflict",
+        "verdict":       "Conflict",
+        "status_fof":    "Theorem",
+        "status_smt":    "unsat",
+        "difficulty":    "Hard",
+        "needs_density": False,
+        "description": (
+            "PolicyA xone: width∈(0,100] XOR width∈[500,600]\n"
+            "PolicyB xone: width∈[200,300] XOR width∈[700,800]\n"
+            "A-support=(0,100]∪[500,600], B-support=[200,300]∪[700,800] — disjoint\n"
+            "All 4 branch-pair intersections empty → verdictXone=Conflict\n"
+            "Genuine xone-vs-xone Conflict: not a single-axis order contradiction.\n"
+            "Note: xone(A1,A2) Conflict requires disjoint supports (A1∪A2)∩(B1∪B2)=∅."
+        ),
+        "ttl": """\
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix drk:  <http://w3id.org/drk/ontology/> .
+
+drk:policyA a odrl:Set ;
+  odrl:permission [
+    odrl:action odrl:use ;
+    odrl:constraint [
+      odrl:xone (
+        [ odrl:leftOperand oax:absoluteSizeWidth ;
+          odrl:operator odrl:lteq ;
+          odrl:rightOperand "100"^^xsd:decimal ]
+        [ odrl:and (
+            [ odrl:leftOperand oax:absoluteSizeWidth ;
+              odrl:operator odrl:gteq ;
+              odrl:rightOperand "500"^^xsd:decimal ]
+            [ odrl:leftOperand oax:absoluteSizeWidth ;
+              odrl:operator odrl:lteq ;
+              odrl:rightOperand "600"^^xsd:decimal ]
+          ) ]
+      )
+    ]
+  ] .
+
+drk:policyB a odrl:Set ;
+  odrl:permission [
+    odrl:action odrl:use ;
+    odrl:constraint [
+      odrl:xone (
+        [ odrl:and (
+            [ odrl:leftOperand oax:absoluteSizeWidth ;
+              odrl:operator odrl:gteq ;
+              odrl:rightOperand "200"^^xsd:decimal ]
+            [ odrl:leftOperand oax:absoluteSizeWidth ;
+              odrl:operator odrl:lteq ;
+              odrl:rightOperand "300"^^xsd:decimal ]
+          ) ]
+        [ odrl:and (
+            [ odrl:leftOperand oax:absoluteSizeWidth ;
+              odrl:operator odrl:gteq ;
+              odrl:rightOperand "700"^^xsd:decimal ]
+            [ odrl:leftOperand oax:absoluteSizeWidth ;
+              odrl:operator odrl:lteq ;
+              odrl:rightOperand "800"^^xsd:decimal ]
+          ) ]
+      )
+    ]
+  ] .""",
+        "fof_extra_decls": """\
+fof(val_v0, axiom, val(v0)).
+fof(val_v100, axiom, val(v100)).
+fof(val_v200, axiom, val(v200)).
+fof(val_v300, axiom, val(v300)).
+fof(val_v500, axiom, val(v500)).
+fof(val_v600, axiom, val(v600)).
+fof(val_v700, axiom, val(v700)).
+fof(val_v800, axiom, val(v800)).
+fof(ord_v0_v100, axiom, less(v0, v100)).
+fof(ord_v0_v200, axiom, less(v0, v200)).
+fof(ord_v0_v300, axiom, less(v0, v300)).
+fof(ord_v0_v500, axiom, less(v0, v500)).
+fof(ord_v0_v600, axiom, less(v0, v600)).
+fof(ord_v0_v700, axiom, less(v0, v700)).
+fof(ord_v0_v800, axiom, less(v0, v800)).
+fof(ord_v100_v200, axiom, less(v100, v200)).
+fof(ord_v100_v300, axiom, less(v100, v300)).
+fof(ord_v100_v500, axiom, less(v100, v500)).
+fof(ord_v100_v600, axiom, less(v100, v600)).
+fof(ord_v100_v700, axiom, less(v100, v700)).
+fof(ord_v100_v800, axiom, less(v100, v800)).
+fof(ord_v200_v300, axiom, less(v200, v300)).
+fof(ord_v200_v500, axiom, less(v200, v500)).
+fof(ord_v200_v600, axiom, less(v200, v600)).
+fof(ord_v200_v700, axiom, less(v200, v700)).
+fof(ord_v200_v800, axiom, less(v200, v800)).
+fof(ord_v300_v500, axiom, less(v300, v500)).
+fof(ord_v300_v600, axiom, less(v300, v600)).
+fof(ord_v300_v700, axiom, less(v300, v700)).
+fof(ord_v300_v800, axiom, less(v300, v800)).
+fof(ord_v500_v600, axiom, less(v500, v600)).
+fof(ord_v500_v700, axiom, less(v500, v700)).
+fof(ord_v500_v800, axiom, less(v500, v800)).
+fof(ord_v600_v700, axiom, less(v600, v700)).
+fof(ord_v600_v800, axiom, less(v600, v800)).
+fof(ord_v700_v800, axiom, less(v700, v800)).
+fof(distinct, axiom, $distinct(v0, v100, v200, v300, v500, v600, v700, v800)).
+""",
+        "fof_conjecture": (
+            "~?[X]: (\n"
+            "  ((in_lopen(X, v0, v100) & ~(leq(v500, X) & in_lopen(X, v0, v600))) |\n"
+            "   (~in_lopen(X, v0, v100) & (leq(v500, X) & in_lopen(X, v0, v600)))) &\n"
+            "  (((leq(v200, X) & in_lopen(X, v0, v300)) & ~(leq(v700, X) & in_lopen(X, v0, v800))) |\n"
+            "   (~(leq(v200, X) & in_lopen(X, v0, v300)) & (leq(v700, X) & in_lopen(X, v0, v800)))))"
+        ),
+        "smt2_logic": "QF_LRA",
+        "smt2_decls": "(declare-const x Real)",
+        "smt2_asserts": """\
+(assert (> x 0.0))
+; xone_A: x∈(0,100] XOR x∈[500,600]
+(assert (or (and (<= x 100.0) (not (and (>= x 500.0) (<= x 600.0))))
+            (and (> x 100.0)  (and (>= x 500.0) (<= x 600.0)))))
+; xone_B: x∈[200,300] XOR x∈[700,800]
+(assert (or (and (>= x 200.0) (<= x 300.0) (not (and (>= x 700.0) (<= x 800.0))))
+            (and (not (and (>= x 200.0) (<= x 300.0))) (>= x 700.0) (<= x 800.0))))""",
+    },
 ]
