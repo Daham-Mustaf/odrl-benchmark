@@ -1,53 +1,36 @@
 %--------------------------------------------------------------------------
-% File     : ODRL311-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
+% File     : ODRL311-1.p
+% Domain   : ODRL Policy / Axis Decomposition
 % Problem  : [800,∞) ⊆ [400,∞): higher lower-bound subsumes
-% Expected : Theorem
-% Verdict  : Subsumes
-% Category : SingleAxis
-% Difficulty: Easy
+% Version  : 1.0
+% English  : width gteq 800 → [800, ∞)   [def:interval-denotation, gteq]
+%           : width gteq 400 → [400, ∞)   [def:interval-denotation, gteq]
+%           : [800, ∞) ⊆ [400, ∞)          [def:box-containment, Compatible]
+%           : since less(v400, v800) → ∀X. X≥800 → X≥400.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL311-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "800"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "400"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ] .
-%
-% Formal   : [800, ∞) ⊆ [400, ∞)
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL311-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
-fof(val_v0, axiom, val(v0)).
-fof(val_v400, axiom, val(v400)).
-fof(val_v800, axiom, val(v800)).
-fof(ord_v0_v400, axiom, less(v0, v400)).
-fof(ord_v0_v800, axiom, less(v0, v800)).
+% v0 = domain lower bound (excluded); v400, v800 = constraint values
+fof(val_v0,        axiom, val(v0)).
+fof(val_v400,      axiom, val(v400)).
+fof(val_v800,      axiom, val(v800)).
+fof(ord_v0_v400,   axiom, less(v0, v400)).
+fof(ord_v0_v800,   axiom, less(v0, v800)).
 fof(ord_v400_v800, axiom, less(v400, v800)).
-fof(distinct, axiom, $distinct(v0, v400, v800)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+fof(distinct,      axiom, $distinct(v0, v400, v800)).
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl311, conjecture,
-    ![X]: ((leq(v800, X)) => (leq(v400, X)))).
+    ![X]: (leq(v800, X) => leq(v400, X))).
 %--------------------------------------------------------------------------

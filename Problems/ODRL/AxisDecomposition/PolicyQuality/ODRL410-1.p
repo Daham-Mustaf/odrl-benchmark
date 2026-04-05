@@ -1,67 +1,26 @@
 %--------------------------------------------------------------------------
-% File     : ODRL410-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : ★★★★☆ Hard: 4-axis De Morgan subsumption, 8 constants
-% Expected : Theorem
-% Verdict  : Subsumes
-% Category : PolicyQuality
-% Difficulty: Hard
+% File     : ODRL410-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : 4D subsumption Compatible — scaling (8 constants)
+% Version  : 1.0
+% English  : Width:  (0,600]  ⊆ (0,1920]  Compatible
+%           : Height: (0,400]  ⊆ (0,1080]  Compatible
+%           : Depth:  (0,16]   ⊆ (0,48]    Compatible
+%           : Alt:    (0,150]  ⊆ (0,600]   Compatible
+%           : 28 ordering axioms, HD video scaling scenario.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL410-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "400"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "16"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "150"^^xsd:decimal ] ;
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "1920"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "1080"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "48"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : (0, 600] ⊆ (0, 1920]
-% Notes    : 4-way De Morgan: (or not-w not-h not-d not-r). All branches unsat.
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL410-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -101,8 +60,8 @@ fof(ord_v600_v1080, axiom, less(v600, v1080)).
 fof(ord_v600_v1920, axiom, less(v600, v1920)).
 fof(ord_v1080_v1920, axiom, less(v1080, v1920)).
 fof(distinct, axiom, $distinct(v0, v16, v48, v150, v400, v600, v1080, v1920)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl410, conjecture,
-    ![X,Y,Z,W]: ((in_lopen(X, v0, v600) & in_lopen(Y, v0, v400) & in_lopen(Z, v0, v16) & in_lopen(W, v0, v150)) => (in_lopen(X, v0, v1920) & in_lopen(Y, v0, v1080) & in_lopen(Z, v0, v48) & in_lopen(W, v0, v600)))).
+    ![X,Y,Z,W]: ((in_lopen(X, v0, v600) & in_lopen(Y, v0, v400) & in_lopen(Z, v0, v16) & in_lopen(W, v0, v150)) =>
+              (in_lopen(X, v0, v1920) & in_lopen(Y, v0, v1080) & in_lopen(Z, v0, v48) & in_lopen(W, v0, v600)))).
 %--------------------------------------------------------------------------

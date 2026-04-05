@@ -1,22 +1,18 @@
 %--------------------------------------------------------------------------
 % File     : GRND022-corr-nonunique-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Correlativity violated: two NoRight positions in same relator
+% Axioms   : Correlativity violated: two NoRight positions in same relator
 % Version  : 1.6
 % English  : odrl_rel(rho1) + Permission(l) partOf rho1.
 %           : Two distinct no_right positions n1 != n2 both partOf rho1 with same content.
 %           : ax_correlativity_permission requires unique NoRight => contradiction.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND022-corr-nonunique-1.p
 %
-% Status   : Unsatisfiable
-% Syntax   : Number of formulae    :   19  (19 axm)
-%            Number of atoms       :   32
-%            Number of variables   :    7
-%            Maximal formula depth :    8
-% SPC      : FOF_UNS_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

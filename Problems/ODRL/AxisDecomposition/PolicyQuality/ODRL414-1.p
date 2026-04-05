@@ -1,68 +1,26 @@
 %--------------------------------------------------------------------------
-% File     : ODRL414-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : ★★★★★ Very Hard: all 5 ops, 4-axis De Morgan refutation
-% Expected : Theorem
-% Verdict  : Refuted
-% Category : PolicyQuality
-% Difficulty: Very Hard
+% File     : ODRL414-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : 4D fractional subsumption Conflict — alt escape (11 constants)
+% Version  : 1.0
+% English  : Width: {600} ∈ A_w; A_w ⊆ B_w=(1,1920] Compatible
+%           : Height: A_h=(300,∞) ⊄ B_h=(2,1080) via Y≥1080
+%           : Depth: A_d=[16,∞) ⊄ B_d=(3,48] via Z>48
+%           : Alt: A_w=(4,300) ⊄ B_W=[72,∞) via W<72 (escape)
+%           : Witness: X=600, Y=1080, Z=72, W=16.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL414-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:eq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gt ;
-%         odrl:rightOperand "300"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "16"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:lt ;
-%         odrl:rightOperand "300"^^xsd:decimal ] ;
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "1920"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lt ;
-%         odrl:rightOperand "1080"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "48"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "72"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : [600, 600] ⊄ (1, 1920]
-% Notes    : All 5 ops (eq, gt, gteq, lt, lteq). De Morgan: (or not-w not-h not-d not-r). Counterexample: (600, 301, 16, 50) — res 50 < 72.
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL414-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
-include('Axioms/Layer0-DomainKB/ORD001-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v1, axiom, val(v1)).
@@ -132,8 +90,8 @@ fof(ord_v600_v1080, axiom, less(v600, v1080)).
 fof(ord_v600_v1920, axiom, less(v600, v1920)).
 fof(ord_v1080_v1920, axiom, less(v1080, v1920)).
 fof(distinct, axiom, $distinct(v1, v2, v3, v4, v16, v48, v72, v300, v600, v1080, v1920)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl414, conjecture,
-    ?[X,Y,Z,W]: ((in_closed(X, v600, v600) & less(v300, Y) & leq(v16, Z) & in_open(W, v4, v300)) & ~(in_lopen(X, v1, v1920) & in_open(Y, v2, v1080) & in_lopen(Z, v3, v48) & leq(v72, W)))).
+    ?[X,Y,Z,W]: ((in_closed(X, v600, v600) & less(v300, Y) & leq(v16, Z) & in_open(W, v4, v300)) &
+             ~(in_lopen(X, v1, v1920) & in_open(Y, v2, v1080) & in_lopen(Z, v3, v48) & leq(v72, W)))).
 %--------------------------------------------------------------------------

@@ -1,55 +1,36 @@
 %--------------------------------------------------------------------------
-% File     : ODRL301-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
+% File     : ODRL301-1.p
+% Domain   : ODRL Policy / Axis Decomposition
 % Problem  : width = 600 vs width = 800: distinct points
-% Expected : Theorem
-% Verdict  : Conflict
-% Category : SingleAxis
-% Difficulty: Easy
+% Version  : 1.0
+% English  : width eq 600 → {600}         [def:interval-denotation, eq]
+%           : width eq 800 → {800}         [def:interval-denotation, eq]
+%           : {600} ∩ {800} = ∅            by $distinct(v600, v800)
+%           : Conflict Criterion (cc): u1=600, l2=800, both closed → 600 < 800.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL301-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:eq ;
-%         odrl:rightOperand "600"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:eq ;
-%         odrl:rightOperand "800"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ] .
-%
-% Formal   : width eq 600  →  [600, 600]
-%            width eq 800  →  [800, 800]
-%            [600, 600] ∩ [800, 800] ∅  →  Conflict
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL301-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
-fof(val_v0, axiom, val(v0)).
-fof(val_v600, axiom, val(v600)).
-fof(val_v800, axiom, val(v800)).
-fof(ord_v0_v600, axiom, less(v0, v600)).
-fof(ord_v0_v800, axiom, less(v0, v800)).
+% v0 = domain lower bound (excluded); v600, v800 = constraint values
+fof(val_v0,        axiom, val(v0)).
+fof(val_v600,      axiom, val(v600)).
+fof(val_v800,      axiom, val(v800)).
+fof(ord_v0_v600,   axiom, less(v0, v600)).
+fof(ord_v0_v800,   axiom, less(v0, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
-fof(distinct, axiom, $distinct(v0, v600, v800)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+fof(distinct,      axiom, $distinct(v0, v600, v800)).
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl301, conjecture,
     ~?[X]: (in_closed(X, v600, v600) & in_closed(X, v800, v800))).
 %--------------------------------------------------------------------------

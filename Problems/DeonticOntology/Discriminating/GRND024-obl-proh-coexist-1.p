@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND024-obl-proh-coexist-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Obligation + Prohibition coexist: Duty(a) vs Duty(rfr(a)) distinct
+% Axioms   : Obligation + Prohibition coexist: Duty(a) vs Duty(rfr(a)) distinct
 % Version  : 1.6
 % English  : obl(obl1) activated at e1: creates Duty(bibliothek, read, theater_ds).
 %           : proh(f1)  activated at e2: creates Duty(bibliothek, rfr(read), theater_ds).
@@ -13,15 +13,11 @@
 %           : read=odrl:read, theater_ds=drk:TheaterShowtimeDataset
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND024-obl-proh-coexist-1.p
 %
 % Status   : Satisfiable
-% Syntax   : Number of formulae    :   24  (24 axm)
-%            Number of atoms       :   60
-%            Number of variables   :   11
-%            Maximal formula depth :    5
-% SPC      : FOF_SAT_RFN
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

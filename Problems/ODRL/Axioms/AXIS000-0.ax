@@ -1,0 +1,128 @@
+%--------------------------------------------------------------------------
+% File     : AXIS000-0.ax
+% Domain   : ODRL Policy / Axis Decomposition
+% Axioms   : Axis decomposition, interval denotation, and verdict algebra
+% Version  : 1.1
+% English  : Layer 1 axioms for the ODRL Axis Decomposition benchmark.
+%           : Section A: interval membership (in_closed, in_lopen, in_ropen, in_open).
+%           : Section B: per-axis verdicts (axis_conflict, axis_compatible, axis_subsumes).
+%           : Section C: strong Kleene verdict algebra (conflict/compatible/unknown).
+%           : Section D: box-level verdict aggregation (box_verdict/2).
+%           : Requires ORD000-0.ax (included). For continuous domains also
+%           : include ORD001-0.ax (density) in the problem file.
+%
+% Refs     : [Mus27]  Mustafa, D. et al. Conflict Detection via Denotational Semantics for ODRL Policies. VLDB 2027.
+% Source   : Mustafa, D. (2026)
+% Names    : AXIS000-0.ax
+%
+% Status   : Satisfiable
+% SPC      : FOF_SAT_RFN
+%
+% Comments : Section B uses CLOSED intervals only -- for open/half-open
+%           : boundary precision, use Section A predicates directly in
+%           : the conjecture and include PREC000-0.ax.
+%           : 16 axioms: 4 interval + 3 verdict + 4 Kleene + verdict closure
+%           : + 4 section D aggregation rules.
+%--------------------------------------------------------------------------
+
+include('Axioms/ORD000-0.ax').
+
+% NOTE: For continuous domains (coordinates, percentages), problem files
+% should additionally include ORD001-0.ax for the density axiom.
+% For discrete domains (pixel counts), ORD000-0.ax alone suffices.
+
+% ==========================================================================
+% Section A: Interval membership            [Paper: def:interval-denotation]
+% ==========================================================================
+% Four interval types arising from the five ODRL operators
+% (O_delta = {eq, lt, lteq, gt, gteq}):
+%
+%   eq   v  ->  [v, v]        (closed point)   -- in_closed
+%   lteq v  ->  [inf D_k, v]  (closed)         -- in_closed
+%   gteq v  ->  [v, sup D_k]  (closed)         -- in_closed
+%   lt   v  ->  [inf D_k, v)  (right-open)     -- in_ropen
+%   gt   v  ->  (v, sup D_k]  (left-open)      -- in_lopen
+%
+% For boundary-sensitive problems, use these predicates directly in
+% the conjecture rather than the Section B verdict predicates.
+
+% [A, B] -- closed interval
+fof(in_closed, axiom, ![X,A,B]:
+    (in_closed(X,A,B) <=> (leq(A,X) & leq(X,B)))).
+
+% (A, B] -- left-open interval
+fof(in_lopen, axiom, ![X,A,B]:
+    (in_lopen(X,A,B) <=> (less(A,X) & leq(X,B)))).
+
+% [A, B) -- right-open interval
+fof(in_ropen, axiom, ![X,A,B]:
+    (in_ropen(X,A,B) <=> (leq(A,X) & less(X,B)))).
+
+% (A, B) -- open interval
+fof(in_open, axiom, ![X,A,B]:
+    (in_open(X,A,B) <=> (less(A,X) & less(X,B)))).
+
+% ==========================================================================
+% Section B: Per-axis verdicts  [Paper: def:axis-verdict, def:axis-subsumption]
+% ==========================================================================
+% Treats all intervals as CLOSED [lo, hi].
+% For open/half-open boundary precision, use Section A directly
+% together with PREC000-0.ax.
+%
+% Conflict: [[c1]] ∩ [[c2]] = ∅
+fof(axis_conflict_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
+    (axis_conflict(I1lo,I1hi,I2lo,I2hi) <=>
+     ~?[X]: (in_closed(X,I1lo,I1hi) & in_closed(X,I2lo,I2hi)))).
+
+% Compatible: [[c1]] ∩ [[c2]] ≠ ∅
+fof(axis_compatible_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
+    (axis_compatible(I1lo,I1hi,I2lo,I2hi) <=>
+     ?[X]: (in_closed(X,I1lo,I1hi) & in_closed(X,I2lo,I2hi)))).
+
+% Subsumption: [[c1]] ⊆ [[c2]]
+fof(axis_subsumes_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
+    (axis_subsumes(I1lo,I1hi,I2lo,I2hi) <=>
+     ![X]: (in_closed(X,I1lo,I1hi) => in_closed(X,I2lo,I2hi)))).
+
+% ==========================================================================
+% Section C: Verdict algebra                      [Paper: def:verdict-algebra]
+% ==========================================================================
+% Strong Kleene (K_3) three-valued logic.
+% Ordering: conflict < unknown < compatible  (F < bot < T)
+fof(conflict_is_verdict,     axiom, is_verdict(conflict)).
+fof(compatible_is_verdict,   axiom, is_verdict(compatible)).
+fof(unknown_is_verdict,      axiom, is_verdict(unknown)).
+fof(verdicts_distinct_cf_cp, axiom, conflict != compatible).
+fof(verdicts_distinct_cf_un, axiom, conflict != unknown).
+fof(verdicts_distinct_cp_un, axiom, compatible != unknown).
+fof(verdict_enum, axiom, ![V]:
+    (is_verdict(V) => (V = conflict | V = compatible | V = unknown))).
+
+% ==========================================================================
+% Section D: Box-level verdict aggregation        [Paper: def:box-verdict]
+% ==========================================================================
+% Kleene conjunction over per-axis verdicts.
+% Nest associatively for n axes: box_verdict(V1, box_verdict(V2, V3)).
+
+% Rule 1: any conflict => conflict
+fof(box_conflict, axiom, ![V1,V2]:
+    (((is_verdict(V1) & is_verdict(V2)) & (V1 = conflict | V2 = conflict))
+     => box_verdict(V1,V2) = conflict)).
+
+% Rule 2: both compatible => compatible
+fof(box_compatible, axiom, ![V1,V2]:
+    (((is_verdict(V1) & is_verdict(V2)) & (V1 = compatible & V2 = compatible))
+     => box_verdict(V1,V2) = compatible)).
+
+% Rule 3: no conflict, at least one unknown => unknown
+fof(box_unknown, axiom, ![V1,V2]:
+    (((is_verdict(V1) & is_verdict(V2)) &
+      (V1 = unknown | V2 = unknown) & V1 != conflict & V2 != conflict)
+     => box_verdict(V1,V2) = unknown)).
+
+% Closure: box_verdict always returns a verdict
+fof(box_verdict_total, axiom, ![V1,V2]:
+    ((is_verdict(V1) & is_verdict(V2)) =>
+     (box_verdict(V1,V2) = conflict |
+      box_verdict(V1,V2) = compatible |
+      box_verdict(V1,V2) = unknown))).

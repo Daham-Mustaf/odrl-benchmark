@@ -1,70 +1,26 @@
 %--------------------------------------------------------------------------
-% File     : ODRL413-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : ★★★★★ Very Hard: 12 constants, razor-thin 4D overlap=0.5
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : PolicyQuality
-% Difficulty: Very Hard
+% File     : ODRL413-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : 4D fractional bounds Compatible (12 constants)
+% Version  : 1.0
+% English  : Width: lteq 600.5 (lb=1) ∩ gteq 600 → X∈[600,600.5] ≠ ∅ Compatible
+%           : Height: lteq 480.5 ∩ gteq 480 → [480,480.5] ≠ ∅ Compatible
+%           : Depth: lteq 16.5 ∩ gteq 16 → [16,16.5] ≠ ∅ Compatible
+%           : Alt: lteq 72.5 ∩ gteq 72 → [72,72.5] ≠ ∅ Compatible
+%           : Witnesses: X=600, Y=480, Z=16, W=72 (named constants).
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL413-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600.5"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "480.5"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "16.5"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "72.5"^^xsd:decimal ] ;
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "480"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "16"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "72"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : width lteq 600.5  →  (1, 600.5]
-%            width gteq 600  →  [600, ∞)
-%            (1, 600.5] ∩ [600, ∞) ≠ ∅  →  Compatible
-% Notes    : 12 distinct values → 66 ordering axioms. Each axis overlaps by exactly 0.5. Witness: (600.25, 480.25, 16.25, 72.25).
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL413-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
-include('Axioms/Layer0-DomainKB/ORD001-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v1, axiom, val(v1)).
@@ -146,11 +102,10 @@ fof(ord_v480_5_v600, axiom, less(v480_5, v600)).
 fof(ord_v480_5_v600_5, axiom, less(v480_5, v600_5)).
 fof(ord_v600_v600_5, axiom, less(v600, v600_5)).
 fof(distinct, axiom, $distinct(v1, v2, v3, v4, v16, v16_5, v72, v72_5, v480, v480_5, v600, v600_5)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl413, conjecture,
     ?[X,Y,Z,W]: (in_lopen(X, v1, v600_5) & leq(v600, X) &
-          in_lopen(Y, v2, v480_5) & leq(v480, Y) &
-          in_lopen(Z, v3, v16_5) & leq(v16, Z) &
-          in_lopen(W, v4, v72_5) & leq(v72, W))).
+           in_lopen(Y, v2, v480_5) & leq(v480, Y) &
+           in_lopen(Z, v3, v16_5)  & leq(v16,  Z) &
+           in_lopen(W, v4, v72_5)  & leq(v72,  W))).
 %--------------------------------------------------------------------------

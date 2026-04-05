@@ -60,15 +60,17 @@ REFS = {
         "What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties "
         "in Deontic Logic and Foundational Ontology. FOIS 2026."
     ),
+    "axis2026": (
+        "[Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., "
+        "Quix, C., Decker, S. "
+        "Axis Decomposition for ODRL: Resolving Dimensional Ambiguity "
+        "in Policy Constraints through Interval Semantics. "
+        "arXiv:2602.19878. https://arxiv.org/abs/2602.19878"
+    ),
     "vldb2027": (
         "[Mus27]  Mustafa, D. et al. "
         "Conflict Detection via Denotational Semantics for ODRL Policies. "
         "VLDB 2027."
-    ),
-    "paar2026": (
-        "[MuS26]  Mustafa, D. & Sutcliffe, G. "
-        "An ODRL Benchmark Suite for Automated Reasoning. "
-        "PAAR 2026."
     ),
 }
 
@@ -237,23 +239,21 @@ class Header:
             return SPC["sat"]
         return "FOF_UNK_RFN"
 
-    def render(self) -> str:
-        stats = _stats_block(compute_stats(self.fof_text)) if self.fof_text else ""
+    def render(self):
         return (
             f"%--------------------------------------------------------------------------\n"
             f"% File     : {self.file}\n"
             f"% Domain   : {DOMAINS[self.domain]}\n"
-            f"% Problem  : {self.title}\n"
+            f"% Axioms   : {self.title}\n"
             f"% Version  : {self.version}\n"
             f"{_wrap('English', self.english)}\n"
             f"%\n"
             f"{_refs_block(self.refs)}\n"
-            f"% Source   : Mohammed, D. (2026)\n"
+            f"% Source   : Mustafa, D. (2026)\n"
             f"% Names    : {self.file}\n"
             f"%\n"
-            f"% Status   : {self.status}\n"
-            f"{stats}"
-            f"% SPC      : {self._infer_spc()}\n"
+            f"% Status   : Satisfiable\n"
+            f"% SPC      : {self.spc}\n"
             f"%\n"
             f"{_wrap('Comments', self.comments)}\n"
             f"%--------------------------------------------------------------------------\n"

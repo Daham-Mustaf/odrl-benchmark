@@ -1,69 +1,27 @@
 %--------------------------------------------------------------------------
-% File     : ODRL409-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : ★★★★☆ Hard: 4 axes, all open intervals, density on all axes
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : PolicyQuality
-% Difficulty: Hard
+% File     : ODRL409-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : 4D all open intervals — density (9 constants)
+% Version  : 1.0
+% English  : Width:  gt 200 ∩ lt 800 = (200,800) ≠ ∅ Compatible
+%           : Height: gt 100 ∩ lt 500 = (100,500) ≠ ∅ Compatible
+%           : Depth:  gt 8   ∩ lt 32  = (8,32)    ≠ ∅ Compatible
+%           : Alt:    gt 72  ∩ lt 300 = (72,300)  ≠ ∅ Compatible
+%           : All witnesses inside open intervals — requires ORD001-0.ax.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL409-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gt ;
-%         odrl:rightOperand "200"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gt ;
-%         odrl:rightOperand "100"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:gt ;
-%         odrl:rightOperand "8"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:gt ;
-%         odrl:rightOperand "72"^^xsd:decimal ] ;
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lt ;
-%         odrl:rightOperand "800"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lt ;
-%         odrl:rightOperand "500"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:lt ;
-%         odrl:rightOperand "32"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:lt ;
-%         odrl:rightOperand "300"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : width gt 200  →  (200, ∞)
-%            width lt 800  →  (0, 800)
-%            (200, ∞) ∩ (0, 800) ≠ ∅  →  Compatible
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL409-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
-include('Axioms/Layer0-DomainKB/ORD001-0.ax').
+include('Axioms/ORD001-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -112,11 +70,10 @@ fof(ord_v300_v500, axiom, less(v300, v500)).
 fof(ord_v300_v800, axiom, less(v300, v800)).
 fof(ord_v500_v800, axiom, less(v500, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v500, v800)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl409, conjecture,
     ?[X,Y,Z,W]: (less(v200, X) & in_open(X, v0, v800) &
-          less(v100, Y) & in_open(Y, v0, v500) &
-          less(v8, Z) & in_open(Z, v0, v32) &
-          less(v72, W) & in_open(W, v0, v300))).
+           less(v100, Y) & in_open(Y, v0, v500) &
+           less(v8,   Z) & in_open(Z, v0, v32)  &
+           less(v72,  W) & in_open(W, v0, v300))).
 %--------------------------------------------------------------------------

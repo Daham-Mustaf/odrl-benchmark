@@ -1,53 +1,24 @@
 %--------------------------------------------------------------------------
-% File     : ODRL434-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : ≤v ⊄ <v → endpoint 600 ∈ A, ∉ B → Refuted
-% Expected : Theorem
-% Verdict  : Refuted
-% Category : Boundary
-% Difficulty: Hard
+% File     : ODRL434-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : Subsumption escape: X=600∈(0,600] but X∉(0,600) → Conflict
+% Version  : 1.0
+% English  : PolicyA: width lteq 600 → (0,600]; PolicyB: width lt 600 → (0,600)
+%           : Escape: X=v600 ∈ (0,600] but v600∉(0,600)
+%           : SMT2: x=600 satisfies A_x but not B_x → sat
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL434-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "400"^^xsd:decimal ] ;
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lt ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "800"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : (0, 600] ⊄ (0, 600)
-% Notes    : Counterexample: (600, 1). Width 600 ≤ 600 but 600 ≮ 600. De Morgan disjunction: (or (not (< x 600)) (not (<= y 800))).
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL434-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
-include('Axioms/Layer0-DomainKB/ORD001-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -61,8 +32,8 @@ fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(ord_v400_v800, axiom, less(v400, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl434, conjecture,
-    ?[X,Y]: ((in_lopen(X, v0, v600) & in_lopen(Y, v0, v400)) & ~(in_open(X, v0, v600) & in_lopen(Y, v0, v800)))).
+    ?[X,Y]: ((in_lopen(X, v0, v600) & in_lopen(Y, v0, v400)) &
+           ~(in_open(X, v0, v600) & in_lopen(Y, v0, v800)))).
 %--------------------------------------------------------------------------
