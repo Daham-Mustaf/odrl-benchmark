@@ -1,44 +1,23 @@
 %--------------------------------------------------------------------------
-% File     : ODRL400-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : ★☆☆☆☆ Trivial: 1 axis, 3 constants, gap=200
-% Expected : Theorem
-% Verdict  : Conflict
-% Category : PolicyQuality
-% Difficulty: Trivial
+% File     : ODRL400-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : 1D Conflict (3 constants, minimum difficulty)
+% Version  : 1.0
+% English  : Width: lteq 600 → (0,600] ∩ gteq 800 → [800,∞) = ∅ Conflict
+%           : Minimum difficulty: 3 constants, 3 ordering axioms.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL400-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "800"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : width lteq 600  →  (0, 600]
-%            width gteq 800  →  [800, ∞)
-%            (0, 600] ∩ [800, ∞) ∅  →  Conflict
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL400-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -48,8 +27,7 @@ fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(ord_v0_v800, axiom, less(v0, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v600, v800)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl400, conjecture,
     ~?[X]: (in_lopen(X, v0, v600) & leq(v800, X))).
 %--------------------------------------------------------------------------
