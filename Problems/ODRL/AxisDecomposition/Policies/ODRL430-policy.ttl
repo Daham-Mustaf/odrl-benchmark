@@ -1,0 +1,34 @@
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix drk:  <http://w3id.org/drk/ontology/> .
+
+drk:policyA a odrl:Set ;
+  odrl:permission [
+    odrl:action odrl:use ;
+    odrl:constraint [
+      odrl:and (
+        [ odrl:leftOperand oax:absoluteSizeWidth ;
+          odrl:operator odrl:lteq ;
+          odrl:rightOperand "600"^^xsd:decimal ]
+        [ odrl:leftOperand oax:absoluteSizeHeight ;
+          odrl:operator odrl:lteq ;
+          odrl:rightOperand "400"^^xsd:decimal ]
+      )
+    ]
+  ] .
+
+drk:policyB a odrl:Set ;
+  odrl:permission [
+    odrl:action odrl:use ;
+    odrl:constraint [
+      odrl:and (
+        [ odrl:leftOperand oax:absoluteSizeWidth ;
+          odrl:operator odrl:gteq ;
+          odrl:rightOperand "600"^^xsd:decimal ]
+        [ odrl:leftOperand oax:absoluteSizeHeight ;
+          odrl:operator odrl:gteq ;
+          odrl:rightOperand "400"^^xsd:decimal ]
+      )
+    ]
+  ] .

@@ -1,54 +1,30 @@
 %--------------------------------------------------------------------------
-% File     : ODRL423-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : P4: <v ∧ >v → double gap at v=600 → Conflict
-% Expected : Theorem
-% Verdict  : Conflict
-% Category : Boundary
-% Difficulty: Medium
+% File     : ODRL423-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : oo: lt ∩ gt — boundary excluded both sides → Conflict
+% Version  : 1.0
+% English  : thm:criterion oo: (0,600)∩(600,∞)=∅ Conflict
+%           : Proof: X<600 AND X>600 is order contradiction.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL423-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lt ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%     ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gt ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%     ] .
-%
-% Formal   : width lt 600  →  (0, 600)
-%            width gt 600  →  (600, ∞)
-%            (0, 600) ∩ (600, ∞) ∅  →  Conflict
-% Notes    : (0,600) ∩ (600,∞) = ∅. Neither side includes v.
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL423-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
 fof(val_v600, axiom, val(v600)).
 fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(distinct, axiom, $distinct(v0, v600)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl423, conjecture,
     ~?[X]: (in_open(X, v0, v600) & less(v600, X))).
 %--------------------------------------------------------------------------
