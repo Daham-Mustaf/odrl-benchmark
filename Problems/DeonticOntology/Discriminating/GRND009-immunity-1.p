@@ -30,7 +30,7 @@
 %           : @prefix drk:    <http://w3id.org/drk/ontology/> .
 %           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 %           : @prefix schema: <https://schema.org/> .
-%           : <drk:policy-strong> a odrl:Agreement ;
+%           : drk:policy-strong a odrl:Agreement ;
 %           : ... (15 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 

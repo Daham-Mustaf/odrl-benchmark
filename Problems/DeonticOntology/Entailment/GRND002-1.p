@@ -30,7 +30,7 @@
 %           : @prefix drk:    <http://w3id.org/drk/ontology/> .
 %           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 %           : @prefix schema: <https://schema.org/> .
-%           : <drk:policy-theater-read> a odrl:Agreement ;
+%           : drk:policy-theater-read a odrl:Agreement ;
 %           : ... (12 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 

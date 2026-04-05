@@ -32,7 +32,7 @@
 %           : @prefix drk:    <http://w3id.org/drk/ontology/> .
 %           : @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 %           : @prefix schema: <https://schema.org/> .
-%           : <drk:policy-concert-remedy> a odrl:Agreement ;
+%           : drk:policy-concert-remedy a odrl:Agreement ;
 %           : ... (16 more lines — see Policies/ file)
 %--------------------------------------------------------------------------
 
