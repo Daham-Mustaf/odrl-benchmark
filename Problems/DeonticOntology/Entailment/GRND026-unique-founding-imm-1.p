@@ -1,21 +1,17 @@
 %--------------------------------------------------------------------------
 % File     : GRND026-unique-founding-imm-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Unique founding imm: same event+rule founds at most one immunity relator
+% Axioms   : Unique founding imm: same event+rule founds at most one immunity relator
 % Version  : 1.6
 % English  : founds_imm(e1,rho1,p1) and founds_imm(e1,rho2,p1) => rho1 = rho2.
 %           : UFO uniqueness for immunity relator — mirrors GRND015 for founds_imm.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND026-unique-founding-imm-1.p
 %
-% Status   : Theorem
-% Syntax   : Number of formulae    :    8  (7 axm; 1 cnj)
-%            Number of atoms       :    8
-%            Number of variables   :    4
-%            Maximal formula depth :    4
-% SPC      : FOF_THM_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

@@ -1,69 +1,39 @@
 %--------------------------------------------------------------------------
-% File     : ODRL324-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : Width eq+lteq, height overlap → box Compatible
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : Box2D
-% Difficulty: Easy
+% File     : ODRL324-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : Width eq inside lteq, height overlap → box Compatible
+% Version  : 1.0
+% English  : Width:  eq 600  → {600}     ∩  lteq 800 → (0,800] = {600} ≠ ∅  Compatible
+%           : Height: gteq 200 → [200,∞)  ∩  lteq 600 → (0,600] = [200,600] ≠ ∅  Compatible
+%           : box_verdict(Compatible, Compatible) = Compatible  [def:box-verdict Rule 2]
+%           : Witness: (X=v600, Y=v200).
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL324-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:eq ;
-%         odrl:rightOperand "600"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "200"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "800"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ;
-%         odrl:unit <http://dbpedia.org/resource/Pixel> ] ] .
-%
-% Formal   : width eq 600  →  [600, 600]
-%            width lteq 800  →  (0, 800]
-%            [600, 600] ∩ (0, 800] ≠ ∅  →  Compatible
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL324-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
-fof(val_v0, axiom, val(v0)).
-fof(val_v200, axiom, val(v200)).
-fof(val_v600, axiom, val(v600)).
-fof(val_v800, axiom, val(v800)).
-fof(ord_v0_v200, axiom, less(v0, v200)).
-fof(ord_v0_v600, axiom, less(v0, v600)).
-fof(ord_v0_v800, axiom, less(v0, v800)).
+fof(val_v0,        axiom, val(v0)).
+fof(val_v200,      axiom, val(v200)).
+fof(val_v600,      axiom, val(v600)).
+fof(val_v800,      axiom, val(v800)).
+fof(ord_v0_v200,   axiom, less(v0,   v200)).
+fof(ord_v0_v600,   axiom, less(v0,   v600)).
+fof(ord_v0_v800,   axiom, less(v0,   v800)).
 fof(ord_v200_v600, axiom, less(v200, v600)).
 fof(ord_v200_v800, axiom, less(v200, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
-fof(distinct, axiom, $distinct(v0, v200, v600, v800)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+fof(distinct,      axiom, $distinct(v0, v200, v600, v800)).
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl324, conjecture,
     ?[X,Y]: (in_closed(X, v600, v600) & in_lopen(X, v0, v800) &
           leq(v200, Y) & in_lopen(Y, v0, v600))).

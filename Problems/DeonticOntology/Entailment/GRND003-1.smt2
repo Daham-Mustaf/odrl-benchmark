@@ -19,7 +19,7 @@
 ; @prefix drk:    <http://w3id.org/drk/ontology/> .
 ; @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 ; @prefix schema: <https://schema.org/> .
-; <drk:policy-no-distribute> a odrl:Agreement ;
+; drk:policy-no-distribute> a odrl:Agreement ;
 ; ... (12 more lines — see Policies/ file)
 ; --------------------------------------------------------------------------
 

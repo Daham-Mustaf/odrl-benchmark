@@ -10,6 +10,7 @@ __pycache__/
 # Isabelle
 **/*.thy~
 **/.isabelle/
+.python-version
 
 # Build artifacts
 build/
@@ -61,3 +62,9 @@ hierarchies/
 encoding/
 data/
 *.jar
+visual/
+Problems/ODRL/Axioms/COMP000-0.ax
+Problems/ODRL/Axioms/COMPL000-0.ax
+Problems/ODRL/Axioms/PREC000-0.ax
+Problems/ODRL/Axioms/PROJ000-0.ax
+Problems/ODRL/Axioms/WF000-0.ax

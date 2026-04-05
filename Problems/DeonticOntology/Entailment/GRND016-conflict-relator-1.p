@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND016-conflict-relator-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : Conflict detection: Permission and Duty in same relator
+% Axioms   : Conflict detection: Permission and Duty in same relator
 % Version  : 1.6
 % English  : Permission(l) and Duty(d) both partOf rho1, same bearer, same content.
 %           : Corollary ax:conflict derives False (within-relator check).
@@ -9,15 +9,11 @@
 %           : read=odrl:read, theater_ds=drk:TheaterShowtimeDataset
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND016-conflict-relator-1.p
 %
-% Status   : Unsatisfiable
-% Syntax   : Number of formulae    :   15  (14 axm)
-%            Number of atoms       :   24
-%            Number of variables   :    6
-%            Maximal formula depth :    5
-% SPC      : FOF_UNS_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

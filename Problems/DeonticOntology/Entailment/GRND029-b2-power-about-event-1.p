@@ -1,22 +1,18 @@
 %--------------------------------------------------------------------------
 % File     : GRND029-b2-power-about-event-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Problem  : B2 alone: Power in remedy relator concerns founding event
+% Axioms   : B2 alone: Power in remedy relator concerns founding event
 % Version  : 1.6
 % English  : Power(pw) with cnt(pw,decl(distrib),concert_ds) partOf rho_R,
 %           : and founds_rem(e1,rho_R,f1) => about_event(pw, e1).
 %           : B2 tested in isolation (not combined with B3 or A-axioms).
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : GRND029-b2-power-about-event-1.p
 %
-% Status   : Theorem
-% Syntax   : Number of formulae    :   12  (11 axm; 1 cnj)
-%            Number of atoms       :   18
-%            Number of variables   :    6
-%            Maximal formula depth :    5
-% SPC      : FOF_THM_RFN
+% Status   : Satisfiable
+% SPC      : 
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and
