@@ -10,14 +10,10 @@
 %           : include ORD001-0.ax (density axiom).
 %
 % Refs     : [Mus27]  Mustafa, D. et al. Conflict Detection via Denotational Semantics for ODRL Policies. VLDB 2027.
-% Source   : Mohammed, D. (2026)
+% Source   : Mustafa, D. (2026)
 % Names    : ORD000-0.ax
 %
 % Status   : Satisfiable
-% Syntax   : Number of formulae    :    8  (8 axm)
-%            Number of atoms       :   18
-%            Number of variables   :    3
-%            Maximal formula depth :    4
 % SPC      : FOF_SAT_RFN
 %
 % Comments : Included by AXIS000-0.ax — problem files do not need to
