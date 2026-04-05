@@ -3,10 +3,10 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : width ≤ 600 vs width ≥ 200: overlapping intervals
 % Version  : 1.0
-% English  : width lteq 600 → (0, 600]
-%           : width gteq 200 → [200, ∞)
-%           : (0, 600] ∩ [200, ∞) ≠ ∅ → Compatible
-%           : Witness: X = 400.
+% English  : width lteq 600 → (0, 600]   [def:interval-denotation, lteq]
+%           : width gteq 200 → [200, ∞)   [def:interval-denotation, gteq]
+%           : (0, 600] ∩ [200, ∞) = [200, 600] ≠ ∅
+%           : Witness: X = v200 (named constant, no density needed).
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -22,6 +22,7 @@
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
+% v0 = domain lower bound (excluded); v200, v600 = constraint values
 fof(val_v0,        axiom, val(v0)).
 fof(val_v200,      axiom, val(v200)).
 fof(val_v600,      axiom, val(v600)).
