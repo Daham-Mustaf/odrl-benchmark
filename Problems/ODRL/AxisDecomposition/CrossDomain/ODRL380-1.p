@@ -49,7 +49,7 @@
 % Date     : 2026-02-28
 % Gen      : gen_axis_suite.py
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).

@@ -1,9 +1,0 @@
-category,file,expected,vampire,vampire_t,pass
-XONESymmetricDiff,ODRL230-1.p,Theorem,Theorem,0.07,True
-XONESymmetricDiff,ODRL231-1.p,Theorem,Theorem,0.07,True
-XONESymmetricDiff,ODRL232-1.p,Theorem,Theorem,0.09,True
-XONESymmetricDiff,ODRL233-1.p,CounterSatisfiable,Unknown,30.08,True
-XONESymmetricDiff,ODRL234-1.p,Theorem,Theorem,0.06,True
-XONESymmetricDiff,ODRL235-1.p,Theorem,Theorem,0.07,True
-XONESymmetricDiff,ODRL236-1.p,Theorem,Theorem,0.06,True
-XONESymmetricDiff,ODRL237-1.p,Theorem,Theorem,0.06,True

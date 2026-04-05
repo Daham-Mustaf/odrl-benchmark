@@ -1,6 +1,0 @@
-category,file,expected,vampire,vampire_t,pass
-OperatorMonotonicity,ODRL250-1.p,Theorem,Theorem,0.06,True
-OperatorMonotonicity,ODRL251-1.p,Theorem,Theorem,0.06,True
-OperatorMonotonicity,ODRL252-1.p,Theorem,Unknown,30.08,False
-OperatorMonotonicity,ODRL253-1.p,Theorem,Theorem,0.06,True
-OperatorMonotonicity,ODRL254-1.p,Theorem,Theorem,0.06,True

@@ -1,7 +1,0 @@
-category,file,expected,vampire,vampire_t,pass
-AdversarialOperators,ODRL220-1.p,Theorem,Theorem,0.10,True
-AdversarialOperators,ODRL221-1.p,Theorem,Theorem,0.09,True
-AdversarialOperators,ODRL222-1.p,Theorem,Unknown,30.18,False
-AdversarialOperators,ODRL223-1.p,Theorem,Theorem,0.34,True
-AdversarialOperators,ODRL224-1.p,Theorem,Theorem,0.11,True
-AdversarialOperators,ODRL225-1.p,Theorem,Theorem,0.11,True

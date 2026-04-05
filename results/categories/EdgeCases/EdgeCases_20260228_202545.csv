@@ -1,7 +1,0 @@
-category,file,expected,vampire,vampire_t,pass
-EdgeCases,ODRL140-1.p,CounterSatisfiable,Unknown,30.07,True
-EdgeCases,ODRL141-1.p,Theorem,Theorem,0.06,True
-EdgeCases,ODRL142-1.p,CounterSatisfiable,Unknown,30.07,True
-EdgeCases,ODRL143-1.p,Theorem,Theorem,0.06,True
-EdgeCases,ODRL144-1.p,Theorem,Theorem,0.06,True
-EdgeCases,ODRL145-1.p,CounterSatisfiable,Unknown,30.06,True
