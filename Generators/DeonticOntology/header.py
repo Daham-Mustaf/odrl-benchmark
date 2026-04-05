@@ -60,15 +60,17 @@ REFS = {
         "What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties "
         "in Deontic Logic and Foundational Ontology. FOIS 2026."
     ),
+    "axis2026": (
+        "[Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., "
+        "Quix, C., Decker, S. "
+        "Axis Decomposition for ODRL: Resolving Dimensional Ambiguity "
+        "in Policy Constraints through Interval Semantics. "
+        "arXiv:2602.19878. https://arxiv.org/abs/2602.19878"
+    ),
     "vldb2027": (
         "[Mus27]  Mustafa, D. et al. "
         "Conflict Detection via Denotational Semantics for ODRL Policies. "
         "VLDB 2027."
-    ),
-    "paar2026": (
-        "[MuS26]  Mustafa, D. & Sutcliffe, G. "
-        "An ODRL Benchmark Suite for Automated Reasoning. "
-        "PAAR 2026."
     ),
 }
 
