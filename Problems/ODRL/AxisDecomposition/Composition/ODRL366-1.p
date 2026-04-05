@@ -1,67 +1,26 @@
 %--------------------------------------------------------------------------
-% File     : ODRL366-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : 8 distinct values, 28 ordering axioms → Compatible
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : Composition
-% Difficulty: Hard
+% File     : ODRL366-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : HD video 4-axis: all compatible
+% Version  : 1.0
+% English  : Width:  lteq 1920 ∩ gteq 640  = [640,1920] ≠ ∅ Compatible
+%           : Height: lteq 1080 ∩ gteq 480  = [480,1080] ≠ ∅ Compatible
+%           : Depth:  lteq 48   ∩ gteq 16   = [16,48]    ≠ ∅ Compatible
+%           : Alt:    lteq 600  ∩ gteq 150  = [150,600]  ≠ ∅ Compatible
+%           : Scaling test with HD video values.
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL366-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "1920"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "1080"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "48"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "640"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "480"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "16"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "150"^^xsd:decimal ] ] .
-%
-% Formal   : width lteq 1920  →  (0, 1920]
-%            width gteq 640  →  [640, ∞)
-%            (0, 1920] ∩ [640, ∞) ≠ ∅  →  Compatible
-% Notes    : Realistic HD image values. Tests prover with larger constant set.
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL366-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -110,11 +69,9 @@ fof(ord_v640_v1080, axiom, less(v640, v1080)).
 fof(ord_v640_v1920, axiom, less(v640, v1920)).
 fof(ord_v1080_v1920, axiom, less(v1080, v1920)).
 fof(distinct, axiom, $distinct(v0, v16, v48, v150, v480, v600, v640, v1080, v1920)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl366, conjecture,
-    ?[X,Y,Z,W]: (in_lopen(X, v0, v1920) & leq(v640, X) &
-          in_lopen(Y, v0, v1080) & leq(v480, Y) &
-          in_lopen(Z, v0, v48) & leq(v16, Z) &
-          in_lopen(W, v0, v600) & leq(v150, W))).
+    ?[X,Y,Z,W]: (in_lopen(X, v0, v1920) & leq(v640,  X) &           in_lopen(Y, v0, v1080) & leq(v480,  Y) &
+           in_lopen(Z, v0, v48)   & leq(v16,   Z) &
+           in_lopen(W, v0, v600)  & leq(v150,  W))).
 %--------------------------------------------------------------------------

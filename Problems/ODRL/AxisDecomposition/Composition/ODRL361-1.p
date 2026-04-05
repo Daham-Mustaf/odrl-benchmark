@@ -1,66 +1,24 @@
 %--------------------------------------------------------------------------
-% File     : ODRL361-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
-% Problem  : Conflict on axis 1 of 4 → box Conflict
-% Expected : Theorem
-% Verdict  : Conflict
-% Category : Composition
-% Difficulty: Medium
+% File     : ODRL361-1.p
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : Width conflict × 3 compatible → box Conflict
+% Version  : 1.0
+% English  : Width:  lteq 400 ∩ gteq 800 = ∅  Conflict
+%           : Height/Depth/Alt: all compatible
+%           : box_verdict(Conflict,box_verdict(C,box_verdict(C,C)))=Conflict
 %
-% ODRL Policy (Turtle):
-%   @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-%   @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
-%   @prefix ex:   <https://example.org/> .
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Names    : ODRL361-1.p
 %
-%   ex:policyA a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "400"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "600"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "32"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:lteq ;
-%         odrl:rightOperand "300"^^xsd:decimal ] ] .
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
 %
-%   ex:policyB a odrl:Set ;
-%     odrl:permission [
-%       odrl:action odrl:use ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeWidth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "800"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeHeight ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "100"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand oax:absoluteSizeDepth ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "8"^^xsd:decimal ] ;
-%       odrl:constraint [
-%         odrl:leftOperand odrl:resolution ;
-%         odrl:operator odrl:gteq ;
-%         odrl:rightOperand "72"^^xsd:decimal ] ] .
-%
-% Formal   : width lteq 400  →  (0, 400]
-%            width gteq 800  →  [800, ∞)
-%            (0, 400] ∩ [800, ∞) ∅  →  Conflict
-%
-% Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-02-28
-% Gen      : gen_axis_suite.py
+% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Policy source: Policies/ODRL361-policy.ttl
 %--------------------------------------------------------------------------
-include('Axioms/Layer1-ODRLCore/AXIS000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
@@ -68,6 +26,7 @@ fof(val_v8, axiom, val(v8)).
 fof(val_v32, axiom, val(v32)).
 fof(val_v72, axiom, val(v72)).
 fof(val_v100, axiom, val(v100)).
+fof(val_v200, axiom, val(v200)).
 fof(val_v300, axiom, val(v300)).
 fof(val_v400, axiom, val(v400)).
 fof(val_v600, axiom, val(v600)).
@@ -76,6 +35,7 @@ fof(ord_v0_v8, axiom, less(v0, v8)).
 fof(ord_v0_v32, axiom, less(v0, v32)).
 fof(ord_v0_v72, axiom, less(v0, v72)).
 fof(ord_v0_v100, axiom, less(v0, v100)).
+fof(ord_v0_v200, axiom, less(v0, v200)).
 fof(ord_v0_v300, axiom, less(v0, v300)).
 fof(ord_v0_v400, axiom, less(v0, v400)).
 fof(ord_v0_v600, axiom, less(v0, v600)).
@@ -83,37 +43,43 @@ fof(ord_v0_v800, axiom, less(v0, v800)).
 fof(ord_v8_v32, axiom, less(v8, v32)).
 fof(ord_v8_v72, axiom, less(v8, v72)).
 fof(ord_v8_v100, axiom, less(v8, v100)).
+fof(ord_v8_v200, axiom, less(v8, v200)).
 fof(ord_v8_v300, axiom, less(v8, v300)).
 fof(ord_v8_v400, axiom, less(v8, v400)).
 fof(ord_v8_v600, axiom, less(v8, v600)).
 fof(ord_v8_v800, axiom, less(v8, v800)).
 fof(ord_v32_v72, axiom, less(v32, v72)).
 fof(ord_v32_v100, axiom, less(v32, v100)).
+fof(ord_v32_v200, axiom, less(v32, v200)).
 fof(ord_v32_v300, axiom, less(v32, v300)).
 fof(ord_v32_v400, axiom, less(v32, v400)).
 fof(ord_v32_v600, axiom, less(v32, v600)).
 fof(ord_v32_v800, axiom, less(v32, v800)).
 fof(ord_v72_v100, axiom, less(v72, v100)).
+fof(ord_v72_v200, axiom, less(v72, v200)).
 fof(ord_v72_v300, axiom, less(v72, v300)).
 fof(ord_v72_v400, axiom, less(v72, v400)).
 fof(ord_v72_v600, axiom, less(v72, v600)).
 fof(ord_v72_v800, axiom, less(v72, v800)).
+fof(ord_v100_v200, axiom, less(v100, v200)).
 fof(ord_v100_v300, axiom, less(v100, v300)).
 fof(ord_v100_v400, axiom, less(v100, v400)).
 fof(ord_v100_v600, axiom, less(v100, v600)).
 fof(ord_v100_v800, axiom, less(v100, v800)).
+fof(ord_v200_v300, axiom, less(v200, v300)).
+fof(ord_v200_v400, axiom, less(v200, v400)).
+fof(ord_v200_v600, axiom, less(v200, v600)).
+fof(ord_v200_v800, axiom, less(v200, v800)).
 fof(ord_v300_v400, axiom, less(v300, v400)).
 fof(ord_v300_v600, axiom, less(v300, v600)).
 fof(ord_v300_v800, axiom, less(v300, v800)).
 fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(ord_v400_v800, axiom, less(v400, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
-fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v300, v400, v600, v800)).
-
-% ─── Conjecture ──────────────────────────────────────────────────────
+fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v400, v600, v800)).
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl361, conjecture,
-    ~?[X,Y,Z,W]: (in_lopen(X, v0, v400) & leq(v800, X) &
-          in_lopen(Y, v0, v600) & leq(v100, Y) &
-          in_lopen(Z, v0, v32) & leq(v8, Z) &
-          in_lopen(W, v0, v300) & leq(v72, W))).
+    ~?[X,Y,Z,W]: (in_lopen(X, v0, v400) & leq(v800, X) &            in_lopen(Y, v0, v600) & leq(v100, Y) &
+            in_lopen(Z, v0, v32)  & leq(v8,   Z) &
+            in_lopen(W, v0, v300) & leq(v72,  W))).
 %--------------------------------------------------------------------------
