@@ -11,12 +11,13 @@
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL416-1.p
 %
 % Status   : Theorem
 % SPC      : FOF_THM_RFN
 %
-% Comments : Axis decomposition tier. PAAR 2026 benchmark.
+% Comments : Axis decomposition tier. arXiv:2602.19878.
 %           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
 %           : Policy source: Policies/ODRL416-policy.ttl
 %--------------------------------------------------------------------------

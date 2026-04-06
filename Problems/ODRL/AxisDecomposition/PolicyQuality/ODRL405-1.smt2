@@ -1,16 +1,16 @@
 ; --------------------------------------------------------------------------
 ; File     : ODRL405-1.smt2
-; Domain   : ODRL Spatial Axis Profile / Axis Decomposition
-; Problem  : 3D mixed operators Compatible (7 constants)
-; Expected : sat
-; Verdict  : Compatible
-; Category : PolicyQuality
-; Difficulty: Medium
-;
-; Refs     : [Mus+26] Mustafa et al. Axis Decomposition for ODRL.
-;            arXiv:2602.19878.
-;            [MuS26] Mustafa & Sutcliffe. ODRL Benchmark Suite. PAAR 2026.
+; Domain   : ODRL Policy / Axis Decomposition
+; Axioms   : 3D mixed operators Compatible (7 constants)
+; Version  : 1.0
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+; Source   : Mustafa, D. (2026)
+; Names    : ODRL405-1.smt2
+; Status   : sat
+; Comments : Verdict: Compatible  Category: PolicyQuality  Difficulty: Medium
 ; --------------------------------------------------------------------------
+
 (set-logic QF_LRA)
 (declare-const x Real)
 (declare-const y Real)

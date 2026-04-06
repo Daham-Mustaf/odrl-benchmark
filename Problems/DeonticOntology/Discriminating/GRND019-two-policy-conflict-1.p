@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND019-two-policy-conflict-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Axioms   : Two policies conflict: competing Rights from distinct assigners
+% Problem  : Two policies conflict: competing Rights from distinct assigners
 % Version  : 1.6
 % English  : Two prohibitions over the same (bibliothek, read, theater_ds):
 %           : f1: assigner museen, activates at e1 => Duty(bibliothek,rfr(read),theater_ds)
@@ -15,10 +15,15 @@
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : GRND019-two-policy-conflict-1.p
 %
-% Status   : Satisfiable
-% SPC      : 
+% Status   : Unsatisfiable
+% Syntax   : Number of formulae    :   27  (27 axm)
+%            Number of atoms       :   49
+%            Number of variables   :   10
+%            Maximal formula depth :    5
+% SPC      : FOF_UNS_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

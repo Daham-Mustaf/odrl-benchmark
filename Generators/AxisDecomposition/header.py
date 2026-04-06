@@ -1,14 +1,6 @@
 """
-header.py
-=========
-Shared TPTP header generator for all ODRL benchmark domains.
-
-Paper -> ref key mapping:
-    fois2026   — Mohammed et al. What Does ODRL Mean? FOIS 2026.
-    axis2026   — Mustafa et al. Axis Decomposition for ODRL. arXiv:2602.19878.
-    vldb2027   — Mustafa et al. Conflict Detection. VLDB 2027.
+header.py — see file for full docstring
 """
-
 import re
 from dataclasses import dataclass
 
@@ -26,16 +18,18 @@ REFS = {
         "arXiv:2602.19878. https://arxiv.org/abs/2602.19878"
     ),
     "vldb2027": (
-        "[Mus27]  Mustafa, D. et al. "
-        "Conflict Detection via Denotational Semantics for ODRL Policies. "
-        "VLDB 2027."
+        "[Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., "
+        "Quix, C., Lange, C., Geisler, S., Decker, S. "
+        "Conflict Detection via Denotational Semantics: "
+        "Policy Reasoning over Incomplete Hierarchies. "
+        "arXiv:2602.19883. https://arxiv.org/abs/2602.19883"
     ),
 }
 
 DOMAINS = {
     "foundational": "Deontic Ontology / ODRL Grounding",
     "axis":         "ODRL Policy / Axis Decomposition",
-    "kb":           "ODRL Policy / KB Grounding",
+    "kb":           "ODRL Policy / KB Grounding Concept-valued",
 }
 
 SPC = {
@@ -84,11 +78,21 @@ def compute_stats(fof_text):
     }
 
 def _wrap(label, text):
+    """Wrap multi-line text under a TPTP field label (% prefix)."""
     lines = text.strip().split("\n")
     pad = " " * 11
     out = f"% {label:<9s}: {lines[0]}"
     for line in lines[1:]:
         out += f"\n%{pad}: {line.strip()}"
+    return out
+
+def _smt_wrap(label, text):
+    """Wrap multi-line text under a SMT-LIB field label (; prefix).
+    Every continuation line gets a ; prefix so Z3 never sees bare text."""
+    lines = text.strip().split("\n")
+    out = f"; {label:<9s}: {lines[0]}"
+    for line in lines[1:]:
+        out += f"\n;            {line.strip()}"
     return out
 
 def _refs_block(keys):
@@ -98,6 +102,15 @@ def _refs_block(keys):
             raise KeyError(f"Unknown ref key '{k}'. Add it to header.REFS.")
         label = "Refs" if i == 0 else "     "
         lines.append(f"% {label}     : {REFS[k]}")
+    return "\n".join(lines)
+
+def _smt_refs_block(keys):
+    lines = []
+    for i, k in enumerate(keys):
+        if k not in REFS:
+            raise KeyError(f"Unknown ref key '{k}'. Add it to header.REFS.")
+        label = "Refs" if i == 0 else "     "
+        lines.append(f"; {label}     : {REFS[k]}")
     return "\n".join(lines)
 
 def _stats_block(stats):
@@ -118,8 +131,13 @@ def _stats_block(stats):
         f"%            Maximal formula depth : {md:4d}\n"
     )
 
+_SEP     = "%--------------------------------------------------------------------------\n"
+_SMT_SEP = "; --------------------------------------------------------------------------\n"
+
+
 @dataclass
 class Header:
+    """TPTP header for .p problem files. Stats computed from fof_text."""
     file:     str
     domain:   str
     title:    str
@@ -134,36 +152,39 @@ class Header:
     def _infer_spc(self):
         if self.spc: return self.spc
         s = self.status.lower()
-        if "theorem" in s:    return SPC["theorem"]
-        if "counter" in s:    return SPC["countersat"]
-        if "unsat" in s:      return SPC["unsat"]
-        if "sat" in s:        return SPC["sat"]
+        if "theorem"       in s: return SPC["theorem"]
+        if "counter"       in s: return SPC["countersat"]
+        if "unsatisfiable" in s or "unsat" in s: return SPC["unsat"]
+        if "satisfiable"   in s or "sat"   in s: return SPC["sat"]
         return "FOF_UNK_RFN"
 
     def render(self):
         stats = _stats_block(compute_stats(self.fof_text)) if self.fof_text else ""
         return (
-            f"%--------------------------------------------------------------------------\n"
-            f"% File     : {self.file}\n"
-            f"% Domain   : {DOMAINS[self.domain]}\n"
-            f"% Problem  : {self.title}\n"
-            f"% Version  : {self.version}\n"
-            f"{_wrap('English', self.english)}\n"
-            f"%\n"
-            f"{_refs_block(self.refs)}\n"
-            f"% Source   : Mustafa, D. (2026)\n"
-            f"% Names    : {self.file}\n"
-            f"%\n"
-            f"% Status   : {self.status}\n"
-            f"{stats}"
-            f"% SPC      : {self._infer_spc()}\n"
-            f"%\n"
-            f"{_wrap('Comments', self.comments)}\n"
-            f"%--------------------------------------------------------------------------\n"
+            _SEP
+            + f"% File     : {self.file}\n"
+            + f"% Domain   : {DOMAINS[self.domain]}\n"
+            + f"% Problem  : {self.title}\n"
+            + f"% Version  : {self.version}\n"
+            + _wrap("English", self.english) + "\n"
+            + "%\n"
+            + _refs_block(self.refs) + "\n"
+            + "% Source   : Mustafa, D. (2026)\n"
+            + "% Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + f"% Names    : {self.file}\n"
+            + "%\n"
+            + f"% Status   : {self.status}\n"
+            + stats
+            + f"% SPC      : {self._infer_spc()}\n"
+            + "%\n"
+            + _wrap("Comments", self.comments) + "\n"
+            + _SEP
         )
+
 
 @dataclass
 class AXHeader:
+    """TPTP header for .ax axiom files. Stats computed from fof_text."""
     file:     str
     domain:   str
     title:    str
@@ -175,24 +196,59 @@ class AXHeader:
     fof_text: str = ""
 
     def render(self):
+        stats = _stats_block(compute_stats(self.fof_text)) if self.fof_text else ""
         return (
-            f"%--------------------------------------------------------------------------\n"
-            f"% File     : {self.file}\n"
-            f"% Domain   : {DOMAINS[self.domain]}\n"
-            f"% Axioms   : {self.title}\n"
-            f"% Version  : {self.version}\n"
-            f"{_wrap('English', self.english)}\n"
-            f"%\n"
-            f"{_refs_block(self.refs)}\n"
-            f"% Source   : Mustafa, D. (2026)\n"
-            f"% Names    : {self.file}\n"
-            f"%\n"
-            f"% Status   : Satisfiable\n"
-            f"% SPC      : {self.spc}\n"
-            f"%\n"
-            f"{_wrap('Comments', self.comments)}\n"
-            f"%--------------------------------------------------------------------------\n"
+            _SEP
+            + f"% File     : {self.file}\n"
+            + f"% Domain   : {DOMAINS[self.domain]}\n"
+            + f"% Axioms   : {self.title}\n"
+            + f"% Version  : {self.version}\n"
+            + _wrap("English", self.english) + "\n"
+            + "%\n"
+            + _refs_block(self.refs) + "\n"
+            + "% Source   : Mustafa, D. (2026)\n"
+            + "% Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + f"% Names    : {self.file}\n"
+            + "%\n"
+            + "% Status   : Satisfiable\n"
+            + stats
+            + f"% SPC      : {self.spc}\n"
+            + "%\n"
+            + _wrap("Comments", self.comments) + "\n"
+            + _SEP
         )
+
+
+@dataclass
+class SMTHeader:
+    """SMT-LIB 2 header for .smt2 files.
+    All lines use ; comment prefix.
+    Multi-line comments wrapped with _smt_wrap — Z3 never sees bare text.
+    """
+    file:     str
+    domain:   str
+    title:    str
+    version:  str
+    refs:     list
+    comments: str
+    status:   str = "unknown"
+
+    def render(self):
+        return (
+            _SMT_SEP
+            + f"; File     : {self.file}\n"
+            + f"; Domain   : {DOMAINS[self.domain]}\n"
+            + f"; Axioms   : {self.title}\n"
+            + f"; Version  : {self.version}\n"
+            + f"; Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + _smt_refs_block(self.refs) + "\n"
+            + "; Source   : Mustafa, D. (2026)\n"
+            + f"; Names    : {self.file}\n"
+            + f"; Status   : {self.status}\n"
+            + _smt_wrap("Comments", self.comments) + "\n"
+            + _SMT_SEP
+        )
+
 
 def problem_header(p, domain, fof_body=""):
     ref_map = {
@@ -207,13 +263,14 @@ def problem_header(p, domain, fof_body=""):
             f"Policy source: Policies/{p['id']}-policy.ttl"
         ),
         "axis": (
-            "Axis decomposition tier. PAAR 2026 benchmark.\n"
+            "Axis decomposition tier. arXiv:2602.19878.\n"
             "Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).\n"
             f"Policy source: Policies/{p['id']}-policy.ttl"
         ),
         "kb": (
-            "KB-grounding tier. VLDB 2027 benchmark.\n"
-            "Requires Axioms/ODRL000-0.ax and domain KB axioms."
+            "KB-grounding tier. VLDB 2027. arXiv:2602.19883.\n"
+            "Requires Axioms/ODRL000-0.ax and domain KB axioms.\n"
+            f"Policy source: Policies/{p['id']}-policy.ttl"
         ),
     }
     return Header(
@@ -227,3 +284,45 @@ def problem_header(p, domain, fof_body=""):
         comments = comment_map[domain],
         fof_text = fof_body,
     ).render()
+
+
+if __name__ == "__main__":
+    sample_fof = """\
+fof(ax1, axiom, ![X]: (perm(X) => rule(X))).
+fof(ax2, axiom, ![X,Y]: (aee(X,Y) => agent(Y))).
+fof(conj, conjecture, ?[R,L,N]: (founds(e1,R,p1) & permission(L) & no_right(N))).
+"""
+    print("=== Header (.p) ===")
+    print(Header(
+        file="GRND002-1.p", domain="foundational",
+        title="Permission creates Permission and NoRight", version="1.0",
+        english="A permission activation founds a relator containing\nPermission(assignee) and NoRight(assigner).",
+        status="Theorem", refs=["fois2026"],
+        comments="Requires Axioms/GRND000-0.ax and Axioms/GRND-AX-1.ax.\nPolicy source: Policies/GRND002-policy.ttl",
+        fof_text=sample_fof,
+    ).render())
+
+    print("=== AXHeader (.ax) ===")
+    print(AXHeader(
+        file="GRND000-0.ax", domain="foundational",
+        title="Signature — sorts, predicates, rfr/decl functions", version="1.5",
+        english="FOF signature for all DeonticOntology problems.\nInclude via: include('Axioms/GRND000-0.ax').",
+        refs=["fois2026"],
+        comments="Sorts encoded as unary guard predicates.\nrfr/1: Act -> Forbearance. decl/1: violation declaration.",
+        fof_text=sample_fof,
+    ).render())
+
+    print("=== SMTHeader (.smt2) — multi-line comments test ===")
+    smt_out = SMTHeader(
+        file="GRND000-0.smt2", domain="foundational",
+        title="Signature — sorts, predicates, rfr/decl functions", version="1.5",
+        refs=["fois2026"],
+        comments="SMT-LIB preamble embedded verbatim in every .smt2 problem file.\nLine two — must start with semicolon.\nLine three — Z3 must never see bare text.",
+        status="unknown",
+    ).render()
+    print(smt_out)
+
+    # Safety check: no bare lines
+    bad = [l for l in smt_out.splitlines() if l and not l.startswith(";")]
+    assert not bad, f"BARE LINES: {bad}"
+    print("All SMTHeader lines start with ';'")

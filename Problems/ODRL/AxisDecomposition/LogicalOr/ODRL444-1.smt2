@@ -1,16 +1,16 @@
 ; --------------------------------------------------------------------------
 ; File     : ODRL444-1.smt2
-; Domain   : ODRL Spatial Axis Profile / Axis Decomposition
-; Problem  : Both policies or: cross-branch overlap → Compatible
-; Expected : sat
-; Verdict  : Compatible
-; Category : LogicalOr
-; Difficulty: Medium
-;
-; Refs     : [Mus+26] Mustafa et al. Axis Decomposition for ODRL.
-;            arXiv:2602.19878.
-;            [MuS26] Mustafa & Sutcliffe. ODRL Benchmark Suite. PAAR 2026.
+; Domain   : ODRL Policy / Axis Decomposition
+; Axioms   : Both policies or: cross-branch overlap → Compatible
+; Version  : 1.0
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+; Source   : Mustafa, D. (2026)
+; Names    : ODRL444-1.smt2
+; Status   : sat
+; Comments : Verdict: Compatible  Category: LogicalOr  Difficulty: Medium
 ; --------------------------------------------------------------------------
+
 (set-logic QF_LRA)
 (declare-const x Real)
 (declare-const y Real)

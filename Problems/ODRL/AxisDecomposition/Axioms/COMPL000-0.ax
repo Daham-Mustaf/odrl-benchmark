@@ -1,0 +1,106 @@
+%--------------------------------------------------------------------------
+% File     : COMPL000-0.ax
+% Domain   : ODRL Policy / Axis Decomposition
+% Axioms   : Completion witnesses and Unknown Soundness axioms
+% Version  : 1.1
+% English  : Encodes def:completion (adding constraints to unconstrained axes)
+%           : and thm:unknown-sound (Unknown is sharp in both directions).
+%           : completion_compatible/3: both policies set to eq V on axis.
+%           : completion_conflict/4: policies set to lteq U and gteq V with U<V.
+%           : Also encodes the monotonicity helper (prop:monotone): narrowing
+%           : an interval cannot turn a conflict into a compatible verdict.
+%
+% Refs     : [Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Names    : COMPL000-0.ax
+%
+% Status   : Satisfiable
+% Syntax   : Number of formulae    :    7  (7 axm)
+%            Number of atoms       :   27
+%            Number of variables   :   13
+%            Maximal formula depth :    4
+% SPC      : FOF_SAT_RFN
+%
+% Comments : Depends on ORD000-0.ax and verdict constants from AXIS000-0.ax.
+%           : Include for Unknown Soundness and completion problems:
+%           : include('Axioms/COMPL000-0.ax').
+%           : include('Axioms/AXIS000-0.ax').
+%           : 8 axioms: 2 completion + 2 unknown sound + 2 sharpness
+%           : + 1 monotonicity + 1 box_verdict interaction.
+%--------------------------------------------------------------------------
+
+include('Axioms/ORD000-0.ax').
+
+% ==========================================================================
+% Completion predicate                       [Paper: def:completion]
+% ==========================================================================
+% A completion of (C1, C2) w.r.t. Decomp(ell) adds exactly one
+% well-formed constraint per unconstrained axis.
+%
+% Modelled here as: for an unconstrained axis with domain [InfD, SupD],
+% a compatible completion adds (eq, V) to both policies for any V in D_k;
+% a conflict completion adds (lteq, U) to policy 1 and (gteq, V) to
+% policy 2 where U < V (so [InfD,U] and [V,SupD] are disjoint).
+
+% Compatible completion witness:
+%   both policies constrained to eq V on the unconstrained axis
+fof(completion_compat, axiom, ![V,InfD,SupD]:
+    ((leq(InfD,V) & leq(V,SupD))
+     => completion_compatible(V,InfD,SupD))).
+
+% Conflict completion witness:
+%   policy 1: lteq U (denotation [InfD,U])
+%   policy 2: gteq V (denotation [V,SupD])
+%   with U < V so the two intervals are disjoint
+fof(completion_conflict, axiom, ![U,V,InfD,SupD]:
+    ((leq(InfD,U) & leq(U,SupD) &
+      leq(InfD,V) & leq(V,SupD) &
+      less(U,V))
+     => completion_conflict(U,V,InfD,SupD))).
+
+% ==========================================================================
+% Unknown Soundness                          [Paper: thm:unknown-sound]
+% ==========================================================================
+% Characterisation: boxV = unknown iff no constrained axis yields conflict
+% and at least one axis is unconstrained.
+%
+% Part 1: Compatible direction.
+%   If box_verdict of all constrained axes is compatible and a compatible
+%   completion exists for unconstrained axes, then the full completion
+%   yields compatible.
+fof(unknown_sound_compat, axiom, ![V,InfD,SupD,Vc]:
+    ((Vc = compatible & completion_compatible(V,InfD,SupD))
+     => box_verdict(Vc, compatible) = compatible)).
+
+% Part 2: Conflict direction.
+%   If a conflict completion exists for some unconstrained axis a_k,
+%   the full completion yields conflict (the new axis-conflict propagates
+%   through box_verdict min).
+fof(unknown_sound_conflict, axiom, ![U,V,InfD,SupD,Vc]:
+    ((completion_conflict(U,V,InfD,SupD) & is_verdict(Vc))
+     => box_verdict(conflict, Vc) = conflict)).
+
+% ==========================================================================
+% Sharpness: both directions reachable       [Paper: thm:unknown-sound]
+% ==========================================================================
+% For any unconstrained axis whose domain has two distinct elements u < v,
+% witnesses for both compatible and conflict completions exist.
+fof(sharpness_compat, axiom, ![U,V,InfD,SupD]:
+    ((leq(InfD,U) & leq(U,SupD) & less(U,V) & leq(V,SupD))
+     => completion_compatible(U,InfD,SupD))).
+
+fof(sharpness_conflict, axiom, ![U,V,InfD,SupD]:
+    ((leq(InfD,U) & leq(U,SupD) & less(U,V) & leq(V,SupD))
+     => completion_conflict(U,V,InfD,SupD))).
+
+% ==========================================================================
+% Monotonicity helper                        [Paper: prop:monotone]
+% ==========================================================================
+% Narrowing an interval (subset inclusion) can only decrease the verdict.
+% If sem(c1) subset sem(c1') and the pair (c1', c2) yields conflict,
+% then (c1, c2) also yields conflict.
+fof(monotone_conflict, axiom, ![A1lo,A1hi,A1plo,A1phi,A2lo,A2hi]:
+    ((axis_subsumes(A1lo,A1hi,A1plo,A1phi) &
+      axis_conflict(A1plo,A1phi,A2lo,A2hi))
+     => axis_conflict(A1lo,A1hi,A2lo,A2hi))).

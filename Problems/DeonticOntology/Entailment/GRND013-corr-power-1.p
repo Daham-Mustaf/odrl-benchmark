@@ -1,16 +1,21 @@
 %--------------------------------------------------------------------------
 % File     : GRND013-corr-power-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Axioms   : Correlativity: Power implies unique Subjection in relator
+% Problem  : Correlativity: Power implies unique Subjection in relator
 % Version  : 1.6
 % English  : odrl_rel(rho1), Power(pw) partOf rho1 => exists unique s. Subjection(s) partOf rho1.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : GRND013-corr-power-1.p
 %
-% Status   : Satisfiable
-% SPC      : 
+% Status   : Theorem
+% Syntax   : Number of formulae    :   11  (10 axm; 1 cnj)
+%            Number of atoms       :   30
+%            Number of variables   :    7
+%            Maximal formula depth :    8
+% SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

@@ -1,16 +1,16 @@
 ; --------------------------------------------------------------------------
 ; File     : ODRL333-1.smt2
-; Domain   : ODRL Spatial Axis Profile / Axis Decomposition
-; Problem  : prop:monotone: narrowing an axis propagates Conflict
-; Expected : unsat
-; Verdict  : Conflict
-; Category : Box2D
-; Difficulty: Medium
-;
-; Refs     : [Mus+26] Mustafa et al. Axis Decomposition for ODRL.
-;            arXiv:2602.19878.
-;            [MuS26] Mustafa & Sutcliffe. ODRL Benchmark Suite. PAAR 2026.
+; Domain   : ODRL Policy / Axis Decomposition
+; Axioms   : prop:monotone: narrowing an axis propagates Conflict
+; Version  : 1.0
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+; Source   : Mustafa, D. (2026)
+; Names    : ODRL333-1.smt2
+; Status   : unsat
+; Comments : Verdict: Conflict  Category: Box2D  Difficulty: Medium
 ; --------------------------------------------------------------------------
+
 (set-logic QF_LRA)
 (declare-const x Real)
 ; Negation of conclusion: x in [200,600] AND x in [900,1200]

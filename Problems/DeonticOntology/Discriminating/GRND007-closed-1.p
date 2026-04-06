@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND007-closed-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Axioms   : Closed-world: no Permission for uncovered action
+% Problem  : Closed-world: no Permission for uncovered action
 % Version  : 1.6
 % English  : No perm rule for modify_act. No open-world closure.
 %           : Permission(portal,modify_act,theater_ds) is NOT derivable.
@@ -10,10 +10,15 @@
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : GRND007-closed-1.p
 %
 % Status   : Satisfiable
-% SPC      : 
+% Syntax   : Number of formulae    :    4  (4 axm)
+%            Number of atoms       :    6
+%            Number of variables   :    1
+%            Maximal formula depth :    3
+% SPC      : FOF_SAT_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

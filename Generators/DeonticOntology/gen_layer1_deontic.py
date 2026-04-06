@@ -22,9 +22,8 @@ Usage:
 import argparse
 import sys
 from pathlib import Path
-
 sys.path.insert(0, str(Path(__file__).parent))
-from header import AXHeader
+from header import AXHeader, SMTHeader
 from axiom_data import SMT2_AXIOMS
 
 VERSION = "1.5"
@@ -316,23 +315,22 @@ def main():
     # Write SMT-LIB reference copy
     # SMT2_AXIOMS imported from axiom_data.py — guaranteed identical to
     # what is embedded in every .smt2 problem file by writers.py.
-    smt2_lines = [
-        "; --------------------------------------------------------------------------",
-        "; File     : GRND-AX-1.smt2",
-        "; Domain   : Deontic Ontology / ODRL Grounding",
-        f"; Version  : {VERSION}",
-        "; Axioms   : Layer 1 deontic grounding axioms (Ax5.1-5.11, A1-A3, B1-B3)",
-        "; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026",
-        "; Source   : Mohammed, D. (2026)",
-        "; Names    : GRND-AX-1.smt2",
-        ";",
-        "; NOTE: SMT-LIB 2 has no include directive.",
-        "; These axioms are embedded directly into each .smt2 problem file.",
-        "; This file is the authoritative reference — generated from",
-        "; axiom_data.SMT2_AXIOMS to guarantee identity with embedded content.",
-        "; --------------------------------------------------------------------------",
-        "",
-    ]
+    smt2_header = SMTHeader(
+        file     = "GRND-AX-1.smt2",
+        domain   = "foundational",
+        title    = "Layer 1 deontic grounding axioms (Ax5.1-5.11, A1-A3, B1-B3)",
+        version  = VERSION,
+        refs     = ["fois2026"],
+        comments = (
+            "SMT-LIB 2 has no include directive. "
+            "These axioms are embedded directly into each .smt2 problem file. "
+            "This file is the authoritative reference — generated from "
+            "axiom_data.SMT2_AXIOMS to guarantee identity with embedded content."
+        ),
+        status   = "unknown",
+    ).render()
+
+    smt2_lines = [smt2_header, ""]
     for name, formula in SMT2_AXIOMS:
         smt2_lines.append(f"; {name}")
         smt2_lines.append(formula)

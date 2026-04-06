@@ -1,0 +1,125 @@
+%--------------------------------------------------------------------------
+% File     : COMP000-0.ax
+% Domain   : ODRL Policy / Axis Decomposition
+% Axioms   : Logical constraint composition: or and xone verdicts
+% Version  : 1.1
+% English  : Encodes the three-valued verdict semantics for ODRL or and
+%           : xone over branch pairs (thm:composition-soundness).
+%           : or_verdict/2: compatible if any branch pair overlaps;
+%           : conflict only if all pairs conflict.
+%           : xone_verdict/2: compatible if exactly one pair overlaps
+%           : and all others conflict.
+%           : Also provides or_sound_2branch for the two-branch soundness
+%           : check (disjunction case of thm:composition-soundness).
+%
+% Refs     : [Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Names    : COMP000-0.ax
+%
+% Status   : Satisfiable
+% Syntax   : Number of formulae    :    9  (9 axm)
+%            Number of atoms       :   36
+%            Number of variables   :   15
+%            Maximal formula depth :    5
+% SPC      : FOF_SAT_RFN
+%
+% Comments : Depends on verdict constants from AXIS000-0.ax.
+%           : Include for or/xone composition problems:
+%           : include('Axioms/COMP000-0.ax').
+%           : include('Axioms/AXIS000-0.ax').
+%           : 13 axioms: 4 or + 4 xone + 1 soundness + 4 closure.
+%--------------------------------------------------------------------------
+
+include('Axioms/ORD000-0.ax').
+
+% ==========================================================================
+% Or-verdict                                 [Paper: sec:composition]
+% ==========================================================================
+% or_verdict(V1,V2): verdict for two-branch or.
+% Compatible if any branch pair overlaps; conflict only if all pairs conflict.
+%
+% Generalises to n branches by nesting:
+%   or_verdict(V1, or_verdict(V2, V3))
+
+% Any compatible branch pair => compatible
+fof(or_compat, axiom, ![V1,V2]:
+    (((is_verdict(V1) & is_verdict(V2)) &
+      (V1 = compatible | V2 = compatible))
+     => or_verdict(V1,V2) = compatible)).
+
+% All conflict => conflict
+fof(or_conflict, axiom, ![V1,V2]:
+    (((is_verdict(V1) & is_verdict(V2)) &
+      (V1 = conflict & V2 = conflict))
+     => or_verdict(V1,V2) = conflict)).
+
+% Neither all-conflict nor any-compatible => unknown
+fof(or_unknown, axiom, ![V1,V2]:
+    (((is_verdict(V1) & is_verdict(V2)) &
+      V1 != compatible & V2 != compatible &
+      ~(V1 = conflict & V2 = conflict))
+     => or_verdict(V1,V2) = unknown)).
+
+% Closure
+fof(or_verdict_total, axiom, ![V1,V2]:
+    ((is_verdict(V1) & is_verdict(V2)) =>
+     (or_verdict(V1,V2) = compatible |
+      or_verdict(V1,V2) = conflict |
+      or_verdict(V1,V2) = unknown))).
+
+% ==========================================================================
+% Xone-verdict                               [Paper: sec:composition]
+% ==========================================================================
+% xone_verdict(V_match, V_rest): verdict for exclusive disjunction.
+%   V_match = verdict of the one branch pair claimed to overlap
+%   V_rest  = or_verdict of all other branch pairs (should be conflict)
+%
+% Compatible iff exactly one branch pair overlaps and all others conflict.
+% Conflict iff all branch pairs conflict.
+
+% Exactly one compatible, rest conflict => compatible
+fof(xone_compat, axiom, ![Vm,Vr]:
+    (((is_verdict(Vm) & is_verdict(Vr)) &
+      Vm = compatible & Vr = conflict)
+     => xone_verdict(Vm,Vr) = compatible)).
+
+% All conflict => conflict (no branch pair overlaps)
+fof(xone_conflict, axiom, ![Vm,Vr]:
+    (((is_verdict(Vm) & is_verdict(Vr)) &
+      Vm = conflict & Vr = conflict)
+     => xone_verdict(Vm,Vr) = conflict)).
+
+% Otherwise => unknown
+fof(xone_unknown, axiom, ![Vm,Vr]:
+    (((is_verdict(Vm) & is_verdict(Vr)) &
+      ~(Vm = compatible & Vr = conflict) &
+      ~(Vm = conflict  & Vr = conflict))
+     => xone_verdict(Vm,Vr) = unknown)).
+
+% Closure
+fof(xone_verdict_total, axiom, ![Vm,Vr]:
+    ((is_verdict(Vm) & is_verdict(Vr)) =>
+     (xone_verdict(Vm,Vr) = compatible |
+      xone_verdict(Vm,Vr) = conflict |
+      xone_verdict(Vm,Vr) = unknown))).
+
+% ==========================================================================
+% Composition soundness helper               [Paper: thm:composition-soundness]
+% ==========================================================================
+% For the disjunction case:
+%   all branch pairs conflict => union of denotations is empty.
+% Expressed as: if every pair of branches has disjoint closed intervals,
+% then no point satisfies both policies.
+%
+% Two-branch form.  N-branch: instantiate at fixed n in problem file.
+fof(or_sound_2branch, axiom,
+    ![A1lo,A1hi,A2lo,A2hi,B1lo,B1hi,B2lo,B2hi]:
+    ((axis_conflict(A1lo,A1hi,B1lo,B1hi) &
+      axis_conflict(A1lo,A1hi,B2lo,B2hi) &
+      axis_conflict(A2lo,A2hi,B1lo,B1hi) &
+      axis_conflict(A2lo,A2hi,B2lo,B2hi))
+     =>
+     ~?[X]: (
+       (in_closed(X,A1lo,A1hi) | in_closed(X,A2lo,A2hi)) &
+       (in_closed(X,B1lo,B1hi) | in_closed(X,B2lo,B2hi))))).

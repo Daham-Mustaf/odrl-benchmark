@@ -1,32 +1,42 @@
 ; --------------------------------------------------------------------------
 ; File     : GRND015-unique-founding-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
-; Problem  : Unique founding: same event+rule founds at most one relator
+; Axioms   : Unique founding: same event+rule founds at most one relator
 ; Version  : 1.6
-; Status   : unsat
-; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Source   : Mohammed, D. (2026)
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
 ; Names    : GRND015-unique-founding-1.smt2
-;
-; founds(e1,rho1,p1) and founds(e1,rho2,p1) => rho1 = rho2.
-; UFO axiom a77 — relator individuated by rule-event pair.
-;
-; ODRL Policy (Turtle) — see Policies/ for full file:
-; @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-; @prefix drk:    <http://w3id.org/drk/ontology/> .
-; # Uniqueness: activating the same permission twice at the same event
-; # cannot produce two distinct relators.
+; Status   : unsat
+; Comments : founds(e1,rho1,p1) and founds(e1,rho2,p1) => rho1 = rho2.
+;            UFO axiom a77 — relator individuated by rule-event pair.
+;            Foundational ontology tier. FOIS 2026 benchmark.
+;            Policy source: Policies/GRND015-unique-founding-policy.ttl
+;            @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+;            @prefix drk:    <http://w3id.org/drk/ontology/> .
+;            # Uniqueness: activating the same permission twice at the same event
+;            # cannot produce two distinct relators.
 ; --------------------------------------------------------------------------
+
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
 ; === Source: Axioms/GRND000-0.smt2 ===
-; (set-logic UF)
-; (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
-; (set-info :status unknown)
+; --------------------------------------------------------------------------
+; File     : GRND000-0.smt2
+; Domain   : Deontic Ontology / ODRL Grounding
+; Axioms   : Signature — sorts, predicates, rfr/decl/issue functions
+; Version  : 1.5
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
+; Names    : GRND000-0.smt2
+; Status   : unknown
+; Comments : SMT-LIB has no include directive. This preamble is embedded verbatim by every problem generator. Do NOT add (check-sat) here.
+; --------------------------------------------------------------------------
+
 (set-logic UF)
 (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
 (set-info :status unknown)
-
 ; --------------------------------------------------------------------------
 ; SORTS
 ; NormContent is a unified sort for Act and Forbearance content.

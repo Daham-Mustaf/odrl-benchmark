@@ -26,8 +26,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from header import AXHeader
-
+from header import AXHeader, SMTHeader
 VERSION = "1.5"
 
 # ============================================================================
@@ -224,18 +223,6 @@ def generate_fof() -> str:
     ).render()
     return header + "\n" + FOF_BODY
 
-# ============================================================================
-# SMT-LIB BODY SECTIONS
-# ============================================================================
-
-SMT2_PREAMBLE_HEADER = """\
-; (set-logic UF)
-; (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
-; (set-info :status unknown)
-(set-logic UF)
-(set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
-(set-info :status unknown)
-"""
 
 SMT2_SORTS = """\
 ; --------------------------------------------------------------------------
@@ -376,12 +363,24 @@ SMT2_POSITION_DISJOINTNESS = """\
 """
 
 def generate_smt2() -> str:
-    """
-    Returns the SMT-LIB preamble string embedded verbatim into every .smt2
-    problem file. Do NOT add (check-sat) here.
-    """
-    return "\n".join([
-        SMT2_PREAMBLE_HEADER,
+    header = SMTHeader(
+        file     = "GRND000-0.smt2",
+        domain   = "foundational",
+        title    = "Signature — sorts, predicates, rfr/decl/issue functions",
+        version  = VERSION,
+        refs     = ["fois2026"],
+        comments = (
+            "SMT-LIB has no include directive. "
+            "This preamble is embedded verbatim by every problem generator. "
+            "Do NOT add (check-sat) here."
+        ),
+        status   = "unknown",
+    ).render()
+
+    body = "\n".join([
+        "(set-logic UF)",
+        "(set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)",
+        "(set-info :status unknown)",
         SMT2_SORTS,
         SMT2_RULE_PREDICATES,
         SMT2_RELATOR_PREDICATES,
@@ -391,6 +390,8 @@ def generate_smt2() -> str:
         SMT2_NORMCONTENT,
         SMT2_POSITION_DISJOINTNESS,
     ])
+
+    return header + "\n" + body
 
 # ============================================================================
 # CLI

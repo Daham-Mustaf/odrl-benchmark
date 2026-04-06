@@ -1,39 +1,49 @@
 ; --------------------------------------------------------------------------
 ; File     : GRND018-about-event-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
-; Problem  : B2+B3: Power and Subjection in relator concern founding event
+; Axioms   : B2+B3: Power and Subjection in relator concern founding event
 ; Version  : 1.6
-; Status   : unsat
-; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Source   : Mohammed, D. (2026)
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
 ; Names    : GRND018-about-event-1.smt2
-;
-; proh(f1) + has_rem(f1) + activates(e1,f1).
-; Ax5.4 existentially founds rho_R via founds_rem.
-; B2: Power in rho_R => about_event(pw, e1).
-; B3: Subjection in rho_R => about_event(s, e1).
-; Abstract constants: marketplace=drk:MusicMarketplaceAG,
-;   philharmonie=drk:PhilharmonieBerlin, distrib=odrl:distribute,
-;   concert_ds=drk:ConcertRecordingDataset
-;
-; ODRL Policy (Turtle) — see Policies/ for full file:
-; @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-; @prefix drk:    <http://w3id.org/drk/ontology/> .
-; @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-; @prefix schema: <https://schema.org/> .
-; drk:policy-about-event a odrl:Agreement ;
-; ... (15 more lines — see Policies/ file)
+; Status   : unsat
+; Comments : proh(f1) + has_rem(f1) + activates(e1,f1).
+;            Ax5.4 existentially founds rho_R via founds_rem.
+;            B2: Power in rho_R => about_event(pw, e1).
+;            B3: Subjection in rho_R => about_event(s, e1).
+;            Abstract constants: marketplace=drk:MusicMarketplaceAG,
+;            philharmonie=drk:PhilharmonieBerlin, distrib=odrl:distribute,
+;            concert_ds=drk:ConcertRecordingDataset
+;            Foundational ontology tier. FOIS 2026 benchmark.
+;            Policy source: Policies/GRND018-about-event-policy.ttl
+;            @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+;            @prefix drk:    <http://w3id.org/drk/ontology/> .
+;            @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+;            @prefix schema: <https://schema.org/> .
+;            drk:policy-about-event a odrl:Agreement ;
+;            ... (15 more lines — see Policies/ file)
 ; --------------------------------------------------------------------------
+
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
 ; === Source: Axioms/GRND000-0.smt2 ===
-; (set-logic UF)
-; (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
-; (set-info :status unknown)
+; --------------------------------------------------------------------------
+; File     : GRND000-0.smt2
+; Domain   : Deontic Ontology / ODRL Grounding
+; Axioms   : Signature — sorts, predicates, rfr/decl/issue functions
+; Version  : 1.5
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
+; Names    : GRND000-0.smt2
+; Status   : unknown
+; Comments : SMT-LIB has no include directive. This preamble is embedded verbatim by every problem generator. Do NOT add (check-sat) here.
+; --------------------------------------------------------------------------
+
 (set-logic UF)
 (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
 (set-info :status unknown)
-
 ; --------------------------------------------------------------------------
 ; SORTS
 ; NormContent is a unified sort for Act and Forbearance content.

@@ -1,16 +1,16 @@
 ; --------------------------------------------------------------------------
 ; File     : ODRL415-1.smt2
-; Domain   : ODRL Spatial Axis Profile / Axis Decomposition
-; Problem  : 4D fractional subsumption Compatible — maximum difficulty (12 constants, 66 orderings)
-; Expected : unsat
-; Verdict  : Compatible
-; Category : PolicyQuality
-; Difficulty: VeryHard
-;
-; Refs     : [Mus+26] Mustafa et al. Axis Decomposition for ODRL.
-;            arXiv:2602.19878.
-;            [MuS26] Mustafa & Sutcliffe. ODRL Benchmark Suite. PAAR 2026.
+; Domain   : ODRL Policy / Axis Decomposition
+; Axioms   : 4D fractional subsumption Compatible — maximum difficulty (12 constants, 66 orderings)
+; Version  : 1.0
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+; Source   : Mustafa, D. (2026)
+; Names    : ODRL415-1.smt2
+; Status   : unsat
+; Comments : Verdict: Compatible  Category: PolicyQuality  Difficulty: VeryHard
 ; --------------------------------------------------------------------------
+
 (set-logic QF_LRA)
 (declare-const x Real)
 (declare-const y Real)

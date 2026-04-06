@@ -1,31 +1,41 @@
 ; --------------------------------------------------------------------------
 ; File     : GRND031-odrl-rel-is-legal-rel-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
-; Problem  : Ax5.11: ODRL relator is a UFO legal relator
+; Axioms   : Ax5.11: ODRL relator is a UFO legal relator
 ; Version  : 1.6
-; Status   : unsat
-; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Source   : Mohammed, D. (2026)
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
 ; Names    : GRND031-odrl-rel-is-legal-rel-1.smt2
-;
-; odrl_rel(rho1) => legal_relator(rho1).
-; Ax5.11 standalone: the subsumption bridge to UFO-L.
-;
-; ODRL Policy (Turtle) — see Policies/ for full file:
-; @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-; @prefix drk:  <http://w3id.org/drk/ontology/> .
-; # Ax5.11: every ODRL relator is a UFO legal relator.
+; Status   : unsat
+; Comments : odrl_rel(rho1) => legal_relator(rho1).
+;            Ax5.11 standalone: the subsumption bridge to UFO-L.
+;            Foundational ontology tier. FOIS 2026 benchmark.
+;            Policy source: Policies/GRND031-odrl-rel-is-legal-rel-policy.ttl
+;            @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+;            @prefix drk:  <http://w3id.org/drk/ontology/> .
+;            # Ax5.11: every ODRL relator is a UFO legal relator.
 ; --------------------------------------------------------------------------
+
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
 ; === Source: Axioms/GRND000-0.smt2 ===
-; (set-logic UF)
-; (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
-; (set-info :status unknown)
+; --------------------------------------------------------------------------
+; File     : GRND000-0.smt2
+; Domain   : Deontic Ontology / ODRL Grounding
+; Axioms   : Signature — sorts, predicates, rfr/decl/issue functions
+; Version  : 1.5
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
+; Names    : GRND000-0.smt2
+; Status   : unknown
+; Comments : SMT-LIB has no include directive. This preamble is embedded verbatim by every problem generator. Do NOT add (check-sat) here.
+; --------------------------------------------------------------------------
+
 (set-logic UF)
 (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
 (set-info :status unknown)
-
 ; --------------------------------------------------------------------------
 ; SORTS
 ; NormContent is a unified sort for Act and Forbearance content.

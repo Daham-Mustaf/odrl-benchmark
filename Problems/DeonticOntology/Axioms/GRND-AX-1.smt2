@@ -1,17 +1,16 @@
 ; --------------------------------------------------------------------------
 ; File     : GRND-AX-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
-; Version  : 1.5
 ; Axioms   : Layer 1 deontic grounding axioms (Ax5.1-5.11, A1-A3, B1-B3)
-; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Source   : Mohammed, D. (2026)
+; Version  : 1.5
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
 ; Names    : GRND-AX-1.smt2
-;
-; NOTE: SMT-LIB 2 has no include directive.
-; These axioms are embedded directly into each .smt2 problem file.
-; This file is the authoritative reference — generated from
-; axiom_data.SMT2_AXIOMS to guarantee identity with embedded content.
+; Status   : unknown
+; Comments : SMT-LIB 2 has no include directive. These axioms are embedded directly into each .smt2 problem file. This file is the authoritative reference — generated from axiom_data.SMT2_AXIOMS to guarantee identity with embedded content.
 ; --------------------------------------------------------------------------
+
 
 ; ax_perm_relator_weak
 (assert (forall ((p Rule) (x Agent) (y Agent) (a NormContent) (t Target) (e Event))

@@ -1,35 +1,45 @@
 ; --------------------------------------------------------------------------
 ; File     : GRND022-corr-nonunique-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
-; Problem  : Correlativity violated: two NoRight positions in same relator
+; Axioms   : Correlativity violated: two NoRight positions in same relator
 ; Version  : 1.6
-; Status   : unsat
-; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Source   : Mohammed, D. (2026)
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
 ; Names    : GRND022-corr-nonunique-1.smt2
-;
-; odrl_rel(rho1) + Permission(l) partOf rho1.
-; Two distinct no_right positions n1 != n2 both partOf rho1 with same content.
-; ax_correlativity_permission requires unique NoRight => contradiction.
-;
-; ODRL Policy (Turtle) — see Policies/ for full file:
-; @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-; @prefix drk:    <http://w3id.org/drk/ontology/> .
-; @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-; # Correlativity uniqueness test:
-; # A relator cannot contain two distinct NoRight positions
-; ... (1 more lines — see Policies/ file)
+; Status   : unsat
+; Comments : odrl_rel(rho1) + Permission(l) partOf rho1.
+;            Two distinct no_right positions n1 != n2 both partOf rho1 with same content.
+;            ax_correlativity_permission requires unique NoRight => contradiction.
+;            Foundational ontology tier. FOIS 2026 benchmark.
+;            Policy source: Policies/GRND022-corr-nonunique-policy.ttl
+;            @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+;            @prefix drk:    <http://w3id.org/drk/ontology/> .
+;            @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+;            # Correlativity uniqueness test:
+;            # A relator cannot contain two distinct NoRight positions
+;            ... (1 more lines — see Policies/ file)
 ; --------------------------------------------------------------------------
+
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
 ; === Source: Axioms/GRND000-0.smt2 ===
-; (set-logic UF)
-; (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
-; (set-info :status unknown)
+; --------------------------------------------------------------------------
+; File     : GRND000-0.smt2
+; Domain   : Deontic Ontology / ODRL Grounding
+; Axioms   : Signature — sorts, predicates, rfr/decl/issue functions
+; Version  : 1.5
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
+; Names    : GRND000-0.smt2
+; Status   : unknown
+; Comments : SMT-LIB has no include directive. This preamble is embedded verbatim by every problem generator. Do NOT add (check-sat) here.
+; --------------------------------------------------------------------------
+
 (set-logic UF)
 (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
 (set-info :status unknown)
-
 ; --------------------------------------------------------------------------
 ; SORTS
 ; NormContent is a unified sort for Act and Forbearance content.

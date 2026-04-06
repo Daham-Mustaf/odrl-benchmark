@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND004-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Axioms   : Prohibition with remedy creates Power and Subjection
+% Problem  : Prohibition with remedy creates Power and Subjection
 % Version  : 1.6
 % English  : proh(f1) + has_rem(f1) + activates(e1,f1).
 %           : Ax5.4 existentially founds rho_R via founds_rem.
@@ -13,10 +13,15 @@
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : GRND004-1.p
 %
-% Status   : Satisfiable
-% SPC      : 
+% Status   : Theorem
+% Syntax   : Number of formulae    :   16  (15 axm; 1 cnj)
+%            Number of atoms       :   59
+%            Number of variables   :   12
+%            Maximal formula depth :    5
+% SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
 %           : Requires Axioms/GRND000-0.ax (Layer 0) and

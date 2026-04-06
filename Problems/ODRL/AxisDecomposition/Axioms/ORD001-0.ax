@@ -2,17 +2,15 @@
 % File     : ORD001-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
 % Axioms   : Density axiom for continuous (real-valued) domains
-% Version  : 1.0
-% English  : Layer 0 extension for continuous domains.
-%           : Extends ORD000-0.ax with density: between any two distinct
+% Version  : 1.1
+% English  : Extends ORD000-0.ax with density: between any two distinct
 %           : values exists a third. Required for open-interval reasoning
-%           : over continuous domains (R, Q).
-%           : INCOMPATIBLE with discrete domains (N, Z) — do not include
-%           : for pixel counts or integer-valued constraints.
+%           : over continuous domains (R, Q). INCOMPATIBLE with discrete
+%           : domains (N, Z) -- do not include for pixel counts.
 %
-% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878.
-%           : [MuS26]  Mustafa, D. & Sutcliffe, G. An ODRL Benchmark Suite for Automated Reasoning. PAAR 2026.
+% Refs     : [Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ORD001-0.ax
 %
 % Status   : Satisfiable
@@ -22,7 +20,7 @@
 %            Maximal formula depth :    4
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Include BEFORE AXIS000-0.ax for continuous domains:
+% Comments : Include alongside AXIS000-0.ax for continuous domains:
 %           : include('Axioms/ORD001-0.ax').
 %           : include('Axioms/AXIS000-0.ax').
 %           : Omit for discrete domains (pixel counts, integer counts).
