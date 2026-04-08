@@ -5,6 +5,10 @@ cd ~/Desktop/tptp-odrl
 uv run Generators/AxisDecomposition/gen_axis_problems.py \
   --out-dir Problems/ODRL/AxisDecomposition --cat all
 
+  # Generate
+uv run Generators/AxisDecomposition/gen_prec_problems.py \
+  --out-dir Problems/ODRL/AxisDecomposition
+
 # SemanticCore separately
 uv run Generators/AxisDecomposition/gen_semantic_core.py
 ```

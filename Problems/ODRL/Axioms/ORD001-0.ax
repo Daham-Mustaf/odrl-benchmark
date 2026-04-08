@@ -2,13 +2,13 @@
 % File     : ORD001-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
 % Axioms   : Density axiom for continuous (real-valued) domains
-% Version  : 1.1
+% Version  : 1.2
 % English  : Extends ORD000-0.ax with density: between any two distinct
 %           : values exists a third. Required for open-interval reasoning
 %           : over continuous domains (R, Q). INCOMPATIBLE with discrete
 %           : domains (N, Z) -- do not include for pixel counts.
 %
-% Refs     : [Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ORD001-0.ax

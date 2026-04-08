@@ -22,7 +22,7 @@ REFS = {
         "arXiv:2602.19878. https://arxiv.org/abs/2602.19878"
     ),
     "vldb2027": (
-        "[Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., "
+        "[Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., "
         "Quix, C., Lange, C., Geisler, S., Decker, S. "
         "Conflict Detection via Denotational Semantics: "
         "Policy Reasoning over Incomplete Hierarchies. "
