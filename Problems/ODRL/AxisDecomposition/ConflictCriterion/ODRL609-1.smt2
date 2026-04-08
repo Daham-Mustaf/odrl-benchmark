@@ -13,6 +13,7 @@
 
 (set-logic QF_LRA)
 (declare-const x Real)
+; Indirect: lt 600 and gt 600 are contradictory (x < 600 and x > 600).
 (assert (< x 600.0))
 (assert (> x 600.0))
 (check-sat)

@@ -12,8 +12,15 @@
 ; --------------------------------------------------------------------------
 
 (set-logic QF_LRA)
-(declare-const x Real)
-(assert (>= x 0.0)) (assert (<= x 500.0))
-(assert (>= x 600.0))
+(declare-const l1 Real) (declare-const u1 Real)
+(declare-const l2 Real) (declare-const u2 Real)
+; disjoint(A,B) in cc case: u1 < l2
+(assert (< u1 l2))
+; well-formed intervals: l1 <= u1, l2 <= u2
+(assert (<= l1 u1))
+(assert (<= l2 u2))
+; negate disjoint(B,A): ~(u2 < l1) and ~(u2 <= l1)
+(assert (not (< u2 l1)))
+(assert (not (<= u2 l1)))
 (check-sat)
 (exit)

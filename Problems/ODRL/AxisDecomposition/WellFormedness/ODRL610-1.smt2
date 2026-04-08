@@ -15,6 +15,6 @@
 (declare-const v Real)
 (assert (>= v 0.0))
 (assert (<= v 1200.0))
-(assert (not (= v v)))
+(assert (or (< v 0.0) (> v 1200.0)))
 (check-sat)
 (exit)

@@ -26,7 +26,7 @@ include('Axioms/AXIS000-0.ax').
 fof(val_v0,    axiom, val(v0)).
 fof(val_v600,  axiom, val(v600)).
 fof(val_v1200, axiom, val(v1200)).
-fof(ord_v0_v600,   axiom, less(v0, v600)).
+fof(ord_v0_v600,    axiom, less(v0, v600)).
 fof(ord_v600_v1200, axiom, less(v600, v1200)).
 fof(distinct, axiom, $distinct(v0, v600, v1200)).
 % ─── Conjecture ────────────────────────────────────────────────────

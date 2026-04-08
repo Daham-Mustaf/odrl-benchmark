@@ -5,6 +5,8 @@
 % Version  : 1.0
 % English  : Operator tags: lt => upper_tag(lt,o), gt => lower_tag(gt,o)
 %           : These capture the open-boundary semantics of strict operators.
+%           : SMT is an indirect sanity check (lt/gt contradictory at same value);
+%           : the tag axioms themselves have no direct SMT encoding.
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)

@@ -24,9 +24,6 @@ include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v5, axiom, val(v5)).
-fof(val_v6, axiom, val(v6)).
-fof(ord_v5_v6, axiom, less(v5, v6)).
-fof(distinct, axiom, $distinct(v5, v6)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl604, conjecture,
     prec(v5, v5, o, o)).
