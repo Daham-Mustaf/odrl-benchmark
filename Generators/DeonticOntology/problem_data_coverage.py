@@ -1,7 +1,7 @@
 """
 problem_data_coverage.py
 ========================
-Coverage completion problems for the FOIS/PAAR 2026 benchmark.
+Coverage completion problems for the FOIS/DeonticOntology benchmark.
 Fills axiom gaps identified after the base+ext+hard audit:
   GRND025  ax_unique_founding_rem  — founds_rem uniqueness (relator)
   GRND026  ax_unique_founding_imm  — founds_imm uniqueness (relator)

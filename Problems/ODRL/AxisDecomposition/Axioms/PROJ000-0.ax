@@ -15,108 +15,68 @@
 % Names    : PROJ000-0.ax
 %
 % Status   : Satisfiable
-% Syntax   : Number of formulae    :   14  (14 axm)
-%            Number of atoms       :   41
-%            Number of variables   :   21
-%            Maximal formula depth :    4
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Depends on ORD000-0.ax (included via AXIS000-0.ax).
+% Comments : Depends on ORD000-0.ax (loaded by problem file before AXIS000-0.ax).
 %           : Include for projection and AABB problems:
+%           : include('Axioms/ORD000-0.ax').
 %           : include('Axioms/PROJ000-0.ax').
 %           : include('Axioms/AXIS000-0.ax').
-%           : 22 axioms: 2 box membership + 2 box verdict + 10 shapes
-%           : + 8 supporting.
+%           : 14 axioms: 2 box membership + 2 box verdict + 10 shapes.
 %--------------------------------------------------------------------------
-
-include('Axioms/ORD000-0.ax').
 
 % ==========================================================================
 % Box membership via projection              [Paper: thm:projection]
 % ==========================================================================
-% thm:projection: v in sem(C) iff v_k in I_k for all k.
-%
-% Encoded for fixed arities 2 and 3.
-% Higher arities: nest in_box2 as in_box2(X1, in_box2(X2,X3,...)).
-% All intervals treated as CLOSED [lo, hi].
-% For open/half-open boundaries, use PREC000-0.ax + in_lopen/in_ropen/in_open
-% from AXIS000-0.ax directly in the problem conjecture.
-
 % 2-axis box: (X1,X2) in I1 x I2
 fof(in_box2, axiom, ![X1,X2,A1,B1,A2,B2]:
     (in_box2(X1,X2,A1,B1,A2,B2) <=>
      (in_closed(X1,A1,B1) & in_closed(X2,A2,B2)))).
-
 % 3-axis box: (X1,X2,X3) in I1 x I2 x I3
 fof(in_box3, axiom, ![X1,X2,X3,A1,B1,A2,B2,A3,B3]:
     (in_box3(X1,X2,X3,A1,B1,A2,B2,A3,B3) <=>
      (in_closed(X1,A1,B1) &
       in_closed(X2,A2,B2) &
       in_closed(X3,A3,B3)))).
-
 % ==========================================================================
 % Box intersection                           [Paper: def:box-verdict]
 % ==========================================================================
-% Two 2-axis boxes overlap iff both axis projections overlap.
 fof(box2_overlap, axiom, ![A1,B1,A2,B2,C1,D1,C2,D2]:
     (box2_compatible(A1,B1,A2,B2,C1,D1,C2,D2) <=>
-     (axis_compatible(A1,B1,C1,D1) &
-      axis_compatible(A2,B2,C2,D2)))).
-
-% Two 2-axis boxes conflict iff at least one axis projection is disjoint.
+     (axis_compatible(A1,B1,C1,D1) & axis_compatible(A2,B2,C2,D2)))).
 fof(box2_conflict, axiom, ![A1,B1,A2,B2,C1,D1,C2,D2]:
     (box2_conflict(A1,B1,A2,B2,C1,D1,C2,D2) <=>
-     (axis_conflict(A1,B1,C1,D1) |
-      axis_conflict(A2,B2,C2,D2)))).
-
+     (axis_conflict(A1,B1,C1,D1) | axis_conflict(A2,B2,C2,D2)))).
 % ==========================================================================
 % AABB Completeness: all 10 interval shapes  [Paper: thm:aabb]
 % ==========================================================================
-% Witnesses that each of the 10 interval shapes on a totally ordered set
-% is expressible by well-formed axis-specific constraints.
-% Each axiom states that membership in the shape equals the corresponding
-% ODRL denotation.
-
 % Shape 1: point [v,v]  -- eq
-fof(shape_point, axiom, ![X,V]:
+fof(shape_point,       axiom, ![X,V]:
     (in_closed(X,V,V) <=> X = V)).
-
-% Shape 2: closed left ray [InfD, V]  -- lteq
+% Shape 2: closed left ray [InfD,V]  -- lteq
 fof(shape_lray_closed, axiom, ![X,InfD,V]:
     (in_closed(X,InfD,V) <=> (leq(InfD,X) & leq(X,V)))).
-
-% Shape 3: closed right ray [V, SupD]  -- gteq
+% Shape 3: closed right ray [V,SupD]  -- gteq
 fof(shape_rray_closed, axiom, ![X,V,SupD]:
     (in_closed(X,V,SupD) <=> (leq(V,X) & leq(X,SupD)))).
-
-% Shape 4: right-open left ray [InfD, V)  -- lt
-fof(shape_lray_open, axiom, ![X,InfD,V]:
+% Shape 4: right-open left ray [InfD,V)  -- lt
+fof(shape_lray_open,   axiom, ![X,InfD,V]:
     (in_ropen(X,InfD,V) <=> (leq(InfD,X) & less(X,V)))).
-
-% Shape 5: left-open right ray (V, SupD]  -- gt
-fof(shape_rray_open, axiom, ![X,V,SupD]:
+% Shape 5: left-open right ray (V,SupD]  -- gt
+fof(shape_rray_open,   axiom, ![X,V,SupD]:
     (in_lopen(X,V,SupD) <=> (less(V,X) & leq(X,SupD)))).
-
 % Shape 6: closed bounded [L,U]  -- gteq L and lteq U
-fof(shape_closed, axiom, ![X,L,U]:
+fof(shape_closed,      axiom, ![X,L,U]:
     (in_closed(X,L,U) <=> (leq(L,X) & leq(X,U)))).
-
 % Shape 7: left-open bounded (L,U]  -- gt L and lteq U
-fof(shape_lopen, axiom, ![X,L,U]:
+fof(shape_lopen,       axiom, ![X,L,U]:
     (in_lopen(X,L,U) <=> (less(L,X) & leq(X,U)))).
-
 % Shape 8: right-open bounded [L,U)  -- gteq L and lt U
-fof(shape_ropen, axiom, ![X,L,U]:
+fof(shape_ropen,       axiom, ![X,L,U]:
     (in_ropen(X,L,U) <=> (leq(L,X) & less(X,U)))).
-
 % Shape 9: open bounded (L,U)  -- gt L and lt U
-fof(shape_open, axiom, ![X,L,U]:
+fof(shape_open,        axiom, ![X,L,U]:
     (in_open(X,L,U) <=> (less(L,X) & less(X,U)))).
-
-% Shape 10: full domain [InfD, SupD]  -- no constraint (unconstrained axis)
-% Encoded as: every X in [InfD,SupD] satisfies the unconstrained axis.
-% Problem files represent this by omitting the axis constraint entirely
-% (box_verdict assigns Unknown for that axis per def:box-verdict).
-fof(shape_full, axiom, ![X,InfD,SupD]:
-    ((leq(InfD,X) & leq(X,SupD)) =>
-     in_closed(X,InfD,SupD))).
+% Shape 10: full domain [InfD,SupD]  -- unconstrained axis
+fof(shape_full,        axiom, ![X,InfD,SupD]:
+    (in_closed(X,InfD,SupD) <=> (leq(InfD,X) & leq(X,SupD)))).

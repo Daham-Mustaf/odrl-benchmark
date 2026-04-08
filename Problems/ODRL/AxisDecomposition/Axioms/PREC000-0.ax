@@ -17,100 +17,55 @@
 % Names    : PREC000-0.ax
 %
 % Status   : Satisfiable
-% Syntax   : Number of formulae    :   19  (19 axm)
-%            Number of atoms       :   24
-%            Number of variables   :   13
-%            Maximal formula depth :    4
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Depends on ORD000-0.ax (included).
-%           : Include in problem files that test open/half-open boundaries:
+% Comments : Depends on ORD000-0.ax (loaded by problem file before AXIS000-0.ax).
+%           : Include for open/half-open boundary problems:
+%           : include('Axioms/ORD000-0.ax').
 %           : include('Axioms/PREC000-0.ax').
 %           : include('Axioms/AXIS000-0.ax').
 %           : 19 axioms: 4 ep_type + 4 prec cases + 1 disjoint + 10 tags.
 %--------------------------------------------------------------------------
 
-include('Axioms/ORD000-0.ax').
-
 % ==========================================================================
-% Endpoint types                             [Paper: thm:criterion, fix #2]
+% Endpoint types                             [Paper: thm:criterion]
 % ==========================================================================
-% Two constants tag whether an endpoint is attained.
-%   c  -- closed (attained): the endpoint value IS in the interval
-%   o  -- open   (unattained): the endpoint value is NOT in the interval
-fof(ep_c_is_ep, axiom, is_ep_type(c)).
-fof(ep_o_is_ep, axiom, is_ep_type(o)).
+fof(ep_c_is_ep,    axiom, is_ep_type(c)).
+fof(ep_o_is_ep,    axiom, is_ep_type(o)).
 fof(ep_types_distinct, axiom, c != o).
-fof(ep_type_enum, axiom, ![T]: (is_ep_type(T) => (T = c | T = o))).
-
+fof(ep_type_enum,  axiom, ![T]: (is_ep_type(T) => (T = c | T = o))).
 % ==========================================================================
 % prec/4: role-free endpoint separation      [Paper: thm:criterion]
 % ==========================================================================
-% prec(U, L, CU, CL) holds when upper endpoint U is strictly separated
-% from lower endpoint L under the closedness flags CU, CL.
-%
-% The four cases split on whether each endpoint is attained:
-%
-%   both closed (c,c): U and L are attained, so U=L would be a shared
-%       point -- we need U < L to guarantee disjointness.
-%   any open  (o,*) or (*,o): the boundary value is excluded, so
-%       U = L is already a non-overlap -- U <= L suffices.
-%
-% This definition is SYMMETRIC in the sense that it does not reference
-% "first interval" or "second interval" -- only the local type of each
-% endpoint.  Consequently both (u1 prec l2) and (u2 prec l1) are handled
-% identically by the same four cases.
-
-% Case (c,c): both endpoints attained -- need strict separation
-fof(prec_cc, axiom, ![U,L]:
-    (prec(U,L,c,c) <=> less(U,L))).
-
-% Case (o,c): upper open, lower closed -- weak separation suffices
-fof(prec_oc, axiom, ![U,L]:
-    (prec(U,L,o,c) <=> leq(U,L))).
-
-% Case (c,o): upper closed, lower open -- weak separation suffices
-fof(prec_co, axiom, ![U,L]:
-    (prec(U,L,c,o) <=> leq(U,L))).
-
-% Case (o,o): both open -- weak separation suffices
-fof(prec_oo, axiom, ![U,L]:
-    (prec(U,L,o,o) <=> leq(U,L))).
-
+% prec(U, L, CU, CL): upper U is separated from lower L under flags CU,CL.
+%   (c,c): both attained -> need strict separation: U < L
+%   any o: boundary excluded -> weak separation suffices: U <= L
+fof(prec_cc, axiom, ![U,L]: (prec(U,L,c,c) <=> less(U,L))).
+fof(prec_oc, axiom, ![U,L]: (prec(U,L,o,c) <=> leq(U,L))).
+fof(prec_co, axiom, ![U,L]: (prec(U,L,c,o) <=> leq(U,L))).
+fof(prec_oo, axiom, ![U,L]: (prec(U,L,o,o) <=> leq(U,L))).
 % ==========================================================================
 % Conflict Criterion                          [Paper: thm:criterion]
 % ==========================================================================
-% Two intervals with endpoints (L1,U1,CL1,CU1) and (L2,U2,CL2,CU2) are
-% disjoint iff one upper endpoint precedes the other's lower endpoint.
-%
-% disjoint(L1,U1,CL1,CU1, L2,U2,CL2,CU2) <=>
-%     prec(U1,L2,CU1,CL2) | prec(U2,L1,CU2,CL1)
-%
 % Arguments: lo1, hi1, clo1, chi1, lo2, hi2, clo2, chi2
 fof(disjoint_def, axiom, ![L1,U1,CL1,CU1,L2,U2,CL2,CU2]:
     (disjoint(L1,U1,CL1,CU1,L2,U2,CL2,CU2) <=>
      (prec(U1,L2,CU1,CL2) | prec(U2,L1,CU2,CL1)))).
-
 % ==========================================================================
-% Convenience: interval tag extraction
+% Operator tag extraction
 % ==========================================================================
-% Maps ODRL operator names to their closedness tags.
-% Used by problem files to avoid hard-coding c/o constants.
-%   lower_tag(eq,   c)   upper_tag(eq,   c)
-%   lower_tag(lteq, inf) upper_tag(lteq, c)   -- inf treated as c at boundary
-%   lower_tag(gteq, c)   upper_tag(gteq, inf)
-%   lower_tag(lt,   inf) upper_tag(lt,   o)
-%   lower_tag(gt,   o)   upper_tag(gt,   inf)
-%
-% NOTE: For ray intervals (lteq, gteq, lt, gt) the domain bound acts as
-% the ray endpoint; its tag is always c (the bound is attained by
-% convention -- the domain endpoint is the actual limit).
+% Operator  lower_tag  upper_tag  Interval shape
+% --------  ---------  ---------  ----------------------------------
+% eq        c          c          [v, v]
+% lteq      c          c          [inf D_k, v]   (ray bound closed)
+% gteq      c          c          [v, sup D_k]   (ray bound closed)
+% lt        c          o          [inf D_k, v)   (v is open)
+% gt        o          c          (v, sup D_k]   (v is open)
 fof(lower_tag_eq,   axiom, lower_tag(eq,   c)).
 fof(lower_tag_lteq, axiom, lower_tag(lteq, c)).
 fof(lower_tag_gteq, axiom, lower_tag(gteq, c)).
 fof(lower_tag_lt,   axiom, lower_tag(lt,   c)).
 fof(lower_tag_gt,   axiom, lower_tag(gt,   o)).
-
 fof(upper_tag_eq,   axiom, upper_tag(eq,   c)).
 fof(upper_tag_lteq, axiom, upper_tag(lteq, c)).
 fof(upper_tag_gteq, axiom, upper_tag(gteq, c)).

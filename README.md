@@ -39,7 +39,7 @@ Problems/
 └── DeonticOntology/              ← Use Case 2 (39 problems)
     ├── Axioms/
     │   ├── GRND000-0.ax          signature (39 axioms)
-    │   └── GRND-AX-1.ax          deontic grounding (28 axioms)
+    │  
     ├── Consistency/              1 problem
     ├── Discriminating/           13 problems
     └── Entailment/               25 problems

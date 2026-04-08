@@ -10,6 +10,8 @@ uv run Generators/DeonticOntology/gen_layer1_deontic.py \
 # Step 2 — Generate all 39 problems
 uv run Generators/DeonticOntology/gen_foundation_problems.py \
   --out-dir Problems/DeonticOntology --coverage
+uv run Generators/DeonticOntology/gen_foundation_problems.py \
+  --out-dir Problems/DeonticOntology --dualrule
 
 # Step 3 — Validate
 uv run Generators/DeonticOntology/run_grnd_validation.py \

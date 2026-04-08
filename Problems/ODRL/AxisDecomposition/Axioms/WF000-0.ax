@@ -15,103 +15,64 @@
 % Names    : WF000-0.ax
 %
 % Status   : Satisfiable
-% Syntax   : Number of formulae    :   26  (26 axm)
-%            Number of atoms       :   31
-%            Number of variables   :    6
-%            Maximal formula depth :    4
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Depends on ORD000-0.ax (included).
+% Comments : Depends on ORD000-0.ax (loaded by problem file before AXIS000-0.ax).
 %           : Include for well-formedness and non-emptiness problems:
+%           : include('Axioms/ORD000-0.ax').
 %           : include('Axioms/WF000-0.ax').
 %           : include('Axioms/AXIS000-0.ax').
-%           : 25 axioms: 5 wf + 5 nonempty + 15 op enumeration.
+%           : 26 axioms: 5 wf + 5 nonempty + 5 op_is_op + 10 ops_distinct + 1 op_enum.
 %--------------------------------------------------------------------------
-
-include('Axioms/ORD000-0.ax').
 
 % ==========================================================================
 % Well-formedness predicate                  [Paper: def:profile, lem:totality]
 % ==========================================================================
-% wf(Op, V, InfD, SupD) holds when the constraint (ell_ak, Op, V) is
-% well-formed over domain D_k = [InfD, SupD]:
-%
-%   (i)   V in D_k           -- V is in the domain
+% wf(Op, V, InfD, SupD): constraint (ell_ak, Op, V) is well-formed over D_k.
+%   (i)   V in D_k             -- value is in the domain
 %   (ii)  Op=lt  => V != InfD  -- strict lower bound not at infimum
 %   (iii) Op=gt  => V != SupD  -- strict upper bound not at supremum
-%
-% These three conditions together guarantee sem(c) is non-empty
-% (Lemma well-formed denotation in the paper).
-
-% eq: only condition (i)
-fof(wf_eq, axiom, ![V,InfD,SupD]:
-    (wf(eq, V, InfD, SupD) <=>
-     (leq(InfD,V) & leq(V,SupD)))).
-
-% lteq: only condition (i)
+fof(wf_eq,   axiom, ![V,InfD,SupD]:
+    (wf(eq,   V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD)))).
 fof(wf_lteq, axiom, ![V,InfD,SupD]:
-    (wf(lteq, V, InfD, SupD) <=>
-     (leq(InfD,V) & leq(V,SupD)))).
-
-% gteq: only condition (i)
+    (wf(lteq, V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD)))).
 fof(wf_gteq, axiom, ![V,InfD,SupD]:
-    (wf(gteq, V, InfD, SupD) <=>
-     (leq(InfD,V) & leq(V,SupD)))).
-
-% lt: conditions (i) and (ii)
-fof(wf_lt, axiom, ![V,InfD,SupD]:
-    (wf(lt, V, InfD, SupD) <=>
-     (leq(InfD,V) & leq(V,SupD) & V != InfD))).
-
-% gt: conditions (i) and (iii)
-fof(wf_gt, axiom, ![V,InfD,SupD]:
-    (wf(gt, V, InfD, SupD) <=>
-     (leq(InfD,V) & leq(V,SupD) & V != SupD))).
-
+    (wf(gteq, V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD)))).
+fof(wf_lt,   axiom, ![V,InfD,SupD]:
+    (wf(lt,   V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD) & V != InfD))).
+fof(wf_gt,   axiom, ![V,InfD,SupD]:
+    (wf(gt,   V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD) & V != SupD))).
 % ==========================================================================
 % Non-emptiness guarantee                    [Paper: lem:totality]
 % ==========================================================================
-% sem_nonempty(Op, V, InfD, SupD): the denotation of (ell_ak, Op, V)
-% over [InfD, SupD] is non-empty.  Derived from wf.
-
-% eq, lteq, gteq: V itself witnesses non-emptiness
-fof(nonempty_eq, axiom, ![V,InfD,SupD]:
+fof(nonempty_eq,   axiom, ![V,InfD,SupD]:
     (wf(eq,   V,InfD,SupD) => sem_nonempty(eq,   V,InfD,SupD))).
 fof(nonempty_lteq, axiom, ![V,InfD,SupD]:
     (wf(lteq, V,InfD,SupD) => sem_nonempty(lteq, V,InfD,SupD))).
 fof(nonempty_gteq, axiom, ![V,InfD,SupD]:
     (wf(gteq, V,InfD,SupD) => sem_nonempty(gteq, V,InfD,SupD))).
-
-% lt: witness exists strictly below V (V != InfD guarantees this over
-% continuous domains; for discrete domains, also include ORD001-0.ax
-% or supply an explicit witness in the problem file)
-fof(nonempty_lt, axiom, ![V,InfD,SupD]:
-    (wf(lt,V,InfD,SupD) =>
-     sem_nonempty(lt, V, InfD, SupD))).
-
-% gt: witness exists strictly above V
-fof(nonempty_gt, axiom, ![V,InfD,SupD]:
-    (wf(gt,V,InfD,SupD) =>
-     sem_nonempty(gt, V, InfD, SupD))).
-
+fof(nonempty_lt,   axiom, ![V,InfD,SupD]:
+    (wf(lt,   V,InfD,SupD) => sem_nonempty(lt,   V,InfD,SupD))).
+fof(nonempty_gt,   axiom, ![V,InfD,SupD]:
+    (wf(gt,   V,InfD,SupD) => sem_nonempty(gt,   V,InfD,SupD))).
 % ==========================================================================
 % Operator enumeration
 % ==========================================================================
-fof(op_eq_is_op,   axiom, is_op(eq)).
-fof(op_lt_is_op,   axiom, is_op(lt)).
-fof(op_lteq_is_op, axiom, is_op(lteq)).
-fof(op_gt_is_op,   axiom, is_op(gt)).
-fof(op_gteq_is_op, axiom, is_op(gteq)).
-fof(ops_distinct_1, axiom, eq   != lt).
-fof(ops_distinct_2, axiom, eq   != lteq).
-fof(ops_distinct_3, axiom, eq   != gt).
-fof(ops_distinct_4, axiom, eq   != gteq).
-fof(ops_distinct_5, axiom, lt   != lteq).
-fof(ops_distinct_6, axiom, lt   != gt).
-fof(ops_distinct_7, axiom, lt   != gteq).
-fof(ops_distinct_8, axiom, lteq != gt).
-fof(ops_distinct_9, axiom, lteq != gteq).
-fof(ops_distinct_10,axiom, gt   != gteq).
+fof(op_eq_is_op,    axiom, is_op(eq)).
+fof(op_lt_is_op,    axiom, is_op(lt)).
+fof(op_lteq_is_op,  axiom, is_op(lteq)).
+fof(op_gt_is_op,    axiom, is_op(gt)).
+fof(op_gteq_is_op,  axiom, is_op(gteq)).
+fof(ops_distinct_1,  axiom, eq   != lt).
+fof(ops_distinct_2,  axiom, eq   != lteq).
+fof(ops_distinct_3,  axiom, eq   != gt).
+fof(ops_distinct_4,  axiom, eq   != gteq).
+fof(ops_distinct_5,  axiom, lt   != lteq).
+fof(ops_distinct_6,  axiom, lt   != gt).
+fof(ops_distinct_7,  axiom, lt   != gteq).
+fof(ops_distinct_8,  axiom, lteq != gt).
+fof(ops_distinct_9,  axiom, lteq != gteq).
+fof(ops_distinct_10, axiom, gt   != gteq).
 fof(op_enum, axiom, ![Op]:
     (is_op(Op) =>
      (Op = eq | Op = lt | Op = lteq | Op = gt | Op = gteq))).

@@ -1,7 +1,7 @@
 """
 problem_data_hard.py
 ====================
-Hard/medium problems for the PAAR 2026 automated reasoning track.
+Hard/medium problems .
 These test deeper inference chains, multi-relator reasoning,
 and untested functions (issue/1).
   GRND019  Two policies conflict via assigner Right          Hard
@@ -421,8 +421,7 @@ fof(perm_l_unique, axiom,
 % Layer0 issue_injective: issue(A)=issue(B) => A=B.
 % Conjecture (FOF): issue(pi1) != issue(pi2).
 % SMT2 negated: (assert (= (issue pi1) (issue pi2))) with pi1 != pi2.
-% Injectivity forces pi1=pi2 => contradiction with distinctness.
-% NOTE: issue/1 is a PAAR benchmark function; not used in GRND001-024 paper problems.""",
+% Injectivity forces pi1=pi2 => contradiction with distinctness.""",
         "ttl": """\
 @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
 @prefix drk:    <http://w3id.org/drk/ontology/> .

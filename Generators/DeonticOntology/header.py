@@ -1,5 +1,9 @@
 """
-header.py — see file for full docstring
+header.py
+=========
+TPTP / SMT-LIB header rendering for the ODRL benchmark.
+Statistics (% Syntax block) are intentionally omitted from generated files.
+tptp4X computes and inserts them automatically during TPTP library processing.
 """
 import re
 from dataclasses import dataclass
@@ -39,46 +43,23 @@ SPC = {
     "countersat": "FOF_CSA_RFN",
 }
 
+# ---------------------------------------------------------------------------
+# Formula counting (used by _ax_comment)
+# ---------------------------------------------------------------------------
 def _count_formulae(text):
     return len(re.findall(r"^fof\s*\(", text, re.MULTILINE))
 
-def _count_by_role(text, role):
-    return len(re.findall(rf"^fof\s*\([^,]+,\s*{role}\s*,", text, re.MULTILINE))
+# ---------------------------------------------------------------------------
+# _ax_comment — builds comments= string with auto-computed formula count
+# ---------------------------------------------------------------------------
+def _ax_comment(body: str, breakdown: str, include_note: str) -> str:
+    n = _count_formulae(body)
+    return f"{include_note}\n{n} axioms: {breakdown}."
 
-def _count_atoms(text):
-    stripped = re.sub(r"%.*$", "", text, flags=re.MULTILINE)
-    calls = re.findall(r"\b[a-z][a-z0-9_]*\s*\(", stripped)
-    exclude = {"fof", "cnf", "tff", "thf", "include"}
-    return sum(1 for c in calls if c.split("(")[0].strip() not in exclude)
-
-def _count_variables(text):
-    stripped = re.sub(r"%.*$", "", text, flags=re.MULTILINE)
-    return len(set(re.findall(r"\b[A-Z][A-Za-z0-9_]*\b", stripped)))
-
-def _max_formula_depth(text):
-    stripped = re.sub(r"%.*$", "", text, flags=re.MULTILINE)
-    max_depth = depth = 0
-    for ch in stripped:
-        if ch == "(":
-            depth += 1
-            max_depth = max(max_depth, depth)
-        elif ch == ")":
-            depth = max(0, depth - 1)
-    return max_depth
-
-def compute_stats(fof_text):
-    return {
-        "formulae":    _count_formulae(fof_text),
-        "axioms":      _count_by_role(fof_text, "axiom"),
-        "conjectures": _count_by_role(fof_text, "conjecture"),
-        "corollaries": _count_by_role(fof_text, "corollary"),
-        "atoms":       _count_atoms(fof_text),
-        "variables":   _count_variables(fof_text),
-        "max_depth":   _max_formula_depth(fof_text),
-    }
-
+# ---------------------------------------------------------------------------
+# Formatting helpers
+# ---------------------------------------------------------------------------
 def _wrap(label, text):
-    """Wrap multi-line text under a TPTP field label (% prefix)."""
     lines = text.strip().split("\n")
     pad = " " * 11
     out = f"% {label:<9s}: {lines[0]}"
@@ -87,8 +68,6 @@ def _wrap(label, text):
     return out
 
 def _smt_wrap(label, text):
-    """Wrap multi-line text under a SMT-LIB field label (; prefix).
-    Every continuation line gets a ; prefix so Z3 never sees bare text."""
     lines = text.strip().split("\n")
     out = f"; {label:<9s}: {lines[0]}"
     for line in lines[1:]:
@@ -113,31 +92,15 @@ def _smt_refs_block(keys):
         lines.append(f"; {label}     : {REFS[k]}")
     return "\n".join(lines)
 
-def _stats_block(stats):
-    f  = stats["formulae"]
-    ax = stats["axioms"]
-    co = stats["conjectures"]
-    cr = stats["corollaries"]
-    at = stats["atoms"]
-    va = stats["variables"]
-    md = stats["max_depth"]
-    role_str = f"{ax} axm"
-    if co: role_str += f"; {co} cnj"
-    if cr: role_str += f"; {cr} cor"
-    return (
-        f"% Syntax   : Number of formulae    : {f:4d}  ({role_str})\n"
-        f"%            Number of atoms       : {at:4d}\n"
-        f"%            Number of variables   : {va:4d}\n"
-        f"%            Maximal formula depth : {md:4d}\n"
-    )
-
 _SEP     = "%--------------------------------------------------------------------------\n"
 _SMT_SEP = "; --------------------------------------------------------------------------\n"
 
-
+# ---------------------------------------------------------------------------
+# Header dataclasses
+# ---------------------------------------------------------------------------
 @dataclass
 class Header:
-    """TPTP header for .p problem files. Stats computed from fof_text."""
+    """TPTP header for .p problem files."""
     file:     str
     domain:   str
     title:    str
@@ -147,7 +110,7 @@ class Header:
     refs:     list
     comments: str
     spc:      str = ""
-    fof_text: str = ""
+    fof_text: str = ""   # retained for API compatibility, not used in render
 
     def _infer_spc(self):
         if self.spc: return self.spc
@@ -159,7 +122,6 @@ class Header:
         return "FOF_UNK_RFN"
 
     def render(self):
-        stats = _stats_block(compute_stats(self.fof_text)) if self.fof_text else ""
         return (
             _SEP
             + f"% File     : {self.file}\n"
@@ -174,7 +136,6 @@ class Header:
             + f"% Names    : {self.file}\n"
             + "%\n"
             + f"% Status   : {self.status}\n"
-            + stats
             + f"% SPC      : {self._infer_spc()}\n"
             + "%\n"
             + _wrap("Comments", self.comments) + "\n"
@@ -184,7 +145,7 @@ class Header:
 
 @dataclass
 class AXHeader:
-    """TPTP header for .ax axiom files. Stats computed from fof_text."""
+    """TPTP header for .ax axiom files."""
     file:     str
     domain:   str
     title:    str
@@ -193,10 +154,9 @@ class AXHeader:
     refs:     list
     comments: str
     spc:      str = "FOF_SAT_RFN"
-    fof_text: str = ""
+    fof_text: str = ""   # used only by _ax_comment, not in render
 
     def render(self):
-        stats = _stats_block(compute_stats(self.fof_text)) if self.fof_text else ""
         return (
             _SEP
             + f"% File     : {self.file}\n"
@@ -211,7 +171,6 @@ class AXHeader:
             + f"% Names    : {self.file}\n"
             + "%\n"
             + "% Status   : Satisfiable\n"
-            + stats
             + f"% SPC      : {self.spc}\n"
             + "%\n"
             + _wrap("Comments", self.comments) + "\n"
@@ -221,10 +180,7 @@ class AXHeader:
 
 @dataclass
 class SMTHeader:
-    """SMT-LIB 2 header for .smt2 files.
-    All lines use ; comment prefix.
-    Multi-line comments wrapped with _smt_wrap — Z3 never sees bare text.
-    """
+    """SMT-LIB 2 header for .smt2 files."""
     file:     str
     domain:   str
     title:    str
@@ -250,6 +206,9 @@ class SMTHeader:
         )
 
 
+# ---------------------------------------------------------------------------
+# Convenience factory used by problem generators
+# ---------------------------------------------------------------------------
 def problem_header(p, domain, fof_body=""):
     ref_map = {
         "foundational": ["fois2026"],
@@ -259,12 +218,11 @@ def problem_header(p, domain, fof_body=""):
     comment_map = {
         "foundational": (
             "Foundational ontology tier. FOIS 2026 benchmark.\n"
-            "Requires Axioms/GRND000-0.ax and Axioms/GRND-AX-1.ax.\n"
             f"Policy source: Policies/{p['id']}-policy.ttl"
         ),
         "axis": (
             "Axis decomposition tier. arXiv:2602.19878.\n"
-            "Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).\n"
+            "Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.\n"
             f"Policy source: Policies/{p['id']}-policy.ttl"
         ),
         "kb": (
@@ -286,43 +244,55 @@ def problem_header(p, domain, fof_body=""):
     ).render()
 
 
+# ---------------------------------------------------------------------------
+# Self-test
+# ---------------------------------------------------------------------------
 if __name__ == "__main__":
+    note = (
+        "Depends on ORD000-0.ax (loaded by problem file).\n"
+        "Include for open/half-open boundaries:\n"
+        "  include('Axioms/ORD000-0.ax').\n"
+        "  include('Axioms/PREC000-0.ax').\n"
+        "  include('Axioms/AXIS000-0.ax')."
+    )
     sample_fof = """\
 fof(ax1, axiom, ![X]: (perm(X) => rule(X))).
 fof(ax2, axiom, ![X,Y]: (aee(X,Y) => agent(Y))).
 fof(conj, conjecture, ?[R,L,N]: (founds(e1,R,p1) & permission(L) & no_right(N))).
 """
-    print("=== Header (.p) ===")
+    c = _ax_comment(sample_fof, "2 axm + 1 cnj", note)
+    assert "3 axioms:" in c
+    print("_ax_comment OK:", c.splitlines()[-1])
+
+    print("\n=== Header (.p) ===")
     print(Header(
-        file="GRND002-1.p", domain="foundational",
-        title="Permission creates Permission and NoRight", version="1.0",
-        english="A permission activation founds a relator containing\nPermission(assignee) and NoRight(assigner).",
-        status="Theorem", refs=["fois2026"],
-        comments="Requires Axioms/GRND000-0.ax and Axioms/GRND-AX-1.ax.\nPolicy source: Policies/GRND002-policy.ttl",
-        fof_text=sample_fof,
+        file="ODRL300-1.p", domain="axis",
+        title="SingleAxis conflict — eq vs eq same value", version="1.0",
+        english="Two eq constraints on the same value conflict.",
+        status="Theorem", refs=["axis2026"],
+        comments="Axis decomposition tier. arXiv:2602.19878.\nRequires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.",
     ).render())
 
     print("=== AXHeader (.ax) ===")
     print(AXHeader(
-        file="GRND000-0.ax", domain="foundational",
-        title="Signature — sorts, predicates, rfr/decl functions", version="1.5",
-        english="FOF signature for all DeonticOntology problems.\nInclude via: include('Axioms/GRND000-0.ax').",
-        refs=["fois2026"],
-        comments="Sorts encoded as unary guard predicates.\nrfr/1: Act -> Forbearance. decl/1: violation declaration.",
+        file="AXIS000-0.ax", domain="axis",
+        title="Interval denotation and verdict algebra",
+        version="1.1",
+        english="Layer 1 axioms for the ODRL Axis Decomposition benchmark.",
+        refs=["axis2026"],
+        comments=_ax_comment(sample_fof, "2 axm + 1 cnj", note),
         fof_text=sample_fof,
     ).render())
 
-    print("=== SMTHeader (.smt2) — multi-line comments test ===")
-    smt_out = SMTHeader(
-        file="GRND000-0.smt2", domain="foundational",
-        title="Signature — sorts, predicates, rfr/decl functions", version="1.5",
-        refs=["fois2026"],
-        comments="SMT-LIB preamble embedded verbatim in every .smt2 problem file.\nLine two — must start with semicolon.\nLine three — Z3 must never see bare text.",
-        status="unknown",
+    print("=== SMTHeader (.smt2) ===")
+    smt = SMTHeader(
+        file="ODRL300-1.smt2", domain="axis",
+        title="SingleAxis conflict", version="1.0",
+        refs=["axis2026"],
+        comments="Verdict: Conflict. Category: SingleAxis.",
+        status="unsat",
     ).render()
-    print(smt_out)
-
-    # Safety check: no bare lines
-    bad = [l for l in smt_out.splitlines() if l and not l.startswith(";")]
+    print(smt)
+    bad = [l for l in smt.splitlines() if l and not l.startswith(";")]
     assert not bad, f"BARE LINES: {bad}"
-    print("All SMTHeader lines start with ';'")
+    print("All SMTHeader lines start with ';' ✓")

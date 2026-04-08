@@ -127,8 +127,6 @@ FOF_ISSUE = """\
 %--------------------------------------------------------------------------
 % ISSUE FUNCTION  issue : Rule -> Act
 % issue(Pi) = institutional act of issuing policy Pi.
-% NOTE: issue/1 is NOT used in GRND001-024 (FOIS paper problems).
-% Present for PAAR 2026 benchmark only.
 %--------------------------------------------------------------------------
 fof(issue_range_action, axiom,
     ! [R] : ( rule(R) => action(issue(R)) )).
@@ -217,7 +215,6 @@ def generate_fof() -> str:
             "Three founding predicates: founds, founds_rem, founds_imm.\n"
             "rfr/1: Act -> Forbearance (refrain). pos/1: left-inverse of rfr.\n"
             "decl/1: institutional act of declaring a violation.\n"
-            "issue/1: present for PAAR 2026 benchmark — not used in GRND001-024."
         ),
         fof_text = FOF_BODY,
     ).render()
@@ -312,7 +309,6 @@ SMT2_DECL = """\
 SMT2_ISSUE = """\
 ; --------------------------------------------------------------------------
 ; ISSUE FUNCTION  issue : Rule -> NormContent
-; NOTE: not used in GRND001-024. Present for PAAR 2026 benchmark only.
 ; --------------------------------------------------------------------------
 (declare-fun issue (Rule) NormContent)
 (assert (forall ((a Rule) (b Rule))

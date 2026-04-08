@@ -1,7 +1,7 @@
 """
 problem_data_dualrule.py
 ========================
-Two-provider dual-rule problems for the FOIS 2026 / PAAR 2026 benchmark.
+Two-provider dual-rule problems for the FOIS 2026 benchmark.
 Grounded in the DRK culture-dataspace scenario:
   - Consumer:  drk:UniversitaetsbibliothekMuenchen  (bibliothek)
   - ProviderA: drk:BerlinerEnsemble                 (ensemble)

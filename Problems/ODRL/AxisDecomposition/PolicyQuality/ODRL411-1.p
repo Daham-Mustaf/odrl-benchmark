@@ -17,9 +17,10 @@
 % SPC      : FOF_THM_RFN
 %
 % Comments : Axis decomposition tier. arXiv:2602.19878.
-%           : Requires Axioms/AXIS000-0.ax (+ ORD001-0.ax if dense).
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL411-policy.ttl
 %--------------------------------------------------------------------------
+include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────

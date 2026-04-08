@@ -12,7 +12,7 @@ from header import problem_header, SMTHeader
 def write_fof_problem(p: dict, out_dir: Path) -> Path:
     subdir = out_dir / p["subdir"]
     subdir.mkdir(parents=True, exist_ok=True)
-    includes = ""
+    includes = "include('Axioms/ORD000-0.ax').\n"
     if p.get("needs_density"):
         includes += "include('Axioms/ORD001-0.ax').\n"
     includes += "include('Axioms/AXIS000-0.ax').\n"

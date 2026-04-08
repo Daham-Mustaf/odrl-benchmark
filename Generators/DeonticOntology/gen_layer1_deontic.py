@@ -260,7 +260,6 @@ def generate() -> str:
         version  = VERSION,
         english  = (
             "Layer 1 axioms for ODRL deontic grounding.\n"
-            "Requires Layer 0 signature via include('Axioms/GRND000-0.ax').\n"
             "Contains 27 axioms + 1 corollary."
         ),
         refs     = ["fois2026"],

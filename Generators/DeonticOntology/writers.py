@@ -114,7 +114,6 @@ def write_fof_problem(p: dict, out_dir: Path) -> Path:
         refs     = ["fois2026"],
         comments = (
             "Foundational ontology tier. FOIS 2026 benchmark.\n"
-            "Requires Axioms/GRND000-0.ax (Layer 0) and\n"
             "inline Layer 1 axiom subset (fof_axioms key).\n"
             "FOF inlines per-problem subsets only to avoid Vampire timeouts.\n"
             "SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.\n"
@@ -127,7 +126,6 @@ def write_fof_problem(p: dict, out_dir: Path) -> Path:
         header,
         "",
         "% Layer 0: Signature (sorts, rfr/decl, position disjointness)",
-        "include('Axioms/GRND000-0.ax').",
         "",
         "% Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)",
         *[_get_axiom(ax, p["id"]) for ax in p.get("fof_axioms", [])],
