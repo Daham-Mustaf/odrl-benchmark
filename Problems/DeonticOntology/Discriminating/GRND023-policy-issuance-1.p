@@ -8,7 +8,6 @@
 %           : Conjecture (FOF): issue(pi1) != issue(pi2).
 %           : SMT2 negated: (assert (= (issue pi1) (issue pi2))) with pi1 != pi2.
 %           : Injectivity forces pi1=pi2 => contradiction with distinctness.
-%           : NOTE: issue/1 is a PAAR benchmark function; not used in GRND001-024 paper problems.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mustafa, D. (2026)
@@ -23,7 +22,6 @@
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
-%           : Requires Axioms/GRND000-0.ax (Layer 0) and
 %           : inline Layer 1 axiom subset (fof_axioms key).
 %           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
 %           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
@@ -38,7 +36,6 @@
 
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
-include('Axioms/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
 

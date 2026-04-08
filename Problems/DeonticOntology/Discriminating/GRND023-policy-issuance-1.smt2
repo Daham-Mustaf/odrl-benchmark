@@ -13,7 +13,6 @@
 ;            Conjecture (FOF): issue(pi1) != issue(pi2).
 ;            SMT2 negated: (assert (= (issue pi1) (issue pi2))) with pi1 != pi2.
 ;            Injectivity forces pi1=pi2 => contradiction with distinctness.
-;            NOTE: issue/1 is a PAAR benchmark function; not used in GRND001-024 paper problems.
 ;            Foundational ontology tier. FOIS 2026 benchmark.
 ;            Policy source: Policies/GRND023-policy-issuance-policy.ttl
 ;            @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
@@ -120,7 +119,6 @@
 
 ; --------------------------------------------------------------------------
 ; ISSUE FUNCTION  issue : Rule -> NormContent
-; NOTE: not used in GRND001-024. Present for PAAR 2026 benchmark only.
 ; --------------------------------------------------------------------------
 (declare-fun issue (Rule) NormContent)
 (assert (forall ((a Rule) (b Rule))

@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND035-dual-rule-remedy-chain-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Axioms   : Dual-rule: Power in remedy relator concerns founding event (B2)
+% Problem  : Dual-rule: Power in remedy relator concerns founding event (B2)
 % Version  : 1.6
 % English  : Two prohibitions with distinct remedies from two DRK providers:
 %           : pol1: ensemble prohibits bibliothek from distributing theater_ds
@@ -22,13 +22,17 @@
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : GRND035-dual-rule-remedy-chain-1.p
 %
-% Status   : Satisfiable
-% SPC      : 
+% Status   : Theorem
+% Syntax   : Number of formulae    :   29  (28 axm; 1 cnj)
+%            Number of atoms       :   57
+%            Number of variables   :   13
+%            Maximal formula depth :    5
+% SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
-%           : Requires Axioms/GRND000-0.ax (Layer 0) and
 %           : inline Layer 1 axiom subset (fof_axioms key).
 %           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
 %           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
@@ -43,7 +47,6 @@
 
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
-include('Axioms/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
 fof(ax_proh_relator_remedy, axiom,

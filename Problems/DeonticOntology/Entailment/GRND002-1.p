@@ -22,7 +22,6 @@
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
-%           : Requires Axioms/GRND000-0.ax (Layer 0) and
 %           : inline Layer 1 axiom subset (fof_axioms key).
 %           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
 %           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
@@ -37,7 +36,6 @@
 
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
-include('Axioms/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
 fof(ax_perm_relator_weak, axiom,

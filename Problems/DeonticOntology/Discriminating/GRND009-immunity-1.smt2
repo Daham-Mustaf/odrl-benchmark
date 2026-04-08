@@ -119,7 +119,6 @@
 
 ; --------------------------------------------------------------------------
 ; ISSUE FUNCTION  issue : Rule -> NormContent
-; NOTE: not used in GRND001-024. Present for PAAR 2026 benchmark only.
 ; --------------------------------------------------------------------------
 (declare-fun issue (Rule) NormContent)
 (assert (forall ((a Rule) (b Rule))

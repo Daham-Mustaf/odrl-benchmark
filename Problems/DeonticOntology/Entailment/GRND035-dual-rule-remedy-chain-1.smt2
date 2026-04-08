@@ -1,48 +1,58 @@
 ; --------------------------------------------------------------------------
 ; File     : GRND035-dual-rule-remedy-chain-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
-; Problem  : Dual-rule: Power in remedy relator concerns founding event (B2)
+; Axioms   : Dual-rule: Power in remedy relator concerns founding event (B2)
 ; Version  : 1.6
-; Status   : unsat
-; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Source   : Mohammed, D. (2026)
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
 ; Names    : GRND035-dual-rule-remedy-chain-1.smt2
-;
-; Two prohibitions with distinct remedies from two DRK providers:
-;   pol1: ensemble prohibits bibliothek from distributing theater_ds
-;         remedy = compensate (pay ensemble)
-;   pol2: museen  prohibits bibliothek from distributing museum_api
-;         remedy = delete     (destroy copy)
-; Conjecture: activating pol1 at e1 creates a remedy relator rho_R1
-; containing Power(ensemble, decl(distrib), theater_ds) linked to e1 (B2).
-; Abstract constants:
-;   bibliothek = drk:UniversitaetsbibliothekMuenchen (consumer)
-;   ensemble   = drk:BerlinerEnsemble  (ProviderA, remedy=compensate)
-;   museen     = drk:StaatlicheMuseenBerlin (ProviderB, remedy=delete)
-;   theater_ds = drk:TheaterShowtimeDataset
-;   museum_api = drk:MuseumCollectionAPI
-;   distrib    = odrl:distribute
-;   compensate = odrl:compensate
-;   delete_act = odrl:delete
-;
-; ODRL Policy (Turtle) — see Policies/ for full file:
-; @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-; @prefix drk:    <http://w3id.org/drk/ontology/> .
-; @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-; @prefix schema: <https://schema.org/> .
-; # ProviderA: BerlinerEnsemble prohibits distribution, remedy = compensate
-; ... (23 more lines — see Policies/ file)
+; Status   : unsat
+; Comments : Two prohibitions with distinct remedies from two DRK providers:
+;            pol1: ensemble prohibits bibliothek from distributing theater_ds
+;            remedy = compensate (pay ensemble)
+;            pol2: museen  prohibits bibliothek from distributing museum_api
+;            remedy = delete     (destroy copy)
+;            Conjecture: activating pol1 at e1 creates a remedy relator rho_R1
+;            containing Power(ensemble, decl(distrib), theater_ds) linked to e1 (B2).
+;            Abstract constants:
+;            bibliothek = drk:UniversitaetsbibliothekMuenchen (consumer)
+;            ensemble   = drk:BerlinerEnsemble  (ProviderA, remedy=compensate)
+;            museen     = drk:StaatlicheMuseenBerlin (ProviderB, remedy=delete)
+;            theater_ds = drk:TheaterShowtimeDataset
+;            museum_api = drk:MuseumCollectionAPI
+;            distrib    = odrl:distribute
+;            compensate = odrl:compensate
+;            delete_act = odrl:delete
+;            Foundational ontology tier. FOIS 2026 benchmark.
+;            Policy source: Policies/GRND035-dual-rule-remedy-chain-policy.ttl
+;            @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+;            @prefix drk:    <http://w3id.org/drk/ontology/> .
+;            @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+;            @prefix schema: <https://schema.org/> .
+;            # ProviderA: BerlinerEnsemble prohibits distribution, remedy = compensate
+;            ... (23 more lines — see Policies/ file)
 ; --------------------------------------------------------------------------
+
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
 ; === Source: Axioms/GRND000-0.smt2 ===
-; (set-logic UF)
-; (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
-; (set-info :status unknown)
+; --------------------------------------------------------------------------
+; File     : GRND000-0.smt2
+; Domain   : Deontic Ontology / ODRL Grounding
+; Axioms   : Signature — sorts, predicates, rfr/decl/issue functions
+; Version  : 1.5
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
+; Names    : GRND000-0.smt2
+; Status   : unknown
+; Comments : SMT-LIB has no include directive. This preamble is embedded verbatim by every problem generator. Do NOT add (check-sat) here.
+; --------------------------------------------------------------------------
+
 (set-logic UF)
 (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
 (set-info :status unknown)
-
 ; --------------------------------------------------------------------------
 ; SORTS
 ; NormContent is a unified sort for Act and Forbearance content.
@@ -120,7 +130,6 @@
 
 ; --------------------------------------------------------------------------
 ; ISSUE FUNCTION  issue : Rule -> NormContent
-; NOTE: not used in GRND001-024. Present for PAAR 2026 benchmark only.
 ; --------------------------------------------------------------------------
 (declare-fun issue (Rule) NormContent)
 (assert (forall ((a Rule) (b Rule))

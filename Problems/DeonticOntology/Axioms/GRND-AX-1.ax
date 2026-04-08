@@ -4,7 +4,6 @@
 % Axioms   : Deontic grounding axioms (Ax5.1-5.11, A1-A3, B1-B3)
 % Version  : 1.5
 % English  : Layer 1 axioms for ODRL deontic grounding.
-%           : Requires Layer 0 signature via include('Axioms/GRND000-0.ax').
 %           : Contains 27 axioms + 1 corollary.
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.

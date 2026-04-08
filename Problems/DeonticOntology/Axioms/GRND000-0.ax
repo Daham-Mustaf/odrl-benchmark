@@ -24,7 +24,6 @@
 %           : Three founding predicates: founds, founds_rem, founds_imm.
 %           : rfr/1: Act -> Forbearance (refrain). pos/1: left-inverse of rfr.
 %           : decl/1: institutional act of declaring a violation.
-%           : issue/1: present for PAAR 2026 benchmark — not used in GRND001-024.
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -110,8 +109,6 @@ fof(decl_distinct, axiom,
 %--------------------------------------------------------------------------
 % ISSUE FUNCTION  issue : Rule -> Act
 % issue(Pi) = institutional act of issuing policy Pi.
-% NOTE: issue/1 is NOT used in GRND001-024 (FOIS paper problems).
-% Present for PAAR 2026 benchmark only.
 %--------------------------------------------------------------------------
 fof(issue_range_action, axiom,
     ! [R] : ( rule(R) => action(issue(R)) )).

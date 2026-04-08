@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : GRND036-dual-rule-unique-rem-1.p
 % Domain   : Deontic Ontology / ODRL Grounding
-% Axioms   : Dual-rule unique rem: same event+rule founds at most one remedy relator
+% Problem  : Dual-rule unique rem: same event+rule founds at most one remedy relator
 % Version  : 1.6
 % English  : Real DRK scenario: pol1 = BerlinerEnsemble prohibition with remedy.
 %           : founds_rem(e1,rhoR1,pol1) and founds_rem(e1,rhoR2,pol1) => rhoR1=rhoR2.
@@ -10,13 +10,17 @@
 %
 % Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
 % Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : GRND036-dual-rule-unique-rem-1.p
 %
-% Status   : Satisfiable
-% SPC      : 
+% Status   : Theorem
+% Syntax   : Number of formulae    :    8  (7 axm; 1 cnj)
+%            Number of atoms       :    8
+%            Number of variables   :    4
+%            Maximal formula depth :    4
+% SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
-%           : Requires Axioms/GRND000-0.ax (Layer 0) and
 %           : inline Layer 1 axiom subset (fof_axioms key).
 %           : FOF inlines per-problem subsets only to avoid Vampire timeouts.
 %           : SMT-LIB embeds the full axiom set (Z3 handles it). Asymmetry intentional.
@@ -31,7 +35,6 @@
 
 
 % Layer 0: Signature (sorts, rfr/decl, position disjointness)
-include('Axioms/GRND000-0.ax').
 
 % Layer 1: Problem-specific axioms (subset of Ax5.1-5.11, A1-A3, B1-B3)
 fof(ax_unique_founding_rem, axiom,

@@ -1,36 +1,46 @@
 ; --------------------------------------------------------------------------
 ; File     : GRND036-dual-rule-unique-rem-1.smt2
 ; Domain   : Deontic Ontology / ODRL Grounding
-; Problem  : Dual-rule unique rem: same event+rule founds at most one remedy relator
+; Axioms   : Dual-rule unique rem: same event+rule founds at most one remedy relator
 ; Version  : 1.6
-; Status   : unsat
-; Refs     : Mohammed et al., What Does ODRL Mean? FOIS 2026
-; Source   : Mohammed, D. (2026)
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
 ; Names    : GRND036-dual-rule-unique-rem-1.smt2
-;
-; Real DRK scenario: pol1 = BerlinerEnsemble prohibition with remedy.
-; founds_rem(e1,rhoR1,pol1) and founds_rem(e1,rhoR2,pol1) => rhoR1=rhoR2.
-; ax_unique_founding_rem fires: same event e1 + same rule pol1.
-; Mirrors GRND025 but grounded in actual DRK culture-dataspace entities.
-;
-; ODRL Policy (Turtle) — see Policies/ for full file:
-; @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
-; @prefix drk:    <http://w3id.org/drk/ontology/> .
-; @prefix dcat:   <http://www.w3.org/ns/dcat#> .
-; @prefix schema: <https://schema.org/> .
-; # Uniqueness test: same rule pol1 at same event e1 => same remedy relator.
-; ... (12 more lines — see Policies/ file)
+; Status   : unsat
+; Comments : Real DRK scenario: pol1 = BerlinerEnsemble prohibition with remedy.
+;            founds_rem(e1,rhoR1,pol1) and founds_rem(e1,rhoR2,pol1) => rhoR1=rhoR2.
+;            ax_unique_founding_rem fires: same event e1 + same rule pol1.
+;            Mirrors GRND025 but grounded in actual DRK culture-dataspace entities.
+;            Foundational ontology tier. FOIS 2026 benchmark.
+;            Policy source: Policies/GRND036-dual-rule-unique-rem-policy.ttl
+;            @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
+;            @prefix drk:    <http://w3id.org/drk/ontology/> .
+;            @prefix dcat:   <http://www.w3.org/ns/dcat#> .
+;            @prefix schema: <https://schema.org/> .
+;            # Uniqueness test: same rule pol1 at same event e1 => same remedy relator.
+;            ... (12 more lines — see Policies/ file)
 ; --------------------------------------------------------------------------
+
 
 ; === Layer 0 + Layer 1 preamble (embedded — SMT-LIB has no include) ===
 ; === Source: Axioms/GRND000-0.smt2 ===
-; (set-logic UF)
-; (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
-; (set-info :status unknown)
+; --------------------------------------------------------------------------
+; File     : GRND000-0.smt2
+; Domain   : Deontic Ontology / ODRL Grounding
+; Axioms   : Signature — sorts, predicates, rfr/decl/issue functions
+; Version  : 1.5
+; Authors  : Mustafa, D. & Sutcliffe, G.
+; Refs     : [MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties in Deontic Logic and Foundational Ontology. FOIS 2026.
+; Source   : Mustafa, D. (2026)
+; Names    : GRND000-0.smt2
+; Status   : unknown
+; Comments : SMT-LIB has no include directive. This preamble is embedded verbatim by every problem generator. Do NOT add (check-sat) here.
+; --------------------------------------------------------------------------
+
 (set-logic UF)
 (set-info :source |Mohammed et al., What Does ODRL Mean? FOIS 2026|)
 (set-info :status unknown)
-
 ; --------------------------------------------------------------------------
 ; SORTS
 ; NormContent is a unified sort for Act and Forbearance content.
@@ -108,7 +118,6 @@
 
 ; --------------------------------------------------------------------------
 ; ISSUE FUNCTION  issue : Rule -> NormContent
-; NOTE: not used in GRND001-024. Present for PAAR 2026 benchmark only.
 ; --------------------------------------------------------------------------
 (declare-fun issue (Rule) NormContent)
 (assert (forall ((a Rule) (b Rule))
