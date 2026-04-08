@@ -13,10 +13,6 @@
 % Names    : GRND030-b3-subjection-about-event-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :   12  (11 axm; 1 cnj)
-%            Number of atoms       :   18
-%            Number of variables   :    6
-%            Maximal formula depth :    5
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

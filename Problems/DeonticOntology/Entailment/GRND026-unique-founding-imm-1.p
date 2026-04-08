@@ -12,10 +12,6 @@
 % Names    : GRND026-unique-founding-imm-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :    8  (7 axm; 1 cnj)
-%            Number of atoms       :    8
-%            Number of variables   :    4
-%            Maximal formula depth :    4
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

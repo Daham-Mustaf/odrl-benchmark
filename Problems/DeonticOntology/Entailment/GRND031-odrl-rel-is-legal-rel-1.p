@@ -12,10 +12,6 @@
 % Names    : GRND031-odrl-rel-is-legal-rel-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :    3  (2 axm; 1 cnj)
-%            Number of atoms       :    4
-%            Number of variables   :    1
-%            Maximal formula depth :    3
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

@@ -15,10 +15,6 @@
 % Names    : GRND034-disability-exists-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :   15  (14 axm; 1 cnj)
-%            Number of atoms       :   34
-%            Number of variables   :    9
-%            Maximal formula depth :    4
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

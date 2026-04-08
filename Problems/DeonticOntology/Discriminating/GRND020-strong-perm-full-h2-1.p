@@ -18,10 +18,6 @@
 % Names    : GRND020-strong-perm-full-h2-1.p
 %
 % Status   : Unsatisfiable
-% Syntax   : Number of formulae    :   24  (24 axm)
-%            Number of atoms       :   60
-%            Number of variables   :   13
-%            Maximal formula depth :    4
 % SPC      : FOF_UNS_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

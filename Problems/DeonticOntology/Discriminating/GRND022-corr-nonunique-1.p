@@ -13,10 +13,6 @@
 % Names    : GRND022-corr-nonunique-1.p
 %
 % Status   : Unsatisfiable
-% Syntax   : Number of formulae    :   19  (19 axm)
-%            Number of atoms       :   32
-%            Number of variables   :    7
-%            Maximal formula depth :    8
 % SPC      : FOF_UNS_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

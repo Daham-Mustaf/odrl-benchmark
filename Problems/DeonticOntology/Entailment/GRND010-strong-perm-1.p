@@ -17,10 +17,6 @@
 % Names    : GRND010-strong-perm-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :   16  (15 axm; 1 cnj)
-%            Number of atoms       :   53
-%            Number of variables   :   12
-%            Maximal formula depth :    4
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

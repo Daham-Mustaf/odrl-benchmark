@@ -26,10 +26,6 @@
 % Names    : GRND035-dual-rule-remedy-chain-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :   29  (28 axm; 1 cnj)
-%            Number of atoms       :   57
-%            Number of variables   :   13
-%            Maximal formula depth :    5
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

@@ -15,10 +15,6 @@
 % Names    : GRND007-open-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :    7  (6 axm; 1 cnj)
-%            Number of atoms       :   21
-%            Number of variables   :    6
-%            Maximal formula depth :    5
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

@@ -11,10 +11,6 @@
 % Names    : GRND014-corr-immunity-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :   11  (10 axm; 1 cnj)
-%            Number of atoms       :   30
-%            Number of variables   :    7
-%            Maximal formula depth :    8
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

@@ -12,10 +12,6 @@
 % Names    : GRND-AX-1.ax
 %
 % Status   : Satisfiable
-% Syntax   : Number of formulae    :   28  (27 axm; 1 cor)
-%            Number of atoms       :  214
-%            Number of variables   :   34
-%            Maximal formula depth :    8
 % SPC      : FOF_SAT_RFN
 %
 % Comments : Ax5.1-5.5: relator founding (perm/proh/obl, weak/strong/conduct/remedy).

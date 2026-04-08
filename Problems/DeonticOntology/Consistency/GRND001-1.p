@@ -15,10 +15,6 @@
 % Names    : GRND001-1.p
 %
 % Status   : Satisfiable
-% Syntax   : Number of formulae    :   40  (39 axm)
-%            Number of atoms       :  226
-%            Number of variables   :   34
-%            Maximal formula depth :    8
 % SPC      : FOF_SAT_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

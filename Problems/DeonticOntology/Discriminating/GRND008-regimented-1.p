@@ -15,10 +15,6 @@
 % Names    : GRND008-regimented-1.p
 %
 % Status   : Unsatisfiable
-% Syntax   : Number of formulae    :   11  (11 axm)
-%            Number of atoms       :   15
-%            Number of variables   :    5
-%            Maximal formula depth :    4
 % SPC      : FOF_UNS_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

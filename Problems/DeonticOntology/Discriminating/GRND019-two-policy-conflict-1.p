@@ -19,10 +19,6 @@
 % Names    : GRND019-two-policy-conflict-1.p
 %
 % Status   : Unsatisfiable
-% Syntax   : Number of formulae    :   27  (27 axm)
-%            Number of atoms       :   49
-%            Number of variables   :   10
-%            Maximal formula depth :    5
 % SPC      : FOF_UNS_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

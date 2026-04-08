@@ -15,10 +15,6 @@
 % Names    : GRND023-policy-issuance-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :    4  (3 axm; 1 cnj)
-%            Number of atoms       :    4
-%            Number of variables   :    0
-%            Maximal formula depth :    3
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

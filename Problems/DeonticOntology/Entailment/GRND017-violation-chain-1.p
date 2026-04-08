@@ -19,10 +19,6 @@
 % Names    : GRND017-violation-chain-1.p
 %
 % Status   : Theorem
-% Syntax   : Number of formulae    :   23  (22 axm; 1 cnj)
-%            Number of atoms       :   94
-%            Number of variables   :   15
-%            Maximal formula depth :    5
 % SPC      : FOF_THM_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.

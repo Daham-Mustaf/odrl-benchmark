@@ -16,10 +16,6 @@
 % Names    : GRND009-no-immunity-1.p
 %
 % Status   : Unsatisfiable
-% Syntax   : Number of formulae    :   23  (23 axm)
-%            Number of atoms       :   45
-%            Number of variables   :   10
-%            Maximal formula depth :    5
 % SPC      : FOF_UNS_RFN
 %
 % Comments : Foundational ontology tier. FOIS 2026 benchmark.
