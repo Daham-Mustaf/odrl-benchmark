@@ -1,5 +1,5 @@
 %--------------------------------------------------------------------------
-% File     : ODRL762b-1.p
+% File     : ODRL769-1.p
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : SAT PolicyQuality: 4-axis drone policy is satisfiable
 % Version  : 1.0
@@ -8,14 +8,14 @@
 % Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Names    : ODRL762b-1.p
+% Names    : ODRL769-1.p
 %
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
 % Comments : SAT — axiom layer consistency witness.
 %           : No conjecture; model finder confirms satisfiability.
-%           : Policy source: Policies/ODRL762b-policy.ttl
+%           : Policy source: Policies/ODRL769-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
