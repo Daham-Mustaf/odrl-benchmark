@@ -1,79 +1,28 @@
 %--------------------------------------------------------------------------
 % File     : HARD001+1.p
-% Domain   : Axis Decomposition (ODRL)
-% Problem  : Full reasoning chain: conflict propagation, open-interval
-%            density, endpoint precedence, Unknown sharpness, and box
-%            verdict — all derived from raw ordering facts only.
-% Version  : 1.0.0
-% English  :
-%   Six properties are established simultaneously from a single ordering
-%   chain n0 < n3 < n5 < n10 < n20 and domain bounds [ninf, nsup].
-%   No intermediate results (axis_conflict, axis_subsumes, etc.) are
-%   given as hypotheses; the prover must derive everything from first
-%   principles across six axiom files.
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : Full reasoning chain across 6 axiom files
+% Version  : 1.0
+% English  : Six properties derived from ordering chain n0<n3<n5<n10<n20:
+%           : conflict propagation, density witness, open-interval criterion,
+%           : conflict completion, compatible completion, box verdict.
+%           : No intermediate results given — prover derives everything
+%           : from first principles across ORD000+ORD001+AXIS000+PREC000+COMPL000.
 %
-%   Part A (ORD000 + AXIS000 + COMPL000 -- ~15 steps):
-%     Conflict propagation chain.
-%     [n0,n3] subsumes [n0,n5]  (axis_subsumes, via leq/less mixed trans)
-%     [n0,n5] conflicts [n10,n20]  (axis_conflict, derived by contradiction
-%       through transitivity + antisymmetry + irreflexivity)
-%     monotone_conflict gives axis_conflict([n0,n3],[n10,n20]).
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R.,
+%          :          Quix, C., Decker, S. Axis Decomposition for ODRL.
+%          :          arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Names    : HARD001+1.p
 %
-%   Part B (ORD000 + ORD001 -- 2 steps):
-%     Density witness inside open interval.
-%     less(n5,n10) + dense => ?[Z]: less(n5,Z) & less(Z,n10).
-%
-%   Part C (ORD000 + PREC000 -- ~8 steps):
-%     Open-interval Conflict Criterion (negative direction).
-%     ~disjoint(n5,nsup,o,c, ninf,n10,c,o)
-%     = ~(prec(nsup,ninf,c,c) | prec(n10,n5,o,o))
-%     = ~(less(nsup,ninf) | leq(n10,n5)).
-%     ~less(nsup,ninf): from bounds + transitivity → less(ninf,nsup) →
-%       irreflexivity rules out less(nsup,ninf).
-%     ~leq(n10,n5): from less(n5,n10) + leq(n10,n5) → leq_antisym gives
-%       n10=n5 → less(n5,n5) contradicts irreflexive.
-%
-%   Part D (ORD000 + COMPL000 -- 3 steps):
-%     Conflict completion for unconstrained axis.
-%     completion_conflict(n5,n10,ninf,nsup) from bounds + less(n5,n10).
-%
-%   Part E (ORD000 + COMPL000 -- 2 steps):
-%     Compatible completion for unconstrained axis.
-%     completion_compatible(n5,ninf,nsup) from bounds.
-%
-%   Part F (AXIS000 -- 1 step):
-%     Box verdict when one axis is Unknown.
-%     box_verdict(conflict,unknown) = conflict by box_conflict axiom
-%     (conflict dominates under Strong Kleene min).
-%
-% Why this is the hardest problem in the benchmark:
-%   - All six axiom files (ORD000, ORD001, PREC000, AXIS000, COMPL000,
-%     SUBS000 indirectly via axis_subsumes_def) are required.
-%   - No derived lemma is provided as a hypothesis; every intermediate
-%     result must be constructed by the prover.
-%   - Part A requires a 3-quantifier chain (universal axis_subsumes
-%     instantiated at a specific X, then a contradiction proof for
-%     axis_conflict, then monotone_conflict).
-%   - Part B requires instantiating the existential in 'dense'.
-%   - Part C requires a two-branch negation proof via different ordering
-%     paths (irreflexivity branch vs. antisymmetry branch).
-%   - The conjecture is a 6-way conjunction; the prover cannot close any
-%     part without the specific axiom file it depends on.
-%
-% Refs     : [vldb2027] Axis Decomposition paper
-%            def:profile, lem:conflict-propagation, lem:totality,
-%            thm:criterion, thm:unknown-sound, prop:monotone,
-%            def:box-verdict, def:completion
-% Source   : Generated for PAAR 2026 TPTP benchmark
-% Names    :
 % Status   : Theorem
-% Rating   : TBD  (expected: hard for Vampire/E without hints)
-% Syntax   : Number of formulae    :   8 (hypotheses) + 1 (conjecture)
-%            Number of axiom files :   6
-%            Maximal conjecture depth : 6 (conjunction of 6 parts)
-% SPC      : FOF_THM_RFO_SEQ
+% SPC      : FOF_THM_RFN
+%
+% Comments : Hard tier — requires all 5 axiom files simultaneously.
+%           : Conjecture is 6-way conjunction; each part tests one paper theorem.
+%           : Policy source: Policies/HARD001-policy.ttl
 %--------------------------------------------------------------------------
-
 include('Axioms/ORD000-0.ax').
 include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').

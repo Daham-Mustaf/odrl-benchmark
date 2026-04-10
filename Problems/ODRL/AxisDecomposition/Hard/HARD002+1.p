@@ -1,44 +1,28 @@
 %--------------------------------------------------------------------------
 % File     : HARD002+1.p
-% Domain   : Axis Decomposition (ODRL)
-% Problem  : Unknown verdict does NOT imply Conflict under any completion
-%            — the Compatible completion always exists.  This is a
-%            DISCRIMINATING (non-theorem) problem: the conjecture is false,
-%            and the prover must find a countermodel.
-% Version  : [vldb2027] axioms.
-% English  :
-%   The conjecture claims: whenever boxV = Unknown, every completion
-%   yields Conflict.  This is FALSE by thm:unknown-sound (the Compatible
-%   completion always exists).  A model-finding ATP (Paradox, Mace4) must
-%   exhibit a completion that yields Compatible.
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : Unknown does NOT imply all completions yield Conflict
+% Version  : 1.0
+% English  : The conjecture claims every completion of an Unknown scenario
+%           : yields Conflict. This is FALSE: compatible completion always
+%           : exists (thm:unknown-sound). Resolution provers timeout;
+%           : model finders find a 3-element countermodel.
 %
-%   Why this is hard for resolution provers:
-%     A resolution prover attempting to prove the (false) conjecture will
-%     exhaust a large portion of the search space before timing out.
-%     The axiom set is large (ORD000 + ORD001 + AXIS000 + COMPL000) and
-%     all four axiom files interact. The prover must eventually saturate
-%     without finding a proof — which is expensive.
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R.,
+%          :          Quix, C., Decker, S. Axis Decomposition for ODRL.
+%          :          arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Names    : HARD002+1.p
 %
-%   Why this is hard for model finders:
-%     The countermodel must simultaneously satisfy:
-%       (1) The full total-order axioms (ORD000)
-%       (2) The density axiom (ORD001) — requires an infinite domain or
-%           a domain of size >= 3 with the right ordering
-%       (3) completion_compatible firing for some V in [ninf,nsup]
-%       (4) axis_compatible witnessing overlap in the Compatible completion
-%     This forces a domain of size >= 3 (ninf, V, nsup with
-%     ninf < V < nsup — requires density), making the model non-trivial.
-%
-% Refs     :  Axis decomposition tier. arXiv:2602.19878.
-% Source   : Generated for PAAR 2026 TPTP benchmark
-% Names    :
 % Status   : CounterSatisfiable
-% Rating   : TBD  (expected: hard — large axiom set, requires dense model)
-% Syntax   : Number of formulae    :   5 (hypotheses) + 1 (conjecture)
-%            Number of axiom files :   4
-% SPC      : FOF_CSA_RFO_SEQ
+% SPC      : FOF_CSA_RFN
+%
+% Comments : Hard tier — discriminating (non-theorem) problem.
+%           : Expected: CounterSatisfiable from model finder (Paradox/Mace4).
+%           : Resolution provers (Vampire/E) expected to timeout.
+%           : Policy source: Policies/HARD002-policy.ttl
 %--------------------------------------------------------------------------
-
 include('Axioms/ORD000-0.ax').
 include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').

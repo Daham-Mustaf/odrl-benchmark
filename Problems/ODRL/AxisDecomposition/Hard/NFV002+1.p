@@ -1,22 +1,25 @@
 %--------------------------------------------------------------------------
 % File     : NFV002+1.p
-% Domain   : Axis Decomposition (ODRL)
-% Problem  : Compatible verdict implies a joint witness exists (prop:no-false-verdict)
-% Version  : [vldb2027] axioms.
-% English  : If axis_compatible holds for two closed intervals, then some
-%            value belongs to both.  This establishes that Compatible is
-%            never a false positive (prop:no-false-verdict, paper sec:conflict).
-%            The witness is found via the total-order axioms of ORD000-0.ax.
+% Domain   : ODRL Policy / Axis Decomposition
+% Problem  : Compatible verdict implies joint witness exists (prop:no-false-verdict)
+% Version  : 1.0
+% English  : If axis_compatible holds for two closed intervals then some
+%           : value belongs to both. Establishes Compatible is never a
+%           : false positive (prop:no-false-verdict, Compatible direction).
 %
-% Refs     : [vldb2027] Axis Decomposition paper
-% Source   : Generated for PAAR 2026 TPTP benchmark
-% Names    :
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R.,
+%          :          Quix, C., Decker, S. Axis Decomposition for ODRL.
+%          :          arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Names    : NFV002+1.p
+%
 % Status   : Theorem
-% Rating   : TBD
-% Syntax   : Number of formulae    :   6
-%            Number of atoms       :  14
-%            Maximal formula depth :   5
-% SPC      : FOF_THM_RFO_SEQ
+% SPC      : FOF_THM_RFN
+%
+% Comments : Hard tier — prop:no-false-verdict Compatible direction.
+%           : axis_compatible given as hypothesis; prover finds witness.
+%           : Policy source: Policies/NFV002-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').

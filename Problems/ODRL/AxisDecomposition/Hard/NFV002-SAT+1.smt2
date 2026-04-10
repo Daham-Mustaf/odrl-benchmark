@@ -1,0 +1,10 @@
+(set-logic QF_LRA)
+(declare-const n0 Real)
+(declare-const n5 Real)
+(declare-const n10 Real)
+(assert (< n0 n5))
+(assert (< n5 n10))
+; [n0,n10] and [n5,n10] overlap — n5 is in both
+(assert (and (>= n5 n0) (<= n5 n10) (>= n5 n5) (<= n5 n10)))
+(check-sat)
+(exit)

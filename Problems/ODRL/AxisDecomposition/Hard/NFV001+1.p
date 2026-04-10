@@ -1,21 +1,25 @@
 %--------------------------------------------------------------------------
 % File     : NFV001+1.p
-% Domain   : Axis Decomposition (ODRL)
+% Domain   : ODRL Policy / Axis Decomposition
 % Problem  : Conflict verdict implies no joint witness (prop:no-false-verdict)
-% Version  : [vldb2027] axioms.
-% English  : If axis_conflict holds for two closed intervals, then no
-%            value belongs to both.  This establishes that Conflict is
-%            never a false positive (prop:no-false-verdict, paper sec:conflict).
+% Version  : 1.0
+% English  : If axis_conflict holds for two closed intervals then no value
+%           : belongs to both. Establishes Conflict is never a false positive
+%           : (prop:no-false-verdict, Conflict direction).
 %
-% Refs     : [vldb2027] Axis Decomposition paper
-% Source   : Generated for PAAR 2026 TPTP benchmark
-% Names    :
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R.,
+%          :          Quix, C., Decker, S. Axis Decomposition for ODRL.
+%          :          arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
+% Authors  : Mustafa, D. & Sutcliffe, G.
+% Names    : NFV001+1.p
+%
 % Status   : Theorem
-% Rating   : TBD
-% Syntax   : Number of formulae    :   6
-%            Number of atoms       :  18
-%            Maximal formula depth :   6
-% SPC      : FOF_THM_RFO_SEQ
+% SPC      : FOF_THM_RFN
+%
+% Comments : Hard tier — prop:no-false-verdict Conflict direction.
+%           : axis_conflict given as hypothesis; prover derives emptiness.
+%           : Policy source: Policies/NFV001-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').

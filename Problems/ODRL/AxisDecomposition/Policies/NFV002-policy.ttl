@@ -1,0 +1,6 @@
+@prefix odrl: <http://www.w3.org/ns/odrl/2/\> .
+@prefix oax:  <http://w3id.org/odrl/spatial-axis\#\> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema\#\> .
+@prefix drk:  <http://w3id.org/drk/ontology/\> .
+drk:NFV002 a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ] .
