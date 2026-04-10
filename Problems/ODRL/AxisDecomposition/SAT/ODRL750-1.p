@@ -19,6 +19,7 @@
 %           : Policy source: Policies/ODRL750-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
+include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and witness axioms ────────────────────────────────
 fof(val_v0,    axiom, val(v0)).

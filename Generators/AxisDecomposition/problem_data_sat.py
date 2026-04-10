@@ -26,7 +26,7 @@ PROBLEMS = [
             "The strict total order axioms of ORD000-0.ax are consistent.\n"
             "Witness: v0 < v600 < v1200 forms a valid strict total order.\n"
         ),
-        "includes": ["ORD000-0.ax"],
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
