@@ -2,14 +2,14 @@
 % File     : WF000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
 % Axioms   : Well-formedness conditions for axis-specific constraints
-% Version  : 1.1
+% Version  : 1.2
 % English  : Encodes the three well-formedness conditions from the axis
 %           : profile definition: (i) V in D_k, (ii) op=lt implies V != inf,
 %           : (iii) op=gt implies V != sup. Together they guarantee that every
 %           : well-formed constraint has a non-empty denotation (lem:totality).
 %           : Also defines sem_nonempty/4 and operator enumeration axioms.
 %
-% Refs     : [Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : WF000-0.ax

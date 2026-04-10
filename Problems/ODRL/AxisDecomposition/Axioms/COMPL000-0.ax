@@ -2,7 +2,7 @@
 % File     : COMPL000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
 % Axioms   : Completion witnesses and Unknown Soundness axioms
-% Version  : 1.1
+% Version  : 1.2
 % English  : Encodes def:completion (adding constraints to unconstrained axes)
 %           : and thm:unknown-sound (Unknown is sharp in both directions).
 %           : completion_compatible/3: both policies set to eq V on axis.
@@ -10,8 +10,9 @@
 %           : Sharpness axioms confirm both completions exist for any axis
 %           : domain with two distinct elements.
 %           : monotone_conflict encodes prop:monotone via axis_subsumes.
+%           : redundancy encodes the redundancy half of lem:conflict-propagation.
 %
-% Refs     : [Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : COMPL000-0.ax
@@ -25,7 +26,8 @@
 %           : include('Axioms/ORD000-0.ax').
 %           : include('Axioms/COMPL000-0.ax').
 %           : include('Axioms/AXIS000-0.ax').
-%           : 5 axioms: 2 completion + 2 sharpness + 1 monotonicity.
+%           : GAP 3 fix: redundancy formula added for lem:conflict-propagation.
+%           : 6 axioms: 2 completion + 2 sharpness + 1 monotonicity + 1 redundancy.
 %--------------------------------------------------------------------------
 
 % ==========================================================================
@@ -62,11 +64,15 @@ fof(monotone_conflict, axiom, ![A1lo,A1hi,A1plo,A1phi,A2lo,A2hi]:
       axis_conflict(A1plo,A1phi,A2lo,A2hi))
      => axis_conflict(A1lo,A1hi,A2lo,A2hi))).
 % ==========================================================================
-% Gap: def:box-containment (boxS) is NOT encoded here.
+% Redundancy                                 [Paper: lem:conflict-propagation]
 % ==========================================================================
-% The paper defines a box-level containment predicate boxS that aggregates
-% per-axis axis_subsumes values with Unknown-when-absent logic, analogous
-% to how box_verdict aggregates axis conflict/compatible values.
-% axis_subsumes is present in AXIS000-0.ax Section B.
-% boxS itself requires a separate axiom file (e.g. SUBS000-0.ax) if any
-% benchmark problems test box-level containment or policy redundancy.
+% GAP 3 fix: the paper's lem:conflict-propagation has two parts:
+%   (a) propagation: sem(c1)<=sem(c2) & c2 conflicts c3 => c1 conflicts c3
+%       -> encoded above as monotone_conflict via axis_subsumes
+%   (b) redundancy: sem(c1)<=sem(c2) => c2 is redundant given c1,
+%       i.e. every request satisfying c1 also satisfies c2.
+%       -> encoded here; immediate from axis_subsumes_def but made explicit
+%          to give a dedicated Entailment benchmark problem.
+fof(redundancy, axiom, ![A1lo,A1hi,A2lo,A2hi]:
+    (axis_subsumes(A1lo,A1hi,A2lo,A2hi) =>
+     ![X]: (in_closed(X,A1lo,A1hi) => in_closed(X,A2lo,A2hi)))).

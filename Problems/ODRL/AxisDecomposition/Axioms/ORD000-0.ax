@@ -2,14 +2,14 @@
 % File     : ORD000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
 % Axioms   : Strict total order for interval reasoning
-% Version  : 1.1
+% Version  : 1.2
 % English  : Foundation axioms for axis-specific constraint reasoning.
 %           : Defines a strict total order (less/2) and derived non-strict
 %           : order (leq/2). Works for both discrete (N) and continuous (R)
 %           : domains. For continuous domains with open intervals, also
 %           : include ORD001-0.ax (density axiom).
 %
-% Refs     : [Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ORD000-0.ax
@@ -19,7 +19,7 @@
 %
 % Comments : Included explicitly by every problem file as the first include.
 %           : No axiom file self-includes this file (flat include architecture).
-%           : 8 axioms: irreflexive, transitive, trichotomy, leq_def, leq_antisym, less_implies_leq, leq_less_trans, less_leq_trans.
+%           : 9 axioms: irreflexive, transitive, trichotomy, leq_def, leq_antisym, less_implies_leq, leq_less_trans, less_leq_trans, leq_trans.
 %--------------------------------------------------------------------------
 
 % ==========================================================================
@@ -53,3 +53,5 @@ fof(leq_less_trans, axiom, ![X,Y,Z]:
     ((leq(X,Y) & less(Y,Z)) => less(X,Z))).
 fof(less_leq_trans, axiom, ![X,Y,Z]:
     ((less(X,Y) & leq(Y,Z)) => less(X,Z))).
+fof(leq_trans, axiom, ![X,Y,Z]:
+    ((leq(X,Y) & leq(Y,Z)) => leq(X,Z))).

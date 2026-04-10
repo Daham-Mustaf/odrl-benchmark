@@ -2,17 +2,19 @@
 % File     : COMP000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
 % Axioms   : Logical constraint composition: or and xone verdicts
-% Version  : 1.1
+% Version  : 1.2
 % English  : Encodes the three-valued verdict semantics for ODRL or and
 %           : xone over branch pairs (thm:composition-soundness).
 %           : or_verdict/2: compatible if any branch pair overlaps;
 %           : conflict only if all pairs conflict.
-%           : xone_verdict/2: compatible if exactly one pair overlaps
-%           : and all others conflict.
-%           : Also provides or_sound_2branch for the two-branch soundness
-%           : check (disjunction case of thm:composition-soundness).
+%           : xone_verdict/2: Vm = verdict of one pair; Vr = MAX of all
+%           : remaining pairs. Compatible iff Vm=compatible & Vr=conflict
+%           : (exactly one overlapping pair). Vr MUST be MAX, not min;
+%           : see body comment for the multi-pair correctness argument.
+%           : or_sound_2branch: 1D helper for disjunction soundness only;
+%           : uses single variable X, not multi-axis box vectors.
 %
-% Refs     : [Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : COMP000-0.ax
@@ -25,11 +27,20 @@
 %           : include('Axioms/ORD000-0.ax').
 %           : include('Axioms/COMP000-0.ax').
 %           : include('Axioms/AXIS000-0.ax').
-%           : 9 axioms: 4 or_verdict + 4 xone_verdict + 1 soundness.
+%           : v1.2: xone Vr argument must be MAX of remaining pairs (not min);
+%           : or_sound_2branch 1D scope documented explicitly.
+%           : 9 axioms: 4 or_verdict + 4 xone_verdict + 1 soundness (1D).
 %--------------------------------------------------------------------------
 
 % ==========================================================================
 % Or-verdict                                 [Paper: sec:composition]
+%
+% or_verdict(V1, V2):
+%   V1, V2 are box-level verdicts of two branch pairs being combined.
+%   Under the order Conflict < Unknown < Compatible:
+%     max(V1,V2) = compatible  =>  or = compatible  (any overlap suffices)
+%     max(V1,V2) = conflict    =>  or = conflict    (all pairs disjoint)
+%     max(V1,V2) = unknown     =>  or = unknown     (inconclusive)
 % ==========================================================================
 fof(or_compat, axiom, ![V1,V2]:
     (((is_verdict(V1) & is_verdict(V2)) &
@@ -51,6 +62,28 @@ fof(or_verdict_total, axiom, ![V1,V2]:
       or_verdict(V1,V2) = unknown))).
 % ==========================================================================
 % Xone-verdict                               [Paper: sec:composition]
+%
+% xone_verdict(Vm, Vr):
+%   Vm = verdict of the ONE branch pair being tested for unique overlap.
+%   Vr = MAX of ALL remaining branch pair verdicts under Conflict<Unknown<Compatible.
+%
+% CRITICAL: Vr must be MAX (not min) of remaining pairs.
+%   Vr = conflict   IFF every remaining pair is conflict (max = conflict).
+%   Vr = unknown    IFF some remaining pair is unknown and none compatible.
+%   Vr = compatible IFF at least one remaining pair is compatible.
+%
+% With MAX semantics the 9-case truth table is:
+%   (compatible, conflict)   -> compatible  [exactly 1 compat pair]
+%   (compatible, unknown)    -> unknown     [1 compat + >=1 unknown]
+%   (compatible, compatible) -> unknown     [>=2 compat pairs]
+%   (conflict,   conflict)   -> conflict    [all pairs conflict]
+%   (conflict,   *)          -> unknown     [no compat, some not conflict]
+%   (unknown,    *)          -> unknown
+%
+% If Vr were MIN, a scenario with 2 compat + 2 conflict pairs would give
+%   Vm=compat, Vr=min(compat,conflict,conflict)=conflict, incorrectly
+%   firing xone_compat (Compatible instead of Unknown).
+% Generators MUST use MAX for Vr; MUST be MAX not min (see above).
 % ==========================================================================
 fof(xone_compat, axiom, ![Vm,Vr]:
     (((is_verdict(Vm) & is_verdict(Vr)) &
@@ -72,6 +105,14 @@ fof(xone_verdict_total, axiom, ![Vm,Vr]:
       xone_verdict(Vm,Vr) = unknown))).
 % ==========================================================================
 % Composition soundness helper               [Paper: thm:composition-soundness]
+%
+% SCOPE: 1-dimensional only.
+%   Uses a single variable X with in_closed on single-axis intervals.
+%   Encodes: all 4 cross-pair axis conflicts on one axis => no X in any
+%   cross-pair combination on that axis.
+%   For N-dimensional box soundness (multi-axis policies), a separate
+%   axiom using in_box2/in_box3 from PROJ000-0.ax with vector variables
+%   (X1,...,Xn) is required.  This axiom is a 1D proof-search hint only.
 % ==========================================================================
 fof(or_sound_2branch, axiom,
     ![A1lo,A1hi,A2lo,A2hi,B1lo,B1hi,B2lo,B2hi]:

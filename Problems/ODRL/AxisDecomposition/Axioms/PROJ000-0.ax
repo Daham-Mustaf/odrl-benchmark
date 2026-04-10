@@ -2,14 +2,19 @@
 % File     : PROJ000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
 % Axioms   : Projection, box membership, and AABB completeness
-% Version  : 1.1
+% Version  : 1.2
 % English  : Encodes thm:projection (box membership iff per-axis membership)
 %           : for 2- and 3-axis boxes, box intersection and conflict predicates,
-%           : and witnesses for all 10 interval shapes establishing
-%           : thm:aabb (AABB completeness). All intervals treated as closed
-%           : unless PREC000-0.ax is also included for boundary precision.
+%           : and 5 canonical interval shape witnesses establishing
+%           : thm:aabb (AABB completeness). The original 10 shapes reduce to
+%           : 5 distinct predicate definitions under variable renaming;
+%           : duplicates shape_rray_closed/shape_closed/shape_full (all in_closed),
+%           : shape_lopen (== shape_rray_open, both in_lopen), and
+%           : shape_ropen (== shape_lray_open, both in_ropen) are removed.
+%           : All intervals treated as closed unless PREC000-0.ax is also
+%           : included for boundary precision.
 %
-% Refs     : [Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : PROJ000-0.ax
@@ -22,7 +27,9 @@
 %           : include('Axioms/ORD000-0.ax').
 %           : include('Axioms/PROJ000-0.ax').
 %           : include('Axioms/AXIS000-0.ax').
-%           : 14 axioms: 2 box membership + 2 box verdict + 10 shapes.
+%           : v1.2: removed 5 duplicate shape axioms (see body comments);
+%           : formula count reduced from 14 to 9.
+%           : 9 axioms: 2 box membership + 2 box verdict + 5 canonical shapes (shape_point, shape_closed, shape_ropen, shape_lopen, shape_open).
 %--------------------------------------------------------------------------
 
 % ==========================================================================
@@ -48,35 +55,36 @@ fof(box2_conflict, axiom, ![A1,B1,A2,B2,C1,D1,C2,D2]:
     (box2_conflict(A1,B1,A2,B2,C1,D1,C2,D2) <=>
      (axis_conflict(A1,B1,C1,D1) | axis_conflict(A2,B2,C2,D2)))).
 % ==========================================================================
-% AABB Completeness: all 10 interval shapes  [Paper: thm:aabb]
+% AABB Completeness: 5 canonical interval shapes  [Paper: thm:aabb]
+%
+% The 10 shapes of thm:aabb reduce to 5 distinct predicate definitions:
+%   Shapes 2/3/6/10 all define in_closed  => one canonical axiom (shape_closed)
+%   Shapes 4/8      both define in_ropen  => one canonical axiom (shape_ropen)
+%   Shapes 5/7      both define in_lopen  => one canonical axiom (shape_lopen)
+%   Shape  9        defines in_open       => shape_open (unique)
+%   Shape  1        specialises in_closed => shape_point (useful explicit lemma)
+%
+% Shapes 2-5 are also implied by AXIS000-0.ax Section A when co-included.
+% They are retained as named proof-search hints for Vampire/E.
 % ==========================================================================
-% Shape 1: point [v,v]  -- eq
-fof(shape_point,       axiom, ![X,V]:
+% Shape 1: point [V,V]  -- eq
+% Not directly in AXIS000; derivable from in_closed + leq_antisym but
+% retained as an explicit lemma to speed up proof search.
+fof(shape_point,  axiom, ![X,V]:
     (in_closed(X,V,V) <=> X = V)).
-% Shape 2: closed left ray [InfD,V]  -- lteq
-fof(shape_lray_closed, axiom, ![X,InfD,V]:
-    (in_closed(X,InfD,V) <=> (leq(InfD,X) & leq(X,V)))).
-% Shape 3: closed right ray [V,SupD]  -- gteq
-fof(shape_rray_closed, axiom, ![X,V,SupD]:
-    (in_closed(X,V,SupD) <=> (leq(V,X) & leq(X,SupD)))).
-% Shape 4: right-open left ray [InfD,V)  -- lt
-fof(shape_lray_open,   axiom, ![X,InfD,V]:
-    (in_ropen(X,InfD,V) <=> (leq(InfD,X) & less(X,V)))).
-% Shape 5: left-open right ray (V,SupD]  -- gt
-fof(shape_rray_open,   axiom, ![X,V,SupD]:
-    (in_lopen(X,V,SupD) <=> (less(V,X) & leq(X,SupD)))).
-% Shape 6: closed bounded [L,U]  -- gteq L and lteq U
-fof(shape_closed,      axiom, ![X,L,U]:
-    (in_closed(X,L,U) <=> (leq(L,X) & leq(X,U)))).
-% Shape 7: left-open bounded (L,U]  -- gt L and lteq U
-fof(shape_lopen,       axiom, ![X,L,U]:
-    (in_lopen(X,L,U) <=> (less(L,X) & leq(X,U)))).
-% Shape 8: right-open bounded [L,U)  -- gteq L and lt U
-fof(shape_ropen,       axiom, ![X,L,U]:
-    (in_ropen(X,L,U) <=> (leq(L,X) & less(X,U)))).
-% Shape 9: open bounded (L,U)  -- gt L and lt U
-fof(shape_open,        axiom, ![X,L,U]:
-    (in_open(X,L,U) <=> (less(L,X) & less(X,U)))).
-% Shape 10: full domain [InfD,SupD]  -- unconstrained axis
-fof(shape_full,        axiom, ![X,InfD,SupD]:
-    (in_closed(X,InfD,SupD) <=> (leq(InfD,X) & leq(X,SupD)))).
+% Shape 2 (canonical): closed interval [A,B]
+% Subsumes paper shapes 2 (lteq left ray), 3 (gteq right ray),
+% 6 (closed bounded), and 10 (full domain) -- all identical under renaming.
+fof(shape_closed, axiom, ![X,A,B]:
+    (in_closed(X,A,B) <=> (leq(A,X) & leq(X,B)))).
+% Shape 4 (canonical): right-open interval [A,B)  -- lt operator
+% Subsumes paper shapes 4 (left ray open) and 8 (bounded right-open).
+fof(shape_ropen,  axiom, ![X,A,B]:
+    (in_ropen(X,A,B) <=> (leq(A,X) & less(X,B)))).
+% Shape 5 (canonical): left-open interval (A,B]  -- gt operator
+% Subsumes paper shapes 5 (right ray open) and 7 (bounded left-open).
+fof(shape_lopen,  axiom, ![X,A,B]:
+    (in_lopen(X,A,B) <=> (less(A,X) & leq(X,B)))).
+% Shape 9: open interval (A,B)  -- gt A and lt B (unique, no duplicates)
+fof(shape_open,   axiom, ![X,A,B]:
+    (in_open(X,A,B) <=> (less(A,X) & less(X,B)))).

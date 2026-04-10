@@ -251,6 +251,10 @@ fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(ord_v400_v800, axiom, less(v400, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800)).
+fof(hint_w, axiom, axis_subsumes(v0,v600,v0,v800)).
+fof(hint_h, axiom, axis_subsumes(v0,v400,v0,v800)).
+fof(hint_d, axiom, axis_subsumes(v0,v16,v0,v32)).
+fof(hint_a, axiom, axis_subsumes(v0,v150,v0,v300)).
 """,
         "fof_conjecture": (
             "box_subs(\n"
