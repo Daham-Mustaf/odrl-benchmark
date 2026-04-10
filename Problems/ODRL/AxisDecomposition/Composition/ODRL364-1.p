@@ -4,10 +4,10 @@
 % Problem  : Mixed operators across 4 axes → box Compatible
 % Version  : 1.0
 % English  : Width:  eq 600 ∩ lteq 800 = {600} ≠ ∅  Compatible
-%           : Height: gt 100 ∩ lt 500  = (100,500) ≠ ∅  Compatible (density)
+%           : Height: gt 100 ∩ lt 500  = (100,500) ≠ ∅  Compatible
 %           : Depth:  gteq 8 ∩ lteq 32 = [8,32] ≠ ∅    Compatible
 %           : Alt:    gteq 150 ∩ lteq 300 = [150,300] ≠ ∅ Compatible
-%           : Witnesses require density for Y (open interval).
+%           : Ground witnesses: X=v600, Y=v150, Z=v8, W=v150. No density needed.
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -22,7 +22,6 @@
 %           : Policy source: Policies/ODRL364-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
-include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────

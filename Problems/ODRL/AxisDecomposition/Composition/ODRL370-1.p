@@ -8,6 +8,7 @@
 %           : Depth:  gt 8   ∩ lt 32  = (8,32)    ≠ ∅  Compatible
 %           : Alt:    gt 72  ∩ lt 300 = (72,300)  ≠ ∅  Compatible
 %           : All witnesses inside open intervals → requires ORD001-0.ax.
+%           : Ground witnesses: X=v300, Y=v200, Z=v16, W=v100.
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -28,6 +29,7 @@ include('Axioms/AXIS000-0.ax').
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0, axiom, val(v0)).
 fof(val_v8, axiom, val(v8)).
+fof(val_v16, axiom, val(v16)).
 fof(val_v32, axiom, val(v32)).
 fof(val_v72, axiom, val(v72)).
 fof(val_v100, axiom, val(v100)).
@@ -36,6 +38,7 @@ fof(val_v300, axiom, val(v300)).
 fof(val_v500, axiom, val(v500)).
 fof(val_v800, axiom, val(v800)).
 fof(ord_v0_v8, axiom, less(v0, v8)).
+fof(ord_v0_v16, axiom, less(v0, v16)).
 fof(ord_v0_v32, axiom, less(v0, v32)).
 fof(ord_v0_v72, axiom, less(v0, v72)).
 fof(ord_v0_v100, axiom, less(v0, v100)).
@@ -43,15 +46,21 @@ fof(ord_v0_v200, axiom, less(v0, v200)).
 fof(ord_v0_v300, axiom, less(v0, v300)).
 fof(ord_v0_v500, axiom, less(v0, v500)).
 fof(ord_v0_v800, axiom, less(v0, v800)).
-fof(ord_v8_v16,  axiom, less(v8,  v16)).
-fof(ord_v16_v32, axiom, less(v16, v32)).
-fof(ord_v8_v32,  axiom, less(v8,  v32)).
+fof(ord_v8_v16, axiom, less(v8, v16)).
+fof(ord_v8_v32, axiom, less(v8, v32)).
 fof(ord_v8_v72, axiom, less(v8, v72)).
 fof(ord_v8_v100, axiom, less(v8, v100)).
 fof(ord_v8_v200, axiom, less(v8, v200)).
 fof(ord_v8_v300, axiom, less(v8, v300)).
 fof(ord_v8_v500, axiom, less(v8, v500)).
 fof(ord_v8_v800, axiom, less(v8, v800)).
+fof(ord_v16_v32, axiom, less(v16, v32)).
+fof(ord_v16_v72, axiom, less(v16, v72)).
+fof(ord_v16_v100, axiom, less(v16, v100)).
+fof(ord_v16_v200, axiom, less(v16, v200)).
+fof(ord_v16_v300, axiom, less(v16, v300)).
+fof(ord_v16_v500, axiom, less(v16, v500)).
+fof(ord_v16_v800, axiom, less(v16, v800)).
 fof(ord_v32_v72, axiom, less(v32, v72)).
 fof(ord_v32_v100, axiom, less(v32, v100)).
 fof(ord_v32_v200, axiom, less(v32, v200)).

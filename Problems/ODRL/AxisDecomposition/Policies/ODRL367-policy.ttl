@@ -2,7 +2,6 @@
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyBSB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -23,7 +22,6 @@ drk:policyBSB a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyMuseum a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
