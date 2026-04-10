@@ -27,8 +27,10 @@ include('Axioms/AXIS000-0.ax').
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0,        axiom, val(v0)).
 fof(val_v8,        axiom, val(v8)).
+fof(val_v16,       axiom, val(v16)).
 fof(val_v32,       axiom, val(v32)).
 fof(val_v100,      axiom, val(v100)).
+fof(val_v300,      axiom, val(v300)).
 fof(val_v200,      axiom, val(v200)).
 fof(val_v500,      axiom, val(v500)).
 fof(val_v800,      axiom, val(v800)).
@@ -53,10 +55,14 @@ fof(ord_v100_v800, axiom, less(v100, v800)).
 fof(ord_v200_v500, axiom, less(v200, v500)).
 fof(ord_v200_v800, axiom, less(v200, v800)).
 fof(ord_v500_v800, axiom, less(v500, v800)).
-fof(distinct, axiom, $distinct(v0, v8, v32, v100, v200, v500, v800)).
+fof(ord_v8_v16,  axiom, less(v8,  v16)).
+fof(ord_v16_v32, axiom, less(v16, v32)).
+fof(ord_v100_v300, axiom, less(v100, v300)).
+fof(ord_v300_v500, axiom, less(v300, v500)).
+fof(distinct, axiom, $distinct(v0, v8, v16, v32, v100, v200, v500, v800)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl347, conjecture,
-    ?[X,Y,Z]: (less(v200, X) & in_open(X, v0, v800) &
-           less(v100, Y) & in_open(Y, v0, v500) &
-           less(v8,   Z) & in_open(Z, v0, v32))).
+    less(v200, v500) & in_open(v500, v0, v800) &
+    less(v100, v300) & in_open(v300, v0, v500) &
+    less(v8,   v16)  & in_open(v16,  v0, v32)).
 %--------------------------------------------------------------------------

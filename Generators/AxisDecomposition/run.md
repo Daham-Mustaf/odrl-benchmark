@@ -68,3 +68,25 @@ for f in Problems/ODRL/AxisDecomposition/**/*.smt2; do
     fi
 done
 echo "Z3: PASS=$pass  FAIL=$fail"
+
+
+
+echo "=== .p files (FOF problems) ==="
+find Problems/ODRL/AxisDecomposition -name "*.p" | wc -l
+
+echo ""
+echo "=== .smt2 files ==="
+find Problems/ODRL/AxisDecomposition -name "*.smt2" | wc -l
+
+echo ""
+echo "=== .ttl files (policies) ==="
+find Problems/ODRL/AxisDecomposition -name "*.ttl" | wc -l
+
+echo ""
+echo "=== Per-category breakdown ==="
+for d in Problems/ODRL/AxisDecomposition/*/; do
+  p=$(find "$d" -name "*.p" | wc -l)
+  s=$(find "$d" -name "*.smt2" | wc -l)
+  t=$(find "$d" -name "*.ttl" | wc -l)
+  echo "  $(basename $d): $p .p  $s .smt2  $t .ttl"
+done

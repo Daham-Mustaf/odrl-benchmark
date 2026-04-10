@@ -94,6 +94,9 @@ fof(ord_v1080_v1920, axiom, less(v1080, v1920)).
 fof(distinct, axiom, $distinct(v1, v2, v3, v4, v16, v48, v72, v300, v600, v1080, v1920)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl414, conjecture,
-    ?[X,Y,Z,W]: ((in_closed(X, v600, v600) & less(v300, Y) & leq(v16, Z) & in_open(W, v4, v300)) &
-             ~(in_lopen(X, v1, v1920) & in_open(Y, v2, v1080) & in_lopen(Z, v3, v48) & leq(v72, W)))).
+    in_closed(v600, v600, v600) &
+    less(v300, v1080) &
+    leq(v16, v16) &
+    in_open(v16, v4, v300) &
+    ~(in_open(v1080, v2, v1080))).
 %--------------------------------------------------------------------------

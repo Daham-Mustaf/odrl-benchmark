@@ -11,6 +11,7 @@
 % Date     : 2026-04-05
 % Gen      : gen_semantic_core.py
 %--------------------------------------------------------------------------
+include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0,        axiom, val(v0)).
