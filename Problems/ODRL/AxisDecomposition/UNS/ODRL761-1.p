@@ -29,6 +29,6 @@ fof(val_v800, axiom, val(v800)).
 fof(ord_v0_v600,   axiom, less(v0, v600)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v600, v800)).
-% ─── Contradiction axioms ──────────────────────────────────────────────
-fof(constraint, axiom, in_lopen(v0,v0,v600) & leq(v800,v0)).
+fof(contradiction, axiom, less(v800,v600) & less(v600,v800)).
+% ─── No conjecture — contradiction in axioms ─────────────────────────
 %--------------------------------------------------------------------------

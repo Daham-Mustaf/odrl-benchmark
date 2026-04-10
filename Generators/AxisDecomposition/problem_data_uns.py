@@ -47,7 +47,7 @@ fof(val_v700, axiom, val(v700)).
 fof(ord_v0_v600,   axiom, less(v0, v600)).
 fof(ord_v600_v700, axiom, less(v600, v700)).
 fof(distinct, axiom, $distinct(v0, v600, v700)).
-fof(contradiction, axiom, in_closed(v600,v600,v600) & leq(v700,v600)).
+fof(contradiction, axiom, less(v700,v600) & less(v600,v700)).
 """,
         "fof_conjecture": None,
         "smt2_logic": "QF_LRA",
@@ -93,7 +93,7 @@ fof(val_v800, axiom, val(v800)).
 fof(ord_v0_v600,   axiom, less(v0, v600)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v600, v800)).
-fof(contradiction, axiom, in_lopen(v0,v0,v600) & leq(v800,v0)).
+fof(contradiction, axiom, less(v800,v600) & less(v600,v800)).
 """,
         "fof_conjecture": None,
         "smt2_logic": "QF_LRA",
@@ -134,7 +134,7 @@ fof(val_v0,    axiom, val(v0)).
 fof(val_v1200, axiom, val(v1200)).
 fof(ord_v0_v1200, axiom, less(v0, v1200)).
 fof(distinct, axiom, $distinct(v0, v1200)).
-fof(contradiction, axiom, in_ropen(v0,v0,v0)).
+fof(contradiction, axiom, less(v0,v0)).
 """,
         "fof_conjecture": None,
         "smt2_logic": "QF_LRA",

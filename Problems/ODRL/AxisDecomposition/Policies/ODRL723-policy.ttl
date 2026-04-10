@@ -1,0 +1,3 @@
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix drk: <http://w3id.org/drk/ontology/> .
+drk:ODRL723 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .
