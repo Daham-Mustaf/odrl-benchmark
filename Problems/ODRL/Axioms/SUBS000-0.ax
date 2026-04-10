@@ -7,12 +7,14 @@
 %           : Presence tags (present/absent) track whether each policy
 %           : constrains a given axis, enabling the Unknown-when-absent logic.
 %           : subs_verdict/6: per-axis subsumption with presence flags.
-%           : box_subs/2: aggregates subs_verdict values across axes.
+%           : box_subs/2: binary aggregation of subs_verdict values;
+%           : apply iteratively: box_subs(box_subs(box_subs(S1,S2),S3),S4).
 %           : Asymmetric: box_subs(C1,C2) checks C1 is stricter than C2;
 %           : box_subs(C2,C1) checks the reverse.
 %           : Requires axis_subsumes from AXIS000-0.ax Section B.
 %
-% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+%           : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : SUBS000-0.ax
@@ -24,10 +26,12 @@
 %           : (both loaded by the problem file).
 %           : Include for box containment / policy redundancy problems:
 %           : include('Axioms/ORD000-0.ax').
-%           : include('Axioms/SUBS000-0.ax').
 %           : include('Axioms/AXIS000-0.ax').
+%           : include('Axioms/SUBS000-0.ax').
 %           : GAP 1 fix: encodes def:box-containment (boxS) from the paper.
 %           : Presence tags (present/absent) encode axis-level absence logic.
+%           : 14 axioms: 4 presence tags + 6 subs_verdict + 4 box_subs.
+%           : box_subs/2 is binary; chain for n axes: box_subs(box_subs(box_subs(S1,S2),S3),S4).
 %           : 14 axioms: 4 presence tags + 6 subs_verdict + 4 box_subs.
 %--------------------------------------------------------------------------
 
@@ -71,13 +75,16 @@ fof(subs_verdict_total, axiom, ![L1,H1,P1,L2,H2,P2]:
 % ==========================================================================
 % Box-level containment aggregation          [Paper: def:box-containment]
 % ==========================================================================
-% boxS(V1,V2) aggregates per-axis subs_verdict values:
-%   Compatible iff all per-axis verdicts are Compatible
-%   Conflict   iff at least one per-axis verdict is Conflict
+% box_subs/2 is BINARY; apply iteratively over all per-axis verdicts:
+%   box_subs(box_subs(box_subs(S1,S2),S3),S4)  for 4 axes.
+%
+% box_subs(V1,V2) aggregates per-axis subs_verdict values:
+%   Compatible iff both V1 and V2 are Compatible
+%   Conflict   iff at least one of V1, V2 is Conflict
 %   Unknown    otherwise (mixed Compatible/Unknown, no Conflict)
 %
-% This is ASYMMETRIC by design: box_subs(V1,V2) != box_subs(V2,V1) in
-% general, matching the asymmetry of containment vs. reverse containment.
+% ASYMMETRIC by design: box_subs(V1,V2) != box_subs(V2,V1) in general,
+% matching the asymmetry of containment vs. reverse containment.
 fof(box_subs_compat, axiom, ![V1,V2]:
     (((is_verdict(V1) & is_verdict(V2)) &
       V1 = compatible & V2 = compatible)

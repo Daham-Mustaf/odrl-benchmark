@@ -43,7 +43,9 @@ fof(ord_v0_v200, axiom, less(v0, v200)).
 fof(ord_v0_v300, axiom, less(v0, v300)).
 fof(ord_v0_v500, axiom, less(v0, v500)).
 fof(ord_v0_v800, axiom, less(v0, v800)).
-fof(ord_v8_v32, axiom, less(v8, v32)).
+fof(ord_v8_v16,  axiom, less(v8,  v16)).
+fof(ord_v16_v32, axiom, less(v16, v32)).
+fof(ord_v8_v32,  axiom, less(v8,  v32)).
 fof(ord_v8_v72, axiom, less(v8, v72)).
 fof(ord_v8_v100, axiom, less(v8, v100)).
 fof(ord_v8_v200, axiom, less(v8, v200)).
@@ -71,10 +73,11 @@ fof(ord_v200_v800, axiom, less(v200, v800)).
 fof(ord_v300_v500, axiom, less(v300, v500)).
 fof(ord_v300_v800, axiom, less(v300, v800)).
 fof(ord_v500_v800, axiom, less(v500, v800)).
-fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v500, v800)).
+fof(distinct, axiom, $distinct(v0, v8, v16, v32, v72, v100, v200, v300, v500, v800)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl370, conjecture,
-    ?[X,Y,Z,W]: (less(v200, X) & in_open(X, v0, v800) &           less(v100, Y) & in_open(Y, v0, v500) &
-           less(v8,   Z) & in_open(Z, v0, v32)  &
-           less(v72,  W) & in_open(W, v0, v300))).
+    less(v200, v500) & in_open(v500, v0, v800) &
+    less(v100, v300) & in_open(v300, v0, v500) &
+    less(v8,   v16)  & in_open(v16,  v0, v32)  &
+    less(v72,  v200) & in_open(v200, v0, v300)).
 %--------------------------------------------------------------------------
