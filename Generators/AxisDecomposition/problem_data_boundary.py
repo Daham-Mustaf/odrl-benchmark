@@ -40,6 +40,7 @@ PROBLEMS = [
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Easy",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion cc: (0,600]∩[600,∞)={600}≠∅ Compatible\n"
@@ -99,6 +100,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion co: (0,600]∩(600,∞)=∅ Conflict\n"
@@ -158,6 +160,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion oc: (0,600)∩[600,∞)=∅ Conflict\n"
@@ -217,6 +220,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion oo: (0,600)∩(600,∞)=∅ Conflict\n"
@@ -276,6 +280,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Easy",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion eq∩lteq: {600}∩(0,600]={600}≠∅ Compatible\n"
@@ -335,6 +340,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Easy",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion eq∩gteq: {600}∩[600,∞)={600}≠∅ Compatible\n"
@@ -394,6 +400,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion eq∩lt: {600}∩(0,600)=∅ Conflict\n"
@@ -453,6 +460,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+         "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion eq∩gt: {600}∩(600,∞)=∅ Conflict\n"
@@ -512,6 +520,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
+        "includes":     ["ORD000-0.ax", "ORD001-0.ax", "AXIS000-0.ax"],
         "needs_density": True,
         "description": (
             "thm:criterion lt∩lteq: (0,600)∩(0,600]=(0,600)≠∅ Compatible\n"
@@ -572,6 +581,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion gt∩gteq: (600,∞)∩[600,∞)=(600,∞)≠∅ Compatible\n"
@@ -635,6 +645,7 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  (0,600]∩[600,∞)={600}≠∅ Compatible (cc)\n"
@@ -708,6 +719,7 @@ fof(distinct, axiom, $distinct(v0, v400, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  cc: (0,600]∩[600,∞)={600} Compatible\n"
@@ -781,6 +793,7 @@ fof(distinct, axiom, $distinct(v0, v400, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  cc: (0,600]∩[600,∞)={600} Compatible\n"
@@ -867,6 +880,7 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  (0,600) ⊆ (0,600] Compatible (open subset of closed)\n"
@@ -944,6 +958,7 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
         "verdict":       "Conflict",
         "status_fof":    "Theorem",
         "status_smt":    "sat",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "difficulty":    "Medium",
         "needs_density": False,
         "description": (
@@ -1022,6 +1037,7 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
         "verdict":       "Compatible",
         "status_fof":    "Theorem",
         "status_smt":    "sat",
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "difficulty":    "Medium",
         "needs_density": False,
         "description": (

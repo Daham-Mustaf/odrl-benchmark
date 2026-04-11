@@ -5,7 +5,7 @@
 % Version  : 1.0
 % English  : PolicyA: xone(width lteq 600, height lteq 400)
 %           : PolicyB: and(width gteq 800, height lteq 200)
-%           : Branch (~A_x & A_y): X≥800>600 → X∉(0,600] ✓, Y∈(0,200]⊆(0,400] → A_y ✓
+%           : Branch (~A_x & A_y): X≥800>600 → X∉(0,600] , Y∈(0,200]⊆(0,400] → A_y
 %           : Witness: X=v800, Y=v200. verdictXone=Compatible
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878

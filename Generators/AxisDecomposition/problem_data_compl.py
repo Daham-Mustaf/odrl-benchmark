@@ -4,12 +4,10 @@ problem_data_compl.py
 Completion benchmark problems: ODRL630-637 (8 problems).
 Category O: Tests completion_compatible/3, completion_conflict/4,
 sharpness, and monotone_conflict from COMPL000-0.ax.
-
 Include pattern:
     include('Axioms/ORD000-0.ax').
     include('Axioms/COMPL000-0.ax').
     include('Axioms/AXIS000-0.ax').
-
 Problem overview:
   ODRL630 — completion_compat: V in [InfD,SupD] => completion_compatible  Theorem
   ODRL631 — completion_conflict: U<V in domain => completion_conflict      Theorem
@@ -20,7 +18,6 @@ Problem overview:
   ODRL636 — completion_compat at boundary: V=InfD works for eq             Theorem
   ODRL637 — completion_conflict requires U<V strictly                      Theorem
 """
-
 PROBLEMS = [
     # ─────────────────────────────────────────────────────────────────
     # ODRL630 — completion_compat: V in domain => completion_compatible
@@ -34,6 +31,7 @@ PROBLEMS = [
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "def:completion: leq(v0,v600) & leq(v600,v1200)\n"
@@ -75,6 +73,7 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "def:completion: less(v400,v800) & both in [v0,v1200]\n"
@@ -122,6 +121,7 @@ fof(distinct, axiom, $distinct(v0, v400, v800, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:unknown-sound sharpness_compat:\n"
@@ -166,6 +166,7 @@ fof(distinct, axiom, $distinct(v0, v400, v800, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:unknown-sound sharpness_conflict:\n"
@@ -212,6 +213,7 @@ fof(distinct, axiom, $distinct(v0, v400, v800, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "prop:monotone: [v200,v400] ⊆ [v0,v600] and [v0,v600] conflicts [v800,v1200]\n"
@@ -272,6 +274,7 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:unknown-sound: box_verdict(compatible, unknown) = unknown.\n"
@@ -299,6 +302,7 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "def:completion: V=InfD is in [InfD,SupD] so completion_compatible holds.\n"
@@ -338,6 +342,7 @@ fof(distinct, axiom, $distinct(v0, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "def:completion: less(U,V) is required — equal values give no conflict.\n"

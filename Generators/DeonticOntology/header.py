@@ -295,4 +295,4 @@ fof(conj, conjecture, ?[R,L,N]: (founds(e1,R,p1) & permission(L) & no_right(N)))
     print(smt)
     bad = [l for l in smt.splitlines() if l and not l.startswith(";")]
     assert not bad, f"BARE LINES: {bad}"
-    print("All SMTHeader lines start with ';' ✓")
+    print("All SMTHeader lines start with ';' ")

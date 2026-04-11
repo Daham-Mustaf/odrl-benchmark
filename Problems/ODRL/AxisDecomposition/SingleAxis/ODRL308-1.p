@@ -18,7 +18,7 @@
 % SPC      : FOF_THM_RFN
 %
 % Comments : Axis decomposition tier. arXiv:2602.19878.
-%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
+%           : Requires Axioms/ORD000-0.ax + Axioms/ORD001-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL308-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').

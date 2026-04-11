@@ -11,6 +11,7 @@
 % Names    : ODRL756-1.p
 %
 % Status   : Satisfiable
+% Rating   : 0.00 v9.0.0
 % SPC      : FOF_SAT_RFN
 %
 % Comments : SAT — axiom layer consistency witness.

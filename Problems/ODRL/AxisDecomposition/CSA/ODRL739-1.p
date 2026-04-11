@@ -12,6 +12,7 @@
 % Names    : ODRL739-1.p
 %
 % Status   : CounterSatisfiable
+% Rating   : 0.00 v9.0.0
 % SPC      : FOF_CSA_RFN
 %
 % Comments : CSA — wrong verdict claim, countermodel exists.

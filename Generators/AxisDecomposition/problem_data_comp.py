@@ -7,7 +7,6 @@ Include pattern:
     include('Axioms/ORD000-0.ax').
     include('Axioms/COMP000-0.ax').
     include('Axioms/AXIS000-0.ax').
-
 Problem overview:
   ODRL640 — or_compat: one branch compatible => or=compatible       Theorem
   ODRL641 — or_conflict: all pairs conflict => or=conflict           Theorem
@@ -19,14 +18,12 @@ Problem overview:
   ODRL647 — xone_verdict_total: always one of 3 values             Theorem
   ODRL648 — or_sound_2branch: all pairs conflict => no shared point Theorem
   ODRL649 — or_distinct_from_xone: or!=xone when one pair overlaps Theorem
-
 SMT note (ODRL640-647, 649):
   or_verdict/xone_verdict are uninterpreted FOL functions over verdict
   constants; there is no direct QF_LRA encoding.  The SMT assertions use
   (assert (not (= x x))) as an intentional placeholder that is trivially
   UNSAT, serving only to confirm the file is well-formed.  The meaningful
   verification for these problems is the FOF Theorem status from Vampire/E.
-
 Fixes vs. original:
   ODRL642: verdict corrected from "Compatible" to "Unknown" — the problem
            tests or_verdict(unknown,conflict)=unknown, which is an Unknown
@@ -41,11 +38,16 @@ Fixes vs. original:
            Ordering extended to v0<v300<v400<v500<v600<v800.
            SMT updated to (x<=400|x<=300)&(x>=600|x>=500) -> UNSAT.
 """
-
 # SMT placeholder used for pure verdict-algebra problems (ODRL640-647,649).
 # or_verdict/xone_verdict have no QF_LRA encoding; this assert is trivially
 # UNSAT and serves only as a file well-formedness check.
 _VERDICT_SMT_PLACEHOLDER = "(assert (not (= x x)))"
+
+# Minimal TTL template for pure verdict-algebra problems (no interval data).
+_MINIMAL_TTL = """\
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix drk:  <http://w3id.org/drk/ontology/> .
+drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] ."""
 
 PROBLEMS = [
     # ─────────────────────────────────────────────────────────────────
@@ -60,15 +62,13 @@ PROBLEMS = [
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "sec:composition or_compat: is_verdict(V2) =>\n"
             "or_verdict(compatible, V2) = compatible.\n"
         ),
-        "ttl": """\
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+        "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": (
             "![V2]: (is_verdict(V2) =>\n"
@@ -78,7 +78,6 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
     },
-
     # ─────────────────────────────────────────────────────────────────
     # ODRL641 — or_conflict: both conflict => or=conflict
     # ─────────────────────────────────────────────────────────────────
@@ -91,22 +90,19 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "sec:composition or_conflict:\n"
             "or_verdict(conflict, conflict) = conflict.\n"
         ),
-        "ttl": """\
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+        "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "or_verdict(conflict, conflict) = conflict",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
     },
-
     # ─────────────────────────────────────────────────────────────────
     # ODRL642 — or_unknown: unknown+conflict => or=unknown
     #
@@ -123,23 +119,20 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "sec:composition or_unknown:\n"
             "or_verdict(unknown, conflict) = unknown.\n"
             "Neither is compatible; not both conflict => unknown.\n"
         ),
-        "ttl": """\
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+        "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "or_verdict(unknown, conflict) = unknown",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
     },
-
     # ─────────────────────────────────────────────────────────────────
     # ODRL643 — or_verdict_total: always one of 3 values
     # ─────────────────────────────────────────────────────────────────
@@ -152,15 +145,13 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "sec:composition or_verdict_total:\n"
             "For all verdicts V1,V2: or_verdict is conflict, compatible, or unknown.\n"
         ),
-        "ttl": """\
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+        "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": (
             "![V1,V2]: ((is_verdict(V1) & is_verdict(V2)) =>\n"
@@ -172,7 +163,6 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
     },
-
     # ─────────────────────────────────────────────────────────────────
     # ODRL644 — xone_compat: match=compat, rest=conflict => xone=compat
     # ─────────────────────────────────────────────────────────────────
@@ -185,23 +175,20 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "sec:composition xone_compat:\n"
             "xone_verdict(compatible, conflict) = compatible.\n"
             "Exactly one branch pair overlaps, rest conflict (Vr=MAX of rest=conflict).\n"
         ),
-        "ttl": """\
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+        "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "xone_verdict(compatible, conflict) = compatible",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
     },
-
     # ─────────────────────────────────────────────────────────────────
     # ODRL645 — xone_conflict: all conflict => xone=conflict
     # ─────────────────────────────────────────────────────────────────
@@ -214,22 +201,19 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "sec:composition xone_conflict:\n"
             "xone_verdict(conflict, conflict) = conflict.\n"
         ),
-        "ttl": """\
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+        "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "xone_verdict(conflict, conflict) = conflict",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
     },
-
     # ─────────────────────────────────────────────────────────────────
     # ODRL646 — xone_unknown: both compat => xone=unknown
     # ─────────────────────────────────────────────────────────────────
@@ -242,6 +226,7 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "sec:composition xone_unknown:\n"
@@ -249,17 +234,13 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
             "Vr=MAX(rest)=compatible => >=2 branch pairs overlap => xone requires\n"
             "exactly one, so result is unknown.\n"
         ),
-        "ttl": """\
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+        "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "xone_verdict(compatible, compatible) = unknown",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
     },
-
     # ─────────────────────────────────────────────────────────────────
     # ODRL647 — xone_verdict_total
     # ─────────────────────────────────────────────────────────────────
@@ -272,15 +253,13 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "sec:composition xone_verdict_total:\n"
             "For all verdicts Vm,Vr: xone_verdict is compat, conflict, or unknown.\n"
         ),
-        "ttl": """\
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+        "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": (
             "![Vm,Vr]: ((is_verdict(Vm) & is_verdict(Vr)) =>\n"
@@ -292,7 +271,6 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
     },
-
     # ─────────────────────────────────────────────────────────────────
     # ODRL648 — or_sound_2branch: all pairs conflict => no shared point
     #
@@ -314,6 +292,7 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:composition-soundness disjunction case (or_sound_2branch):\n"
@@ -373,7 +352,6 @@ fof(distinct, axiom, $distinct(v0, v300, v400, v500, v600, v800)).
 (assert (or (<= x 400.0) (<= x 300.0)))
 (assert (or (>= x 600.0) (>= x 500.0)))""",
     },
-
     # ─────────────────────────────────────────────────────────────────
     # ODRL649 — or vs xone differ when two pairs compatible
     # ─────────────────────────────────────────────────────────────────
@@ -386,16 +364,14 @@ fof(distinct, axiom, $distinct(v0, v300, v400, v500, v600, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "sec:composition: or and xone give different verdicts when\n"
             "both branch pairs are compatible:\n"
             "or_verdict(compat,compat)=compat but xone_verdict(compat,compat)=unknown.\n"
         ),
-        "ttl": """\
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+        "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": (
             "or_verdict(compatible, compatible) = compatible &\n"

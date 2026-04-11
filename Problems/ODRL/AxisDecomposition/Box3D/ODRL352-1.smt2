@@ -12,7 +12,7 @@
 ; --------------------------------------------------------------------------
 
 (set-logic QF_LRA)
-
+; pure Kleene algebra — no Real variable declarations needed
 ; Kleene: conflict=0, compatible=2, box_verdict = min
 ; Negation: min(0,min(2,2))!=0 OR min(min(0,2),2)!=0
 ; min(0,2)=0, min(2,2)=2, min(0,2)=0 -> both =0, negation is unsat

@@ -2,39 +2,31 @@
 problem_data_box3d.py
 =====================
 Box3D benchmark problems: ODRL340-353 (14 problems).
-
 Category C: Three-axis box verdict aggregation.
 Tests def:box-verdict Kleene conjunction nested over width × height × depth.
 All problems use absoluteSize with D_k = (0, ∞) for all three axes.
-
 Nesting pattern (paper: def:box-verdict — "for n axes nest associatively"):
   box_verdict(V_w, box_verdict(V_h, V_d))
-
 Interval predicates (paper: def:interval-denotation, D_k = (0,∞)):
   lteq v → in_lopen(X, v0, v)    encodes (0, v]
   gteq v → leq(v, X)             encodes [v, ∞)
   lt   v → in_open(X, v0, v)     encodes (0, v)
   gt   v → less(v, X)            encodes (v, ∞)
   eq   v → in_closed(X, v, v)    encodes {v}
-
 Conjecture structure (3D box = X=width, Y=height, Z=depth):
   conflict/Conflict:   ~?[X,Y,Z]: (A_w(X)&B_w(X) & A_h(Y)&B_h(Y) & A_d(Z)&B_d(Z))
   conflict/Compatible:  ?[X,Y,Z]: (A_w(X)&B_w(X) & A_h(Y)&B_h(Y) & A_d(Z)&B_d(Z))
   subsumption/Compatible: ![X,Y,Z]: (A(X,Y,Z) => B(X,Y,Z))
   subsumption/Conflict:    ?[X,Y,Z]: (A(X,Y,Z) & ~B(X,Y,Z))
-
 Include pattern:
   Discrete : include('Axioms/AXIS000-0.ax').
   Continuous: include('Axioms/ORD001-0.ax').   ← BEFORE AXIS000
               include('Axioms/AXIS000-0.ax').
-
 TTL: explicit odrl:and over 3 constraints per permission [ODRL 2.2 §4.3].
 SMT2: three variables x (width), y (height), z (depth), all Real > 0.
 TTL prefix: drk: <http://w3id.org/drk/ontology/>
 """
-
 PROBLEMS = [
-
     # ------------------------------------------------------------------
     # ODRL340 — All three axes conflict → box Conflict
     # Paper: def:box-verdict Rule 1
@@ -51,6 +43,7 @@ PROBLEMS = [
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 600 → (0,600]  ∩  gteq 800 → [800,∞)  = ∅  Conflict\n"
@@ -63,7 +56,6 @@ PROBLEMS = [
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -81,7 +73,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -142,7 +133,6 @@ fof(distinct, axiom, $distinct(v0, v8, v24, v300, v500, v600, v800)).
 (assert (> y 0.0)) (assert (<= y 300.0)) (assert (>= y 500.0))
 (assert (> z 0.0)) (assert (<= z 8.0))   (assert (>= z 24.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL341 — Width conflict × height+depth compatible → box Conflict
     # Paper: def:box-verdict Rule 1
@@ -160,6 +150,7 @@ fof(distinct, axiom, $distinct(v0, v8, v24, v300, v500, v600, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 600  → (0,600]  ∩  gteq 1200 → [1200,∞) = ∅  Conflict\n"
@@ -172,7 +163,6 @@ fof(distinct, axiom, $distinct(v0, v8, v24, v300, v500, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -190,7 +180,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -251,7 +240,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v200, v600, v800, v1200)).
 (assert (> y 0.0)) (assert (<= y 800.0))  (assert (>= y 200.0))
 (assert (> z 0.0)) (assert (<= z 32.0))   (assert (>= z 8.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL342 — Height conflict × width+depth compatible → box Conflict
     # Paper: def:box-verdict Rule 1 (commutativity — conflict at position 2)
@@ -269,6 +257,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v200, v600, v800, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 800 → (0,800]  ∩  gteq 200 → [200,∞) = [200,800] ≠ ∅  Compatible\n"
@@ -282,7 +271,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v200, v600, v800, v1200)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -300,7 +288,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -361,7 +348,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v200, v300, v500, v800)).
 (assert (> y 0.0)) (assert (<= y 300.0)) (assert (>= y 500.0))
 (assert (> z 0.0)) (assert (<= z 32.0))  (assert (>= z 8.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL343 — Depth conflict × width+height compatible → box Conflict
     # Paper: def:box-verdict Rule 1 (commutativity — conflict at position 3)
@@ -379,6 +365,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v200, v300, v500, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 800 → (0,800]  ∩  gteq 200 → [200,∞) = [200,800] ≠ ∅  Compatible\n"
@@ -392,7 +379,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v200, v300, v500, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -410,7 +396,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -471,7 +456,6 @@ fof(distinct, axiom, $distinct(v0, v8, v24, v100, v200, v600, v800)).
 (assert (> y 0.0)) (assert (<= y 600.0)) (assert (>= y 100.0))
 (assert (> z 0.0)) (assert (<= z 8.0))   (assert (>= z 24.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL344 — Width+height conflict × depth compatible → box Conflict
     # Paper: def:box-verdict Rule 1
@@ -488,6 +472,7 @@ fof(distinct, axiom, $distinct(v0, v8, v24, v100, v200, v600, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 600 → (0,600]  ∩  gteq 800 → [800,∞) = ∅  Conflict\n"
@@ -500,7 +485,6 @@ fof(distinct, axiom, $distinct(v0, v8, v24, v100, v200, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -518,7 +502,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -579,7 +562,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v300, v500, v600, v800)).
 (assert (> y 0.0)) (assert (<= y 300.0)) (assert (>= y 500.0))
 (assert (> z 0.0)) (assert (<= z 32.0))  (assert (>= z 8.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL345 — All three axes compatible → box Compatible
     # Paper: def:box-verdict Rule 2
@@ -597,6 +579,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v300, v500, v600, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 800 → (0,800]  ∩  gteq 200 → [200,∞) = [200,800] ≠ ∅  Compatible\n"
@@ -610,7 +593,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v300, v500, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -628,7 +610,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -689,7 +670,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v100, v200, v600, v800)).
 (assert (> y 0.0)) (assert (<= y 600.0)) (assert (>= y 100.0))
 (assert (> z 0.0)) (assert (<= z 32.0))  (assert (>= z 8.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL346 — All three axes touch → single-point box Compatible
     # Paper: def:box-verdict Rule 2, thm:criterion (cc: u=l, not disjoint)
@@ -707,6 +687,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v100, v200, v600, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 600 → (0,600] ∩ gteq 600 → [600,∞) = {600} ≠ ∅  Compatible\n"
@@ -720,7 +701,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v100, v200, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -738,7 +718,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -781,7 +760,6 @@ fof(distinct, axiom, $distinct(v0, v16, v400, v600)).
 (assert (> y 0.0)) (assert (<= y 400.0)) (assert (>= y 400.0))
 (assert (> z 0.0)) (assert (<= z 16.0))  (assert (>= z 16.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL347 — All three axes open overlap → Compatible (density)
     # Paper: def:box-verdict Rule 2, lem:totality, ORD001-0.ax
@@ -799,6 +777,7 @@ fof(distinct, axiom, $distinct(v0, v16, v400, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "ORD001-0.ax", "AXIS000-0.ax"],
         "needs_density": True,
         "description": (
             "Width:  gt 200 → (200,∞)  ∩  lt 800 → (0,800) = (200,800) ≠ ∅  Compatible\n"
@@ -811,7 +790,6 @@ fof(distinct, axiom, $distinct(v0, v16, v400, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -829,7 +807,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -847,42 +824,59 @@ drk:policyB a odrl:Set ;
       )
     ]
   ] .""",
-        "fof_extra_decls": """\
+"fof_extra_decls": """\
 fof(val_v0,        axiom, val(v0)).
 fof(val_v8,        axiom, val(v8)).
+fof(val_v16,       axiom, val(v16)).
 fof(val_v32,       axiom, val(v32)).
 fof(val_v100,      axiom, val(v100)).
 fof(val_v200,      axiom, val(v200)).
+fof(val_v300,      axiom, val(v300)).
 fof(val_v500,      axiom, val(v500)).
 fof(val_v800,      axiom, val(v800)).
 fof(ord_v0_v8,     axiom, less(v0,   v8)).
+fof(ord_v0_v16,    axiom, less(v0,   v16)).
 fof(ord_v0_v32,    axiom, less(v0,   v32)).
 fof(ord_v0_v100,   axiom, less(v0,   v100)).
 fof(ord_v0_v200,   axiom, less(v0,   v200)).
+fof(ord_v0_v300,   axiom, less(v0,   v300)).
 fof(ord_v0_v500,   axiom, less(v0,   v500)).
 fof(ord_v0_v800,   axiom, less(v0,   v800)).
+fof(ord_v8_v16,    axiom, less(v8,   v16)).
 fof(ord_v8_v32,    axiom, less(v8,   v32)).
 fof(ord_v8_v100,   axiom, less(v8,   v100)).
 fof(ord_v8_v200,   axiom, less(v8,   v200)).
+fof(ord_v8_v300,   axiom, less(v8,   v300)).
 fof(ord_v8_v500,   axiom, less(v8,   v500)).
 fof(ord_v8_v800,   axiom, less(v8,   v800)).
+fof(ord_v16_v32,   axiom, less(v16,  v32)).
+fof(ord_v16_v100,  axiom, less(v16,  v100)).
+fof(ord_v16_v200,  axiom, less(v16,  v200)).
+fof(ord_v16_v300,  axiom, less(v16,  v300)).
+fof(ord_v16_v500,  axiom, less(v16,  v500)).
+fof(ord_v16_v800,  axiom, less(v16,  v800)).
 fof(ord_v32_v100,  axiom, less(v32,  v100)).
 fof(ord_v32_v200,  axiom, less(v32,  v200)).
+fof(ord_v32_v300,  axiom, less(v32,  v300)).
 fof(ord_v32_v500,  axiom, less(v32,  v500)).
 fof(ord_v32_v800,  axiom, less(v32,  v800)).
 fof(ord_v100_v200, axiom, less(v100, v200)).
+fof(ord_v100_v300, axiom, less(v100, v300)).
 fof(ord_v100_v500, axiom, less(v100, v500)).
 fof(ord_v100_v800, axiom, less(v100, v800)).
+fof(ord_v200_v300, axiom, less(v200, v300)).
 fof(ord_v200_v500, axiom, less(v200, v500)).
 fof(ord_v200_v800, axiom, less(v200, v800)).
+fof(ord_v300_v500, axiom, less(v300, v500)).
+fof(ord_v300_v800, axiom, less(v300, v800)).
 fof(ord_v500_v800, axiom, less(v500, v800)).
-fof(distinct, axiom, $distinct(v0, v8, v32, v100, v200, v500, v800)).
+fof(distinct, axiom, $distinct(v0, v8, v16, v32, v100, v200, v300, v500, v800)).
 """,
-        "fof_conjecture": (
-            "?[X,Y,Z]: (less(v200, X) & in_open(X, v0, v800) &\n"
-            "           less(v100, Y) & in_open(Y, v0, v500) &\n"
-            "           less(v8,   Z) & in_open(Z, v0, v32))"
-        ),
+"fof_conjecture": (
+    "less(v200, v500) & in_open(v500, v0, v800) &\n"
+    "    less(v100, v300) & in_open(v300, v0, v500) &\n"
+    "    less(v8,   v16)  & in_open(v16,  v0, v32)"
+),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)",
         "smt2_asserts": """\
@@ -890,7 +884,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v100, v200, v500, v800)).
 (assert (> y 0.0)) (assert (> y 100.0)) (assert (< y 500.0))
 (assert (> z 0.0)) (assert (> z 8.0))   (assert (< z 32.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL348 — Depth open/closed boundary conflict kills 3D box
     # Paper: def:box-verdict Rule 1, thm:criterion (oc case on depth)
@@ -909,6 +902,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v100, v200, v500, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Hard",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 800 → (0,800]  ∩  gteq 200 → [200,∞) = [200,800] ≠ ∅  Compatible\n"
@@ -923,7 +917,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v100, v200, v500, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -941,7 +934,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -995,7 +987,6 @@ fof(distinct, axiom, $distinct(v0, v16, v100, v200, v600, v800)).
 (assert (> y 0.0)) (assert (<= y 600.0)) (assert (>= y 100.0))
 (assert (> z 0.0)) (assert (< z 16.0))   (assert (>= z 16.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL349 — 3D box A ⊆ B on all axes → Compatible
     # Paper: def:box-containment (Compatible case)
@@ -1010,6 +1001,7 @@ fof(distinct, axiom, $distinct(v0, v16, v100, v200, v600, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  (0,600]  ⊆ (0,1200]  Compatible\n"
@@ -1023,7 +1015,6 @@ fof(distinct, axiom, $distinct(v0, v16, v100, v200, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1041,7 +1032,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1102,7 +1092,6 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v400, v600, v800, v1200)).
 (assert (> z 0.0)) (assert (<= z 16.0))
 (assert (not (and (<= x 1200.0) (<= y 800.0) (<= z 32.0))))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL350 — Depth breaks 3D subsumption → Conflict
     # Paper: def:box-containment (Conflict case)
@@ -1119,6 +1108,7 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v400, v600, v800, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  (0,600]  ⊆ (0,1200]  Compatible\n"
@@ -1132,7 +1122,6 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v400, v600, v800, v1200)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1150,7 +1139,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1211,7 +1199,6 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v400, v600, v800, v1200)).
 (assert (> z 0.0)) (assert (<= z 32.0))
 (assert (not (and (<= x 1200.0) (<= y 800.0) (<= z 16.0))))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL351 — BSB extended to 3D: width conflict × h+d compatible → Conflict
     # Paper: def:box-verdict Rule 1, ex:bsb extended to 3 axes
@@ -1228,6 +1215,7 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v400, v600, v800, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 600  → (0,600]  ∩  gteq 1200 → [1200,∞) = ∅  Conflict\n"
@@ -1241,7 +1229,6 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v400, v600, v800, v1200)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyBSB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1259,7 +1246,6 @@ drk:policyBSB a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyMuseum a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1313,7 +1299,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v400, v600, v1200)).
 (assert (> y 0.0)) (assert (<= y 600.0))  (assert (>= y 400.0))
 (assert (> z 0.0)) (assert (<= z 32.0))   (assert (>= z 8.0))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL352 — Associativity of 3-axis box_verdict nesting  [KEY TEST]
     # Paper: def:box-verdict — "For n axes nest associatively"
@@ -1332,6 +1317,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v400, v600, v1200)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Tests def:box-verdict associativity:\n"
@@ -1346,7 +1332,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v400, v600, v1200)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1364,7 +1349,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1388,7 +1372,7 @@ drk:policyB a odrl:Set ;
             "box_verdict(box_verdict(conflict, compatible), compatible) = conflict"
         ),
         "smt2_logic": "QF_LRA",
-        "smt2_decls": "",
+        "smt2_decls": "; pure Kleene algebra — no Real variable declarations needed",
         "smt2_asserts": """\
 ; Kleene: conflict=0, compatible=2, box_verdict = min
 ; Negation: min(0,min(2,2))!=0 OR min(min(0,2),2)!=0
@@ -1396,7 +1380,6 @@ drk:policyB a odrl:Set ;
 (assert (not (and (= (ite (<= 0.0 (ite (<= 2.0 2.0) 2.0 2.0)) 0.0 (ite (<= 2.0 2.0) 2.0 2.0)) 0.0)
                   (= (ite (<= (ite (<= 0.0 2.0) 0.0 2.0) 2.0) (ite (<= 0.0 2.0) 0.0 2.0) 2.0) 0.0))))""",
     },
-
     # ------------------------------------------------------------------
     # ODRL353 — prop:monotone: narrowing width propagates Conflict  [KEY TEST]
     # Paper: prop:monotone, lem:conflict-propagation, Section B predicates
@@ -1415,6 +1398,7 @@ drk:policyB a odrl:Set ;
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "axis_subsumes(v200,v600, v0,v800): [200,600] ⊆ [0,800]\n"
@@ -1428,7 +1412,6 @@ drk:policyB a odrl:Set ;
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1443,7 +1426,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1495,5 +1477,4 @@ fof(distinct, axiom, $distinct(v0, v200, v600, v800, v900, v1200)).
 (assert (>= x 900.0))
 (assert (<= x 1200.0))""",
     },
-
 ]

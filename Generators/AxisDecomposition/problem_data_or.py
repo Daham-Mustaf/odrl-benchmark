@@ -639,7 +639,7 @@ fof(distinct, axiom, $distinct(v0, v100, v200, v400)).
         "description": (
             "PolicyA: width lteq 600 AND height lteq 400 (odrl:and)\n"
             "PolicyB: width lteq 800 OR height lteq 600 (odrl:or)\n"
-            "(0,600]×(0,400] ⊆ (0,800]∪(0,600]: every A-point in A_w ⊆ B_w=(0,800] ✓\n"
+            "(0,600]×(0,400] ⊆ (0,800]∪(0,600]: every A-point in A_w ⊆ B_w=(0,800] \n"
             "or-subsumption Compatible [def:box-containment, or variant]\n"
         ),
         "ttl": """\

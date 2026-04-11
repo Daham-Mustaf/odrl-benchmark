@@ -5,7 +5,7 @@
 % Version  : 1.0
 % English  : PolicyA: width lteq 600 AND height lteq 400 (odrl:and)
 %           : PolicyB: width lteq 800 OR height lteq 600 (odrl:or)
-%           : (0,600]×(0,400] ⊆ (0,800]∪(0,600]: every A-point in A_w ⊆ B_w=(0,800] ✓
+%           : (0,600]×(0,400] ⊆ (0,800]∪(0,600]: every A-point in A_w ⊆ B_w=(0,800]
 %           : or-subsumption Compatible [def:box-containment, or variant]
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878

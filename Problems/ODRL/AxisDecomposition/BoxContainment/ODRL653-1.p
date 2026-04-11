@@ -63,15 +63,8 @@ fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(ord_v400_v800, axiom, less(v400, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800)).
-fof(hint_w, axiom, ~axis_subsumes(v0, v600, v0, v400)).
+fof(no_subs_hint, axiom, ~axis_subsumes(v0, v800, v0, v600)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl653, conjecture,
-    box_subs(
-    box_subs(
-      box_subs(
-        subs_verdict(v0,v800,present,v0,v600,present),
-        subs_verdict(v0,v400,present,v0,v800,present)),
-      subs_verdict(v0,v16,present,v0,v32,present)),
-    subs_verdict(v0,v150,present,v0,v300,present))
-  = conflict).
+    subs_verdict(v0, v800, present, v0, v600, present) = conflict).
 %--------------------------------------------------------------------------

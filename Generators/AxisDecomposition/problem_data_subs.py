@@ -37,16 +37,16 @@ Problem overview:
 
 SMT encoding:
   ODRL650-651: LRA directly encodes the containment arithmetic.
-    ODRL650 Compatible: negate = (assert (> 600.0 800.0)) → unsat  ✓
-    ODRL651 Conflict:   negate = (assert (<= 800.0 600.0)) → unsat ✓
+    ODRL650 Compatible: negate = (assert (> 600.0 800.0)) → unsat  
+    ODRL651 Conflict:   negate = (assert (<= 800.0 600.0)) → unsat 
   ODRL652-657: subs_verdict/box_subs are uninterpreted — no QF_LRA encoding.
     SMT uses (assert (not (= x x))) as well-formedness placeholder.
     Meaningful verification is FOF Theorem status from Vampire/E.
 
 box_subs chaining reduction (verified by hand):
-  ODRL652: box_subs(C,box_subs(C,box_subs(C,C))) = compatible  ✓
-  ODRL653: box_subs(CONFLICT,box_subs(C,box_subs(C,C))) = conflict  ✓
-  ODRL657: box_subs(unknown,box_subs(C,box_subs(C,C))) = unknown  ✓
+  ODRL652: box_subs(C,box_subs(C,box_subs(C,C))) = compatible  
+  ODRL653: box_subs(CONFLICT,box_subs(C,box_subs(C,C))) = conflict  
+  ODRL657: box_subs(unknown,box_subs(C,box_subs(C,C))) = unknown  
 """
 
 _SUBS_SMT_PLACEHOLDER = "(assert (not (= x x)))"
@@ -162,10 +162,10 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
     },
     # ──────────────────────────────────────────────────────────────────
     # ODRL652 — 4-axis box containment: all A_k ⊆ B_k → Compatible
-    # Width:  (0,600] ⊆ (0,800]  ✓  less(v600,v800)
-    # Height: (0,400] ⊆ (0,800]  ✓  less(v400,v800)
-    # Depth:  (0,16]  ⊆ (0,32]   ✓  less(v16,v32)
-    # Alt:    (0,150] ⊆ (0,300]  ✓  less(v150,v300)
+    # Width:  (0,600] ⊆ (0,800]    less(v600,v800)
+    # Height: (0,400] ⊆ (0,800]    less(v400,v800)
+    # Depth:  (0,16]  ⊆ (0,32]     less(v16,v32)
+    # Alt:    (0,150] ⊆ (0,300]    less(v150,v300)
     # ──────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL652",
@@ -361,18 +361,10 @@ fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(ord_v400_v800, axiom, less(v400, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800)).
+fof(no_subs_hint, axiom, ~axis_subsumes(v0, v800, v0, v600)).
 """,
         # Width: less(v600,v800) so ~axis_subsumes(v0,v800,v0,v600) → conflict
-        "fof_conjecture": (
-            "box_subs(\n"
-            "    box_subs(\n"
-            "      box_subs(\n"
-            "        subs_verdict(v0,v800,present,v0,v600,present),\n"
-            "        subs_verdict(v0,v400,present,v0,v800,present)),\n"
-            "      subs_verdict(v0,v16,present,v0,v32,present)),\n"
-            "    subs_verdict(v0,v150,present,v0,v300,present))\n"
-            "  = conflict"
-        ),
+        "fof_conjecture": "subs_verdict(v0, v800, present, v0, v600, present) = conflict",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": _SUBS_SMT_PLACEHOLDER,

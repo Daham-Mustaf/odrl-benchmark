@@ -222,8 +222,10 @@ def problem_header(p, domain, fof_body=""):
         ),
         "axis": (
             "Axis decomposition tier. arXiv:2602.19878.\n"
-            "Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.\n"
-            f"Policy source: Policies/{p['id']}-policy.ttl"
+            + ("Requires Axioms/ORD000-0.ax + Axioms/ORD001-0.ax + Axioms/AXIS000-0.ax.\n"
+               if p.get("needs_density") else
+               "Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.\n")
+            + f"Policy source: Policies/{p['id']}-policy.ttl"
         ),
         "kb": (
             "KB-grounding tier. VLDB 2027. arXiv:2602.19883.\n"
@@ -295,4 +297,4 @@ fof(conj, conjecture, ?[R,L,N]: (founds(e1,R,p1) & permission(L) & no_right(N)))
     print(smt)
     bad = [l for l in smt.splitlines() if l and not l.startswith(";")]
     assert not bad, f"BARE LINES: {bad}"
-    print("All SMTHeader lines start with ';' ✓")
+    print("All SMTHeader lines start with ';' ")

@@ -15,6 +15,7 @@
 % Names    : ODRL765-1.p
 %
 % Status   : Unsatisfiable
+% Rating   : 0.00 v9.0.0
 % SPC      : FOF_UNS_RFN
 %
 % Comments : UNS — Remark 3.4 intra-policy self-contradiction.

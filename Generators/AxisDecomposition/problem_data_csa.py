@@ -22,6 +22,8 @@ PROBLEMS = [
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
+        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL300: width lteq 600 vs gteq 800.\n"
@@ -67,7 +69,9 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
+        "needs_density": False,
         "description": (
             "width eq 600 vs eq 800: {600} ∩ {800} = ∅ — Conflict.\n"
             "Wrong claim: ?[X]: X=v600 & X=v800. Countermodel: v600≠v800.\n"
@@ -109,7 +113,9 @@ fof(distinct, axiom, $distinct(v600, v800)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
+        "needs_density": False,
         "description": (
             "Flip of ODRL421: lteq 600 vs gt 600.\n"
             "(0,600] ∩ (600,∞) = ∅ — Conflict.\n"
@@ -152,7 +158,9 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
+        "needs_density": False,
         "description": (
             "Flip of ODRL422: lt 600 vs gteq 600.\n"
             "(0,600) ∩ [600,∞) = ∅ — Conflict.\n"
@@ -196,6 +204,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
         "difficulty":  "Easy",
+        "needs_density": False,
         "description": (
             "Flip of ODRL423: lt 600 vs gt 600.\n"
             "(0,600) ∩ (600,∞) = ∅ — Conflict.\n"
@@ -238,6 +247,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL605: [v0,v5] vs [v6,v10] strictly separated.\n"
@@ -285,6 +295,7 @@ fof(distinct, axiom, $distinct(v0, v5, v6, v10)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Medium",
         "description": (
             "Flip of ODRL361: width lteq 400 vs gteq 800 — Conflict.\n"
@@ -348,6 +359,7 @@ fof(distinct, axiom, $distinct(v0, v100, v400, v600, v800)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "eq 600 vs gt 600: {600} ∩ (600,∞) = ∅ — Conflict.\n"
@@ -390,6 +402,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL641: or_verdict(conflict,conflict)=conflict.\n"
@@ -417,6 +430,7 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL644: xone_verdict(compatible,conflict)=compatible.\n"
@@ -443,6 +457,7 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL637: ~completion_conflict(v600,v600,v0,v1200).\n"
@@ -479,6 +494,7 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt": "unsat",
+        "needs_density": False,
         "difficulty":  "Medium",
         "description": (
             "Flip of ODRL652: [v0,v400] ⊆ [v0,v600] => subs_verdict=compatible.\n"
@@ -527,6 +543,7 @@ fof(subs_hint, axiom, axis_subsumes(v0, v400, v0, v600)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL610: wf(eq,v600,v0,v1200) holds.\n"
@@ -568,6 +585,7 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL626: in_closed(v600,v600,v600) holds but in_closed(v400,v600,v600) does not.\n"
@@ -602,6 +620,7 @@ fof(distinct, axiom, $distinct(v400, v600)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
+        "needs_density": False,   
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL635: box_verdict(compatible,unknown)=unknown.\n"

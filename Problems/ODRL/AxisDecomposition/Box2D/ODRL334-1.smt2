@@ -12,7 +12,7 @@
 ; --------------------------------------------------------------------------
 
 (set-logic QF_LRA)
-
+; pure Kleene algebra — no Real variable declarations needed
 ; Kleene ordering: conflict=0.0 < unknown=1.0 < compatible=2.0
 ; box_verdict(V1,V2) = min(V1,V2) under this ordering
 ; Negation: min(conflict=0.0, compatible=2.0) != conflict=0.0

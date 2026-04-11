@@ -1,15 +1,21 @@
 %--------------------------------------------------------------------------
-% File     : ODRL511-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
+% File     : ODRL511-1.p
+% Domain   : ODRL Policy / Axis Decomposition
 % Problem  : thm:aabb — open bounded interval (l,u) is non-empty (density)
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : SemanticCore
-% Tests    : thm:aabb, def:interval-denotation (gt+lt)
+% Version  : 1.0
+% English  : thm:aabb — open bounded interval (l,u) is non-empty (density)
 %
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-04-05
-% Gen      : gen_semantic_core.py
+% Names    : ODRL511-1.p
+%
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
+%
+% Comments : Axis decomposition tier. arXiv:2602.19878.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
+%           : Policy source: Policies/ODRL511-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/ORD001-0.ax').
@@ -26,7 +32,7 @@ fof(ord_v200_v400, axiom, less(v200, v400)).
 fof(ord_v200_v600, axiom, less(v200, v600)).
 fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(distinct,      axiom, $distinct(v0, v200, v400, v600)).
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl511, conjecture,
     ?[X]: (less(v200, X) & in_open(X, v0, v400))).
 %--------------------------------------------------------------------------

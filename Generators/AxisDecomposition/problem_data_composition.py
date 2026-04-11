@@ -53,6 +53,7 @@ PROBLEMS = [
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Easy",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 800 ∩ gteq 200 = [200,800] ≠ ∅  Compatible\n"
@@ -180,6 +181,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v600, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 400 ∩ gteq 800 = ∅  Conflict\n"
@@ -315,6 +317,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v400, v600, v
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width/Height/Depth: all compatible\n"
@@ -440,6 +443,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v600, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width/Depth/Alt: all compatible\n"
@@ -562,7 +566,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v600, v800)).
     #         The conjecture references v600 (X eq constraint) and v150
     #         (W lower bound) — both were undeclared = serious bug.
     # FIX 2: needs_density: True → False. v150 is declared and witnesses
-    #         Y in open (100,500): less(v100,v150) & less(v150,v500) ✓.
+    #         Y in open (100,500): less(v100,v150) & less(v150,v500) .
     #         ORD001 was included unnecessarily causing E ResourceOut.
     # ──────────────────────────────────────────────────────────────────
     {
@@ -574,6 +578,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v600, v800)).
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  eq 600 ∩ lteq 800 = {600} ≠ ∅  Compatible\n"
@@ -701,6 +706,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v100, v150, v300, v500, v600, v800))
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  eq 600 ∩ eq 800 = {600}∩{800}=∅ Conflict (distinct)\n"
@@ -827,6 +833,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v100, v150, v300, v500, v600, v800))
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Easy",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 1920 ∩ gteq 640  = [640,1920] ≠ ∅ Compatible\n"
@@ -954,6 +961,7 @@ fof(distinct, axiom, $distinct(v0, v16, v48, v150, v480, v600, v640, v1080, v192
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lteq 640  ∩ gteq 1920 = ∅  Conflict\n"
@@ -1078,6 +1086,7 @@ fof(distinct, axiom, $distinct(v0, v16, v48, v150, v480, v600, v640, v1080, v192
         "verdict":       "Compatible",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "difficulty":    "Medium",
         "needs_density": False,
         "description": (
@@ -1205,6 +1214,7 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800, v1200
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  (0,600]  ⊆ (0,1200]  Compatible\n"
@@ -1325,7 +1335,7 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800, v1200
     # FIX: added v16 constant between v8 and v32 (+ 8 ordering facts
     #      + updated $distinct). Z conjunct needs less(v8,Z) &
     #      in_open(Z,v0,v32): no constant existed strictly between v8
-    #      and v32. With v16: less(v8,v16) ✓ in_open(v16,v0,v32) ✓.
+    #      and v32. With v16: less(v8,v16)  in_open(v16,v0,v32) .
     #      Ground witnesses: X=v300, Y=v200, Z=v16, W=v100.
     # ──────────────────────────────────────────────────────────────────
     {
@@ -1337,6 +1347,7 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800, v1200
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
+        "includes": ["ORD000-0.ax", "ORD001-0.ax", "AXIS000-0.ax"],
         "needs_density": True,
         "description": (
             "Width:  gt 200 ∩ lt 800 = (200,800) ≠ ∅  Compatible\n"
@@ -1475,6 +1486,7 @@ fof(distinct, axiom, $distinct(v0, v8, v16, v32, v72, v100, v200, v300, v500, v8
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
+        "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "Width:  lt 600  ∩ gteq 600 = (0,600)∩[600,∞)=∅  Conflict (oc)\n"

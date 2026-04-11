@@ -847,6 +847,7 @@ drk:policyB a odrl:Set ;
         "fof_extra_decls": """\
 fof(val_v0, axiom, val(v0)).
 fof(val_v8, axiom, val(v8)).
+fof(val_v16, axiom, val(v16)).
 fof(val_v32, axiom, val(v32)).
 fof(val_v72, axiom, val(v72)).
 fof(val_v100, axiom, val(v100)).
@@ -855,6 +856,7 @@ fof(val_v300, axiom, val(v300)).
 fof(val_v500, axiom, val(v500)).
 fof(val_v800, axiom, val(v800)).
 fof(ord_v0_v8, axiom, less(v0, v8)).
+fof(ord_v0_v16, axiom, less(v0, v16)).
 fof(ord_v0_v32, axiom, less(v0, v32)).
 fof(ord_v0_v72, axiom, less(v0, v72)).
 fof(ord_v0_v100, axiom, less(v0, v100)).
@@ -862,8 +864,16 @@ fof(ord_v0_v200, axiom, less(v0, v200)).
 fof(ord_v0_v300, axiom, less(v0, v300)).
 fof(ord_v0_v500, axiom, less(v0, v500)).
 fof(ord_v0_v800, axiom, less(v0, v800)).
+fof(ord_v8_v16, axiom, less(v8, v16)).
 fof(ord_v8_v32, axiom, less(v8, v32)).
 fof(ord_v8_v72, axiom, less(v8, v72)).
+fof(ord_v16_v32, axiom, less(v16, v32)).
+fof(ord_v16_v72, axiom, less(v16, v72)).
+fof(ord_v16_v100, axiom, less(v16, v100)).
+fof(ord_v16_v200, axiom, less(v16, v200)).
+fof(ord_v16_v300, axiom, less(v16, v300)).
+fof(ord_v16_v500, axiom, less(v16, v500)).
+fof(ord_v16_v800, axiom, less(v16, v800)).
 fof(ord_v8_v100, axiom, less(v8, v100)).
 fof(ord_v8_v200, axiom, less(v8, v200)).
 fof(ord_v8_v300, axiom, less(v8, v300)).
@@ -890,13 +900,13 @@ fof(ord_v200_v800, axiom, less(v200, v800)).
 fof(ord_v300_v500, axiom, less(v300, v500)).
 fof(ord_v300_v800, axiom, less(v300, v800)).
 fof(ord_v500_v800, axiom, less(v500, v800)).
-fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v500, v800)).
+fof(distinct, axiom, $distinct(v0, v8, v16, v32, v72, v100, v200, v300, v500, v800)).
 """,
         "fof_conjecture": (
-            "?[X,Y,Z,W]: (less(v200, X) & in_open(X, v0, v800) &\n"
-            "           less(v100, Y) & in_open(Y, v0, v500) &\n"
-            "           less(v8,   Z) & in_open(Z, v0, v32)  &\n"
-            "           less(v72,  W) & in_open(W, v0, v300))"
+            "less(v200, v500) & in_open(v500, v0, v800) &\n"
+            "    less(v100, v300) & in_open(v300, v0, v500) &\n"
+            "    less(v8,   v16)  & in_open(v16,  v0, v32)  &\n"
+            "    less(v72,  v200) & in_open(v200, v0, v300)"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
@@ -1593,9 +1603,12 @@ fof(ord_v1080_v1920, axiom, less(v1080, v1920)).
 fof(distinct, axiom, $distinct(v1, v2, v3, v4, v16, v48, v72, v300, v600, v1080, v1920)).
 """,
         "fof_conjecture": (
-            "?[X,Y,Z,W]: ((in_closed(X, v600, v600) & less(v300, Y) & leq(v16, Z) & in_open(W, v4, v300)) &\n"
-            "             ~(in_lopen(X, v1, v1920) & in_open(Y, v2, v1080) & in_lopen(Z, v3, v48) & leq(v72, W)))"
-        ),
+    "in_closed(v600, v600, v600) &\n"
+    "    less(v300, v1080) &\n"
+    "    leq(v16, v16) &\n"
+    "    in_open(v16, v4, v300) &\n"
+    "    ~in_open(v1080, v2, v1080)"
+),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
         "smt2_asserts": """\

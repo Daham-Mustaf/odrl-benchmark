@@ -1,15 +1,21 @@
 %--------------------------------------------------------------------------
-% File     : ODRL503-1 : TPTP v0.2.0
-% Domain   : ODRL Spatial Axis Profile
+% File     : ODRL503-1.p
+% Domain   : ODRL Policy / Axis Decomposition
 % Problem  : lem:totality — gt denotation is non-empty (density)
-% Expected : Theorem
-% Verdict  : Compatible
-% Category : SemanticCore
-% Tests    : lem:totality, def:interval-denotation (gt), ORD001-0.ax
+% Version  : 1.0
+% English  : lem:totality — gt denotation is non-empty (density)
 %
+% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Date     : 2026-04-05
-% Gen      : gen_semantic_core.py
+% Names    : ODRL503-1.p
+%
+% Status   : Theorem
+% SPC      : FOF_THM_RFN
+%
+% Comments : Axis decomposition tier. arXiv:2602.19878.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
+%           : Policy source: Policies/ODRL503-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/ORD001-0.ax').
@@ -22,7 +28,7 @@ fof(ord_v0_v200,   axiom, less(v0,   v200)).
 fof(ord_v0_v600,   axiom, less(v0,   v600)).
 fof(ord_v200_v600, axiom, less(v200, v600)).
 fof(distinct,      axiom, $distinct(v0, v200, v600)).
-% ─── Conjecture ──────────────────────────────────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl503, conjecture,
     ?[X]: less(v200, X)).
 %--------------------------------------------------------------------------

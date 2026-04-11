@@ -34,7 +34,7 @@ PROBLEMS = [
         "description": (
             "PolicyA: xone(width lteq 600, height lteq 400) — exactly one\n"
             "PolicyB: and(width lteq 400, height gteq 500)\n"
-            "Branch (A_x & ~A_y): X∈(0,400]⊆(0,600] ✓, Y≥500>400 so Y∉(0,400] ✓\n"
+            "Branch (A_x & ~A_y): X∈(0,400]⊆(0,600] , Y≥500>400 so Y∉(0,400] \n"
             "Witness: X=v400, Y=v500. verdictXone=Compatible\n"
         ),
         "ttl": """\
@@ -199,7 +199,7 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600)).
         "description": (
             "PolicyA: xone(width lteq 600, height lteq 400)\n"
             "PolicyB: and(width gteq 800, height lteq 200)\n"
-            "Branch (~A_x & A_y): X≥800>600 → X∉(0,600] ✓, Y∈(0,200]⊆(0,400] → A_y ✓\n"
+            "Branch (~A_x & A_y): X≥800>600 → X∉(0,600] , Y∈(0,200]⊆(0,400] → A_y \n"
             "Witness: X=v800, Y=v200. verdictXone=Compatible\n"
         ),
         "ttl": """\
@@ -369,7 +369,7 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600)).
             "PolicyA: xone(width lteq 400, height lteq 300)\n"
             "PolicyB: xone(width lteq 600, height lteq 500)\n"
             "Branch (A_x&~A_y) & (B_x&~B_y): X∈(0,400], Y>500\n"
-            "  X∈(0,400]⊆(0,600]→B_x✓, Y>500→Y∉(0,300]✓ and Y∉(0,500]✓\n"
+            "  X∈(0,400]⊆(0,600]→B_x, Y>500→Y∉(0,300] and Y∉(0,500]\n"
             "Witness: X=v300, Y=v600. verdictXone=Compatible\n"
         ),
         "ttl": """\
@@ -553,7 +553,7 @@ fof(distinct, axiom, $distinct(v0, v100, v200, v400, v600)).
         "description": (
             "PolicyA: xone3(width lteq 600, height lteq 400, depth lteq 200)\n"
             "PolicyB: and(width lteq 400, height gteq 500, depth gteq 300)\n"
-            "Branch (A_x&~A_y&~A_z): X∈(0,400], Y≥500>400→Y∉(0,400]✓, Z≥300>200→Z∉(0,200]✓\n"
+            "Branch (A_x&~A_y&~A_z): X∈(0,400], Y≥500>400→Y∉(0,400], Z≥300>200→Z∉(0,200]\n"
             "Witness: X=v300, Y=v500, Z=v300. verdictXone=Compatible\n"
         ),
         "ttl": """\
@@ -656,7 +656,7 @@ fof(distinct, axiom, $distinct(v0, v200, v300, v400, v500, v600)).
             "PolicyA: and(width gteq 800, height lteq 200)\n"
             "PolicyB: xone(width lteq 600, height lteq 400)\n"
             "For A: X≥800>600 → X∉(0,600] → ~B_x; Y∈(0,200]⊆(0,400] → B_y\n"
-            "Exactly one B-branch true → xone holds ✓ [~B_x & B_y]\n"
+            "Exactly one B-branch true → xone holds  [~B_x & B_y]\n"
             "or-subsumption Compatible\n"
         ),
         "ttl": """\
@@ -826,8 +826,8 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600)).
         "description": (
             "PolicyA: xone(width lteq 600, height lteq 400)\n"
             "PolicyB: or(width gteq 800, height gteq 200)\n"
-            "Branch (~A_x & A_y): X≥800>600→X∉(0,600] ✓, Y∈(0,400]→A_y ✓\n"
-            "PolicyB: X≥800 ✓\n"
+            "Branch (~A_x & A_y): X≥800>600→X∉(0,600] , Y∈(0,400]→A_y \n"
+            "PolicyB: X≥800 \n"
             "Witness: X=v800, Y=v200. verdictXone=Compatible\n"
         ),
         "ttl": """\

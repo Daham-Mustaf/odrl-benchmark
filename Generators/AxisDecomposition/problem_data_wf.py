@@ -53,7 +53,7 @@ PROBLEMS = [
     #      always UNSAT regardless of domain, tests nothing.
     #      Replaced with (assert (or (< v 0.0) (> v 1200.0))):
     #      the negated wf_eq condition V ∉ [InfD,SupD].
-    #      Combined with v >= 0 & v <= 1200 → UNSAT ✓
+    #      Combined with v >= 0 & v <= 1200 → UNSAT 
     # ─────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL610",
@@ -192,7 +192,7 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
     #      Fix: (assert (> v 1200.0)).
     #      Residual negation of wf_lt given v > 0 & v <= 1200:
     #        ~wf_lt = v<0 | v>1200 | v=0; hypotheses rule out v<0 and v=0;
-    #        remainder is v > 1200. With v <= 1200 → UNSAT ✓
+    #        remainder is v > 1200. With v <= 1200 → UNSAT 
     # ─────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL613",
@@ -283,13 +283,13 @@ fof(distinct, axiom, $distinct(v0, v1200)).
     #
     # FIX: SMT (assert (not (> v 0.0))) = v <= 0.
     #      Combined with (assert (>= v 0.0)): v = 0.
-    #      Combined with (assert (< v 1200.0)): 0 < 1200 ✓ → SAT.
+    #      Combined with (assert (< v 1200.0)): 0 < 1200  → SAT.
     #      status_smt was "unsat" — wrong.
     #      Fix: (assert (>= v 1200.0)).
     #      Residual negation of wf_gt given v >= 0 & v < 1200:
     #        ~wf_gt = v<0 | v>1200 | v=1200; hypotheses rule out v<0,
     #        v>1200, and v=1200; so negation is (>= v 1200.0).
-    #      With v < 1200 → UNSAT ✓
+    #      With v < 1200 → UNSAT 
     # ─────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL615",
@@ -385,7 +385,7 @@ fof(distinct, axiom, $distinct(v0, v1200)).
     #      sem_nonempty(lt, V, InfD, SupD) means [InfD, V) is non-empty,
     #      i.e., V > InfD. Given hypothesis v > 0 (V > InfD = 0),
     #      negated sem_nonempty = V <= InfD = v <= 0.
-    #      With v > 0 → UNSAT ✓
+    #      With v > 0 → UNSAT 
     # ─────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL617",
