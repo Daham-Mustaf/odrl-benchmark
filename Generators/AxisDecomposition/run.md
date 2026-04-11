@@ -52,6 +52,38 @@ for cat in SingleAxis Box2D Box3D Composition PolicyQuality Boundary \
 done
 
 
+
+cd ~/Desktop/tptp-odrl
+
+echo "=== .p files by category ==="
+total=0
+for cat in SingleAxis Box2D Box3D Composition PolicyQuality Boundary \
+           LogicalOr LogicalXone SemanticCore ConflictCriterion \
+           WellFormedness Projection BoxContainment Completion \
+           CSA SAT UNS Hard; do
+    n=$(ls Problems/ODRL/AxisDecomposition/$cat/*.p 2>/dev/null | wc -l | tr -d ' ')
+    total=$((total+n))
+    printf "  %-20s %s\n" "$cat" "$n"
+done
+echo "  ─────────────────────"
+echo "  TOTAL .p    : $total"
+
+echo ""
+echo "=== Status distribution ==="
+grep -rh "% Status" \
+  Problems/ODRL/AxisDecomposition/{SingleAxis,Box2D,Box3D,Composition,PolicyQuality,Boundary,LogicalOr,LogicalXone,SemanticCore,ConflictCriterion,WellFormedness,Projection,BoxContainment,Completion,CSA,SAT,UNS,Hard}/*.p \
+  | sort | uniq -c | sort -rn
+
+echo ""
+echo "=== Why numbers differ ==="
+echo "  .p files  : $total (all FOF problems)"
+echo "  .smt2     : $(ls Problems/ODRL/AxisDecomposition/{SingleAxis,Box2D,Box3D,Composition,PolicyQuality,Boundary,LogicalOr,LogicalXone,SemanticCore,ConflictCriterion,WellFormedness,Projection,BoxContainment,Completion,CSA,SAT,UNS,Hard}/*.smt2 2>/dev/null | wc -l | tr -d ' ') (Hard THM have no .smt2)"
+echo "  .ttl      : $(ls Problems/ODRL/AxisDecomposition/Policies/*.ttl 2>/dev/null | wc -l | tr -d ' ') (some Hard share TTL)"
+echo "  E tested  : 188 (THM+UNS+Hard THM only — CSA/SAT skipped)"
+echo "  Z3 tested : 243 (all .smt2 files)"
+echo "  Vampire   : 188 (THM+UNS+Hard THM only)"
+
+
 cd ~/Desktop/tptp-odrl
 
 echo "================================================================"
@@ -160,6 +192,37 @@ echo "  Z3              : PASS=$zpass FAIL=$zfail"
 
 
 
+cd ~/Desktop/tptp-odrl
+
+echo "=== Vampire — ALL 247 problems (8 second limit) ==="
+pass=0; fail=0; skip=0
+
+for cat in SingleAxis Box2D Box3D Composition PolicyQuality Boundary \
+           LogicalOr LogicalXone SemanticCore ConflictCriterion \
+           WellFormedness Projection BoxContainment Completion \
+           CSA SAT UNS Hard; do
+    for f in Problems/ODRL/AxisDecomposition/$cat/*.p; do
+        [ -f "$f" ] || continue
+        r=$(vampire --include Problems/ODRL/AxisDecomposition \
+            --mode casc --time_limit 8 "$f" 2>&1 | grep "SZS status")
+        case "$r" in
+            *Theorem*)            ((pass++)) ;;
+            *Unsatisfiable*)      ((pass++)) ;;
+            *CounterSatisfiable*) ((pass++)) ;;
+            *Satisfiable*)        ((pass++)) ;;
+            *Timeout*)            ((skip++)); echo "TIMEOUT: $cat/$(basename $f)" ;;
+            *)                    ((fail++)); echo "FAIL: $cat/$(basename $f): $r" ;;
+        esac
+    done
+done
+
+echo ""
+echo "Vampire ALL: PASS=$pass TIMEOUT=$skip FAIL=$fail"
+echo "Total: $((pass+skip+fail))"
+echo ""
+echo "Expected: PASS=206 TIMEOUT=41 FAIL=0"
+echo "  206 = 180 THM + 5 UNS + 3 Hard THM + 15 SAT + 3 Hard SAT"
+echo "  41  = 40 CSA + 1 Hard CSA (HARD002)"
 
 ```bash
 echo "=== Per category ===" && \
