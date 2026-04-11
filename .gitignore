@@ -72,3 +72,7 @@ Problems/ODRL/Axioms/WF000-0.ax
 .DS_Store
 .gitignore
 .DS_Store
+.DS_Store
+**/.DS_Store
+.DS_Store
+**/.DS_Store
