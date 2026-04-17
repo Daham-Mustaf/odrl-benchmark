@@ -262,7 +262,7 @@ PROBLEMS_EXT = [
     {
         "id": "ODRL734", "subdir": "CSA",
         "name": "CSA BoxContainment: claim larger interval subsumes smaller (wrong direction)",
-        "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "sat",
+        "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "needs_density": False,
         "description": "[v0,v600] does NOT subsume [v0,v400] — wrong direction.\nWrong claim: subs_verdict([v0,v600],[v0,v400])=compatible.\n",

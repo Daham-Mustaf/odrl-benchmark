@@ -1,12 +1,14 @@
 %--------------------------------------------------------------------------
 % File     : ODRL762-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : intra-policy: lt InfD violates wf condition (ii) — empty denotation
+% Problem  : intra-policy: wf(lt) with V=InfD violates condition (ii) — empty denotation
 % Version  : 1.0
-% English  : Remark 3.4 intra-policy self-contradiction via wf_lt condition (ii).
-%           : width lt v0 (infimum): [infD, v0) with v0=InfD => empty.
-%           : def:profile condition (ii): op=lt => V != InfD.
-%           : Violated: denotation is empty, policy is ill-formed.
+% English  : Remark 3.4 intra-policy self-contradiction via WF000 wf_lt condition (ii).
+%           : def:profile condition (ii): Op=lt ⇒ V ≠ InfD.
+%           : Policy asserts wf(lt, v0, v0, v1200) where V = InfD = v0. By the wf_lt
+%           : equivalence in WF000, this forces v0 ≠ v0 — a direct contradiction with
+%           : equality reflexivity. The proof genuinely exercises WF000 rather than
+%           : reducing to ORD irreflexivity.
 %
 % Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
 % Source   : Mustafa, D. (2026)
@@ -30,6 +32,6 @@ fof(val_v0,    axiom, val(v0)).
 fof(val_v1200, axiom, val(v1200)).
 fof(ord_v0_v1200, axiom, less(v0, v1200)).
 fof(distinct, axiom, $distinct(v0, v1200)).
-fof(contradiction, axiom, less(v0,v0)).
+fof(policy_assertion, axiom, wf(lt, v0, v0, v1200)).
 % ─── No conjecture — contradiction in axioms ─────────────────────────
 %--------------------------------------------------------------------------

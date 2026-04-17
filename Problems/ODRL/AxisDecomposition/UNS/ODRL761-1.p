@@ -4,8 +4,12 @@
 % Problem  : intra-policy: lteq 600 AND gteq 800 gives empty denotation
 % Version  : 1.0
 % English  : Remark 3.4 intra-policy self-contradiction.
-%           : width lteq 600: (0,600]; width gteq 800: [800,∞).
-%           : (0,600] ∩ [800,∞) = ∅ — no request satisfies both.
+%           : width lteq 600: denotation is (v0, v600].
+%           : width gteq 800: denotation is [v800, ∞).
+%           : (v0, v600] ∩ [v800, ∞) = ∅ — no request satisfies both.
+%           : Encoded by asserting a witness in both denotations (via in_lopen
+%           : and leq from AXIS000/ORD000), which forces leq(v800, v600) and
+%           : contradicts the declared ord chain less(v600, v800).
 %
 % Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
 % Source   : Mustafa, D. (2026)
@@ -30,6 +34,7 @@ fof(val_v800, axiom, val(v800)).
 fof(ord_v0_v600,   axiom, less(v0, v600)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v600, v800)).
-fof(contradiction, axiom, less(v800,v600) & less(v600,v800)).
+fof(witness_in_lteq, axiom, in_lopen(witness, v0, v600)).
+fof(witness_in_gteq, axiom, leq(v800, witness)).
 % ─── No conjecture — contradiction in axioms ─────────────────────────
 %--------------------------------------------------------------------------

@@ -70,18 +70,71 @@ PROBLEMS_EXT = [
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)",
         "smt2_asserts": "(assert (>= x 200.0))(assert (<= x 800.0))\n(assert (>= y 100.0))(assert (<= y 600.0))\n(assert (>= z 8.0))(assert (<= z 32.0))",
     },
-    {
-        "id": "ODRL767", "subdir": "SAT",
-        "name": "SAT Box3D: 3-axis conflict axioms are internally consistent",
-        "verdict": "Satisfiable", "status_fof": "Satisfiable", "status_smt": "sat",
-        "difficulty": "Easy", "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
-        "description": "Three separate axis_conflict facts coexist. Axioms are consistent.\n",
-        "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL767 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
-        "fof_extra_decls": "fof(val_v0,axiom,val(v0)).\nfof(val_v400,axiom,val(v400)).\nfof(val_v600,axiom,val(v600)).\nfof(val_v800,axiom,val(v800)).\nfof(ord_v0_v400,axiom,less(v0,v400)).\nfof(ord_v400_v600,axiom,less(v400,v600)).\nfof(ord_v600_v800,axiom,less(v600,v800)).\nfof(distinct,axiom,$distinct(v0,v400,v600,v800)).\nfof(cf1,axiom,axis_conflict(v0,v400,v600,v800)).\nfof(cf2,axiom,axis_conflict(v0,v400,v600,v800)).\nfof(cf3,axiom,axis_conflict(v0,v400,v600,v800)).\n",
-        "fof_conjecture": None,
-        "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (>= x 0.0))(assert (<= x 400.0))",
-    },
+{
+    "id": "ODRL767", "subdir": "SAT",
+    "name": "SAT Box3D: three axis_conflict facts on distinct axes are consistent",
+    "verdict": "Satisfiable", "status_fof": "Satisfiable", "status_smt": "sat",
+    "difficulty": "Easy", "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
+    "description": (
+        "Three axis_conflict facts on distinct (width, height, depth) 4-tuples\n"
+        "coexist. Each uses a different pair of disjoint intervals drawn from a\n"
+        "shared strict chain v1 < v2 < ... < v6. No shared variable forces a\n"
+        "contradiction; the axioms are consistent.\n"
+        "Width:  [v1,v2] vs [v3,v4]  disjoint (less(v2,v3))\n"
+        "Height: [v2,v3] vs [v4,v5]  disjoint (less(v3,v4))\n"
+        "Depth:  [v3,v4] vs [v5,v6]  disjoint (less(v4,v5))\n"
+    ),
+    "ttl": """\
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix drk:  <http://w3id.org/drk/ontology/> .
+drk:policyA a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:and (
+      [ odrl:leftOperand oax:absoluteSizeWidth ;
+        odrl:operator odrl:lteq ; odrl:rightOperand "2"^^xsd:decimal ]
+      [ odrl:leftOperand oax:absoluteSizeHeight ;
+        odrl:operator odrl:lteq ; odrl:rightOperand "3"^^xsd:decimal ]
+      [ odrl:leftOperand oax:absoluteSizeDepth ;
+        odrl:operator odrl:lteq ; odrl:rightOperand "4"^^xsd:decimal ]
+    ) ] ] .
+drk:policyB a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:and (
+      [ odrl:leftOperand oax:absoluteSizeWidth ;
+        odrl:operator odrl:gteq ; odrl:rightOperand "3"^^xsd:decimal ]
+      [ odrl:leftOperand oax:absoluteSizeHeight ;
+        odrl:operator odrl:gteq ; odrl:rightOperand "4"^^xsd:decimal ]
+      [ odrl:leftOperand oax:absoluteSizeDepth ;
+        odrl:operator odrl:gteq ; odrl:rightOperand "5"^^xsd:decimal ]
+    ) ] ] .""",
+    "fof_extra_decls": (
+        "fof(val_v1,axiom,val(v1)).\n"
+        "fof(val_v2,axiom,val(v2)).\n"
+        "fof(val_v3,axiom,val(v3)).\n"
+        "fof(val_v4,axiom,val(v4)).\n"
+        "fof(val_v5,axiom,val(v5)).\n"
+        "fof(val_v6,axiom,val(v6)).\n"
+        "fof(ord_v1_v2,axiom,less(v1,v2)).\n"
+        "fof(ord_v2_v3,axiom,less(v2,v3)).\n"
+        "fof(ord_v3_v4,axiom,less(v3,v4)).\n"
+        "fof(ord_v4_v5,axiom,less(v4,v5)).\n"
+        "fof(ord_v5_v6,axiom,less(v5,v6)).\n"
+        "fof(distinct,axiom,$distinct(v1,v2,v3,v4,v5,v6)).\n"
+        "fof(cf_width, axiom, axis_conflict(v1, v2, v3, v4)).\n"
+        "fof(cf_height,axiom, axis_conflict(v2, v3, v4, v5)).\n"
+        "fof(cf_depth, axiom, axis_conflict(v3, v4, v5, v6)).\n"
+    ),
+    "fof_conjecture": None,
+    "smt2_logic": "QF_LRA",
+    "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)",
+    "smt2_asserts": (
+        "(assert (>= x 1.0))(assert (<= x 2.0))\n"
+        "(assert (>= y 2.0))(assert (<= y 3.0))\n"
+        "(assert (>= z 3.0))(assert (<= z 4.0))"
+    ),
+},
     # ── PolicyQuality ────────────────────────────────────────────────
     {
         "id": "ODRL768", "subdir": "SAT",
