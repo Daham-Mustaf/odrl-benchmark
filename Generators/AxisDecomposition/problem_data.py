@@ -87,7 +87,7 @@ fof(ord_v0_v800,   axiom, less(v0, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct,      axiom, $distinct(v0, v600, v800)).
 """,
-        "fof_conjecture": "~?[X]: (in_lopen(X, v0, v600) & leq(v800, X))",
+        "fof_conjecture": "![X]: ~(in_lopen(X, v0, v600) & leq(v800, X))",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\
@@ -144,7 +144,7 @@ fof(ord_v0_v800,   axiom, less(v0, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct,      axiom, $distinct(v0, v600, v800)).
 """,
-        "fof_conjecture": "~?[X]: (in_closed(X, v600, v600) & in_closed(X, v800, v800))",
+        "fof_conjecture": "![X]:~(in_closed(X, v600, v600) & in_closed(X, v800, v800))",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\
@@ -203,7 +203,7 @@ fof(val_v600,    axiom, val(v600)).
 fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(distinct,    axiom, $distinct(v0, v600)).
 """,
-        "fof_conjecture": "~?[X]: (in_open(X, v0, v600) & leq(v600, X))",
+        "fof_conjecture": "![X]: ~(in_open(X, v0, v600) & leq(v600, X))",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\
@@ -261,7 +261,7 @@ fof(val_v600,    axiom, val(v600)).
 fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(distinct,    axiom, $distinct(v0, v600)).
 """,
-        "fof_conjecture": "~?[X]: (less(v600, X) & in_lopen(X, v0, v600))",
+        "fof_conjecture": "![X]: ~(less(v600, X) & in_lopen(X, v0, v600))",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\
@@ -836,7 +836,7 @@ fof(ord_v0_v1200,   axiom, less(v0, v1200)).
 fof(ord_v600_v1200, axiom, less(v600, v1200)).
 fof(distinct,       axiom, $distinct(v0, v600, v1200)).
 """,
-        "fof_conjecture": "~?[X]: (in_lopen(X, v0, v600) & leq(v1200, X))",
+        "fof_conjecture": "![X]: ~(in_lopen(X, v0, v600) & leq(v1200, X))",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\

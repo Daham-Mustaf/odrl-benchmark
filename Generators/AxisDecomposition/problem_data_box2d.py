@@ -105,7 +105,7 @@ fof(ord_v600_v1200, axiom, less(v600, v1200)).
 fof(distinct,       axiom, $distinct(v0, v400, v600, v1200)).
 """,
         "fof_conjecture": (
-            "~?[X,Y]: (in_lopen(X, v0, v600) & leq(v1200, X) &\n"
+            "![X,Y]: ~(in_lopen(X, v0, v600) & leq(v1200, X) &\n"
             "           in_lopen(Y, v0, v600) & leq(v400,  Y))"
         ),
         "smt2_logic": "QF_LRA",
@@ -192,7 +192,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct,      axiom, $distinct(v0, v300, v500, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y]: (in_lopen(X, v0, v600) & leq(v800, X) &\n"
+            "![X,Y]: ~(in_lopen(X, v0, v600) & leq(v800, X) &\n"
             "           in_lopen(Y, v0, v300) & leq(v500, Y))"
         ),
         "smt2_logic": "QF_LRA",
@@ -280,7 +280,7 @@ fof(ord_v500_v800, axiom, less(v500, v800)).
 fof(distinct,      axiom, $distinct(v0, v200, v300, v500, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y]: (in_lopen(X, v0, v800) & leq(v200, X) &\n"
+            "![X,Y]: ~(in_lopen(X, v0, v800) & leq(v200, X) &\n"
             "           in_lopen(Y, v0, v300) & leq(v500, Y))"
         ),
         "smt2_logic": "QF_LRA",
@@ -614,7 +614,7 @@ fof(ord_v500_v600, axiom, less(v500, v600)).
 fof(distinct,      axiom, $distinct(v0, v300, v500, v600)).
 """,
         "fof_conjecture": (
-            "~?[X,Y]: (in_lopen(X, v0, v600) & leq(v600, X) &\n"
+            "![X,Y]: ~(in_lopen(X, v0, v600) & leq(v600, X) &\n"
             "           in_lopen(Y, v0, v300) & leq(v500, Y))"
         ),
         "smt2_logic": "QF_LRA",
@@ -788,7 +788,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct,      axiom, $distinct(v0, v200, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y]: (in_open(X, v0, v600) & leq(v600, X) &\n"
+            "![X,Y]: ~(in_open(X, v0, v600) & leq(v600, X) &\n"
             "           in_lopen(Y, v0, v800) & leq(v200, Y))"
         ),
         "smt2_logic": "QF_LRA",
@@ -965,7 +965,7 @@ fof(ord_v601_v800,  axiom, less(v601, v800)).
 fof(distinct,       axiom, $distinct(v0, v200, v599, v601, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y]: (in_lopen(X, v0, v599) & leq(v601, X) &\n"
+            "![X,Y]: ~(in_lopen(X, v0, v599) & leq(v601, X) &\n"
             "           in_lopen(Y, v0, v800) & leq(v200, Y))"
         ),
         "smt2_logic": "QF_LRA",
