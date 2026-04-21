@@ -292,10 +292,10 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v400, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z,W]: (in_lopen(X, v0, v400) & leq(v800, X) &"
-            "            in_lopen(Y, v0, v600) & leq(v100, Y) &\n"
-            "            in_lopen(Z, v0, v32)  & leq(v8,   Z) &\n"
-            "            in_lopen(W, v0, v300) & leq(v72,  W))"
+            "![X,Y,Z,W]: ~(in_lopen(X, v0, v400) & leq(v800, X) &"
+            "             in_lopen(Y, v0, v600) & leq(v100, Y) &\n"
+            "             in_lopen(Z, v0, v32)  & leq(v8,   Z) &\n"
+            "             in_lopen(W, v0, v300) & leq(v72,  W))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
@@ -418,10 +418,10 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z,W]: (in_lopen(X, v0, v800) & leq(v200, X) &"
-            "            in_lopen(Y, v0, v600) & leq(v100, Y) &\n"
-            "            in_lopen(Z, v0, v32)  & leq(v8,   Z) &\n"
-            "            in_lopen(W, v0, v72)  & leq(v300, W))"
+            "![X,Y,Z,W]: ~(in_lopen(X, v0, v800) & leq(v200, X) &"
+            "             in_lopen(Y, v0, v600) & leq(v100, Y) &\n"
+            "             in_lopen(Z, v0, v32)  & leq(v8,   Z) &\n"
+            "             in_lopen(W, v0, v72)  & leq(v300, W))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
@@ -544,10 +544,10 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z,W]: (in_lopen(X, v0, v800) & leq(v200, X) &"
-            "            in_lopen(Y, v0, v300) & leq(v600, Y) &\n"
-            "            in_lopen(Z, v0, v32)  & leq(v8,   Z) &\n"
-            "            in_lopen(W, v0, v300) & leq(v72,  W))"
+        "![X,Y,Z,W]: ~(in_lopen(X, v0, v800) & leq(v200, X) &"
+        "             in_lopen(Y, v0, v300) & leq(v600, Y) &\n"
+        "             in_lopen(Z, v0, v32)  & leq(v8,   Z) &\n"
+        "             in_lopen(W, v0, v300) & leq(v72,  W))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
@@ -559,15 +559,6 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v72, v100, v200, v300, v600, v800)).
     },
     # ──────────────────────────────────────────────────────────────────
     # ODRL364 — Mixed operators across 4 axes → box Compatible
-    #
-    # FIX 1: fof_extra_decls restored to correct set: v0,v8,v32,v100,
-    #         v150,v300,v500,v600,v800. The previous version had v16 and
-    #         v72 added (meant for ODRL370) while v150 and v600 were lost.
-    #         The conjecture references v600 (X eq constraint) and v150
-    #         (W lower bound) — both were undeclared = serious bug.
-    # FIX 2: needs_density: True → False. v150 is declared and witnesses
-    #         Y in open (100,500): less(v100,v150) & less(v150,v500) .
-    #         ORD001 was included unnecessarily causing E ResourceOut.
     # ──────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL364",
@@ -808,10 +799,10 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v100, v150, v300, v500, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z,W]: (in_closed(X, v600, v600) & in_closed(X, v800, v800) &"
-            "            less(v100, Y) & in_open(Y, v0, v500) &\n"
-            "            leq(v8,   Z) & in_lopen(Z, v0, v32) &\n"
-            "            in_lopen(W, v0, v300) & leq(v150, W))"
+            "![X,Y,Z,W]: ~(in_closed(X, v600, v600) & in_closed(X, v800, v800) &"
+            "             less(v100, Y) & in_open(Y, v0, v500) &\n"
+            "             leq(v8,   Z) & in_lopen(Z, v0, v32) &\n"
+            "             in_lopen(W, v0, v300) & leq(v150, W))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
@@ -1062,10 +1053,10 @@ fof(ord_v1080_v1920, axiom, less(v1080, v1920)).
 fof(distinct, axiom, $distinct(v0, v16, v48, v150, v480, v600, v640, v1080, v1920)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z,W]: (in_lopen(X, v0, v640)  & leq(v1920, X) &"
-            "            in_lopen(Y, v0, v1080) & leq(v480,  Y) &\n"
-            "            in_lopen(Z, v0, v48)   & leq(v16,   Z) &\n"
-            "            in_lopen(W, v0, v600)  & leq(v150,  W))"
+            "![X,Y,Z,W]: ~(in_lopen(X, v0, v640)  & leq(v1920, X) &"
+            "             in_lopen(Y, v0, v1080) & leq(v480,  Y) &\n"
+            "             in_lopen(Z, v0, v48)   & leq(v16,   Z) &\n"
+            "             in_lopen(W, v0, v600)  & leq(v150,  W))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
@@ -1330,13 +1321,7 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800, v1200
 (assert (not (and (<= x 1200.0) (<= y 800.0) (<= z 32.0) (<= w 150.0))))""",
     },
     # ──────────────────────────────────────────────────────────────────
-    # ODRL370 — All 4 axes open intervals → box Compatible (density)
-    #
-    # FIX: added v16 constant between v8 and v32 (+ 8 ordering facts
-    #      + updated $distinct). Z conjunct needs less(v8,Z) &
-    #      in_open(Z,v0,v32): no constant existed strictly between v8
-    #      and v32. With v16: less(v8,v16)  in_open(v16,v0,v32) .
-    #      Ground witnesses: X=v300, Y=v200, Z=v16, W=v100.
+    # ODRL370 — All 4 axes open intervals → box Compatible
     # ──────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL370",
@@ -1347,15 +1332,15 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800, v1200
         "status_fof":    "Theorem",
         "status_smt":    "sat",
         "difficulty":    "Medium",
-        "includes": ["ORD000-0.ax", "ORD001-0.ax", "AXIS000-0.ax"],
-        "needs_density": True,
+        "includes":      ["ORD000-0.ax", "AXIS000-0.ax"],
+        "needs_density": False,
         "description": (
             "Width:  gt 200 ∩ lt 800 = (200,800) ≠ ∅  Compatible\n"
             "Height: gt 100 ∩ lt 500 = (100,500) ≠ ∅  Compatible\n"
             "Depth:  gt 8   ∩ lt 32  = (8,32)    ≠ ∅  Compatible\n"
             "Alt:    gt 72  ∩ lt 300 = (72,300)  ≠ ∅  Compatible\n"
-            "All witnesses inside open intervals → requires ORD001-0.ax.\n"
-            "Ground witnesses: X=v300, Y=v200, Z=v16, W=v100.\n"
+            "Ground witnesses: X=v300, Y=v300, Z=v16, W=v100 (from chain).\n"
+            "No density needed — chain provides named witness in every open interval.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -1461,10 +1446,10 @@ fof(ord_v500_v800, axiom, less(v500, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v16, v32, v72, v100, v200, v300, v500, v800)).
 """,
         "fof_conjecture": (
-            "less(v200, v500) & in_open(v500, v0, v800) &\n"
-            "    less(v100, v300) & in_open(v300, v0, v500) &\n"
-            "    less(v8,   v16)  & in_open(v16,  v0, v32)  &\n"
-            "    less(v72,  v200) & in_open(v200, v0, v300)"
+            "?[X,Y,Z,W]: (less(v200, X) & in_open(X, v0, v800) &\n"
+            "             less(v100, Y) & in_open(Y, v0, v500) &\n"
+            "             less(v8,   Z) & in_open(Z, v0, v32)  &\n"
+            "             less(v72,  W) & in_open(W, v0, v300))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
@@ -1578,10 +1563,10 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v150, v200, v300, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z,W]: (in_open(X, v0, v600)  & leq(v600, X) &"
-            "            in_lopen(Y, v0, v800) & leq(v200, Y) &\n"
-            "            in_lopen(Z, v0, v32)  & leq(v8,   Z) &\n"
-            "            in_lopen(W, v0, v300) & leq(v150, W))"
+            "![X,Y,Z,W]: ~(in_open(X, v0, v600)  & leq(v600, X) &"
+            "             in_lopen(Y, v0, v800) & leq(v200, Y) &\n"
+            "             in_lopen(Z, v0, v32)  & leq(v8,   Z) &\n"
+            "             in_lopen(W, v0, v300) & leq(v150, W))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
