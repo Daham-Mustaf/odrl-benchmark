@@ -122,7 +122,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v24, v300, v500, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: (in_lopen(X, v0, v600) & leq(v800, X) &\n"
+            "![X,Y,Z]: ~(in_lopen(X, v0, v600) & leq(v800, X) &\n"
             "            in_lopen(Y, v0, v300) & leq(v500, Y) &\n"
             "            in_lopen(Z, v0, v8)   & leq(v24,  Z))"
         ),
@@ -229,7 +229,7 @@ fof(ord_v800_v1200, axiom, less(v800, v1200)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v200, v600, v800, v1200)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: (in_lopen(X, v0, v600)  & leq(v1200, X) &\n"
+            "![X,Y,Z]: ~(in_lopen(X, v0, v600)  & leq(v1200, X) &\n"
             "            in_lopen(Y, v0, v800)  & leq(v200,  Y) &\n"
             "            in_lopen(Z, v0, v32)   & leq(v8,    Z))"
         ),
@@ -337,7 +337,7 @@ fof(ord_v500_v800, axiom, less(v500, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v200, v300, v500, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: (in_lopen(X, v0, v800) & leq(v200, X) &\n"
+            "![X,Y,Z]: ~(in_lopen(X, v0, v800) & leq(v200, X) &\n"
             "            in_lopen(Y, v0, v300) & leq(v500, Y) &\n"
             "            in_lopen(Z, v0, v32)  & leq(v8,   Z))"
         ),
@@ -445,7 +445,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v24, v100, v200, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: (in_lopen(X, v0, v800) & leq(v200, X) &\n"
+            "![X,Y,Z]: ~(in_lopen(X, v0, v800) & leq(v200, X) &\n"
             "            in_lopen(Y, v0, v600) & leq(v100, Y) &\n"
             "            in_lopen(Z, v0, v8)   & leq(v24,  Z))"
         ),
@@ -551,7 +551,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v300, v500, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: (in_lopen(X, v0, v600) & leq(v800, X) &\n"
+            "![X,Y,Z]: ~(in_lopen(X, v0, v600) & leq(v800, X) &\n"
             "            in_lopen(Y, v0, v300) & leq(v500, Y) &\n"
             "            in_lopen(Z, v0, v32)  & leq(v8,   Z))"
         ),
@@ -759,131 +759,94 @@ fof(distinct, axiom, $distinct(v0, v16, v400, v600)).
 (assert (> x 0.0)) (assert (<= x 600.0)) (assert (>= x 600.0))
 (assert (> y 0.0)) (assert (<= y 400.0)) (assert (>= y 400.0))
 (assert (> z 0.0)) (assert (<= z 16.0))  (assert (>= z 16.0))""",
-    },
-    # ------------------------------------------------------------------
-    # ODRL347 — All three axes open overlap → Compatible (density)
-    # Paper: def:box-verdict Rule 2, lem:totality, ORD001-0.ax
-    # Width:  (200,800) ≠ ∅  Compatible (open witness needs density)
-    # Height: (100,500) ≠ ∅  Compatible (open witness needs density)
-    # Depth:  (8,32)    ≠ ∅  Compatible (open witness needs density)
-    # INCLUDE ORDER: ORD001 BEFORE AXIS000
-    # ------------------------------------------------------------------
-    {
-        "id":            "ODRL347",
-        "subdir":        "Box3D",
-        "name":          "All three axes open overlap → box Compatible",
-        "relation":      "conflict",
-        "verdict":       "Compatible",
-        "status_fof":    "Theorem",
-        "status_smt":    "sat",
-        "difficulty":    "Medium",
-        "includes":      ["ORD000-0.ax", "ORD001-0.ax", "AXIS000-0.ax"],
-        "needs_density": True,
-        "description": (
-            "Width:  gt 200 → (200,∞)  ∩  lt 800 → (0,800) = (200,800) ≠ ∅  Compatible\n"
-            "Height: gt 100 → (100,∞)  ∩  lt 500 → (0,500) = (100,500) ≠ ∅  Compatible\n"
-            "Depth:  gt 8   → (8,∞)    ∩  lt 32  → (0,32)  = (8,32)    ≠ ∅  Compatible\n"
-            "All witnesses inside open intervals → requires ORD001-0.ax (density)."
-        ),
-        "ttl": """\
+    },  
+  # ------------------------------------------------------------------
+# ODRL347 — All three axes open overlap → Compatible (density-dependent)
+# Paper: def:interval-denotation (open), thm:criterion (gg/ll cases)
+# Each open interval requires a strict interior witness; the named-
+# constant chain has no interior points in any of the three gaps, so
+# the proof genuinely requires ORD001-0.ax (density).
+#
+#   with    ORD001  -> Theorem          (Prover9, Vampire casc)
+#   without ORD001  -> CounterSatisfiable (Vampire fmb)
+# ------------------------------------------------------------------
+{
+    "id":            "ODRL347",
+    "subdir":        "Box3D",
+    "name":          "All three axes open overlap → box Compatible (density)",
+    "relation":      "compatible",
+    "verdict":       "Compatible",
+    "status_fof":    "Theorem",
+    "status_smt":    "sat",
+    "difficulty":    "Medium",
+    "needs_density": True,
+    "description": (
+        "Width:  intervals gt 200 and lt 800 share open (200, 800)        Compatible\n"
+        "Height: intervals gt 100 and lt 500 share open (100, 500)        Compatible\n"
+        "Depth:  intervals gt 8   and lt 32  share open (8, 32)           Compatible\n"
+        "All three conjuncts are existentials over open intervals with no\n"
+        "named interior witness; genuinely requires ORD001-0.ax (density).\n"
+    ),
+    "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
 drk:policyA a odrl:Set ;
-  odrl:permission [
-    odrl:action odrl:use ;
-    odrl:constraint [
-      odrl:and (
-        [ odrl:leftOperand oax:absoluteSizeWidth ;
-          odrl:operator odrl:gt ;
-          odrl:rightOperand "200"^^xsd:decimal ]
-        [ odrl:leftOperand oax:absoluteSizeHeight ;
-          odrl:operator odrl:gt ;
-          odrl:rightOperand "100"^^xsd:decimal ]
-        [ odrl:leftOperand oax:absoluteSizeDepth ;
-          odrl:operator odrl:gt ;
-          odrl:rightOperand "8"^^xsd:decimal ]
-      )
-    ]
-  ] .
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:and (
+      [ odrl:leftOperand oax:absoluteSizeWidth  ;
+        odrl:operator odrl:gt ; odrl:rightOperand "200"^^xsd:decimal ]
+      [ odrl:leftOperand oax:absoluteSizeHeight ;
+        odrl:operator odrl:gt ; odrl:rightOperand "100"^^xsd:decimal ]
+      [ odrl:leftOperand oax:absoluteSizeDepth  ;
+        odrl:operator odrl:gt ; odrl:rightOperand "8"^^xsd:decimal ]
+    ) ] ] .
 drk:policyB a odrl:Set ;
-  odrl:permission [
-    odrl:action odrl:use ;
-    odrl:constraint [
-      odrl:and (
-        [ odrl:leftOperand oax:absoluteSizeWidth ;
-          odrl:operator odrl:lt ;
-          odrl:rightOperand "800"^^xsd:decimal ]
-        [ odrl:leftOperand oax:absoluteSizeHeight ;
-          odrl:operator odrl:lt ;
-          odrl:rightOperand "500"^^xsd:decimal ]
-        [ odrl:leftOperand oax:absoluteSizeDepth ;
-          odrl:operator odrl:lt ;
-          odrl:rightOperand "32"^^xsd:decimal ]
-      )
-    ]
-  ] .""",
-"fof_extra_decls": """\
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:and (
+      [ odrl:leftOperand oax:absoluteSizeWidth  ;
+        odrl:operator odrl:lt ; odrl:rightOperand "800"^^xsd:decimal ]
+      [ odrl:leftOperand oax:absoluteSizeHeight ;
+        odrl:operator odrl:lt ; odrl:rightOperand "500"^^xsd:decimal ]
+      [ odrl:leftOperand oax:absoluteSizeDepth  ;
+        odrl:operator odrl:lt ; odrl:rightOperand "32"^^xsd:decimal ]
+    ) ] ] .""",
+    "fof_extra_decls": """\
+% Minimal named-constant chain: no named point lies strictly between any
+% adjacent pair, so all three open-interval witnesses must come from ORD001
+% (density). Do NOT add v16, v300, or other intermediate constants here —
+% they would let the existentials be discharged without density and
+% defeat the test.
 fof(val_v0,        axiom, val(v0)).
 fof(val_v8,        axiom, val(v8)).
-fof(val_v16,       axiom, val(v16)).
 fof(val_v32,       axiom, val(v32)).
 fof(val_v100,      axiom, val(v100)).
 fof(val_v200,      axiom, val(v200)).
-fof(val_v300,      axiom, val(v300)).
 fof(val_v500,      axiom, val(v500)).
 fof(val_v800,      axiom, val(v800)).
 fof(ord_v0_v8,     axiom, less(v0,   v8)).
-fof(ord_v0_v16,    axiom, less(v0,   v16)).
-fof(ord_v0_v32,    axiom, less(v0,   v32)).
-fof(ord_v0_v100,   axiom, less(v0,   v100)).
-fof(ord_v0_v200,   axiom, less(v0,   v200)).
-fof(ord_v0_v300,   axiom, less(v0,   v300)).
-fof(ord_v0_v500,   axiom, less(v0,   v500)).
-fof(ord_v0_v800,   axiom, less(v0,   v800)).
-fof(ord_v8_v16,    axiom, less(v8,   v16)).
 fof(ord_v8_v32,    axiom, less(v8,   v32)).
-fof(ord_v8_v100,   axiom, less(v8,   v100)).
-fof(ord_v8_v200,   axiom, less(v8,   v200)).
-fof(ord_v8_v300,   axiom, less(v8,   v300)).
-fof(ord_v8_v500,   axiom, less(v8,   v500)).
-fof(ord_v8_v800,   axiom, less(v8,   v800)).
-fof(ord_v16_v32,   axiom, less(v16,  v32)).
-fof(ord_v16_v100,  axiom, less(v16,  v100)).
-fof(ord_v16_v200,  axiom, less(v16,  v200)).
-fof(ord_v16_v300,  axiom, less(v16,  v300)).
-fof(ord_v16_v500,  axiom, less(v16,  v500)).
-fof(ord_v16_v800,  axiom, less(v16,  v800)).
 fof(ord_v32_v100,  axiom, less(v32,  v100)).
-fof(ord_v32_v200,  axiom, less(v32,  v200)).
-fof(ord_v32_v300,  axiom, less(v32,  v300)).
-fof(ord_v32_v500,  axiom, less(v32,  v500)).
-fof(ord_v32_v800,  axiom, less(v32,  v800)).
 fof(ord_v100_v200, axiom, less(v100, v200)).
-fof(ord_v100_v300, axiom, less(v100, v300)).
-fof(ord_v100_v500, axiom, less(v100, v500)).
-fof(ord_v100_v800, axiom, less(v100, v800)).
-fof(ord_v200_v300, axiom, less(v200, v300)).
 fof(ord_v200_v500, axiom, less(v200, v500)).
-fof(ord_v200_v800, axiom, less(v200, v800)).
-fof(ord_v300_v500, axiom, less(v300, v500)).
-fof(ord_v300_v800, axiom, less(v300, v800)).
 fof(ord_v500_v800, axiom, less(v500, v800)).
-fof(distinct, axiom, $distinct(v0, v8, v16, v32, v100, v200, v300, v500, v800)).
+fof(distinct,      axiom, $distinct(v0, v8, v32, v100, v200, v500, v800)).
 """,
-"fof_conjecture": (
-    "less(v200, v500) & in_open(v500, v0, v800) &\n"
-    "    less(v100, v300) & in_open(v300, v0, v500) &\n"
-    "    less(v8,   v16)  & in_open(v16,  v0, v32)"
-),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)",
-        "smt2_asserts": """\
-(assert (> x 0.0)) (assert (> x 200.0)) (assert (< x 800.0))
-(assert (> y 0.0)) (assert (> y 100.0)) (assert (< y 500.0))
-(assert (> z 0.0)) (assert (> z 8.0))   (assert (< z 32.0))""",
-    },
+    "fof_conjecture": (
+        "?[X,Y,Z]: (in_open(X, v200, v800) & "
+                   "in_open(Y, v100, v500) & "
+                   "in_open(Z, v8,   v32))"
+    ),
+    "smt2_logic": "QF_LRA",
+    "smt2_decls": "(declare-const x Real)\n"
+                  "(declare-const y Real)\n"
+                  "(declare-const z Real)",
+    "smt2_asserts": """\
+(assert (> x 200.0))(assert (< x 800.0))
+(assert (> y 100.0))(assert (< y 500.0))
+(assert (> z 8.0))(assert (< z 32.0))""",
+},
     # ------------------------------------------------------------------
     # ODRL348 — Depth open/closed boundary conflict kills 3D box
     # Paper: def:box-verdict Rule 1, thm:criterion (oc case on depth)
@@ -976,7 +939,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v16, v100, v200, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: (in_lopen(X, v0, v800) & leq(v200, X) &\n"
+            "![X,Y,Z]: ~(in_lopen(X, v0, v800) & leq(v200, X) &\n"
             "            in_lopen(Y, v0, v600) & leq(v100, Y) &\n"
             "            in_open(Z,  v0, v16)  & leq(v16,  Z))"
         ),
@@ -1288,7 +1251,7 @@ fof(ord_v600_v1200, axiom, less(v600, v1200)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v400, v600, v1200)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: (in_lopen(X, v0, v600)  & leq(v1200, X) &\n"
+            "![X,Y,Z]: ~(in_lopen(X, v0, v600)  & leq(v1200, X) &\n"
             "            in_lopen(Y, v0, v600)  & leq(v400,  Y) &\n"
             "            in_lopen(Z, v0, v32)   & leq(v8,    Z))"
         ),
