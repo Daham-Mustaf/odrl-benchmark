@@ -121,6 +121,6 @@ fof(or_sound_2branch, axiom,
       axis_conflict(A2lo,A2hi,B1lo,B1hi) &
       axis_conflict(A2lo,A2hi,B2lo,B2hi))
      =>
-     ~?[X]: (
+     ![X]: ~(
        (in_closed(X,A1lo,A1hi) | in_closed(X,A2lo,A2hi)) &
        (in_closed(X,B1lo,B1hi) | in_closed(X,B2lo,B2hi))))).

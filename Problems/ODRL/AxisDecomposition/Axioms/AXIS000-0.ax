@@ -51,7 +51,7 @@ fof(in_open, axiom, ![X,A,B]:
 % ==========================================================================
 fof(axis_conflict_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
     (axis_conflict(I1lo,I1hi,I2lo,I2hi) <=>
-     ~?[X]: (in_closed(X,I1lo,I1hi) & in_closed(X,I2lo,I2hi)))).
+     ![X]: ~(in_closed(X,I1lo,I1hi) & in_closed(X,I2lo,I2hi)))).
 fof(axis_compatible_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
     (axis_compatible(I1lo,I1hi,I2lo,I2hi) <=>
      ?[X]: (in_closed(X,I1lo,I1hi) & in_closed(X,I2lo,I2hi)))).
