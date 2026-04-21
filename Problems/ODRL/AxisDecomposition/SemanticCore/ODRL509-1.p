@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : ODRL509-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : thm:aabb — half-open right-closed (l,u] is non-empty (density)
+% Problem  : thm:aabb — half-open right-closed (l,u] is non-empty
 % Version  : 1.0
-% English  : thm:aabb — half-open right-closed (l,u] is non-empty (density)
+% English  : thm:aabb — half-open right-closed (l,u] is non-empty
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -18,7 +18,6 @@
 %           : Policy source: Policies/ODRL509-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
-include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0,        axiom, val(v0)).

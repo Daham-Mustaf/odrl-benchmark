@@ -1,4 +1,4 @@
-; ODRL502 — lem:totality — lt denotation is non-empty (density)
+; ODRL502 — lem:totality — lt denotation is non-empty
 (set-logic QF_LRA)
 (declare-const x Real)
 (assert (> x 0.0))
