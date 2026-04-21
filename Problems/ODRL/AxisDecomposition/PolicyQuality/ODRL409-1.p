@@ -7,7 +7,7 @@
 %           : Height: gt 100 ∩ lt 500 = (100,500) ≠ ∅ Compatible
 %           : Depth:  gt 8   ∩ lt 32  = (8,32)    ≠ ∅ Compatible
 %           : Alt:    gt 72  ∩ lt 300 = (72,300)  ≠ ∅ Compatible
-%           : All witnesses inside open intervals — requires ORD001-0.ax.
+%           : Witnesses available from named-constant chain; no density required.
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -18,11 +18,10 @@
 % SPC      : FOF_THM_RFN
 %
 % Comments : Axis decomposition tier. arXiv:2602.19878.
-%           : Requires Axioms/ORD000-0.ax + Axioms/ORD001-0.ax + Axioms/AXIS000-0.ax.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL409-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
-include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────

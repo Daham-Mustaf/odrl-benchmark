@@ -231,8 +231,8 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800)).
 """,
         "fof_conjecture": (
-            "![X,Y]: ~(in_open(X, v0, v600) & leq(v600, X) &\n"
-            "          in_lopen(Y, v0, v800) & leq(v200, Y))"
+            "![X,Y]: ~(in_lopen(X, v0, v400) & leq(v800, X) &\n"
+            "          in_lopen(Y, v0, v600) & leq(v200, Y))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)",
@@ -785,18 +785,19 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v72, v300, v480, v599, v601, v1080))
         "subdir":        "PolicyQuality",
         "name":          "4D all open intervals — density (9 constants)",
         "relation":      "conflict",
-        "verdict":       "Compatible",
-        "status_fof":    "Theorem",
-        "status_smt":    "sat",
-        "difficulty":    "Hard",
-        "needs_density": True,
-        "description": (
-            "Width:  gt 200 ∩ lt 800 = (200,800) ≠ ∅ Compatible\n"
-            "Height: gt 100 ∩ lt 500 = (100,500) ≠ ∅ Compatible\n"
-            "Depth:  gt 8   ∩ lt 32  = (8,32)    ≠ ∅ Compatible\n"
-            "Alt:    gt 72  ∩ lt 300 = (72,300)  ≠ ∅ Compatible\n"
-            "All witnesses inside open intervals — requires ORD001-0.ax.\n"
-        ),
+          "verdict": "Compatible",
+          "status_fof": "Theorem",
+          "status_smt": "sat",
+          "difficulty": "Hard",
+          "needs_density": False,   
+          "description": (
+              "Width:  gt 200 ∩ lt 800 = (200,800) ≠ ∅ Compatible\n"
+              "Height: gt 100 ∩ lt 500 = (100,500) ≠ ∅ Compatible\n"
+              "Depth:  gt 8   ∩ lt 32  = (8,32)    ≠ ∅ Compatible\n"
+              "Alt:    gt 72  ∩ lt 300 = (72,300)  ≠ ∅ Compatible\n"
+              "Witnesses available from named-constant chain; no density required.\n"
+            ),
+  
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
