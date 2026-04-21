@@ -71,8 +71,8 @@ fof(ord_v601_v1080, axiom, less(v601, v1080)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v72, v300, v480, v599, v601, v1080)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl408, conjecture,
-    ~?[X,Y,Z,W]: (in_lopen(X, v0, v599) & leq(v601, X) &
-            in_lopen(Y, v0, v1080) & leq(v480, Y) &
-            in_lopen(Z, v0, v32)   & leq(v8,   Z) &
-            in_lopen(W, v0, v300)  & leq(v72,  W))).
+    ![X,Y,Z,W]: ~(in_lopen(X, v0, v599) & leq(v601, X) &
+             in_lopen(Y, v0, v1080) & leq(v480, Y) &
+             in_lopen(Z, v0, v32)   & leq(v8,   Z) &
+             in_lopen(W, v0, v300)  & leq(v72,  W))).
 %--------------------------------------------------------------------------

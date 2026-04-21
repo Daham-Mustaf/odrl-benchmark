@@ -7,8 +7,8 @@
 %           : Height: gt 100 ∩ lt 500 = (100,500) ≠ ∅  Compatible
 %           : Depth:  gt 8   ∩ lt 32  = (8,32)    ≠ ∅  Compatible
 %           : Alt:    gt 72  ∩ lt 300 = (72,300)  ≠ ∅  Compatible
-%           : All witnesses inside open intervals → requires ORD001-0.ax.
-%           : Ground witnesses: X=v300, Y=v200, Z=v16, W=v100.
+%           : Ground witnesses: X=v300, Y=v300, Z=v16, W=v100 (from chain).
+%           : No density needed — chain provides named witness in every open interval.
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -19,11 +19,10 @@
 % SPC      : FOF_THM_RFN
 %
 % Comments : Axis decomposition tier. arXiv:2602.19878.
-%           : Requires Axioms/ORD000-0.ax + Axioms/ORD001-0.ax + Axioms/AXIS000-0.ax.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL370-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
-include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
@@ -85,8 +84,8 @@ fof(ord_v500_v800, axiom, less(v500, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v16, v32, v72, v100, v200, v300, v500, v800)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl370, conjecture,
-    less(v200, v500) & in_open(v500, v0, v800) &
-    less(v100, v300) & in_open(v300, v0, v500) &
-    less(v8,   v16)  & in_open(v16,  v0, v32)  &
-    less(v72,  v200) & in_open(v200, v0, v300)).
+    ?[X,Y,Z,W]: (less(v200, X) & in_open(X, v0, v800) &
+             less(v100, Y) & in_open(Y, v0, v500) &
+             less(v8,   Z) & in_open(Z, v0, v32)  &
+             less(v72,  W) & in_open(W, v0, v300))).
 %--------------------------------------------------------------------------

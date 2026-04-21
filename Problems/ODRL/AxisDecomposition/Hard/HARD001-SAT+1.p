@@ -15,8 +15,9 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : SAT companion for HARD001+1.p.
-%           : No conjecture — prover finds a model of the hypothesis set.
+% Comments : SAT companion for HARD001+1.p. No conjecture — a model finder
+%           : (Mace4, Paradox, Vampire-FMB) should return a finite model
+%           : establishing satisfiability of the hypothesis set.
 %           : Policy source: Policies/HARD001-policy.ttl
 %--------------------------------------------------------------------------
 
@@ -25,14 +26,16 @@ include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').
 include('Axioms/PREC000-0.ax').
 include('Axioms/COMPL000-0.ax').
+
 % Ordering chain: n0 < n3 < n5 < n10 < n20
-fof(h_0_3,    axiom, less(n0,n3)).
-fof(h_3_5,    axiom, less(n3,n5)).
-fof(h_5_10,   axiom, less(n5,n10)).
-fof(h_10_20,  axiom, less(n10,n20)).
-% Domain bounds
+fof(h_0_3,   axiom, less(n0,n3)).
+fof(h_3_5,   axiom, less(n3,n5)).
+fof(h_5_10,  axiom, less(n5,n10)).
+fof(h_10_20, axiom, less(n10,n20)).
+
+% Domain bounds (sentinel infimum/supremum used by HARD001)
 fof(h_inf_lb, axiom, ![X]: leq(ninf,X)).
 fof(h_sup_ub, axiom, ![X]: leq(X,nsup)).
-% SAT witness: the ordering chain is satisfiable in any dense total order.
-% No conjecture — model finder confirms consistency.
-fof(sat_witness, axiom, less(n0,n20)).
+
+% 7 distinct domain elements needed: n0, n3, n5, n10, n20, ninf, nsup
+fof(distinct, axiom, $distinct(ninf, n0, n3, n5, n10, n20, nsup)).

@@ -105,8 +105,8 @@ fof(ord_v599_5_v600, axiom, less(v599_5, v600)).
 fof(distinct, axiom, $distinct(v1, v2, v3, v4, v15_5, v16, v71_5, v72, v479_5, v480, v599_5, v600)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl412, conjecture,
-    ~?[X,Y,Z,W]: (in_open(X, v1, v599_5) & leq(v600, X) &
-            less(v479_5, Y) & in_open(Y, v2, v480) &
-            less(v15_5,  Z) & in_open(Z, v3, v16)  &
-            in_open(W, v4, v71_5) & leq(v72, W))).
+    ![X,Y,Z,W]: ~(in_open(X, v1, v599_5) & leq(v600, X) &
+             less(v479_5, Y) & in_open(Y, v2, v480) &
+             less(v15_5,  Z) & in_open(Z, v3, v16)  &
+             in_open(W, v4, v71_5) & leq(v72, W))).
 %--------------------------------------------------------------------------
