@@ -411,18 +411,18 @@ fof(perm_l_unique, axiom,
     #        TTL: angle brackets removed
     # =========================================================================
     {
-        "id": "GRND023-policy-issuance", "subdir": "Discriminating",
-        "name": "Policy issuance: issue/1 injectivity (distinct rules => distinct acts)",
-        "status_fof": "Theorem",
-        "status_smt": "unsat",
-        "fof_axioms": [],  # issue/1 injectivity is in Layer0 (GRND000-0.ax)
-        "description": """\
+    "id": "GRND023-policy-issuance", "subdir": "Discriminating",
+    "name": "Policy issuance: issue/1 injectivity (distinct rules => distinct acts)",
+    "status_fof": "Theorem",
+    "status_smt": "unsat",
+    "fof_axioms": [],
+    "description": """\
 % Two distinct rules pi1 != pi2.
 % Layer0 issue_injective: issue(A)=issue(B) => A=B.
 % Conjecture (FOF): issue(pi1) != issue(pi2).
 % SMT2 negated: (assert (= (issue pi1) (issue pi2))) with pi1 != pi2.
 % Injectivity forces pi1=pi2 => contradiction with distinctness.""",
-        "ttl": """\
+    "ttl": """\
 @prefix odrl:   <http://www.w3.org/ns/odrl/2/> .
 @prefix drk:    <http://w3id.org/drk/ontology/> .
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
@@ -446,13 +446,15 @@ drk:MuseumCollectionAPI     a dcat:DataService .
 drk:PhilharmonieBerlin      a schema:Organization .
 drk:StaatlicheMuseenBerlin  a schema:Organization .
 drk:FraunhoferFIT           a schema:Organization .""",
-        "fof_extra_decls": """\
+    "fof_extra_decls": """\
+% Layer 0 axiom (inlined): issue/1 is injective
+fof(issue_injective, axiom,
+    ! [A,B] : ( ( rule(A) & rule(B) & issue(A) = issue(B) ) => A = B ) ).
 fof(rule_pi1,     axiom, rule(pi1)).
 fof(rule_pi2,     axiom, rule(pi2)).
 fof(pi1_neq_pi2,  axiom, pi1 != pi2).
 """,
-        "fof_conjecture": "issue(pi1) != issue(pi2)",
-        "smt2_extra_decls": """\
+    "smt2_extra_decls": """\
 (declare-const pi1  Rule)
 (declare-const pi2  Rule)
 ; Distinctness of the two rules
@@ -460,9 +462,10 @@ fof(pi1_neq_pi2,  axiom, pi1 != pi2).
 ; Negated conjecture: assume issue(pi1) = issue(pi2) — should be unsat
 ; via Layer0 injectivity: issue(A)=issue(B) => A=B, contradicting pi1!=pi2
 """,
-        "smt2_conjecture": """\
+    "fof_conjecture": "issue(pi1) != issue(pi2)",
+    "smt2_conjecture": """\
 (assert (= (issue pi1) (issue pi2)))""",
-    },
+},
 
     # =========================================================================
     # GRND024 — obl + proh on same target = Satisfiable (no direct conflict)

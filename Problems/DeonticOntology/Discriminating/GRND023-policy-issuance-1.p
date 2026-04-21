@@ -60,6 +60,9 @@
 %--------------------------------------------------------------------------
 % Ground instance (gamma)
 %--------------------------------------------------------------------------
+% Layer 0 axiom (inlined): issue/1 is injective
+fof(issue_injective, axiom,
+    ! [A,B] : ( ( rule(A) & rule(B) & issue(A) = issue(B) ) => A = B ) ).
 fof(rule_pi1,     axiom, rule(pi1)).
 fof(rule_pi2,     axiom, rule(pi2)).
 fof(pi1_neq_pi2,  axiom, pi1 != pi2).
