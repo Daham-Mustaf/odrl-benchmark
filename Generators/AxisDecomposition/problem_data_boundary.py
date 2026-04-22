@@ -138,7 +138,7 @@ fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(distinct, axiom, $distinct(v0, v600)).
 """,
         "fof_conjecture": (
-            "~?[X]: (in_lopen(X, v0, v600) & less(v600, X))"
+            "![X]: ~(in_lopen(X, v0, v600) & less(v600, X))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
@@ -198,7 +198,7 @@ fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(distinct, axiom, $distinct(v0, v600)).
 """,
         "fof_conjecture": (
-            "~?[X]: (in_open(X, v0, v600) & leq(v600, X))"
+            "![X]: ~(in_open(X, v0, v600) & leq(v600, X))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
@@ -258,7 +258,7 @@ fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(distinct, axiom, $distinct(v0, v600)).
 """,
         "fof_conjecture": (
-            "~?[X]: (in_open(X, v0, v600) & less(v600, X))"
+            "![X]: ~(in_open(X, v0, v600) & less(v600, X))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
@@ -438,7 +438,7 @@ fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(distinct, axiom, $distinct(v0, v600)).
 """,
         "fof_conjecture": (
-            "~?[X]: (in_closed(X, v600, v600) & in_open(X, v0, v600))"
+            "![X]: ~(in_closed(X, v600, v600) & in_open(X, v0, v600))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
@@ -498,7 +498,7 @@ fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(distinct, axiom, $distinct(v0, v600)).
 """,
         "fof_conjecture": (
-            "~?[X]: (in_closed(X, v600, v600) & less(v600, X))"
+            "![X]: ~(in_closed(X, v600, v600) & less(v600, X))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
@@ -771,8 +771,8 @@ fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(distinct, axiom, $distinct(v0, v400, v600)).
 """,
         "fof_conjecture": (
-            "~?[X,Y]: (in_lopen(X, v0, v600) & leq(v600, X) &\n"
-            "            in_open(Y, v0, v400) & leq(v400, Y))"
+            "![X,Y]: ~(in_lopen(X, v0, v600) & leq(v600, X) &\n"
+            "          in_open(Y, v0, v400) & leq(v400, Y))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)",
@@ -856,9 +856,9 @@ fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(distinct, axiom, $distinct(v0, v200, v400, v600)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: (in_lopen(X, v0, v600) & leq(v600, X) &\n"
-            "            in_lopen(Y, v0, v400) & less(v400, Y) &\n"
-            "            in_lopen(Z, v0, v200) & leq(v200, Z))"
+            "![X,Y,Z]: ~(in_lopen(X, v0, v600) & leq(v600, X) &\n"
+            "           in_lopen(Y, v0, v400) & less(v400, Y) &\n"
+            "           in_lopen(Z, v0, v200) & leq(v200, Z))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)",

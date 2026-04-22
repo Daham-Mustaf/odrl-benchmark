@@ -28,5 +28,5 @@ fof(ord_v0_v600, axiom, less(v0, v600)).
 fof(distinct, axiom, $distinct(v0, v600)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl427, conjecture,
-    ~?[X]: (in_closed(X, v600, v600) & less(v600, X))).
+    ![X]: ~(in_closed(X, v600, v600) & less(v600, X))).
 %--------------------------------------------------------------------------
