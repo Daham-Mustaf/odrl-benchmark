@@ -8,7 +8,7 @@
 ; Source   : Mustafa, D. (2026)
 ; Names    : ODRL450-1.smt2
 ; Status   : sat
-; Comments : Verdict: Compatible  Category: LogicalOr  Difficulty: Hard
+; Comments : Verdict: Compatible  Category: LogicalOr  Difficulty: Medium
 ; --------------------------------------------------------------------------
 
 (set-logic QF_LRA)

@@ -182,8 +182,8 @@ fof(ord_v400_v800, axiom, less(v400, v800)).
 fof(distinct, axiom, $distinct(v0, v100, v200, v400, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y]: ((in_lopen(X, v0, v400) | in_lopen(Y, v0, v100)) &\n"
-            "            (leq(v800, X) & leq(v200, Y)))"
+            "![X,Y]: ~((in_lopen(X, v0, v400) | in_lopen(Y, v0, v100)) &\n"
+            "          (leq(v800, X) & leq(v200, Y)))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)",
@@ -350,8 +350,8 @@ fof(ord_v400_v800, axiom, less(v400, v800)).
 fof(distinct, axiom, $distinct(v0, v100, v200, v400, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y]: ((in_lopen(X, v0, v400) & in_lopen(Y, v0, v100)) &\n"
-            "            (leq(v800, X) | leq(v200, Y)))"
+            "![X,Y]: ~((in_lopen(X, v0, v400) & in_lopen(Y, v0, v100)) &\n"
+            "          (leq(v800, X) | leq(v200, Y)))"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)",
@@ -523,7 +523,7 @@ fof(ord_v200_v400, axiom, less(v200, v400)).
 fof(distinct, axiom, $distinct(v0, v50, v100, v200, v400)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: ((in_lopen(X, v0, v200) | in_lopen(Y, v0, v100) | in_lopen(Z, v0, v50)) &\n"
+            "![X,Y,Z]: ~((in_lopen(X, v0, v200) | in_lopen(Y, v0, v100) | in_lopen(Z, v0, v50)) &\n"
             "            (leq(v400, X) & leq(v200, Y) & leq(v100, Z)))"
         ),
         "smt2_logic": "QF_LRA",
@@ -888,13 +888,14 @@ fof(distinct, axiom, $distinct(v0, v100, v200, v300, v400, v800)).
         "verdict":       "Compatible",
         "status_fof":    "Theorem",
         "status_smt":    "sat",
-        "difficulty":    "Hard",
-        "needs_density": True,
+        "difficulty":    "Medium",
+        "needs_density": False,
         "description": (
             "PolicyA: width lt 600 OR height gt 200 (odrl:or)\n"
             "PolicyB: width gt 400 AND height lt 800 (odrl:and)\n"
             "Branch (A1,B): X∈(0,600)∩(400,∞)=(400,600) ≠ ∅ → Compatible\n"
-            "Witness inside open interval (400,600) → requires ORD001-0.ax.\n"
+            "Named witnesses X=v600 (via right disjunct), Y=v400 suffice.\n"
+            "No density needed.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -1054,7 +1055,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v50, v100, v200, v400, v600, v800)).
 """,
         "fof_conjecture": (
-            "~?[X,Y,Z]: ((in_closed(X, v600, v600) | in_open(Y, v0, v200) | less(v100, Z)) &\n"
+            "![X,Y,Z]: ~((in_closed(X, v600, v600) | in_open(Y, v0, v200) | less(v100, Z)) &\n"
             "            (less(v800, X) & leq(v400, Y) & in_lopen(Z, v0, v50)))"
         ),
         "smt2_logic": "QF_LRA",

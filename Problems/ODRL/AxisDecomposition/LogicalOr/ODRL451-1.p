@@ -55,6 +55,6 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v50, v100, v200, v400, v600, v800)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl451, conjecture,
-    ~?[X,Y,Z]: ((in_closed(X, v600, v600) | in_open(Y, v0, v200) | less(v100, Z)) &
+    ![X,Y,Z]: ~((in_closed(X, v600, v600) | in_open(Y, v0, v200) | less(v100, Z)) &
             (less(v800, X) & leq(v400, Y) & in_lopen(Z, v0, v50)))).
 %--------------------------------------------------------------------------

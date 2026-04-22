@@ -6,7 +6,8 @@
 % English  : PolicyA: width lt 600 OR height gt 200 (odrl:or)
 %           : PolicyB: width gt 400 AND height lt 800 (odrl:and)
 %           : Branch (A1,B): X∈(0,600)∩(400,∞)=(400,600) ≠ ∅ → Compatible
-%           : Witness inside open interval (400,600) → requires ORD001-0.ax.
+%           : Named witnesses X=v600 (via right disjunct), Y=v400 suffice.
+%           : No density needed.
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
 % Source   : Mustafa, D. (2026)
@@ -17,11 +18,10 @@
 % SPC      : FOF_THM_RFN
 %
 % Comments : Axis decomposition tier. arXiv:2602.19878.
-%           : Requires Axioms/ORD000-0.ax + Axioms/ORD001-0.ax + Axioms/AXIS000-0.ax.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL450-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
-include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
