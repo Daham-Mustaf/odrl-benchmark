@@ -39,7 +39,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v300, v400, v500, v600, v800)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl648, conjecture,
-    ~?[X]: (
+    ![X]: ~(
     (in_closed(X,v0,v400) | in_closed(X,v0,v300)) &
     (in_closed(X,v600,v800) | in_closed(X,v500,v800)))).
 %--------------------------------------------------------------------------
