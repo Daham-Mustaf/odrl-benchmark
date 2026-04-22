@@ -341,7 +341,7 @@ fof(distinct, axiom, $distinct(v0, v300, v400, v500, v600, v800)).
         #   A2=[v0,v300] vs B1=[v600,v800]: disjoint (v300 < v500 < v600)
         #   A2=[v0,v300] vs B2=[v500,v800]: disjoint (v300 < v500)
         "fof_conjecture": (
-            "~?[X]: (\n"
+            "![X]: ~(\n"
             "    (in_closed(X,v0,v400) | in_closed(X,v0,v300)) &\n"
             "    (in_closed(X,v600,v800) | in_closed(X,v500,v800)))"
         ),
