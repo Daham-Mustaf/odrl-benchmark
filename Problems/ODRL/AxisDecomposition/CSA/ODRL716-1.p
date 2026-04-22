@@ -31,5 +31,5 @@ fof(ord_v600_v800,axiom,less(v600,v800)).
 fof(distinct,axiom,$distinct(v0,v600,v800)).
 % ─── Conjecture (WRONG — countermodel exists) ──────────────────────
 fof(odrl716, conjecture,
-    ~?[X]: (in_open(X,v0,v800) & in_open(X,v0,v600))).
+    ![X]: ~(in_open(X,v0,v800) & in_open(X,v0,v600))).
 %--------------------------------------------------------------------------
