@@ -65,7 +65,7 @@ fof(ord_v700_v800, axiom, less(v700, v800)).
 fof(distinct, axiom, $distinct(v0, v100, v200, v300, v500, v600, v700, v800)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl470, conjecture,
-    ~?[X]: (
+    ![X]: ~(
   ((in_lopen(X, v0, v100) & ~(leq(v500, X) & in_lopen(X, v0, v600))) |
    (~in_lopen(X, v0, v100) & (leq(v500, X) & in_lopen(X, v0, v600)))) &
   (((leq(v200, X) & in_lopen(X, v0, v300)) & ~(leq(v700, X) & in_lopen(X, v0, v800))) |
