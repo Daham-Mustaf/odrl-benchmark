@@ -28,20 +28,20 @@ include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and witness axioms ────────────────────────────────
-fof(val_v1,axiom,val(v1)).
-fof(val_v2,axiom,val(v2)).
-fof(val_v3,axiom,val(v3)).
-fof(val_v4,axiom,val(v4)).
-fof(val_v5,axiom,val(v5)).
-fof(val_v6,axiom,val(v6)).
-fof(ord_v1_v2,axiom,less(v1,v2)).
-fof(ord_v2_v3,axiom,less(v2,v3)).
-fof(ord_v3_v4,axiom,less(v3,v4)).
-fof(ord_v4_v5,axiom,less(v4,v5)).
-fof(ord_v5_v6,axiom,less(v5,v6)).
-fof(distinct,axiom,$distinct(v1,v2,v3,v4,v5,v6)).
-fof(cf_width, axiom, axis_conflict(v1, v2, v3, v4)).
-fof(cf_height,axiom, axis_conflict(v2, v3, v4, v5)).
-fof(cf_depth, axiom, axis_conflict(v3, v4, v5, v6)).
+fof(val_v1, axiom, val(v1)).
+fof(val_v2, axiom, val(v2)).
+fof(val_v3, axiom, val(v3)).
+fof(val_v4, axiom, val(v4)).
+fof(val_v5, axiom, val(v5)).
+fof(val_v6, axiom, val(v6)).
+fof(ord_v1_v2, axiom, less(v1, v2)).
+fof(ord_v2_v3, axiom, less(v2, v3)).
+fof(ord_v3_v4, axiom, less(v3, v4)).
+fof(ord_v4_v5, axiom, less(v4, v5)).
+fof(ord_v5_v6, axiom, less(v5, v6)).
+fof(distinct, axiom, $distinct(v1, v2, v3, v4, v5, v6)).
+fof(cf_width,  axiom, axis_conflict(v1, v2, v3, v4)).
+fof(cf_height, axiom, axis_conflict(v2, v3, v4, v5)).
+fof(cf_depth,  axiom, axis_conflict(v3, v4, v5, v6)).
 % ─── No conjecture — satisfiability check ───────────────────────────
 %--------------------------------------------------------------------------

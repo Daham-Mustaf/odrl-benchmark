@@ -17,6 +17,6 @@
 (declare-const z Real)
 (assert (>= x 200.0))(assert (<= x 800.0))
 (assert (>= y 100.0))(assert (<= y 600.0))
-(assert (>= z 8.0))(assert (<= z 32.0))
+(assert (>= z 8.0))  (assert (<= z 32.0))
 (check-sat)
 (exit)

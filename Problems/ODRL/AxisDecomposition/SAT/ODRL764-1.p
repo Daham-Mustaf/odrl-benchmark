@@ -3,8 +3,10 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : SAT SemanticCore: verdict algebra constants are consistent
 % Version  : 1.0
-% English  : conflict, compatible, unknown are distinct is_verdict constants.
-%           : Axioms consistent.
+% English  : AXIS000 verdict algebra: conflict, compatible, unknown are three
+%           : distinct is_verdict constants. Axioms are consistent, no contradiction.
+%           : Meta-level consistency check; TTL is a minimal Set placeholder since
+%           : the scenario is about the verdict ontology itself, not a concrete policy.
 %
 % Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
 % Source   : Mustafa, D. (2026)
@@ -23,6 +25,6 @@ include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and witness axioms ────────────────────────────────
-fof(v_distinct,axiom,conflict != compatible & compatible != unknown & conflict != unknown).
+fof(v_distinct, axiom, conflict != compatible & compatible != unknown & conflict != unknown).
 % ─── No conjecture — satisfiability check ───────────────────────────
 %--------------------------------------------------------------------------
