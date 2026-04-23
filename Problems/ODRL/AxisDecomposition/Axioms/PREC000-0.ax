@@ -11,7 +11,7 @@
 %           : Also defines disjoint/8 encoding the full Conflict Criterion
 %           : and operator tag axioms (lower_tag/2, upper_tag/2).
 %
-% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : PREC000-0.ax

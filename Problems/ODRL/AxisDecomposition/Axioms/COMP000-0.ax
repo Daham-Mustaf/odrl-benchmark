@@ -14,7 +14,7 @@
 %           : or_sound_2branch: 1D helper for disjunction soundness only;
 %           : uses single variable X, not multi-axis box vectors.
 %
-% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : COMP000-0.ax

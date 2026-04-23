@@ -24,7 +24,6 @@
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 include('Axioms/PROJ000-0.ax').
-
 fof(order_0_5,   axiom, less(n0,n5)).
 fof(order_5_10,  axiom, less(n5,n10)).
 fof(order_10_15, axiom, less(n10,n15)).

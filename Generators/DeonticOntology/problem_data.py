@@ -71,7 +71,7 @@ PROBLEMS = [
     #   ensemble   = drk:BerlinerEnsemble (assigner)
     #   read       = odrl:read
     #   theater_ds = drk:TheaterShowtimeDataset
-    # Bug 5 fix: fof_axioms includes ALL Layer1 axioms (paper §6.2 claim).
+    # fof_axioms includes ALL Layer1 axioms (paper §6.2 claim).
     # Note: may require extended timeout (--time 120) for Vampire.
     # -------------------------------------------------------------------------
     {
@@ -225,7 +225,7 @@ fof(act_e1_p1,        axiom, activates(e1, p1)).
     #   museen  = drk:StaatlicheMuseenBerlin (assigner)
     #   distrib = odrl:distribute
     #   museum_api = drk:MuseumCollectionAPI
-    # Bug 9 fix: ax_proh_relator_basic -> ax_proh_relator_conduct
+    # fix: ax_proh_relator_basic -> ax_proh_relator_conduct
     # -------------------------------------------------------------------------
     {
         "id": "GRND003", "subdir": "Entailment",

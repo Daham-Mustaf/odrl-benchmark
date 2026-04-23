@@ -105,10 +105,7 @@ PROBLEMS = [
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL642 — or_unknown: unknown+conflict => or=unknown
-    #
-    # FIX: verdict corrected from "Compatible" to "Unknown".
     #      The problem tests or_verdict(unknown,conflict)=unknown;
-    #      the policy outcome is Unknown, not Compatible.
     # ─────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL642",
@@ -274,7 +271,6 @@ PROBLEMS = [
     # ─────────────────────────────────────────────────────────────────
     # ODRL648 — or_sound_2branch: all pairs conflict => no shared point
     #
-    # FIX: replaced identical branches A1=A2=[v0,v400], B1=B2=[v600,v800]
     #      with distinct branches:
     #        A1=[v0,v400], A2=[v0,v300]  (P1 or-branches)
     #        B1=[v600,v800], B2=[v500,v800]  (P2 or-branches)

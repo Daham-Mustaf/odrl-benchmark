@@ -14,7 +14,7 @@
 %           : Requires axis_subsumes from AXIS000-0.ax Section B.
 %
 % Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
-%           : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+%           : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : SUBS000-0.ax

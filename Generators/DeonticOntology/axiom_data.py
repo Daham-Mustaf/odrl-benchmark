@@ -22,9 +22,9 @@ CHANGELOG v1.5:
   - SMT2: correlativity fixed to exists-unique on both sides
   - SMT2: ax_unique_event_rem, ax_unique_event_imm added
   - SMT2_APPENDIX_SORTS: founds-rem/founds-imm removed (declared in Layer 0)
-  - Bug fix: ax_conflict role corollary -> lemma (corollary invalid TPTP FOF role)
-  - Bug fix: Z3 portability comment added to ax_cross_relator and ax_conflict SMT2
-  - Bug fix: legal-relator declaration ordering note added to SMT2_APPENDIX_SORTS
+  - ax_conflict role corollary -> lemma (corollary invalid TPTP FOF role)
+  - Z3 portability comment added to ax_cross_relator and ax_conflict SMT2
+  - legal-relator declaration ordering note added to SMT2_APPENDIX_SORTS
 """
 
 # ============================================================================

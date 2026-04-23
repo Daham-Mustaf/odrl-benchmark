@@ -18,24 +18,20 @@
 % Comments : SAT companion for HARD001+1.p. No conjecture — a model finder
 %           : (Mace4, Paradox, Vampire-FMB) should return a finite model
 %           : establishing satisfiability of the hypothesis set.
+%           : ORD001-0.ax (density) intentionally excluded: density forces
+%           : infinite models on any non-trivial ordering chain, defeating
+%           : finite model finders. HARD001+1.p (THM) keeps density.
 %           : Policy source: Policies/HARD001-policy.ttl
 %--------------------------------------------------------------------------
 
 include('Axioms/ORD000-0.ax').
-include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').
 include('Axioms/PREC000-0.ax').
 include('Axioms/COMPL000-0.ax').
-
-% Ordering chain: n0 < n3 < n5 < n10 < n20
 fof(h_0_3,   axiom, less(n0,n3)).
 fof(h_3_5,   axiom, less(n3,n5)).
 fof(h_5_10,  axiom, less(n5,n10)).
 fof(h_10_20, axiom, less(n10,n20)).
-
-% Domain bounds (sentinel infimum/supremum used by HARD001)
 fof(h_inf_lb, axiom, ![X]: leq(ninf,X)).
 fof(h_sup_ub, axiom, ![X]: leq(X,nsup)).
-
-% 7 distinct domain elements needed: n0, n3, n5, n10, n20, ninf, nsup
 fof(distinct, axiom, $distinct(ninf, n0, n3, n5, n10, n20, nsup)).

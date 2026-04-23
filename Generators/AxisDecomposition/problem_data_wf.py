@@ -22,27 +22,6 @@ SMT convention (all Theorem problems):
     assert domain hypotheses + negated conjecture → UNSAT.
     The negated conjecture is the arithmetic negation of what
     wf/sem_nonempty asserts, residualised under the hypotheses.
-
-Fixes vs. original:
-  ODRL610: SMT (assert (not (= v v))) was tautologically false (v≠v is
-           always impossible) — tested nothing meaningful.
-           Fixed to (assert (or (< v 0.0) (> v 1200.0))), the correct
-           negation of wf_eq: V ∉ [InfD, SupD].
-  ODRL613: SMT (assert (not (< v 1200.0))) = v >= 1200.  Combined with
-           (assert (<= v 1200.0)) this gives v = 1200, which satisfies
-           (assert (> v 0.0)) → SAT.  status_smt claimed "unsat" — wrong.
-           Fixed to (assert (> v 1200.0)): the correct residual negation
-           of wf_lt under hypotheses v > 0 & v <= 1200, which is UNSAT.
-  ODRL615: SMT (assert (not (> v 0.0))) = v <= 0.  Combined with
-           (assert (>= v 0.0)) gives v = 0, which satisfies
-           (assert (< v 1200.0)) → SAT.  status_smt claimed "unsat" — wrong.
-           Fixed to (assert (>= v 1200.0)): the correct residual negation
-           of wf_gt under hypotheses v >= 0 & v < 1200, which is UNSAT.
-  ODRL617: Same root bug as ODRL613: (assert (not (< v 1200.0))) = v >= 1200
-           is SAT (v = 1200 satisfies all three asserts).
-           Fixed to (assert (<= v 0.0)): negated sem_nonempty(lt) under
-           hypothesis v > 0 means the interval [InfD,V) would be empty,
-           i.e., V <= InfD → v <= 0, which contradicts v > 0 → UNSAT.
 """
 
 PROBLEMS = [

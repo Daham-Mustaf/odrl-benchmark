@@ -20,17 +20,6 @@ Or run standalone:
     uv run Generators/DeonticOntology/gen_foundation_problems.py \\
       --out-dir Problems/DeonticOntology --ext
 All required keys are present in axiom_data.FOF_AXIOM_DICT v1.5.
-Fix history:
-  Bug 1 — GRND010: old Ax5.2 added Immunity/Disability into rho1 (rho_P).
-           Fixed Ax5.2 uses founds_imm existentially for fresh rho_I.
-           rho1 assertions removed; conjecture uses ? [RhoI] founds_imm.
-  Bug 2 — GRND011: claim -> right in fof_conjecture and smt2_conjecture.
-  Bug 3 — GRND012: claim -> right in fof_conjecture and smt2_conjecture.
-  Bug 4 — GRND016: liberty -> permission in fof_extra_decls and
-           smt2_extra_decls; cnt-f -> cnt in smt2_extra_decls.
-  Bug 5 — GRND018: Power/Subjection must be in fresh rho_R via founds_rem
-           (not rho1 which founds rho_F). rho1 assertions removed;
-           conjecture and B2/B3 use founds_rem + existential rho_R.
   v1.5  — GRND010: ax_perm_relator_basic -> ax_perm_relator_weak (KeyError fix)
          — GRND016: ax_conflict_detection -> ax_conflict (KeyError fix)
          — GRND017: ax_proh_relator_basic -> ax_proh_relator_conduct (KeyError fix)

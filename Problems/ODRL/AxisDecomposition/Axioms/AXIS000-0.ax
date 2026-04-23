@@ -11,7 +11,7 @@
 %           : Requires ORD000-0.ax (loaded by problem file). For continuous
 %           : domains also include ORD001-0.ax (density) before this file.
 %
-% Refs     : [Mus+26] Mustafa, D., Collarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : AXIS000-0.ax
