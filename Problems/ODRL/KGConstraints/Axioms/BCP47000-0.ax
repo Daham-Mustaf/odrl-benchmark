@@ -2,17 +2,18 @@
 % File     : BCP47000-0.ax
 % Domain   : ODRL Policy / KB Grounding Concept-valued
 % Axioms   : BCP 47 language-tag registry fragment
-% Version  : 1.0
+% Version  : 1.1
 % English  : Concrete grounding facts for the language left operand,
 %           : derived from a 15-tag slice of the IANA Language Subtag
 %           : Registry covering EU official languages plus the motivating
-%           : example pair (bcp:de, bcp:fr).  Flat registry: partial order
-%           : is equality.  Disjointness is RFC 5646 § 2.2.1 registry
-%           : uniqueness, unfolded as pairwise kge_disjoint facts.  This is
-%           : the resource that yields the Conflict verdict on the language
-%           : operand in the paper's Example 2.
+%           : example pair (bcp:de, bcp:fr). Flat registry: partial order
+%           : is equality. Each tag is declared as a kge_concept (resource
+%           : universe membership) and asserted pairwise disjoint via RFC
+%           : 5646 § 2.2.1 registry uniqueness. This is the resource that
+%           : yields the Conflict verdict on the language operand in the
+%           : paper's Example 2.
 %
-% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26b] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Denotational Semantics for ODRL: Knowledge-Based Constraint Conflict Detection. 2026. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : BCP47000-0.ax
@@ -21,14 +22,14 @@
 % SPC      : FOF_SAT_RFN
 %
 % Comments : Generated from Resources/bcp47.ttl by gen_bcp47.py.
-%           : Depends on KGE000-0.ax (kge_disjoint signature).
-%           : 105 pairwise disjointness facts (15 choose 2).
+%           : Depends on KGE000-0.ax (kge_disjoint and kge_concept signatures).
+%           : 15 kge_concept assertions + 105 pairwise disjointness facts.
 %           : Problem files emit:
 %           : include('Axioms/KGE000-0.ax').
 %           : include('Axioms/DENOT000-0.ax').
 %           : include('Axioms/BCP47000-0.ax').
 %           : No axiom file self-includes this file.
-%           : 105 axioms: pairwise disjointness facts (BCP 47 registry uniqueness).
+%           : 120 axioms: 15 concept assertions + 105 pairwise disjointness facts (BCP 47 registry uniqueness).
 %--------------------------------------------------------------------------
 
 % ==========================================================================
@@ -36,12 +37,33 @@
 %                                            Example 2 language pair]
 %
 % Source: Resources/bcp47.ttl
-% Encoding: each ISO 639-1 primary language subtag is a TPTP constant.
-% Partial order is equality (flat registry); the kge_leq_reflexive axiom
-% from KGE000-0.ax suffices.  Disjointness is registry uniqueness from
-% RFC 5646 § 2.2.1, unfolded here as pairwise kge_disjoint facts.
-% Tags: 15.  Pairwise disjoint pairs: 105.
+% Encoding: each ISO 639-1 primary language subtag is a TPTP constant
+% asserted as a kge_concept (resource universe membership) and
+% pairwise kge_disjoint via RFC 5646 § 2.2.1 registry uniqueness.
+% Partial order is equality (flat registry); the kge_leq_reflexive
+% axiom from KGE000-0.ax suffices.
+% Tags: 15.  Concept assertions: 15.
+% Pairwise disjoint pairs: 105.
 % ==========================================================================
+
+% ----- Concept universe membership (kge_concept) -----
+fof(bcp_bg_concept, axiom, kge_concept(bcp_bg)).
+fof(bcp_cs_concept, axiom, kge_concept(bcp_cs)).
+fof(bcp_da_concept, axiom, kge_concept(bcp_da)).
+fof(bcp_de_concept, axiom, kge_concept(bcp_de)).
+fof(bcp_el_concept, axiom, kge_concept(bcp_el)).
+fof(bcp_en_concept, axiom, kge_concept(bcp_en)).
+fof(bcp_es_concept, axiom, kge_concept(bcp_es)).
+fof(bcp_fi_concept, axiom, kge_concept(bcp_fi)).
+fof(bcp_fr_concept, axiom, kge_concept(bcp_fr)).
+fof(bcp_hu_concept, axiom, kge_concept(bcp_hu)).
+fof(bcp_it_concept, axiom, kge_concept(bcp_it)).
+fof(bcp_nl_concept, axiom, kge_concept(bcp_nl)).
+fof(bcp_pl_concept, axiom, kge_concept(bcp_pl)).
+fof(bcp_pt_concept, axiom, kge_concept(bcp_pt)).
+fof(bcp_sv_concept, axiom, kge_concept(bcp_sv)).
+
+% ----- Pairwise disjointness (RFC 5646 § 2.2.1) -----
 fof(bcp_bg_disjoint_cs, axiom, kge_disjoint(bcp_bg, bcp_cs)).
 fof(bcp_bg_disjoint_da, axiom, kge_disjoint(bcp_bg, bcp_da)).
 fof(bcp_bg_disjoint_de, axiom, kge_disjoint(bcp_bg, bcp_de)).

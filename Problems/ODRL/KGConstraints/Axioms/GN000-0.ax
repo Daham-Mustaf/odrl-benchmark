@@ -2,17 +2,18 @@
 % File     : GN000-0.ax
 % Domain   : ODRL Policy / KB Grounding Concept-valued
 % Axioms   : GeoNames slice for the spatial operand
-% Version  : 1.1
+% Version  : 1.2
 % English  : Concrete grounding facts for the spatial left operand,
 %           : derived from a 15-feature slice of GeoNames covering
 %           : the EU example region with 14 direct gn:parentFeature
-%           : edges.  Disjointness is NOT asserted: GeoNames does not
-%           : assert sibling disjointness, so the base resource yields
-%           : Compatible or Unknown verdicts for spatial constraints.
+%           : edges. Each feature is declared as a kge_concept (resource
+%           : universe membership). Disjointness is NOT asserted: GeoNames
+%           : does not assert sibling disjointness, so the base resource
+%           : yields Compatible or Unknown verdicts for spatial constraints.
 %           : Conflict verdicts require the SDA (Sibling Disjointness
 %           : Assumption) profile, applied separately.
 %
-% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26b] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Denotational Semantics for ODRL: Knowledge-Based Constraint Conflict Detection. 2026. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : GN000-0.ax
@@ -21,16 +22,15 @@
 % SPC      : FOF_SAT_RFN
 %
 % Comments : Generated from Resources/geonames.ttl by gen_geonames.py.
-%           : Depends on KGE000-0.ax (kge_leq signature, kge_leq_transitive,
-%           : kge_leq_antisymmetric, kge_leq_reflexive).
-%           : 14 direct gn:parentFeature edges over 15 features.
+%           : Depends on KGE000-0.ax (kge_leq + kge_concept signatures, kge_leq_transitive, kge_leq_antisymmetric, kge_leq_reflexive).
+%           : 15 kge_concept assertions + 14 direct gn:parentFeature edges over 15 features.
 %           : Acyclicity is verified at generation time.
 %           : NO disjointness asserted (OWA).  Problem files emit:
 %           : include('Axioms/KGE000-0.ax').
 %           : include('Axioms/DENOT000-0.ax').
 %           : include('Axioms/GN000-0.ax').
 %           : No axiom file self-includes this file.
-%           : 14 axioms: 14 direct gn:parentFeature edges (transitive closure via KGE000-0.ax).
+%           : 29 axioms: 15 concept assertions + 14 direct gn:parentFeature edges (transitive closure via KGE000-0.ax).
 %--------------------------------------------------------------------------
 
 % ==========================================================================
@@ -40,9 +40,10 @@
 % Source: Resources/geonames.ttl
 % Encoding: each gn:Feature is a TPTP constant named from gn:name;
 % the numeric GeoNames ID is preserved as a comment for traceability
-% to the live sws.geonames.org IRIs.  gn:parentFeature edges are
-% emitted as direct kge_leq facts; transitive closure is provided
-% by KGE000-0.ax::kge_leq_transitive at proof time.
+% to the live sws.geonames.org IRIs.  Each feature is asserted as a
+% kge_concept (resource universe membership), and gn:parentFeature
+% edges are emitted as direct kge_leq facts; transitive closure is
+% provided by KGE000-0.ax::kge_leq_transitive at proof time.
 %
 % Note on relation choice: the paper's Table 1 names gn:sfWithin as
 % the spatial-containment relation.  We operationalize this for
@@ -64,9 +65,27 @@
 % on the spatial operand require the SDA (Sibling Disjointness
 % Assumption) profile, applied at evaluation time.
 %
-% Features: 15.  Direct gn:parentFeature edges: 14.
+% Features: 15.  Concept assertions: 15.
+% Direct gn:parentFeature edges: 14.
 % Acyclicity verified at generation time.
 % ==========================================================================
+% Concept universe membership (kge_concept)
+fof(gn_auvergne_rhone_alpes_concept, axiom, kge_concept(gn_auvergne_rhone_alpes)).
+fof(gn_baden_wuerttemberg_concept, axiom, kge_concept(gn_baden_wuerttemberg)).
+fof(gn_bayern_concept, axiom, kge_concept(gn_bayern)).
+fof(gn_berlin_concept, axiom, kge_concept(gn_berlin)).
+fof(gn_europe_concept, axiom, kge_concept(gn_europe)).
+fof(gn_france_concept, axiom, kge_concept(gn_france)).
+fof(gn_germany_concept, axiom, kge_concept(gn_germany)).
+fof(gn_grand_est_concept, axiom, kge_concept(gn_grand_est)).
+fof(gn_ile_de_france_concept, axiom, kge_concept(gn_ile_de_france)).
+fof(gn_munich_concept, axiom, kge_concept(gn_munich)).
+fof(gn_nouvelle_aquitaine_concept, axiom, kge_concept(gn_nouvelle_aquitaine)).
+fof(gn_occitanie_concept, axiom, kge_concept(gn_occitanie)).
+fof(gn_paris_concept, axiom, kge_concept(gn_paris)).
+fof(gn_provence_alpes_cote_d_azur_concept, axiom, kge_concept(gn_provence_alpes_cote_d_azur)).
+fof(gn_strasbourg_concept, axiom, kge_concept(gn_strasbourg)).
+
 % Features in this fragment (numeric IDs from sws.geonames.org):
 %   gn_auvergne_rhone_alpes          = 11071625  [A.ADM1]  (Auvergne-Rhone-Alpes)
 %   gn_baden_wuerttemberg            = 2953481  [A.ADM1]  (Baden-Wuerttemberg)

@@ -1,20 +1,26 @@
 """
 problem_data_operators.py
 =========================
+
 Per-operator audit grid for Theorem 1 (operand-level conflict
 detection).  Every monotone operator in the single-valued fragment
 is exercised against each of the three verdicts (Conflict, Compatible,
-Unknown).
+Unknown), plus complement operators tested for Conflict and Compatible
+(Unknown is not audited for complement operators because it does not
+arise naturally when resource distinctness is fully declared).
 
 Operators (single-valued fragment, paper Section 2.2):
-  eq, isA, isPartOf, hasPart, isAnyOf
+  Monotone:   eq, isA, isPartOf, hasPart, isAnyOf
+  Complement: neq, isNoneOf
 
 Operator isAllOf is omitted: it collapses to isAnyOf for single-valued
-left operands.  Operators neq and isNoneOf are excluded (Remark 2).
+left operands.
 
 Resource choice per cell follows what the verdict requires:
-  - Conflict cells need asserted disjointness
+  - Conflict cells (monotone) need asserted disjointness
        -> BCP 47 (only resource asserting disjointness)
+  - Conflict cells (complement) require no disjointness; B3/B4 patterns
+    fire structurally.  We use BCP 47 for parallelism with the eq cell.
   - Compatible cells need a witness
        -> any resource where one exists
   - Unknown cells need silence
@@ -22,10 +28,10 @@ Resource choice per cell follows what the verdict requires:
 
 KGC430 (hasPart / Conflict) is expected to return CounterSatisfiable
 in FOF: it exceeds the certification fragment of forced_empty's
-current pattern set (B1 downward-pair, B2 list-vs-eq), neither of
-which covers upward cones. The hand-rolled SMT encoding bypasses
-forced_empty and certifies the conflict directly via
-kge_disjoint_propagation; Z3 and cvc5 both return unsat. KGC430
+current pattern set (B1 downward-pair, B2 list-vs-eq, B3 neq-vs-eq,
+B4 isNoneOf-vs-eq), none of which covers upward cones. The hand-rolled
+SMT encoding bypasses forced_empty and certifies the conflict directly
+via kge_disjoint_propagation; Z3 and cvc5 both return unsat. KGC430
 therefore documents the remaining FOF-encoding gap relative to
 Definition 7, not a fundamental incompleteness of the
 conflict-detection approach.
@@ -36,9 +42,18 @@ each list member is asserted disjoint from the request value
 (BCP 47 registry uniqueness), forced_empty fires by Assumption 1
 applied pointwise. All five FOF provers now derive Theorem.
 
+KGC450 (neq / Conflict) and KGC460 (isNoneOf / Conflict) use the
+B3 and B4 patterns added in DENOT000-0.ax v1.3. Both fire structurally
+without requiring resource-level disjointness assertions: the
+denotation of c_neq(g) excludes g by definition, and c_isnoneof(S)
+excludes every list member. When paired with c_eq targeting the
+excluded element, the intersection is empty by construction.
+
 Numbering: KGC4{op}{verdict}, where:
-  op:      0=eq, 1=isA, 2=isPartOf, 3=hasPart, 4=isAnyOf
+  op:      0=eq, 1=isA, 2=isPartOf, 3=hasPart, 4=isAnyOf,
+           5=neq, 6=isNoneOf
   verdict: 0=Conflict, 1=Compatible, 2=Unknown
+           (verdict 2 omitted for op=5, op=6 -- see header note above)
 """
 
 # ---------------------------------------------------------------------------
@@ -883,5 +898,246 @@ fof(c_request_den, axiom,
                   dpv_commercial_research
                   dpv_non_commercial_purpose))""",
     },
+# =====================================================================
+    # neq row: KGC450 (Conflict), KGC451 (Compatible)
+    # =====================================================================
+    #
+    # Note: Unknown is not audited for complement operators because it
+    # does not arise naturally when resource distinctness is fully
+    # declared (BCP 47 owl:AllDifferent, DPV distinct IRIs). For a
+    # complement-vs-eq pair, the verdict is determined by whether the
+    # eq value equals the excluded value (Conflict) or differs (Compatible).
+    # =====================================================================
+    {
+        "id":            "KGC450",
+        "subdir":        "Conflict",
+        "name":          "neq / Conflict: neq bcp:de x eq bcp:de",
+        "relation":      "conflict",
+        "verdict":       "Conflict",
+        "status_fof":    "Theorem",
+        "status_smt":    "unsat",
+        "difficulty":    "Easy",
+        "includes":      ["KGE000-0.ax", "DENOT000-0.ax", "BCP47000-0.ax"],
+        "needs_density": False,
+        "description": (
+            "neq operator, Conflict verdict.  Offer's denotation is\n"
+            "C \\ {bcp_de} (every concept except bcp_de, restricted to\n"
+            "the resource universe via kge_concept guard).  Request's\n"
+            "denotation is {bcp_de}.  Intersection is empty by\n"
+            "construction: the excluded value is exactly the eq target.\n"
+            "Pattern B3 (neq-vs-eq) in DENOT000 fires structurally; no\n"
+            "disjointness assertion is needed because the denotations\n"
+            "are complementary by definition.\n"
+            "\n"
+            "FOF side: all five provers derive verdict_conflict as Theorem.\n"
+            "SMT side: Z3 and cvc5 return unsat via direct denotation\n"
+            "membership reasoning."
+        ),
+        "ttl": _ttl("language", "neq", "bcp:de", "eq", "bcp:de"),
+        "fof_extra_decls": _fof_decls(
+            "den_neq(X, bcp_de)",
+            "den_eq(X, bcp_de)",
+        ),
+        "fof_conjecture": "verdict_conflict(c_offer, c_request)",
+        "smt2_logic": "UF",
+        "smt2_decls": """\
+(declare-sort Concept 0)
+(declare-fun bcp_de () Concept)""",
+        "smt2_asserts": """\
+; Negation of Conflict: witness x in both denotations.
+; [[c_offer]]   = C \\ {bcp_de}, so x must satisfy x != bcp_de
+; [[c_request]] = {bcp_de}, so x must satisfy x = bcp_de
+; These constraints are unsatisfiable; unsat is correct.
+(declare-fun x () Concept)
+(assert (distinct x bcp_de))
+(assert (= x bcp_de))""",
+    },
+    {
+        "id":            "KGC451",
+        "subdir":        "Conflict",
+        "name":          "neq / Compatible: neq bcp:de x eq bcp:fr",
+        "relation":      "conflict",
+        "verdict":       "Compatible",
+        "status_fof":    "Theorem",
+        "status_smt":    "sat",
+        "difficulty":    "Easy",
+        "includes":      ["KGE000-0.ax", "DENOT000-0.ax", "BCP47000-0.ax"],
+        "needs_density": False,
+        "description": (
+            "neq operator, Compatible verdict.  Offer's denotation is\n"
+            "C \\ {bcp_de} (every concept except bcp_de).  Request's\n"
+            "denotation is {bcp_fr}.  Witness: bcp_fr is in C \\ {bcp_de}\n"
+            "(since bcp_fr != bcp_de by BCP 47 registry uniqueness) AND\n"
+            "in {bcp_fr}, providing a common element.  The kge_concept\n"
+            "guard is satisfied because bcp_fr is asserted as a concept\n"
+            "in BCP47000."
+        ),
+        "ttl": _ttl("language", "neq", "bcp:de", "eq", "bcp:fr"),
+        "fof_extra_decls": _fof_decls(
+            "den_neq(X, bcp_de)",
+            "den_eq(X, bcp_fr)",
+        ),
+        "fof_conjecture": "verdict_compatible(c_offer, c_request)",
+        "smt2_logic": "UF",
+        "smt2_decls": """\
+(declare-sort Concept 0)
+(declare-fun bcp_de () Concept)
+(declare-fun bcp_fr () Concept)""",
+        "smt2_asserts": """\
+(assert (distinct bcp_de bcp_fr))
+(declare-fun x () Concept)
+(assert (distinct x bcp_de))
+(assert (= x bcp_fr))""",
+    },
+    # =====================================================================
+    # isNoneOf row: KGC460 (Conflict), KGC461 (Compatible)
+    # =====================================================================
+    #
+    # Note: in_list/2 is the problem-file hook for isNoneOf operands;
+    # each problem asserts list membership directly.  Unknown is not
+    # audited for the same reason as the neq row.
+    # =====================================================================
+    {
+        "id":            "KGC460",
+        "subdir":        "Conflict",
+        "name":          "isNoneOf / Conflict: isNoneOf {bcp:de, bcp:fr} x eq bcp:de",
+        "relation":      "conflict",
+        "verdict":       "Conflict",
+        "status_fof":    "Theorem",
+        "status_smt":    "unsat",
+        "difficulty":    "Easy",
+        "includes":      ["KGE000-0.ax", "DENOT000-0.ax", "BCP47000-0.ax"],
+        "needs_density": False,
+        "description": (
+            "isNoneOf operator, Conflict verdict.  Offer's denotation is\n"
+            "C \\ {bcp_de, bcp_fr} (every concept except those on the\n"
+            "list).  Request's denotation is {bcp_de}.  Since bcp_de\n"
+            "is on the excluded list, it cannot be in offer's denotation,\n"
+            "and the intersection is empty by construction.  Pattern B4\n"
+            "(isNoneOf-vs-eq) in DENOT000 fires structurally.\n"
+            "\n"
+            "FOF side: all five provers derive verdict_conflict as Theorem.\n"
+            "SMT side: Z3 and cvc5 return unsat via direct list-membership\n"
+            "and complement reasoning."
+        ),
+        "ttl": _TTL_PREFIX + """
+drk:policyOffer a odrl:Set ;
+  odrl:permission [
+    odrl:action odrl:use ;
+    odrl:constraint [
+      odrl:leftOperand odrl:language ;
+      odrl:operator odrl:isNoneOf ;
+      odrl:rightOperand ( bcp:de bcp:fr )
+    ]
+  ] .
 
+drk:policyRequest a odrl:Set ;
+  odrl:permission [
+    odrl:action odrl:use ;
+    odrl:constraint [
+      odrl:leftOperand odrl:language ;
+      odrl:operator odrl:eq ;
+      odrl:rightOperand bcp:de
+    ]
+  ] .
+""",
+        "fof_extra_decls": """\
+% Constraint tokens: defined denotations.
+fof(c_offer_defined,   axiom, ~denotation_undef(c_offer)).
+fof(c_request_defined, axiom, ~denotation_undef(c_request)).
+
+% List membership for isNoneOf {bcp_de, bcp_fr}.
+fof(in_list_de, axiom, in_list(bcp_de, list_de_fr)).
+fof(in_list_fr, axiom, in_list(bcp_fr, list_de_fr)).
+fof(in_list_closed, axiom,
+    ![X]: (in_list(X, list_de_fr) <=> (X = bcp_de | X = bcp_fr))).
+
+% Denotations
+fof(c_offer_den,   axiom,
+    ![X]: (in_denotation(X, c_offer)   <=> den_isnoneof(X, list_de_fr))).
+fof(c_request_den, axiom,
+    ![X]: (in_denotation(X, c_request) <=> den_eq(X, bcp_de))).
+""",
+        "fof_conjecture": "verdict_conflict(c_offer, c_request)",
+        "smt2_logic": "UF",
+        "smt2_decls": """\
+(declare-sort Concept 0)
+(declare-fun bcp_de () Concept)
+(declare-fun bcp_fr () Concept)""",
+        "smt2_asserts": """\
+(assert (distinct bcp_de bcp_fr))
+; Negation of Conflict: witness x in both denotations.
+; [[c_offer]]   = C \\ {bcp_de, bcp_fr}, so x must NOT be in the list
+; [[c_request]] = {bcp_de}, so x = bcp_de
+; bcp_de is on the excluded list; constraints unsatisfiable.
+(declare-fun x () Concept)
+(assert (and (distinct x bcp_de) (distinct x bcp_fr)))
+(assert (= x bcp_de))""",
+    },
+    {
+        "id":            "KGC461",
+        "subdir":        "Conflict",
+        "name":          "isNoneOf / Compatible: isNoneOf {bcp:de, bcp:fr} x eq bcp:it",
+        "relation":      "conflict",
+        "verdict":       "Compatible",
+        "status_fof":    "Theorem",
+        "status_smt":    "sat",
+        "difficulty":    "Easy",
+        "includes":      ["KGE000-0.ax", "DENOT000-0.ax", "BCP47000-0.ax"],
+        "needs_density": False,
+        "description": (
+            "isNoneOf operator, Compatible verdict.  Offer's denotation\n"
+            "is C \\ {bcp_de, bcp_fr}.  Request's denotation is {bcp_it}.\n"
+            "Witness: bcp_it is in C \\ {bcp_de, bcp_fr} (since bcp_it\n"
+            "is distinct from both list members by BCP 47 registry\n"
+            "uniqueness) AND in {bcp_it}, providing a common element."
+        ),
+        "ttl": _TTL_PREFIX + """
+drk:policyOffer a odrl:Set ;
+  odrl:permission [
+    odrl:action odrl:use ;
+    odrl:constraint [
+      odrl:leftOperand odrl:language ;
+      odrl:operator odrl:isNoneOf ;
+      odrl:rightOperand ( bcp:de bcp:fr )
+    ]
+  ] .
+
+drk:policyRequest a odrl:Set ;
+  odrl:permission [
+    odrl:action odrl:use ;
+    odrl:constraint [
+      odrl:leftOperand odrl:language ;
+      odrl:operator odrl:eq ;
+      odrl:rightOperand bcp:it
+    ]
+  ] .
+""",
+        "fof_extra_decls": """\
+fof(c_offer_defined,   axiom, ~denotation_undef(c_offer)).
+fof(c_request_defined, axiom, ~denotation_undef(c_request)).
+
+fof(in_list_de, axiom, in_list(bcp_de, list_de_fr)).
+fof(in_list_fr, axiom, in_list(bcp_fr, list_de_fr)).
+fof(in_list_closed, axiom,
+    ![X]: (in_list(X, list_de_fr) <=> (X = bcp_de | X = bcp_fr))).
+
+fof(c_offer_den,   axiom,
+    ![X]: (in_denotation(X, c_offer)   <=> den_isnoneof(X, list_de_fr))).
+fof(c_request_den, axiom,
+    ![X]: (in_denotation(X, c_request) <=> den_eq(X, bcp_it))).
+""",
+        "fof_conjecture": "verdict_compatible(c_offer, c_request)",
+        "smt2_logic": "UF",
+        "smt2_decls": """\
+(declare-sort Concept 0)
+(declare-fun bcp_de () Concept)
+(declare-fun bcp_fr () Concept)
+(declare-fun bcp_it () Concept)""",
+        "smt2_asserts": """\
+(assert (distinct bcp_de bcp_fr bcp_it))
+(declare-fun x () Concept)
+(assert (and (distinct x bcp_de) (distinct x bcp_fr)))
+(assert (= x bcp_it))""",
+    },
 ]

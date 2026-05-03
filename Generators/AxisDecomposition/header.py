@@ -21,7 +21,7 @@ REFS = {
         "in Policy Constraints through Interval Semantics. "
         "arXiv:2602.19878. https://arxiv.org/abs/2602.19878"
     ),
-    "vldb2027": (
+    "kgc2026": (
         "[Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., "
         "Quix, C., Lange, C., Geisler, S., Decker, S. "
         "Conflict Detection via Denotational Semantics: "
@@ -213,7 +213,7 @@ def problem_header(p, domain, fof_body=""):
     ref_map = {
         "foundational": ["fois2026"],
         "axis":         ["axis2026"],
-        "kb":           ["vldb2027"],
+        "kb":           ["kgc2026"],
     }
     comment_map = {
         "foundational": (

@@ -886,6 +886,254 @@ fof(all_compat_bridge, axiom,
 (declare-fun x () Concept)
 (assert (= x bcp_de))
 (assert (= x bcp_fr))""",
-}
+},
+
+# =====================================================================
+    # KGC703 -- Disjoint operand sets (Corollary 1 case (a)).
+    # =====================================================================
+    {
+        "id":            "KGC703",
+        "subdir":        "Composition",
+        "name":          "Theorem 5 (and): disjoint operand sets [GeoNames | BCP47]",
+        "relation":      "composition",
+        "verdict":       "AndCompatibleNonConflict",
+        "status_fof":    "CounterSatisfiable",
+        "status_smt":    "sat",
+        "difficulty":    "Easy",
+        "includes":      [
+            "KGE000-0.ax",
+            "DENOT000-0.ax",
+            "COMPOSE000-0.ax",
+            "GN000-0.ax",
+            "BCP47000-0.ax",
+        ],
+        "needs_density": False,
+        "description": (
+            "Corollary~\\ref{cor:and-factoring} case (a): disjoint\n"
+            "operand sets yield rule-level Compatible vacuously. CS\n"
+            "constrains spatial only; CS' constrains language only.\n"
+            "No shared operand, so the rule-level intersection is\n"
+            "unrestricted across both rules.\n"
+            "\n"
+            "Setup:\n"
+            "  CS  (offer): one constraint on spatial, no others.\n"
+            "    c1_off = (spatial, isPartOf, gn:Europe)\n"
+            "  CS' (request): one constraint on language, no others.\n"
+            "    c2_req = (language, eq, bcp:de)\n"
+            "\n"
+            "Operand sets: L = {spatial}, L' = {language}, L cap L' =\n"
+            "empty. Per Corollary 1 case (a), rule_and(r1) = compatible.\n"
+            "\n"
+            "Bridges:\n"
+            "  has_conflict(r1) is vacuously false (no operand-pair\n"
+            "    has both a CS and CS' constraint to compare).\n"
+            "  all_compat(r1) is vacuously true (no shared operand to\n"
+            "    aggregate over).\n"
+            "\n"
+            "Strong Kleene AND with empty shared-operand set: the\n"
+            "vacuous quantification yields all_compat -> rule\n"
+            "Compatible.\n"
+            "\n"
+            "Conjecture (Style B, asserting Conflict): rule_and(r1) = conflict.\n"
+            "Expected: CounterSatisfiable. Disjoint operand sets cannot\n"
+            "produce Conflict; the asserted conflict fails to derive."
+        ),
+        "ttl": _TTL_PREFIX + """
+drk:offer_rule a odrl:Permission ;
+  odrl:constraint [
+    odrl:leftOperand odrl:spatial ;
+    odrl:operator odrl:isPartOf ;
+    odrl:rightOperand <https://sws.geonames.org/6255148/>
+  ] .
+
+drk:request_rule a odrl:Permission ;
+  odrl:constraint [
+    odrl:leftOperand odrl:language ;
+    odrl:operator odrl:eq ;
+    odrl:rightOperand bcp:de
+  ] .
+# Corollary 1 case (a): disjoint operand sets.
+#   CS  has one spatial constraint.
+#   CS' has one language constraint.
+#   No shared operand; rule_and(r1) = compatible vacuously.
+""",
+        "fof_extra_decls": """\
+% --- Single operand on each side (disjoint operand sets) ---
+fof(c_offer_defined, axiom, ~denotation_undef(c_offer)).
+fof(c_request_defined, axiom, ~denotation_undef(c_request)).
+fof(c_offer_den, axiom,
+    ![X]: (in_denotation(X, c_offer) <=> den_ispartof(X, gn_europe))).
+fof(c_request_den, axiom,
+    ![X]: (in_denotation(X, c_request) <=> den_eq(X, bcp_de))).
+
+% --- Rule-level bridge axioms (vacuous for disjoint operand sets) ---
+% Disjoint operand sets: no shared-operand verdict to aggregate.
+% has_conflict(r1) is vacuously false; all_compat(r1) is vacuously true.
+% This is Corollary 1 case (a).
+fof(has_conflict_bridge, axiom,
+    ~has_conflict(r1)).
+fof(all_compat_bridge, axiom,
+    all_compat(r1)).
+""",
+        "fof_conjecture": "rule_and(r1) = conflict",
+        "smt2_logic": "UF",
+        "smt2_decls": """\
+(declare-sort Concept 0)
+(declare-fun gn_europe () Concept)
+(declare-fun bcp_de    () Concept)
+(declare-fun kge_leq      (Concept Concept) Bool)
+(declare-fun kge_disjoint (Concept Concept) Bool)""",
+        "smt2_asserts": """\
+; KGE000 load-bearing axioms.
+(assert (forall ((c Concept)) (kge_leq c c)))
+(assert (forall ((a Concept) (b Concept) (c Concept))
+    (=> (and (kge_leq a b) (kge_leq b c)) (kge_leq a c))))
+(assert (forall ((a Concept) (b Concept))
+    (=> (kge_disjoint a b) (kge_disjoint b a))))
+(assert (forall ((c Concept)) (not (kge_disjoint c c))))
+; Identity.
+(assert (distinct gn_europe bcp_de))
+;
+; Disjoint operand sets: spatial and language are unrelated.
+; No shared operand to compare; rule-level Conflict cannot derive.
+; Z3 returns sat (consistent model exists with no conflict).""",
+    },
+    
+    # =====================================================================
+    # KGC704 -- Partial operand-set overlap (Corollary 1 case (c)).
+    # =====================================================================
+    {
+        "id":            "KGC704",
+        "subdir":        "Composition",
+        "name":          "Theorem 5 (and): partial operand overlap [GeoNames+BCP47+DPV]",
+        "relation":      "composition",
+        "verdict":       "AndConflict",
+        "status_fof":    "Theorem",
+        "status_smt":    "unsat",
+        "difficulty":    "Medium",
+        "includes":      [
+            "KGE000-0.ax",
+            "DENOT000-0.ax",
+            "COMPOSE000-0.ax",
+            "GN000-0.ax",
+            "BCP47000-0.ax",
+            "DPV000-0.ax",
+        ],
+        "needs_density": False,
+        "description": (
+            "Corollary~\\ref{cor:and-factoring} case (c): partial overlap\n"
+            "of operand sets. CS over {spatial, language}; CS' over\n"
+            "{language, purpose}. Shared operand: language. Atomic\n"
+            "verdict on language is Conflict (registry uniqueness).\n"
+            "Per Corollary 1 case (c), Strong Kleene aggregates over\n"
+            "shared operands only; rule-level Conflict.\n"
+            "\n"
+            "Setup:\n"
+            "  CS  (offer):\n"
+            "    c1_off = (spatial, isPartOf, gn:Europe)   [unshared]\n"
+            "    c2_off = (language, eq, bcp:de)            [shared]\n"
+            "  CS' (request):\n"
+            "    c2_req = (language, eq, bcp:fr)            [shared]\n"
+            "    c3_req = (purpose, isA, dpv:Purpose)       [unshared]\n"
+            "\n"
+            "Shared operand: language. Atomic verdict at language:\n"
+            "  [c2_off] = {bcp_de}, [c2_req] = {bcp_fr};\n"
+            "  kge_disjoint(bcp_de, bcp_fr) by BCP47 registry uniqueness;\n"
+            "  forced_empty fires via pattern B1.\n"
+            "  => verdict_conflict(c2_off, c2_req).\n"
+            "\n"
+            "Bridges (over shared operand language only):\n"
+            "  has_conflict(r1) <=> verdict_conflict(c2_off, c2_req).\n"
+            "  all_compat(r1) <=> verdict_compatible(c2_off, c2_req).\n"
+            "\n"
+            "Strong Kleene AND: rule_and(R) = conflict <=>\n"
+            "  has_conflict(R). The shared-operand Conflict propagates\n"
+            "to rule-level Conflict (Corollary 1 case (c)).\n"
+            "\n"
+            "Conjecture (Style A): rule_and(r1) = conflict.\n"
+            "Expected: Theorem.\n"
+            "\n"
+            "Why this audit matters:\n"
+            "  Corollary 1 case (c) is the basis of Theorem 5\n"
+            "  (Composition Soundness): cross-pair verdicts in DNF\n"
+            "  decomposition aggregate over shared operands only.\n"
+            "  Without this audit, the shared-operand reasoning that\n"
+            "  carries Theorem 5 is unverified."
+        ),
+        "ttl": _TTL_PREFIX + """
+drk:offer_rule a odrl:Permission ;
+  odrl:constraint [
+    odrl:leftOperand odrl:spatial ;
+    odrl:operator odrl:isPartOf ;
+    odrl:rightOperand <https://sws.geonames.org/6255148/>
+  ] ;
+  odrl:constraint [
+    odrl:leftOperand odrl:language ;
+    odrl:operator odrl:eq ;
+    odrl:rightOperand bcp:de
+  ] .
+
+drk:request_rule a odrl:Permission ;
+  odrl:constraint [
+    odrl:leftOperand odrl:language ;
+    odrl:operator odrl:eq ;
+    odrl:rightOperand bcp:fr
+  ] ;
+  odrl:constraint [
+    odrl:leftOperand odrl:purpose ;
+    odrl:operator odrl:isA ;
+    odrl:rightOperand dpv:Purpose
+  ] .
+# Corollary 1 case (c): partial overlap.
+#   L  = {spatial, language}; L' = {language, purpose}.
+#   Shared operand: language.  Atomic verdict at language: Conflict.
+#   rule_and(r1) = conflict via Strong Kleene over shared operands only.
+""",
+        "fof_extra_decls": """\
+% --- Shared operand: language (BCP47), atomic Conflict ---
+fof(c2_off_defined, axiom, ~denotation_undef(c2_off)).
+fof(c2_req_defined, axiom, ~denotation_undef(c2_req)).
+fof(c2_off_den, axiom,
+    ![X]: (in_denotation(X, c2_off) <=> den_eq(X, bcp_de))).
+fof(c2_req_den, axiom,
+    ![X]: (in_denotation(X, c2_req) <=> den_eq(X, bcp_fr))).
+
+% --- Rule-level bridge over shared operands only ---
+% Per Corollary 1 case (c): aggregate Strong Kleene over shared
+% operands only. Unshared operands (spatial in CS, purpose in CS')
+% do not participate in rule-level verdict aggregation.
+fof(has_conflict_bridge, axiom,
+    (has_conflict(r1) <=> verdict_conflict(c2_off, c2_req))).
+fof(all_compat_bridge, axiom,
+    (all_compat(r1) <=> verdict_compatible(c2_off, c2_req))).
+""",
+        "fof_conjecture": "rule_and(r1) = conflict",
+        "smt2_logic": "UF",
+        "smt2_decls": """\
+(declare-sort Concept 0)
+(declare-fun bcp_de () Concept)
+(declare-fun bcp_fr () Concept)
+(declare-fun kge_leq      (Concept Concept) Bool)
+(declare-fun kge_disjoint (Concept Concept) Bool)""",
+        "smt2_asserts": """\
+; KGE000 load-bearing axioms.
+(assert (forall ((c Concept)) (kge_leq c c)))
+(assert (forall ((a Concept) (b Concept) (c Concept))
+    (=> (and (kge_leq a b) (kge_leq b c)) (kge_leq a c))))
+(assert (forall ((a Concept) (b Concept))
+    (=> (kge_disjoint a b) (kge_disjoint b a))))
+(assert (forall ((c Concept)) (not (kge_disjoint c c))))
+(assert (forall ((a Concept) (b Concept) (z Concept))
+    (=> (and (kge_disjoint a b) (kge_leq z a) (kge_leq z b))
+        false)))
+; BCP47: de disjoint fr (registry uniqueness).
+(assert (kge_disjoint bcp_de bcp_fr))
+(assert (distinct bcp_de bcp_fr))
+;
+; Shared-operand Conflict: x cannot be both bcp_de and bcp_fr.
+(declare-fun x () Concept)
+(assert (= x bcp_de))
+(assert (= x bcp_fr))""",
+    },
 
 ]
