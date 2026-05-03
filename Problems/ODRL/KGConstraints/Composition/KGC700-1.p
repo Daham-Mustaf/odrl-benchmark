@@ -31,9 +31,9 @@
 %           : Conjecture (Style A): rule_and(r1) = conflict.
 %           : Expected: Theorem.
 %
-% Refs     : [Mus+26b] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Denotational Semantics for ODRL: Knowledge-Based Constraint Conflict Detection. 2026. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
-% Source   : Mustafa, D. (2026)
-% Authors  : Mustafa, D. & Sutcliffe, G.
+% Refs     : ()
+% Source   : 
+% Authors  : 
 % Names    : KGC700-1.p
 %
 % Status   : Theorem

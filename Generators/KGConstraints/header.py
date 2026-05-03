@@ -199,7 +199,7 @@ class SMTHeader:
             + f"; Domain   : {DOMAINS[self.domain]}\n"
             + f"; Axioms   : {self.title}\n"
             + f"; Version  : {self.version}\n"
-            + f"; Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + f"; Authors  : \n"
             + _smt_refs_block(self.refs) + "\n"
             + "; Source   : Mustafa, D. (2026)\n"
             + f"; Names    : {self.file}\n"

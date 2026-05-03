@@ -3,7 +3,7 @@
 ; Domain   : ODRL Policy / KB Grounding Concept-valued
 ; Axioms   : Proposition 1: denotation growth under concept addition [GeoNames]
 ; Version  : 1.0
-; Authors  : Mustafa, D. & Sutcliffe, G.
+; Authors  : 
 ; Refs     : [Mus+26b] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Denotational Semantics for ODRL: Knowledge-Based Constraint Conflict Detection. 2026. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
 ; Source   : Mustafa, D. (2026)
 ; Names    : KGC806-1.smt2

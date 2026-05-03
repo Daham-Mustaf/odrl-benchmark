@@ -3,8 +3,8 @@
 ; Domain   : ODRL Policy / KB Grounding Concept-valued
 ; Axioms   : Theorem 2 (and): Conflict aggregation [GeoNames+SDA, BCP47]
 ; Version  : 1.0
-; Authors  : Mustafa, D. & Sutcliffe, G.
-; Refs     : [Mus+26b] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Denotational Semantics for ODRL: Knowledge-Based Constraint Conflict Detection. 2026. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+; Authors  : 
+; Refs     : ()
 ; Source   : Mustafa, D. (2026)
 ; Names    : KGC700-1.smt2
 ; Status   : unsat

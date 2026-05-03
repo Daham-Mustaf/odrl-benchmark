@@ -19,7 +19,7 @@
 %           : Conflict requires both empty intersection and forced emptiness;
 %           : absence of witness alone yields Unknown.
 %
-% Refs     : [Mus+26b] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Denotational Semantics for ODRL: Knowledge-Based Constraint Conflict Detection. 2026. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : ()
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : DENOT000-0.ax

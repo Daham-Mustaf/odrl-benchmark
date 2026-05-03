@@ -24,11 +24,7 @@ REFS = {
         "arXiv:2602.19878. https://arxiv.org/abs/2602.19878"
     ),
     "kgc2026": (
-        "[Mus+26b] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., "
-        "Quix, C., Decker, S. "
-        "Denotational Semantics for ODRL: Knowledge-Based Constraint "
-        "Conflict Detection. 2026. arXiv:2602.19883. "
-        "https://arxiv.org/abs/2602.19883"
+
     ),
 }
 
@@ -145,8 +141,8 @@ class Header:
             + _wrap("English", self.english) + "\n"
             + "%\n"
             + _refs_block(self.refs) + "\n"
-            + "% Source   : Mustafa, D. (2026)\n"
-            + "% Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + "% Source   : \n"
+            + "% Authors  : \n"
             + f"% Names    : {self.file}\n"
             + "%\n"
             + f"% Status   : {self.status}\n"
@@ -181,8 +177,8 @@ class AXHeader:
             + _wrap("English", self.english) + "\n"
             + "%\n"
             + _refs_block(self.refs) + "\n"
-            + "% Source   : Mustafa, D. (2026)\n"
-            + "% Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + "% Source   : \n"
+            + "% Authors  : \n"
             + f"% Names    : {self.file}\n"
             + "%\n"
             + "% Status   : Satisfiable\n"
@@ -215,7 +211,7 @@ class SMTHeader:
             + f"; Domain   : {DOMAINS[self.domain]}\n"
             + f"; Axioms   : {self.title}\n"
             + f"; Version  : {self.version}\n"
-            + f"; Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + f"; Authors  : \n"
             + _smt_refs_block(self.refs) + "\n"
             + "; Source   : Mustafa, D. (2026)\n"
             + f"; Names    : {self.file}\n"
