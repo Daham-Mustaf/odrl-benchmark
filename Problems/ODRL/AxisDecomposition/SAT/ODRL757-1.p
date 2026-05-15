@@ -6,23 +6,23 @@
 % English  : Width [200,800], Height [100,600]. Box non-empty.
 %           : Witness: (x,y) = (v400, v300) inside both closed intervals.
 %
-% Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL757-1.p
 %
 % Status   : Satisfiable
-% Rating   : 0.00 v9.0.0
+% Verdict  : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : SAT — axiom layer consistency witness.
-%           : No conjecture; model finder confirms satisfiability.
+% Comments : Axis decomposition tier. ISWC 2026.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL757-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 
-% ─── Named constants and witness axioms ────────────────────────────────
+% ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v100, axiom, val(v100)).
 fof(val_v200, axiom, val(v200)).
 fof(val_v300, axiom, val(v300)).
@@ -37,5 +37,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v100, v200, v300, v400, v600, v800)).
 fof(witness_x, axiom, leq(v200, v400) & leq(v400, v800)).
 fof(witness_y, axiom, leq(v100, v300) & leq(v300, v600)).
-% ─── No conjecture — satisfiability check ───────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
+fof(odrl757, conjecture,
+    None).
 %--------------------------------------------------------------------------

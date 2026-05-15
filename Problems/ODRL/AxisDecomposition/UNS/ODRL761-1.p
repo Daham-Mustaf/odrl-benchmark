@@ -11,17 +11,17 @@
 %           : and leq from AXIS000/ORD000), which forces leq(v800, v600) and
 %           : contradicts the declared ord chain less(v600, v800).
 %
-% Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL761-1.p
 %
 % Status   : Unsatisfiable
-% Rating   : 0.00 v9.0.0
+% Verdict  : Unsatisfiable
 % SPC      : FOF_UNS_RFN
 %
-% Comments : UNS — Remark 3.4 intra-policy self-contradiction.
-%           : Empty denotation: no request satisfies the constraint.
+% Comments : Axis decomposition tier. ISWC 2026.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL761-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
@@ -36,5 +36,7 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v600, v800)).
 fof(witness_in_lteq, axiom, in_lopen(witness, v0, v600)).
 fof(witness_in_gteq, axiom, leq(v800, witness)).
-% ─── No conjecture — contradiction in axioms ─────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
+fof(odrl761, conjecture,
+    None).
 %--------------------------------------------------------------------------

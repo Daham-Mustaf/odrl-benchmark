@@ -11,23 +11,23 @@
 %           : Height: [v2,v3] vs [v4,v5]  disjoint (less(v3,v4))
 %           : Depth:  [v3,v4] vs [v5,v6]  disjoint (less(v4,v5))
 %
-% Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL767-1.p
 %
 % Status   : Satisfiable
-% Rating   : 0.00 v9.0.0
+% Verdict  : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : SAT — axiom layer consistency witness.
-%           : No conjecture; model finder confirms satisfiability.
+% Comments : Axis decomposition tier. ISWC 2026.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL767-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 
-% ─── Named constants and witness axioms ────────────────────────────────
+% ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v1, axiom, val(v1)).
 fof(val_v2, axiom, val(v2)).
 fof(val_v3, axiom, val(v3)).
@@ -43,5 +43,7 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v5, v6)).
 fof(cf_width,  axiom, axis_conflict(v1, v2, v3, v4)).
 fof(cf_height, axiom, axis_conflict(v2, v3, v4, v5)).
 fof(cf_depth,  axiom, axis_conflict(v3, v4, v5, v6)).
-% ─── No conjecture — satisfiability check ───────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
+fof(odrl767, conjecture,
+    None).
 %--------------------------------------------------------------------------

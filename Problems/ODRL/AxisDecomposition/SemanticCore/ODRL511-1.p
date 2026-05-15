@@ -1,19 +1,21 @@
 %--------------------------------------------------------------------------
 % File     : ODRL511-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : thm:aabb — open bounded interval (l,u) is non-empty (density)
+% Problem  : thm:aabb — open bounded interval is non-empty (density)
 % Version  : 1.0
-% English  : thm:aabb — open bounded interval (l,u) is non-empty (density)
+% English  : thm:aabb — open bounded interval is non-empty (density)
 %
-% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL511-1.p
 %
 % Status   : Theorem
+% Verdict  : Compatible
+% Relation : conflict
 % SPC      : FOF_THM_RFN
 %
-% Comments : Axis decomposition tier. arXiv:2602.19878.
+% Comments : Axis decomposition tier. ISWC 2026.
 %           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL511-policy.ttl
 %--------------------------------------------------------------------------

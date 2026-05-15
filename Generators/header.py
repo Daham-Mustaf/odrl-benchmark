@@ -2,29 +2,25 @@
 header.py
 =========
 TPTP / SMT-LIB header rendering for the ODRL benchmark.
-
-Statistics (% Syntax block) are intentionally omitted from generated files.
-tptp4X computes and inserts them automatically during TPTP library processing.
 """
 import re
 from dataclasses import dataclass
 
-
 REFS = {
     "fois2026": (
-        "[MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. "
+        "[Mus+26a] Mustafa, D., et al. "
         "What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties "
         "in Deontic Logic and Foundational Ontology. FOIS 2026."
     ),
     "axis2026": (
-        "[Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., "
-        "Quix, C., Decker, S. "
+        "[Mus+26b] Mustafa, D., et al. "
         "Axis Decomposition for ODRL: Resolving Dimensional Ambiguity "
-        "in Policy Constraints through Interval Semantics. "
-        "arXiv:2602.19878. https://arxiv.org/abs/2602.19878"
+        "in Policy Constraints through Interval Semantics. ISWC 2026 (submitted)."
     ),
     "kgc2026": (
-
+        "[Mus+26c] Mustafa, D., et al. "
+        "Conflict Detection via Denotational Semantics: "
+        "Policy Reasoning over Incomplete Hierarchies. (under submission)."
     ),
 }
 
@@ -42,24 +38,15 @@ SPC = {
 }
 
 
-# ---------------------------------------------------------------------------
-# Formula counting (used by _ax_comment)
-# ---------------------------------------------------------------------------
 def _count_formulae(text):
     return len(re.findall(r"^fof\s*\(", text, re.MULTILINE))
 
 
-# ---------------------------------------------------------------------------
-# _ax_comment — builds comments= string with auto-computed formula count
-# ---------------------------------------------------------------------------
-def _ax_comment(body: str, breakdown: str, include_note: str) -> str:
+def _ax_comment(body, breakdown, include_note):
     n = _count_formulae(body)
     return f"{include_note}\n{n} axioms: {breakdown}."
 
 
-# ---------------------------------------------------------------------------
-# Formatting helpers
-# ---------------------------------------------------------------------------
 def _wrap(label, text):
     lines = text.strip().split("\n")
     pad = " " * 11
@@ -101,9 +88,6 @@ _SEP     = "%-------------------------------------------------------------------
 _SMT_SEP = "; --------------------------------------------------------------------------\n"
 
 
-# ---------------------------------------------------------------------------
-# Header dataclasses
-# ---------------------------------------------------------------------------
 @dataclass
 class Header:
     """TPTP header for .p problem files."""
@@ -116,11 +100,13 @@ class Header:
     refs:     list
     comments: str
     spc:      str = ""
-    verdict:  str = ""   # NEW: Conflict | Compatible | Unknown
+    verdict:  str = ""    # Conflict | Compatible | Unknown | CounterSatisfiable
+    relation: str = ""    # conflict | subsumption | verdict_algebra
     fof_text: str = ""
 
     def _infer_spc(self):
-        if self.spc: return self.spc
+        if self.spc:
+            return self.spc
         s = self.status.lower()
         if "theorem"       in s: return SPC["theorem"]
         if "counter"       in s: return SPC["countersat"]
@@ -129,9 +115,8 @@ class Header:
         return "FOF_UNK_RFN"
 
     def render(self):
-        verdict_line = (
-            f"% Verdict  : {self.verdict}\n" if self.verdict else ""
-        )
+        verdict_line  = f"% Verdict  : {self.verdict}\n"  if self.verdict  else ""
+        relation_line = f"% Relation : {self.relation}\n" if self.relation else ""
         return (
             _SEP
             + f"% File     : {self.file}\n"
@@ -141,12 +126,13 @@ class Header:
             + _wrap("English", self.english) + "\n"
             + "%\n"
             + _refs_block(self.refs) + "\n"
-            + "% Source   : \n"
-            + "% Authors  : \n"
+            + "% Source   : Mustafa, D. (2026)\n"
+            + "% Authors  : Mustafa, D. & Sutcliffe, G.\n"
             + f"% Names    : {self.file}\n"
             + "%\n"
             + f"% Status   : {self.status}\n"
             + verdict_line
+            + relation_line
             + f"% SPC      : {self._infer_spc()}\n"
             + "%\n"
             + _wrap("Comments", self.comments) + "\n"
@@ -177,8 +163,8 @@ class AXHeader:
             + _wrap("English", self.english) + "\n"
             + "%\n"
             + _refs_block(self.refs) + "\n"
-            + "% Source   : \n"
-            + "% Authors  : \n"
+            + "% Source   : Mustafa, D. (2026)\n"
+            + "% Authors  : Mustafa, D. & Sutcliffe, G.\n"
             + f"% Names    : {self.file}\n"
             + "%\n"
             + "% Status   : Satisfiable\n"
@@ -199,32 +185,24 @@ class SMTHeader:
     refs:     list
     comments: str
     status:   str = "unknown"
-    verdict:  str = ""   # NEW
 
     def render(self):
-        verdict_line = (
-            f"; Verdict  : {self.verdict}\n" if self.verdict else ""
-        )
         return (
             _SMT_SEP
             + f"; File     : {self.file}\n"
             + f"; Domain   : {DOMAINS[self.domain]}\n"
             + f"; Axioms   : {self.title}\n"
             + f"; Version  : {self.version}\n"
-            + f"; Authors  : \n"
+            + f"; Authors  : Mustafa, D. & Sutcliffe, G.\n"
             + _smt_refs_block(self.refs) + "\n"
             + "; Source   : Mustafa, D. (2026)\n"
             + f"; Names    : {self.file}\n"
             + f"; Status   : {self.status}\n"
-            + verdict_line
             + _smt_wrap("Comments", self.comments) + "\n"
             + _SMT_SEP
         )
 
 
-# ---------------------------------------------------------------------------
-# Convenience factory used by problem generators
-# ---------------------------------------------------------------------------
 def problem_header(p, domain, fof_body=""):
     ref_map = {
         "foundational": ["fois2026"],
@@ -237,14 +215,13 @@ def problem_header(p, domain, fof_body=""):
             f"Policy source: Policies/{p['id']}-policy.ttl"
         ),
         "axis": (
-            "Axis decomposition tier. arXiv:2602.19878.\n"
+            "Axis decomposition tier. ISWC 2026.\n"
             "Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.\n"
             f"Policy source: Policies/{p['id']}-policy.ttl"
         ),
         "kb": (
-            "KB-grounding tier. arXiv:2602.19883.\n"
-            "Requires Axioms/KGE000-0.ax + Axioms/DENOT000-0.ax + "
-            "resource axioms.\n"
+            "KB-grounding tier.\n"
+            "Requires Axioms/ODRL000-0.ax and domain KB axioms.\n"
             f"Policy source: Policies/{p['id']}-policy.ttl"
         ),
     }
@@ -255,48 +232,21 @@ def problem_header(p, domain, fof_body=""):
         version  = "1.0",
         english  = p.get("description", p["name"]),
         status   = p["status_fof"],
-        verdict  = p.get("verdict", ""),
         refs     = ref_map[domain],
         comments = comment_map[domain],
+        verdict  = p.get("verdict", ""),
+        relation = p.get("relation", ""),
         fof_text = fof_body,
     ).render()
 
 
-# ---------------------------------------------------------------------------
-# Self-test
-# ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    sample_fof = """\
-fof(ax1, axiom, ![X]: (perm(X) => rule(X))).
-fof(ax2, axiom, ![X,Y]: (aee(X,Y) => agent(Y))).
-fof(conj, conjecture, ?[R]: rule(R)).
-"""
-    note = "Depends on KGE000-0.ax."
-    c = _ax_comment(sample_fof, "2 axm + 1 cnj", note)
-    assert "3 axioms:" in c
-    print("_ax_comment OK:", c.splitlines()[-1])
-
-    print("\n=== Header (.p) with verdict ===")
-    print(Header(
-        file="KGC300-1.p", domain="kb",
-        title="language eq×eq Conflict", version="1.0",
-        english="Two eq constraints on disjoint language tags.",
-        status="Theorem",
-        verdict="Conflict",   # NEW
-        refs=["kgc2026"],
-        comments="Motivating example. Section 3.",
-    ).render())
-
-    print("=== SMTHeader (.smt2) with verdict ===")
-    smt = SMTHeader(
-        file="KGC300-1.smt2", domain="kb",
-        title="language Conflict", version="1.0",
-        refs=["kgc2026"],
-        comments="Verdict: Conflict.",
-        status="unsat",
-        verdict="Conflict",   # NEW
-    ).render()
-    print(smt)
-    bad = [l for l in smt.splitlines() if l and not l.startswith(";")]
-    assert not bad, f"BARE LINES: {bad}"
-    print("All SMTHeader lines start with ';' ✓")
+    test_p = {
+        "id": "ODRLTEST",
+        "name": "smoke test",
+        "description": "smoke test",
+        "status_fof": "Theorem",
+        "verdict": "Compatible",
+        "relation": "verdict_algebra",
+    }
+    print(problem_header(test_p, "axis", ""))

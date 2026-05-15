@@ -1,18 +1,11 @@
 %--------------------------------------------------------------------------
 % File     : COMPL000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Completion witnesses and Unknown Soundness axioms
-% Version  : 1.2
-% English  : Encodes def:completion (adding constraints to unconstrained axes)
-%           : and thm:unknown-sound (Unknown is sharp in both directions).
-%           : completion_compatible/3: both policies set to eq V on axis.
-%           : completion_conflict/4: policies set to lteq U and gteq V with U<V.
-%           : Sharpness axioms confirm both completions exist for any axis
-%           : domain with two distinct elements.
-%           : monotone_conflict encodes prop:monotone via axis_subsumes.
-%           : redundancy encodes the redundancy half of lem:conflict-propagation.
+% Axioms   : Completion verdicts (Thm 6.10)
+% Version  : 1.0
+% English  : completion_compatible/3 and completion_conflict/4 biconditionals.
 %
-% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : COMPL000-0.ax
@@ -20,59 +13,20 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Depends on ORD000-0.ax and axis_subsumes/axis_conflict from
-%           : AXIS000-0.ax (loaded by the problem file).
-%           : Include for Unknown Soundness and completion problems:
-%           : include('Axioms/ORD000-0.ax').
-%           : include('Axioms/COMPL000-0.ax').
-%           : include('Axioms/AXIS000-0.ax').
-%           : GAP 3 fix: redundancy formula added for lem:conflict-propagation.
-%           : 6 axioms: 2 completion + 2 sharpness + 1 monotonicity + 1 redundancy.
+% Comments : 2 axioms: 2 completion biconditionals.
 %--------------------------------------------------------------------------
+% Completion verdicts (Thm 6.10 Unknown Soundness):
+% completion_compatible(V, Inf, Sup): equality completion at V yields Compatible
+%   (V must be in the domain).
+% completion_conflict(V1, V2, Inf, Sup): lower/upper bound completion
+%   yields Conflict when V2 < V1, both within domain.
 
-% ==========================================================================
-% Completion predicate                       [Paper: def:completion]
-% ==========================================================================
-% Compatible completion: both policies constrained to eq V on unconstrained axis.
-fof(completion_compat, axiom, ![V,InfD,SupD]:
-    ((leq(InfD,V) & leq(V,SupD))
-     => completion_compatible(V,InfD,SupD))).
-% Conflict completion: policy 1 gets lteq U, policy 2 gets gteq V, U < V.
-fof(completion_conflict, axiom, ![U,V,InfD,SupD]:
-    ((leq(InfD,U) & leq(U,SupD) &
-      leq(InfD,V) & leq(V,SupD) & less(U,V))
-     => completion_conflict(U,V,InfD,SupD))).
-% ==========================================================================
-% Sharpness: both directions reachable       [Paper: thm:unknown-sound]
-% ==========================================================================
-% NOTE: sharpness_compat and sharpness_conflict are logically redundant
-% given completion_compat/completion_conflict + ORD000-0.ax.
-% (Their premises are derivable via leq_less_trans + less_implies_leq.)
-% Retained as explicit proof-search hints for Vampire/E and as readable
-% witnesses for the paper claim.
-fof(sharpness_compat, axiom, ![U,V,InfD,SupD]:
-    ((leq(InfD,U) & leq(U,SupD) & less(U,V) & leq(V,SupD))
-     => completion_compatible(U,InfD,SupD))).
-fof(sharpness_conflict, axiom, ![U,V,InfD,SupD]:
-    ((leq(InfD,U) & leq(U,SupD) & less(U,V) & leq(V,SupD))
-     => completion_conflict(U,V,InfD,SupD))).
-% ==========================================================================
-% Monotonicity helper                        [Paper: prop:monotone]
-% ==========================================================================
-fof(monotone_conflict, axiom, ![A1lo,A1hi,A1plo,A1phi,A2lo,A2hi]:
-    ((axis_subsumes(A1lo,A1hi,A1plo,A1phi) &
-      axis_conflict(A1plo,A1phi,A2lo,A2hi))
-     => axis_conflict(A1lo,A1hi,A2lo,A2hi))).
-% ==========================================================================
-% Redundancy                                 [Paper: lem:conflict-propagation]
-% ==========================================================================
-% GAP 3 fix: the paper's lem:conflict-propagation has two parts:
-%   (a) propagation: sem(c1)<=sem(c2) & c2 conflicts c3 => c1 conflicts c3
-%       -> encoded above as monotone_conflict via axis_subsumes
-%   (b) redundancy: sem(c1)<=sem(c2) => c2 is redundant given c1,
-%       i.e. every request satisfying c1 also satisfies c2.
-%       -> encoded here; immediate from axis_subsumes_def but made explicit
-%          to give a dedicated Entailment benchmark problem.
-fof(redundancy, axiom, ![A1lo,A1hi,A2lo,A2hi]:
-    (axis_subsumes(A1lo,A1hi,A2lo,A2hi) =>
-     ![X]: (in_closed(X,A1lo,A1hi) => in_closed(X,A2lo,A2hi)))).
+fof(completion_compat_iff, axiom,
+    ! [V,Inf,Sup] :
+        (completion_compatible(V, Inf, Sup)
+         <=> (leq(Inf, V) & leq(V, Sup)))).
+
+fof(completion_conflict_iff, axiom,
+    ! [V1,V2,Inf,Sup] :
+        (completion_conflict(V1, V2, Inf, Sup)
+         <=> (less(V2, V1) & leq(Inf, V2) & leq(V1, Sup)))).

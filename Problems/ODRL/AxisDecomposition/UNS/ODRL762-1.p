@@ -10,17 +10,17 @@
 %           : equality reflexivity. The proof genuinely exercises WF000 rather than
 %           : reducing to ORD irreflexivity.
 %
-% Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL762-1.p
 %
 % Status   : Unsatisfiable
-% Rating   : 0.00 v9.0.0
+% Verdict  : Unsatisfiable
 % SPC      : FOF_UNS_RFN
 %
-% Comments : UNS — Remark 3.4 intra-policy self-contradiction.
-%           : Empty denotation: no request satisfies the constraint.
+% Comments : Axis decomposition tier. ISWC 2026.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL762-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
@@ -33,5 +33,7 @@ fof(val_v1200, axiom, val(v1200)).
 fof(ord_v0_v1200, axiom, less(v0, v1200)).
 fof(distinct, axiom, $distinct(v0, v1200)).
 fof(policy_assertion, axiom, wf(lt, v0, v0, v1200)).
-% ─── No conjecture — contradiction in axioms ─────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
+fof(odrl762, conjecture,
+    None).
 %--------------------------------------------------------------------------

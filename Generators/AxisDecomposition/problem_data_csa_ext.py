@@ -5,6 +5,19 @@ Additional CSA problems: ODRL715-739 (+25 problems).
 Appended to problem_data_csa.py PROBLEMS list.
 """
 
+# Real UF SMT encodings for verdict-algebra CSA refutations (724-733)
+from smt_axioms import (
+    PREAMBLE_VERDICT, PREAMBLE_PRESENCE, PREAMBLE_BOUND_SORT, PREAMBLE_UPPER_TAG,
+    DECL_OR_VERDICT, DECL_XONE_VERDICT, DECL_BOX_VERDICT, DECL_BOX_SUBS, DECL_SUBS_VERDICT,
+    AXIOM_OR_COMPAT, AXIOM_OR_UNKNOWN,
+    AXIOM_XONE_CONFLICT, AXIOM_XONE_UNKNOWN,
+    AXIOM_BOX_UNKNOWN,
+    AXIOM_BOX_SUBS_UNKNOWN,
+    AXIOM_SUBS_C1_ABSENT,
+    AXIOM_UPPER_TAG_GROUND,
+    declare_bounds,
+)
+
 PROBLEMS_EXT = [
     # ── SingleAxis: claim Compatible when Conflict ──────────────────
     {
@@ -129,21 +142,25 @@ PROBLEMS_EXT = [
     },
     {
         "id": "ODRL724", "subdir": "CSA",
-        "name": "CSA ConflictCriterion: claim upper_tag(eq,o) (wrong — eq has closed upper)",
+        "name": "CSA ConflictCriterion: claim upper_tag(eq,o) (wrong - eq has closed upper)",
+        "relation": "verdict_algebra",
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "PREC000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
-        "description": "upper_tag(eq,c) holds — eq has closed upper boundary.\nWrong claim: upper_tag(eq,o).\n",
+        "description": "upper_tag(eq,c) holds - eq has closed upper boundary.\nWrong claim: upper_tag(eq,o).\n",
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL724 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "",
         "fof_conjecture": "upper_tag(eq, o)",
-        "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic": "UF",
+        "smt2_decls": PREAMBLE_UPPER_TAG,
+        "smt2_asserts": AXIOM_UPPER_TAG_GROUND + "; Wrong claim asserted directly (CSA)\n"
+                              "(assert (upper_tag eq o))",
     },
     # ── Composition: wrong or/xone verdict ──────────────────────────
     {
         "id": "ODRL725", "subdir": "CSA",
         "name": "CSA Composition: claim or(compatible,conflict)=conflict (wrong)",
+        "relation": "verdict_algebra",
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
@@ -151,12 +168,15 @@ PROBLEMS_EXT = [
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL725 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "",
         "fof_conjecture": "or_verdict(compatible, conflict) = conflict",
-        "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic": "UF",
+        "smt2_decls": PREAMBLE_VERDICT + DECL_OR_VERDICT,
+        "smt2_asserts": AXIOM_OR_COMPAT + "; Wrong claim asserted directly (CSA)\n"
+                          "(assert (= (or_verdict compatible conflict) conflict))",
     },
     {
         "id": "ODRL726", "subdir": "CSA",
         "name": "CSA Composition: claim or(unknown,unknown)=compatible (wrong)",
+        "relation": "verdict_algebra",
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
@@ -164,12 +184,15 @@ PROBLEMS_EXT = [
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL726 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "",
         "fof_conjecture": "or_verdict(unknown, unknown) = compatible",
-        "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic": "UF",
+        "smt2_decls": PREAMBLE_VERDICT + DECL_OR_VERDICT,
+        "smt2_asserts": AXIOM_OR_UNKNOWN + "; Wrong claim asserted directly (CSA)\n"
+                           "(assert (= (or_verdict unknown unknown) compatible))",
     },
     {
         "id": "ODRL727", "subdir": "CSA",
         "name": "CSA Composition: claim xone(conflict,conflict)=compatible (wrong)",
+        "relation": "verdict_algebra",
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
@@ -177,12 +200,15 @@ PROBLEMS_EXT = [
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL727 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "",
         "fof_conjecture": "xone_verdict(conflict, conflict) = compatible",
-        "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic": "UF",
+        "smt2_decls": PREAMBLE_VERDICT + DECL_XONE_VERDICT,
+        "smt2_asserts": AXIOM_XONE_CONFLICT + "; Wrong claim asserted directly (CSA)\n"
+                              "(assert (= (xone_verdict conflict conflict) compatible))",
     },
     {
         "id": "ODRL728", "subdir": "CSA",
         "name": "CSA Composition: claim xone(unknown,conflict)=compatible (wrong)",
+        "relation": "verdict_algebra",
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "COMP000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
@@ -190,8 +216,10 @@ PROBLEMS_EXT = [
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL728 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "",
         "fof_conjecture": "xone_verdict(unknown, conflict) = compatible",
-        "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic": "UF",
+        "smt2_decls": PREAMBLE_VERDICT + DECL_XONE_VERDICT,
+        "smt2_asserts": AXIOM_XONE_UNKNOWN + "; Wrong claim asserted directly (CSA)\n"
+                             "(assert (= (xone_verdict unknown conflict) compatible))",
     },
     # ── Completion: claim Compatible when Unknown ────────────────────
     {
@@ -210,6 +238,7 @@ PROBLEMS_EXT = [
     {
         "id": "ODRL730", "subdir": "CSA",
         "name": "CSA Completion: claim box_verdict(unknown,compatible)=conflict (wrong)",
+        "relation": "verdict_algebra",
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
@@ -217,8 +246,10 @@ PROBLEMS_EXT = [
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL730 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "",
         "fof_conjecture": "box_verdict(unknown, compatible) = conflict",
-        "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic": "UF",
+        "smt2_decls": PREAMBLE_VERDICT + DECL_BOX_VERDICT,
+        "smt2_asserts": AXIOM_BOX_UNKNOWN + "; Wrong claim asserted directly (CSA)\n"
+                            "(assert (= (box_verdict unknown compatible) conflict))",
     },
     {
         "id": "ODRL731", "subdir": "CSA",
@@ -237,6 +268,7 @@ PROBLEMS_EXT = [
     {
         "id": "ODRL732", "subdir": "CSA",
         "name": "CSA BoxContainment: claim subs absent=compatible (wrong)",
+        "relation": "verdict_algebra",
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "needs_density": False,
@@ -244,12 +276,19 @@ PROBLEMS_EXT = [
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL732 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "fof(val_v0,axiom,val(v0)).\nfof(val_v600,axiom,val(v600)).\nfof(ord_v0_v600,axiom,less(v0,v600)).\nfof(distinct,axiom,$distinct(v0,v600)).\n",
         "fof_conjecture": "subs_verdict(v0, v600, absent, v0, v600, present) = compatible",
-        "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic": "UF",
+        "smt2_decls": (
+            PREAMBLE_VERDICT + PREAMBLE_PRESENCE + PREAMBLE_BOUND_SORT
+            + DECL_SUBS_VERDICT
+            + declare_bounds(["v0", "v600"])
+        ),
+        "smt2_asserts": AXIOM_SUBS_C1_ABSENT + "; Wrong claim asserted directly (CSA)\n"
+                              "(assert (= (subs_verdict v0 v600 absent v0 v600 present) compatible))",
     },
     {
         "id": "ODRL733", "subdir": "CSA",
         "name": "CSA BoxContainment: claim box_subs(unknown,compatible)=compatible (wrong)",
+        "relation": "verdict_algebra",
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "needs_density": False,
@@ -257,8 +296,10 @@ PROBLEMS_EXT = [
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL733 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "",
         "fof_conjecture": "box_subs(unknown, compatible) = compatible",
-        "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic": "UF",
+        "smt2_decls": PREAMBLE_VERDICT + DECL_BOX_SUBS,
+        "smt2_asserts": AXIOM_BOX_SUBS_UNKNOWN + "; Wrong claim asserted directly (CSA)\n"
+                                 "(assert (= (box_subs unknown compatible) compatible))",
     },
     {
         "id": "ODRL734", "subdir": "CSA",

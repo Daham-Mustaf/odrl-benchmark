@@ -1,15 +1,11 @@
 %--------------------------------------------------------------------------
 % File     : WF000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Well-formedness conditions for axis-specific constraints
-% Version  : 1.2
-% English  : Encodes the three well-formedness conditions from the axis
-%           : profile definition: (i) V in D_k, (ii) op=lt implies V != inf,
-%           : (iii) op=gt implies V != sup. Together they guarantee that every
-%           : well-formed constraint has a non-empty denotation (lem:totality).
-%           : Also defines sem_nonempty/4 and operator enumeration axioms.
+% Axioms   : Well-formedness (Def 4.4)
+% Version  : 1.0
+% English  : wf/4 biconditional: (Op,V) is well-formed on [Inf,Sup] iff V in domain and boundary exclusions hold.
 %
-% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : WF000-0.ax
@@ -17,62 +13,31 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Depends on ORD000-0.ax (loaded by problem file before AXIS000-0.ax).
-%           : Include for well-formedness and non-emptiness problems:
-%           : include('Axioms/ORD000-0.ax').
-%           : include('Axioms/WF000-0.ax').
-%           : include('Axioms/AXIS000-0.ax').
-%           : 26 axioms: 5 wf + 5 nonempty + 5 op_is_op + 10 ops_distinct + 1 op_enum.
+% Comments : 5 axioms: 5 biconditional well-formedness cases.
 %--------------------------------------------------------------------------
+% Well-formedness from Def 4.4 (Well-formed constraint):
+% (Op, V) on domain [Inf, Sup] is well-formed iff
+%   V is in the domain  AND
+%   Op = lt forbids V = Inf  AND
+%   Op = gt forbids V = Sup.
+% Each case is a biconditional so both wf and ~wf are derivable.
 
-% ==========================================================================
-% Well-formedness predicate                  [Paper: def:profile, lem:totality]
-% ==========================================================================
-% wf(Op, V, InfD, SupD): constraint (ell_ak, Op, V) is well-formed over D_k.
-%   (i)   V in D_k             -- value is in the domain
-%   (ii)  Op=lt  => V != InfD  -- strict lower bound not at infimum
-%   (iii) Op=gt  => V != SupD  -- strict upper bound not at supremum
-fof(wf_eq,   axiom, ![V,InfD,SupD]:
-    (wf(eq,   V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD)))).
-fof(wf_lteq, axiom, ![V,InfD,SupD]:
-    (wf(lteq, V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD)))).
-fof(wf_gteq, axiom, ![V,InfD,SupD]:
-    (wf(gteq, V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD)))).
-fof(wf_lt,   axiom, ![V,InfD,SupD]:
-    (wf(lt,   V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD) & V != InfD))).
-fof(wf_gt,   axiom, ![V,InfD,SupD]:
-    (wf(gt,   V,InfD,SupD) <=> (leq(InfD,V) & leq(V,SupD) & V != SupD))).
-% ==========================================================================
-% Non-emptiness guarantee                    [Paper: lem:totality]
-% ==========================================================================
-fof(nonempty_eq,   axiom, ![V,InfD,SupD]:
-    (wf(eq,   V,InfD,SupD) => sem_nonempty(eq,   V,InfD,SupD))).
-fof(nonempty_lteq, axiom, ![V,InfD,SupD]:
-    (wf(lteq, V,InfD,SupD) => sem_nonempty(lteq, V,InfD,SupD))).
-fof(nonempty_gteq, axiom, ![V,InfD,SupD]:
-    (wf(gteq, V,InfD,SupD) => sem_nonempty(gteq, V,InfD,SupD))).
-fof(nonempty_lt,   axiom, ![V,InfD,SupD]:
-    (wf(lt,   V,InfD,SupD) => sem_nonempty(lt,   V,InfD,SupD))).
-fof(nonempty_gt,   axiom, ![V,InfD,SupD]:
-    (wf(gt,   V,InfD,SupD) => sem_nonempty(gt,   V,InfD,SupD))).
-% ==========================================================================
-% Operator enumeration
-% ==========================================================================
-fof(op_eq_is_op,    axiom, is_op(eq)).
-fof(op_lt_is_op,    axiom, is_op(lt)).
-fof(op_lteq_is_op,  axiom, is_op(lteq)).
-fof(op_gt_is_op,    axiom, is_op(gt)).
-fof(op_gteq_is_op,  axiom, is_op(gteq)).
-fof(ops_distinct_1,  axiom, eq   != lt).
-fof(ops_distinct_2,  axiom, eq   != lteq).
-fof(ops_distinct_3,  axiom, eq   != gt).
-fof(ops_distinct_4,  axiom, eq   != gteq).
-fof(ops_distinct_5,  axiom, lt   != lteq).
-fof(ops_distinct_6,  axiom, lt   != gt).
-fof(ops_distinct_7,  axiom, lt   != gteq).
-fof(ops_distinct_8,  axiom, lteq != gt).
-fof(ops_distinct_9,  axiom, lteq != gteq).
-fof(ops_distinct_10, axiom, gt   != gteq).
-fof(op_enum, axiom, ![Op]:
-    (is_op(Op) =>
-     (Op = eq | Op = lt | Op = lteq | Op = gt | Op = gteq))).
+fof(wf_eq_iff, axiom,
+    ! [V,Inf,Sup] :
+        (wf(eq, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup)))).
+
+fof(wf_lteq_iff, axiom,
+    ! [V,Inf,Sup] :
+        (wf(lteq, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup)))).
+
+fof(wf_gteq_iff, axiom,
+    ! [V,Inf,Sup] :
+        (wf(gteq, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup)))).
+
+fof(wf_lt_iff, axiom,
+    ! [V,Inf,Sup] :
+        (wf(lt, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup) & V != Inf))).
+
+fof(wf_gt_iff, axiom,
+    ! [V,Inf,Sup] :
+        (wf(gt, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup) & V != Sup))).

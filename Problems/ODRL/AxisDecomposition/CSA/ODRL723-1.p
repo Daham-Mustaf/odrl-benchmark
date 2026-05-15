@@ -6,17 +6,17 @@
 % English  : prec(v5,v6,o,o) requires leq(v5,v6): true.
 %           : Wrong claim: ~disjoint with open endpoints when they are separated.
 %
-% Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL723-1.p
 %
 % Status   : CounterSatisfiable
-% Rating   : 0.00 v9.0.0
+% Verdict  : CounterSatisfiable
 % SPC      : FOF_CSA_RFN
 %
-% Comments : CSA — wrong verdict claim, countermodel exists.
-%           : Flip of corresponding THM problem.
+% Comments : Axis decomposition tier. ISWC 2026.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL723-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
@@ -32,7 +32,7 @@ fof(ord_v0_v5,axiom,less(v0,v5)).
 fof(ord_v5_v6,axiom,less(v5,v6)).
 fof(ord_v6_v10,axiom,less(v6,v10)).
 fof(distinct,axiom,$distinct(v0,v5,v6,v10)).
-% ─── Conjecture (WRONG — countermodel exists) ──────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl723, conjecture,
     ~disjoint(v0, v5, o, c, v6, v10, c, o)).
 %--------------------------------------------------------------------------

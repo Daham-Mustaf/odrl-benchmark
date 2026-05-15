@@ -2,13 +2,8 @@
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-% Malformed: gt at effective upper bound — violates def:profile (iii)
-% sem(gt 600) intersected with domain (0,600] = empty
-drk:policyMalformed a odrl:Set ;
+drk:policyA a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
       odrl:operator odrl:gt ;
-      odrl:rightOperand "600"^^xsd:decimal ] ;
-    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
-      odrl:operator odrl:lteq ;
       odrl:rightOperand "600"^^xsd:decimal ] ] .

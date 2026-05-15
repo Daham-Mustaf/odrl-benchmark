@@ -1,14 +1,11 @@
 %--------------------------------------------------------------------------
 % File     : ORD001-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Density axiom for continuous (real-valued) domains
-% Version  : 1.2
-% English  : Extends ORD000-0.ax with density: between any two distinct
-%           : values exists a third. Required for open-interval reasoning
-%           : over continuous domains (R, Q). INCOMPATIBLE with discrete
-%           : domains (N, Z) -- do not include for pixel counts.
+% Axioms   : Density of the linear order
+% Version  : 1.0
+% English  : Between any two distinct ordered values there is another.
 %
-% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ORD001-0.ax
@@ -16,23 +13,10 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Depends on ORD000-0.ax (loaded by problem file before this file).
-%           : Include for continuous domains:
-%           : include('Axioms/ORD000-0.ax').
-%           : include('Axioms/ORD001-0.ax').
-%           : include('Axioms/AXIS000-0.ax').
-%           : Omit for discrete domains (pixel counts, integer counts).
-%           : 1 axioms: dense.
+% Comments : 1 axioms: 1 density axiom.
 %--------------------------------------------------------------------------
+% Density axiom: between any two distinct ordered values there is another.
+% Used only by problems with open-open intervals where no named witness exists.
 
-% Density: between any two distinct values exists a third.
-% Required for open-interval witnesses over continuous domains (R, Q).
-% DO NOT include for discrete domains (pixel counts, integers).
-%
-% Example where density matters:
-%   Policy 1: width gt 599  -> denotation (599, inf)
-%   Policy 2: width lt 601  -> denotation (-inf, 601)
-%   Intersection: (599, 601) -- non-empty only if dense.
-%   Without density, Vampire cannot find a witness between 599 and 601.
-fof(dense, axiom, ![X,Y]:
-    (less(X,Y) => ?[Z]: (less(X,Z) & less(Z,Y)))).
+fof(less_dense, axiom,
+    ! [X,Y] : (less(X, Y) => ? [Z] : (less(X, Z) & less(Z, Y)))).

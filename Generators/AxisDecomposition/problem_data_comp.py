@@ -49,6 +49,15 @@ _MINIMAL_TTL = """\
 @prefix drk:  <http://w3id.org/drk/ontology/> .
 drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] ."""
 
+
+# Real UF SMT encodings for verdict-algebra problems
+from smt_axioms import (
+    PREAMBLE_VERDICT,
+    DECL_OR_VERDICT, DECL_XONE_VERDICT,
+    AXIOM_OR_COMPAT, AXIOM_OR_CONFLICT, AXIOM_OR_UNKNOWN, AXIOM_OR_TOTAL,
+    AXIOM_XONE_COMPAT, AXIOM_XONE_CONFLICT, AXIOM_XONE_UNKNOWN, AXIOM_XONE_TOTAL,
+)
+
 PROBLEMS = [
     # ─────────────────────────────────────────────────────────────────
     # ODRL640 — or_compat: V1=compatible => or_verdict=compatible
@@ -57,7 +66,7 @@ PROBLEMS = [
         "id":            "ODRL640",
         "subdir":        "Composition",
         "name":          "or_compat: V1=compatible implies or_verdict=compatible",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Compatible",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -74,9 +83,11 @@ PROBLEMS = [
             "![V2]: (is_verdict(V2) =>\n"
             "    or_verdict(compatible, V2) = compatible)"
         ),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_OR_VERDICT + "(declare-fun v2 () Verdict)\n",
+        "smt2_asserts": AXIOM_OR_COMPAT + "; Negated conjecture (Skolemized)\n"
+                          "(assert (is_verdict v2))\n"
+                          "(assert (not (= (or_verdict compatible v2) compatible)))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL641 — or_conflict: both conflict => or=conflict
@@ -85,7 +96,7 @@ PROBLEMS = [
         "id":            "ODRL641",
         "subdir":        "Composition",
         "name":          "or_conflict: both verdicts conflict implies or=conflict",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Conflict",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -99,9 +110,10 @@ PROBLEMS = [
         "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "or_verdict(conflict, conflict) = conflict",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_OR_VERDICT,
+        "smt2_asserts": AXIOM_OR_CONFLICT + "; Negated conjecture\n"
+                          "(assert (not (= (or_verdict conflict conflict) conflict)))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL642 — or_unknown: unknown+conflict => or=unknown
@@ -111,7 +123,7 @@ PROBLEMS = [
         "id":            "ODRL642",
         "subdir":        "Composition",
         "name":          "or_unknown: unknown and conflict implies or=unknown",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Unknown",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -126,9 +138,10 @@ PROBLEMS = [
         "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "or_verdict(unknown, conflict) = unknown",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_OR_VERDICT,
+        "smt2_asserts": AXIOM_OR_UNKNOWN + "; Negated conjecture\n"
+                          "(assert (not (= (or_verdict unknown conflict) unknown)))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL643 — or_verdict_total: always one of 3 values
@@ -137,7 +150,7 @@ PROBLEMS = [
         "id":            "ODRL643",
         "subdir":        "Composition",
         "name":          "or_verdict_total: result is always one of three verdicts",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Conflict",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -156,9 +169,14 @@ PROBLEMS = [
             "     or_verdict(V1,V2) = conflict |\n"
             "     or_verdict(V1,V2) = unknown))"
         ),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_OR_VERDICT + "(declare-fun vv1 () Verdict)\n(declare-fun vv2 () Verdict)\n",
+        "smt2_asserts": AXIOM_OR_TOTAL + "; Negated conjecture (Skolemized)\n"
+                        "(assert (is_verdict vv1))\n"
+                        "(assert (is_verdict vv2))\n"
+                        "(assert (not (or (= (or_verdict vv1 vv2) compatible)\n"
+                        "                 (= (or_verdict vv1 vv2) conflict)\n"
+                        "                 (= (or_verdict vv1 vv2) unknown))))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL644 — xone_compat: match=compat, rest=conflict => xone=compat
@@ -167,7 +185,7 @@ PROBLEMS = [
         "id":            "ODRL644",
         "subdir":        "Composition",
         "name":          "xone_compat: one match compatible rest conflict => xone=compatible",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Compatible",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -182,9 +200,10 @@ PROBLEMS = [
         "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "xone_verdict(compatible, conflict) = compatible",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_XONE_VERDICT,
+        "smt2_asserts": AXIOM_XONE_COMPAT + "; Negated conjecture\n"
+                            "(assert (not (= (xone_verdict compatible conflict) compatible)))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL645 — xone_conflict: all conflict => xone=conflict
@@ -193,7 +212,7 @@ PROBLEMS = [
         "id":            "ODRL645",
         "subdir":        "Composition",
         "name":          "xone_conflict: all pairs conflict implies xone=conflict",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Conflict",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -207,9 +226,10 @@ PROBLEMS = [
         "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "xone_verdict(conflict, conflict) = conflict",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_XONE_VERDICT,
+        "smt2_asserts": AXIOM_XONE_CONFLICT + "; Negated conjecture\n"
+                              "(assert (not (= (xone_verdict conflict conflict) conflict)))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL646 — xone_unknown: both compat => xone=unknown
@@ -218,7 +238,7 @@ PROBLEMS = [
         "id":            "ODRL646",
         "subdir":        "Composition",
         "name":          "xone_unknown: both pairs compatible implies xone=unknown",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Compatible",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -234,9 +254,10 @@ PROBLEMS = [
         "ttl": _MINIMAL_TTL,
         "fof_extra_decls": "",
         "fof_conjecture": "xone_verdict(compatible, compatible) = unknown",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_XONE_VERDICT,
+        "smt2_asserts": AXIOM_XONE_UNKNOWN + "; Negated conjecture\n"
+                             "(assert (not (= (xone_verdict compatible compatible) unknown)))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL647 — xone_verdict_total
@@ -245,7 +266,7 @@ PROBLEMS = [
         "id":            "ODRL647",
         "subdir":        "Composition",
         "name":          "xone_verdict_total: result is always one of three verdicts",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Conflict",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -264,9 +285,14 @@ PROBLEMS = [
             "     xone_verdict(Vm,Vr) = conflict |\n"
             "     xone_verdict(Vm,Vr) = unknown))"
         ),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_XONE_VERDICT + "(declare-fun vvm () Verdict)\n(declare-fun vvr () Verdict)\n",
+        "smt2_asserts": AXIOM_XONE_TOTAL + "; Negated conjecture (Skolemized)\n"
+                          "(assert (is_verdict vvm))\n"
+                          "(assert (is_verdict vvr))\n"
+                          "(assert (not (or (= (xone_verdict vvm vvr) compatible)\n"
+                          "                 (= (xone_verdict vvm vvr) conflict)\n"
+                          "                 (= (xone_verdict vvm vvr) unknown))))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL648 — or_sound_2branch: all pairs conflict => no shared point
@@ -355,7 +381,7 @@ fof(distinct, axiom, $distinct(v0, v300, v400, v500, v600, v800)).
         "id":            "ODRL649",
         "subdir":        "Composition",
         "name":          "or vs xone: differ when two branch pairs compatible",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Compatible",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -373,8 +399,10 @@ fof(distinct, axiom, $distinct(v0, v300, v400, v500, v600, v800)).
             "or_verdict(compatible, compatible) = compatible &\n"
             "    xone_verdict(compatible, compatible) = unknown"
         ),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _VERDICT_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_OR_VERDICT + DECL_XONE_VERDICT,
+        "smt2_asserts": AXIOM_OR_COMPAT + AXIOM_XONE_UNKNOWN + "; Negated conjunction\n"
+                          "(assert (or (not (= (or_verdict compatible compatible) compatible))\n"
+                          "            (not (= (xone_verdict compatible compatible) unknown))))",
     },
 ]

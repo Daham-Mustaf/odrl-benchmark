@@ -2,9 +2,7 @@
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-% Malformed: lt applied at domain lower bound v0 — violates def:profile (ii)
-% sem(lt 0) = (0,0) = empty set
-drk:policyMalformed a odrl:Set ;
+drk:policyA a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
       odrl:operator odrl:lt ;

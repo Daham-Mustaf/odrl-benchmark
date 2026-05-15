@@ -1,17 +1,11 @@
 %--------------------------------------------------------------------------
 % File     : AXIS000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Axis decomposition, interval denotation, and verdict algebra
-% Version  : 1.2
-% English  : Layer 1 axioms for the ODRL Axis Decomposition benchmark.
-%           : Section A: interval membership (in_closed, in_lopen, in_ropen, in_open).
-%           : Section B: per-axis verdicts (axis_conflict, axis_compatible, axis_subsumes).
-%           : Section C: strong Kleene verdict algebra (conflict/compatible/unknown).
-%           : Section D: box-level verdict aggregation (box_verdict/2).
-%           : Requires ORD000-0.ax (loaded by problem file). For continuous
-%           : domains also include ORD001-0.ax (density) before this file.
+% Axioms   : Interval denotations and verdict algebra
+% Version  : 1.0
+% English  : Section A: in_open/in_lopen/in_ropen/in_closed. Section B: three-valued Verdict constants. Section C: box_verdict combinator.
 %
-% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : AXIS000-0.ax
@@ -19,71 +13,50 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Section B uses CLOSED intervals only -- for open/half-open
-%           : boundary precision use Section A predicates + PREC000-0.ax.
-%           : All problems include this file.
-%           : Requires ORD000-0.ax loaded by the problem file before this file.
-%           : lem:normalisation is a meta-theorem; see GAP NOTE in file body.
-%           : 18 axioms: 4 Section A (interval membership) + 3 Section B (axis verdicts) + 7 Section C (3 is_verdict + 3 distinct + 1 enum) + 4 Section D (box aggregation).
+% Comments : 12 axioms: 4 interval defs + 4 verdict facts + 3 box_verdict cases.
 %--------------------------------------------------------------------------
+% ─── Section A: Interval membership predicates ─────────────────────────────
+% in_open(X, L, U)   <=>  L < X < U     (open at both ends)
+% in_lopen(X, L, U)  <=>  L < X <= U    (left-open, right-closed)
+% in_ropen(X, L, U)  <=>  L <= X < U    (left-closed, right-open)
+% in_closed(X, L, U) <=>  L <= X <= U   (closed at both ends)
 
-% NOTE: For continuous domains (coordinates, percentages), problem files
-% should include ORD000-0.ax, ORD001-0.ax, then this file.
-% For discrete domains, include ORD000-0.ax then this file.
-%
-% GAP NOTE (lem:normalisation): the claim that the intersection of finitely
-% many intervals on a totally ordered set is empty or a single interval is
-% a meta-theorem not expressible as a FOL conjecture.  It is supported by
-% the transitivity and trichotomy axioms in ORD000-0.ax.  No formula here.
-% ==========================================================================
-% Section A: Interval membership            [Paper: def:interval-denotation]
-% ==========================================================================
-fof(in_closed, axiom, ![X,A,B]:
-    (in_closed(X,A,B) <=> (leq(A,X) & leq(X,B)))).
-fof(in_lopen, axiom, ![X,A,B]:
-    (in_lopen(X,A,B) <=> (less(A,X) & leq(X,B)))).
-fof(in_ropen, axiom, ![X,A,B]:
-    (in_ropen(X,A,B) <=> (leq(A,X) & less(X,B)))).
-fof(in_open, axiom, ![X,A,B]:
-    (in_open(X,A,B) <=> (less(A,X) & less(X,B)))).
-% ==========================================================================
-% Section B: Per-axis verdicts  [Paper: def:axis-verdict, def:axis-subsumption]
-% ==========================================================================
-fof(axis_conflict_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
-    (axis_conflict(I1lo,I1hi,I2lo,I2hi) <=>
-     ![X]: ~(in_closed(X,I1lo,I1hi) & in_closed(X,I2lo,I2hi)))).
-fof(axis_compatible_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
-    (axis_compatible(I1lo,I1hi,I2lo,I2hi) <=>
-     ?[X]: (in_closed(X,I1lo,I1hi) & in_closed(X,I2lo,I2hi)))).
-fof(axis_subsumes_def, axiom, ![I1lo,I1hi,I2lo,I2hi]:
-    (axis_subsumes(I1lo,I1hi,I2lo,I2hi) <=>
-     ![X]: (in_closed(X,I1lo,I1hi) => in_closed(X,I2lo,I2hi)))).
-% ==========================================================================
-% Section C: Verdict algebra                      [Paper: def:verdict-algebra]
-% ==========================================================================
-fof(conflict_is_verdict,     axiom, is_verdict(conflict)).
-fof(compatible_is_verdict,   axiom, is_verdict(compatible)).
-fof(unknown_is_verdict,      axiom, is_verdict(unknown)).
-fof(verdicts_distinct_cf_cp, axiom, conflict != compatible).
-fof(verdicts_distinct_cf_un, axiom, conflict != unknown).
-fof(verdicts_distinct_cp_un, axiom, compatible != unknown).
-fof(verdict_enum, axiom, ![V]:
-    (is_verdict(V) => (V = conflict | V = compatible | V = unknown))).
-% ==========================================================================
-% Section D: Box-level verdict aggregation        [Paper: def:box-verdict]
-% ==========================================================================
-fof(box_conflict, axiom, ![V1,V2]:
-    (((is_verdict(V1) & is_verdict(V2)) & (V1 = conflict | V2 = conflict))
-     => box_verdict(V1,V2) = conflict)).
-fof(box_compatible, axiom, ![V1,V2]:
-    (((is_verdict(V1) & is_verdict(V2)) & (V1 = compatible & V2 = compatible))
-     => box_verdict(V1,V2) = compatible)).
-fof(box_unknown, axiom, ![V1,V2]:
-    (((is_verdict(V1) & is_verdict(V2)) &
-      (V1 = unknown | V2 = unknown) & V1 != conflict & V2 != conflict)
-     => box_verdict(V1,V2) = unknown)).
-fof(box_verdict_total, axiom, ![V1,V2]:
-    ((is_verdict(V1) & is_verdict(V2)) =>
-     (box_verdict(V1,V2) = conflict |
-      box_verdict(V1,V2) = compatible |
-      box_verdict(V1,V2) = unknown))).
+fof(in_open_def, axiom,
+    ! [X,L,U] : (in_open(X, L, U) <=> (less(L, X) & less(X, U)))).
+
+fof(in_lopen_def, axiom,
+    ! [X,L,U] : (in_lopen(X, L, U) <=> (less(L, X) & leq(X, U)))).
+
+fof(in_ropen_def, axiom,
+    ! [X,L,U] : (in_ropen(X, L, U) <=> (leq(L, X) & less(X, U)))).
+
+fof(in_closed_def, axiom,
+    ! [X,L,U] : (in_closed(X, L, U) <=> (leq(L, X) & leq(X, U)))).
+
+% ─── Section B: Three-valued verdict constants ─────────────────────────────
+fof(verdicts_distinct, axiom,
+    $distinct(compatible, conflict, unknown)).
+
+fof(verdict_total, axiom,
+    ! [V] : (is_verdict(V) <=> (V = compatible | V = conflict | V = unknown))).
+
+fof(is_verdict_compatible, axiom, is_verdict(compatible)).
+fof(is_verdict_conflict,   axiom, is_verdict(conflict)).
+fof(is_verdict_unknown,    axiom, is_verdict(unknown)).
+
+% ─── Section C: box_verdict (per-axis combination, 2D and 3D boxes) ───────
+fof(box_conflict, axiom,
+    ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
+                  (V1 = conflict | V2 = conflict))
+                 => box_verdict(V1, V2) = conflict)).
+
+fof(box_compatible, axiom,
+    ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
+                  V1 = compatible & V2 = compatible)
+                 => box_verdict(V1, V2) = compatible)).
+
+fof(box_unknown, axiom,
+    ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
+                  (V1 = unknown | V2 = unknown) &
+                  V1 != conflict & V2 != conflict)
+                 => box_verdict(V1, V2) = unknown)).

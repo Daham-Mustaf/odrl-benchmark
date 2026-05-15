@@ -10,23 +10,21 @@ from dataclasses import dataclass
 
 REFS = {
     "fois2026": (
-        "[MMC+26] Mohammed, D., Mustafa, D., Collarana, D., Lange, C., Guizzardi, G. "
+        "[Anonymous26a] Anonymous. "
         "What Does ODRL Mean? Grounding Permissions, Prohibitions, and Duties "
-        "in Deontic Logic and Foundational Ontology. FOIS 2026."
+        "in Deontic Logic and Foundational Ontology. FOIS 2026 (anonymized for review)."
     ),
     "axis2026": (
-        "[Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., "
-        "Quix, C., Decker, S. "
+        "[Anonymous26b] Anonymous. "
         "Axis Decomposition for ODRL: Resolving Dimensional Ambiguity "
         "in Policy Constraints through Interval Semantics. "
-        "arXiv:2602.19878. https://arxiv.org/abs/2602.19878"
+        "Submitted to"
     ),
     "kgc2026": (
-        "[Mus+27] Mustafa, D., Collarana, D., Haque, R., Peng, Y., "
-        "Quix, C., Lange, C., Geisler, S., Decker, S. "
+        "[Anonymous26c] Anonymous. "
         "Conflict Detection via Denotational Semantics: "
         "Policy Reasoning over Incomplete Hierarchies. "
-        "arXiv:2602.19883. https://arxiv.org/abs/2602.19883"
+        "Under submission (anonymized for review)."
     ),
 }
 
@@ -110,6 +108,8 @@ class Header:
     refs:     list
     comments: str
     spc:      str = ""
+    verdict:  str = ""    # Conflict | Compatible | Unknown | CounterSatisfiable
+    relation: str = ""    # conflict | subsumption | verdict_algebra
     fof_text: str = ""   # retained for API compatibility, not used in render
 
     def _infer_spc(self):
@@ -131,11 +131,13 @@ class Header:
             + _wrap("English", self.english) + "\n"
             + "%\n"
             + _refs_block(self.refs) + "\n"
-            + "% Source   : Mustafa, D. (2026)\n"
-            + "% Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + "% Source   : anonymous\n"
+            + "% Authors  : anonymous\n"
             + f"% Names    : {self.file}\n"
             + "%\n"
             + f"% Status   : {self.status}\n"
+            + (f"% Verdict  : {self.verdict}\n" if self.verdict else "")
+            + (f"% Relation : {self.relation}\n" if self.relation else "")
             + f"% SPC      : {self._infer_spc()}\n"
             + "%\n"
             + _wrap("Comments", self.comments) + "\n"
@@ -166,8 +168,8 @@ class AXHeader:
             + _wrap("English", self.english) + "\n"
             + "%\n"
             + _refs_block(self.refs) + "\n"
-            + "% Source   : Mustafa, D. (2026)\n"
-            + "% Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + "% Source   : anonymous\n"
+            + "% Authors  : anonymous\n"
             + f"% Names    : {self.file}\n"
             + "%\n"
             + "% Status   : Satisfiable\n"
@@ -196,9 +198,9 @@ class SMTHeader:
             + f"; Domain   : {DOMAINS[self.domain]}\n"
             + f"; Axioms   : {self.title}\n"
             + f"; Version  : {self.version}\n"
-            + f"; Authors  : Mustafa, D. & Sutcliffe, G.\n"
+            + f"; Authors  : anonymous\n"
             + _smt_refs_block(self.refs) + "\n"
-            + "; Source   : Mustafa, D. (2026)\n"
+            + "; Source   : anonymous\n"
             + f"; Names    : {self.file}\n"
             + f"; Status   : {self.status}\n"
             + _smt_wrap("Comments", self.comments) + "\n"
@@ -240,6 +242,8 @@ def problem_header(p, domain, fof_body=""):
         status   = p["status_fof"],
         refs     = ref_map[domain],
         comments = comment_map[domain],
+        verdict  = p.get("verdict", ""),
+        relation = p.get("relation", ""),
         fof_text = fof_body,
     ).render()
 

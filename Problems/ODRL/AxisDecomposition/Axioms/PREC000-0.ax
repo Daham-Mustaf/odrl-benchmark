@@ -1,17 +1,11 @@
 %--------------------------------------------------------------------------
 % File     : PREC000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Role-free endpoint precedence for the Conflict Criterion
-% Version  : 1.2
-% English  : Defines prec(U,L,CU,CL): upper endpoint U precedes lower
-%           : endpoint L under closedness flags CU,CL in {c,o}.
-%           : Four explicit cases (cc/oc/co/oo) avoid the label-asymmetry
-%           : bug that arises when the definition references 'first/second
-%           : interval'. Both u1 prec l2 and u2 prec l1 use the same rules.
-%           : Also defines disjoint/8 encoding the full Conflict Criterion
-%           : and operator tag axioms (lower_tag/2, upper_tag/2).
+% Axioms   : Endpoint precedence (Def 5.5)
+% Version  : 1.0
+% English  : prec/4 biconditional: U with tag T_u precedes L with tag T_l iff less(U,L) or (U=L and one tag is open).
 %
-% Refs     : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : PREC000-0.ax
@@ -19,55 +13,16 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Depends on ORD000-0.ax (loaded by problem file before AXIS000-0.ax).
-%           : Include for open/half-open boundary problems:
-%           : include('Axioms/ORD000-0.ax').
-%           : include('Axioms/PREC000-0.ax').
-%           : include('Axioms/AXIS000-0.ax').
-%           : 19 axioms: 4 ep_type + 4 prec cases + 1 disjoint + 10 tags.
+% Comments : 2 axioms: 1 tag-distinctness + 1 biconditional.
 %--------------------------------------------------------------------------
+% Endpoint precedence from Def 5.5:
+% prec(U, L, T_u, T_l) holds iff
+%   less(U, L)  OR  (U = L AND at least one of T_u, T_l is open).
+% Tags: c (closed), o (open).
 
-% ==========================================================================
-% Endpoint types                             [Paper: thm:criterion]
-% ==========================================================================
-fof(ep_c_is_ep,    axiom, is_ep_type(c)).
-fof(ep_o_is_ep,    axiom, is_ep_type(o)).
-fof(ep_types_distinct, axiom, c != o).
-fof(ep_type_enum,  axiom, ![T]: (is_ep_type(T) => (T = c | T = o))).
-% ==========================================================================
-% prec/4: role-free endpoint separation      [Paper: thm:criterion]
-% ==========================================================================
-% prec(U, L, CU, CL): upper U is separated from lower L under flags CU,CL.
-%   (c,c): both attained -> need strict separation: U < L
-%   any o: boundary excluded -> weak separation suffices: U <= L
-fof(prec_cc, axiom, ![U,L]: (prec(U,L,c,c) <=> less(U,L))).
-fof(prec_oc, axiom, ![U,L]: (prec(U,L,o,c) <=> leq(U,L))).
-fof(prec_co, axiom, ![U,L]: (prec(U,L,c,o) <=> leq(U,L))).
-fof(prec_oo, axiom, ![U,L]: (prec(U,L,o,o) <=> leq(U,L))).
-% ==========================================================================
-% Conflict Criterion                          [Paper: thm:criterion]
-% ==========================================================================
-% Arguments: lo1, hi1, clo1, chi1, lo2, hi2, clo2, chi2
-fof(disjoint_def, axiom, ![L1,U1,CL1,CU1,L2,U2,CL2,CU2]:
-    (disjoint(L1,U1,CL1,CU1,L2,U2,CL2,CU2) <=>
-     (prec(U1,L2,CU1,CL2) | prec(U2,L1,CU2,CL1)))).
-% ==========================================================================
-% Operator tag extraction
-% ==========================================================================
-% Operator  lower_tag  upper_tag  Interval shape
-% --------  ---------  ---------  ----------------------------------
-% eq        c          c          [v, v]
-% lteq      c          c          [inf D_k, v]   (ray bound closed)
-% gteq      c          c          [v, sup D_k]   (ray bound closed)
-% lt        c          o          [inf D_k, v)   (v is open)
-% gt        o          c          (v, sup D_k]   (v is open)
-fof(lower_tag_eq,   axiom, lower_tag(eq,   c)).
-fof(lower_tag_lteq, axiom, lower_tag(lteq, c)).
-fof(lower_tag_gteq, axiom, lower_tag(gteq, c)).
-fof(lower_tag_lt,   axiom, lower_tag(lt,   c)).
-fof(lower_tag_gt,   axiom, lower_tag(gt,   o)).
-fof(upper_tag_eq,   axiom, upper_tag(eq,   c)).
-fof(upper_tag_lteq, axiom, upper_tag(lteq, c)).
-fof(upper_tag_gteq, axiom, upper_tag(gteq, c)).
-fof(upper_tag_lt,   axiom, upper_tag(lt,   o)).
-fof(upper_tag_gt,   axiom, upper_tag(gt,   c)).
+fof(tags_distinct, axiom, c != o).
+
+fof(prec_iff, axiom,
+    ! [U,L,Tu,Tl] :
+        (prec(U, L, Tu, Tl) <=>
+         (less(U, L) | (U = L & (Tu = o | Tl = o))))).

@@ -6,7 +6,4 @@ drk:policyA a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
       odrl:operator odrl:gteq ;
-      odrl:rightOperand "200"^^xsd:decimal ] ;
-    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
-      odrl:operator odrl:lt ;
-      odrl:rightOperand "400"^^xsd:decimal ] ] .
+      odrl:rightOperand "200"^^xsd:decimal ] ] .

@@ -18,6 +18,12 @@ Problem overview:
   ODRL636 — completion_compat at boundary: V=InfD works for eq             Theorem
   ODRL637 — completion_conflict requires U<V strictly                      Theorem
 """
+
+# Real UF SMT encoding for ODRL635 (box_verdict verdict-algebra)
+from smt_axioms import (
+    PREAMBLE_VERDICT, DECL_BOX_VERDICT, AXIOM_BOX_UNKNOWN,
+)
+
 PROBLEMS = [
     # ─────────────────────────────────────────────────────────────────
     # ODRL630 — completion_compat: V in domain => completion_compatible
@@ -269,7 +275,7 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800, v1200)).
         "id":            "ODRL635",
         "subdir":        "Completion",
         "name":          "unknown_sound: box verdict is Unknown when axis unconstrained",
-        "relation":      "conflict",
+        "relation":      "verdict_algebra",
         "verdict":       "Compatible",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -286,9 +292,10 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800, v1200)).
 drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "fof_extra_decls": "",
         "fof_conjecture": "box_verdict(compatible, unknown) = unknown",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_BOX_VERDICT,
+        "smt2_asserts": AXIOM_BOX_UNKNOWN + "; Negated conjecture\n"
+                            "(assert (not (= (box_verdict compatible unknown) unknown)))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL636 — completion_compat at InfD (boundary V=InfD is ok for eq)

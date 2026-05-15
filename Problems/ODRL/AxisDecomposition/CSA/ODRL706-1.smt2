@@ -4,11 +4,11 @@
 ; Axioms   : CSA Composition 4D: claim compatible when width conflicts (wrong)
 ; Version  : 1.0
 ; Authors  : Mustafa, D. & Sutcliffe, G.
-; Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
+; Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 ; Source   : Mustafa, D. (2026)
 ; Names    : ODRL706-1.smt2
 ; Status   : unsat
-; Comments : CSA: wrong verdict. Category: CSA.
+; Comments : Verdict: CounterSatisfiable  Category: CSA  Difficulty: Medium
 ; --------------------------------------------------------------------------
 
 (set-logic QF_LRA)

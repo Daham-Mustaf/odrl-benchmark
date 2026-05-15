@@ -7,23 +7,23 @@
 %           : Witness: (x,y,z) = (v400, v300, v16), all inside their closed intervals.
 %           : Unfolded into leq primitives so Vampire-FMB closes without instantiating in_box3.
 %
-% Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL759-1.p
 %
 % Status   : Satisfiable
-% Rating   : 0.00 v9.0.0
+% Verdict  : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : SAT — axiom layer consistency witness.
-%           : No conjecture; model finder confirms satisfiability.
+% Comments : Axis decomposition tier. ISWC 2026.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL759-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 
-% ─── Named constants and witness axioms ────────────────────────────────
+% ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v8,   axiom, val(v8)).
 fof(val_v16,  axiom, val(v16)).
 fof(val_v32,  axiom, val(v32)).
@@ -45,5 +45,7 @@ fof(distinct, axiom, $distinct(v8, v16, v32, v100, v200, v300, v400, v600, v800)
 fof(witness_x, axiom, leq(v200, v400) & leq(v400, v800)).
 fof(witness_y, axiom, leq(v100, v300) & leq(v300, v600)).
 fof(witness_z, axiom, leq(v8,   v16)  & leq(v16,  v32)).
-% ─── No conjecture — satisfiability check ───────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
+fof(odrl759, conjecture,
+    None).
 %--------------------------------------------------------------------------

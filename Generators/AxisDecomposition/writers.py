@@ -12,10 +12,31 @@ from header import problem_header, SMTHeader
 def write_fof_problem(p: dict, out_dir: Path) -> Path:
     subdir = out_dir / p["subdir"]
     subdir.mkdir(parents=True, exist_ok=True)
-    includes = "include('Axioms/ORD000-0.ax').\n"
-    if p.get("needs_density"):
-        includes += "include('Axioms/ORD001-0.ax').\n"
-    includes += "include('Axioms/AXIS000-0.ax').\n"
+    # Includes are built as follows:
+    #   1. start from p['includes'] if set, else a default of ORD000+AXIS000
+    #      (+ ORD001 if needs_density)
+    #   2. always add the category-specific axiom file for the problem's subdir
+    #      if one exists and isn't already in the list
+    CATEGORY_AXIOMS = {
+        "Composition":       "COMP000-0.ax",
+        "LogicalOr":         "COMP000-0.ax",
+        "LogicalXone":       "COMP000-0.ax",
+        "Completion":        "COMPL000-0.ax",
+        "BoxContainment":    "SUBS000-0.ax",
+        "ConflictCriterion": "PREC000-0.ax",
+        "WellFormedness":    "WF000-0.ax",
+        "Projection":        "PROJ000-0.ax",
+    }
+    inc_list = list(p.get("includes") or [])
+    if not inc_list:
+        inc_list = ["ORD000-0.ax"]
+        if p.get("needs_density"):
+            inc_list.append("ORD001-0.ax")
+        inc_list.append("AXIS000-0.ax")
+    cat_axiom = CATEGORY_AXIOMS.get(p.get("subdir"))
+    if cat_axiom and cat_axiom not in inc_list:
+        inc_list.append(cat_axiom)
+    includes = "".join(f"include('Axioms/{ax}').\n" for ax in inc_list)
     conj_id = p["id"].lower()
     conjecture_fof = (
         f"fof({conj_id}, conjecture,\n"

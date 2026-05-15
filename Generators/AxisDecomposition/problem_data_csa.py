@@ -10,6 +10,14 @@ The prover finds a countermodel showing the wrong verdict is refuted.
 Status: CounterSatisfiable for all.
 """
 
+
+# Real UF SMT encodings for verdict-algebra CSA refutations (708, 709, 714)
+from smt_axioms import (
+    PREAMBLE_VERDICT,
+    DECL_OR_VERDICT, DECL_XONE_VERDICT, DECL_BOX_VERDICT,
+    AXIOM_OR_CONFLICT, AXIOM_XONE_COMPAT, AXIOM_BOX_UNKNOWN,
+)
+
 PROBLEMS = [
     # ─────────────────────────────────────────────────────────────────
     # ODRL700 — flip ODRL300: claim compatible (wrong — actually conflict)
@@ -399,6 +407,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "id":          "ODRL708",
         "subdir":      "CSA",
         "name":        "CSA Composition: claim or(conflict,conflict)=compatible (wrong)",
+        "relation":    "verdict_algebra",
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
@@ -416,9 +425,10 @@ fof(distinct, axiom, $distinct(v0, v600)).
 drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "fof_extra_decls": "",
         "fof_conjecture": "or_verdict(conflict, conflict) = compatible",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_OR_VERDICT,
+        "smt2_asserts": AXIOM_OR_CONFLICT + "; Wrong claim asserted directly (CSA)\n"
+                          "(assert (= (or_verdict conflict conflict) compatible))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL709 — flip ODRL644: claim xone(compat,conflict)=conflict (wrong)
@@ -427,6 +437,7 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "id":          "ODRL709",
         "subdir":      "CSA",
         "name":        "CSA Composition: claim xone(compat,conflict)=conflict (wrong)",
+        "relation":    "verdict_algebra",
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
@@ -443,9 +454,10 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
 drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "fof_extra_decls": "",
         "fof_conjecture": "xone_verdict(compatible, conflict) = conflict",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_XONE_VERDICT,
+        "smt2_asserts": AXIOM_XONE_COMPAT + "; Wrong claim asserted directly (CSA)\n"
+                            "(assert (= (xone_verdict compatible conflict) conflict))",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL710 — flip ODRL631: claim completion_conflict requires U≥V (wrong)
@@ -617,6 +629,7 @@ fof(distinct, axiom, $distinct(v400, v600)).
         "id":          "ODRL714",
         "subdir":      "CSA",
         "name":        "CSA Completion: claim box(compatible,unknown)=conflict (wrong)",
+        "relation":    "verdict_algebra",
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
@@ -634,8 +647,9 @@ fof(distinct, axiom, $distinct(v400, v600)).
 drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "fof_extra_decls": "",
         "fof_conjecture": "box_verdict(compatible, unknown) = conflict",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": "(assert (not (= x x)))",
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + DECL_BOX_VERDICT,
+        "smt2_asserts": AXIOM_BOX_UNKNOWN + "; Wrong claim asserted directly (CSA)\n"
+                            "(assert (= (box_verdict compatible unknown) conflict))",
     },
 ]

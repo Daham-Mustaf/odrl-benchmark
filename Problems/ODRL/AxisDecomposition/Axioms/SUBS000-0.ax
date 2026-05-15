@@ -1,20 +1,11 @@
 %--------------------------------------------------------------------------
 % File     : SUBS000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Box-level containment (boxS) for policy redundancy detection
-% Version  : 1.2
-% English  : Encodes def:box-containment from the paper.
-%           : Presence tags (present/absent) track whether each policy
-%           : constrains a given axis, enabling the Unknown-when-absent logic.
-%           : subs_verdict/6: per-axis subsumption with presence flags.
-%           : box_subs/2: binary aggregation of subs_verdict values;
-%           : apply iteratively: box_subs(box_subs(box_subs(S1,S2),S3),S4).
-%           : Asymmetric: box_subs(C1,C2) checks C1 is stricter than C2;
-%           : box_subs(C2,C1) checks the reverse.
-%           : Requires axis_subsumes from AXIS000-0.ax Section B.
+% Axioms   : Subsumption: axis_subsumes, subs_verdict, box_subs
+% Version  : 1.0
+% English  : Per-axis subsumption with presence tags + box-level combination.
 %
-% Refs     : [Mus+26] Mustafa, D., Collarana, D., Lange, C., Peng, Y., Haque, R., Quix, C., Decker, S. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. arXiv:2602.19878. https://arxiv.org/abs/2602.19878
-%           : [Mus+26] Mustafa, D., Chollarana, D., Haque, R., Peng, Y., Quix, C., Lange, C., Geisler, S., Decker, S. Conflict Detection via Denotational Semantics: Policy Reasoning over Incomplete Hierarchies. arXiv:2602.19883. https://arxiv.org/abs/2602.19883
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : SUBS000-0.ax
@@ -22,84 +13,77 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : Depends on ORD000-0.ax and axis_subsumes from AXIS000-0.ax
-%           : (both loaded by the problem file).
-%           : Include for box containment / policy redundancy problems:
-%           : include('Axioms/ORD000-0.ax').
-%           : include('Axioms/AXIS000-0.ax').
-%           : include('Axioms/SUBS000-0.ax').
-%           : GAP 1 fix: encodes def:box-containment (boxS) from the paper.
-%           : Presence tags (present/absent) encode axis-level absence logic.
-%           : 14 axioms: 4 presence tags + 6 subs_verdict + 4 box_subs.
-%           : box_subs/2 is binary; chain for n axes: box_subs(box_subs(box_subs(S1,S2),S3),S4).
-%           : 14 axioms: 4 presence tags + 6 subs_verdict + 4 box_subs.
+% Comments : 14 axioms: 4 presence + 5 subs_verdict cases + 4 box_subs cases.
 %--------------------------------------------------------------------------
+% axis_subsumes/4: per-axis interval containment check.
+%   axis_subsumes(L1, U1, L2, U2) iff [L1,U1] subseteq [L2,U2]
+%   (defined via leq comparisons; specific facts asserted in .p files)
 
-% ==========================================================================
-% Presence tags                              [Paper: def:box-containment]
-% ==========================================================================
-% Encode whether a given policy constrains an axis.
-% Used to implement the Unknown-when-absent logic of def:box-containment.
-fof(present_is_presence, axiom, is_presence(present)).
-fof(absent_is_presence,  axiom, is_presence(absent)).
-fof(presence_distinct,   axiom, present != absent).
-fof(presence_enum,       axiom, ![T]:
-    (is_presence(T) => (T = present | T = absent))).
-% ==========================================================================
-% Per-axis subsumption verdict with presence [Paper: def:box-containment]
-% ==========================================================================
-% subs_verdict(L1,H1,P1, L2,H2,P2):
-%   S_k = Unknown  when C1 or C2 does not constrain axis a_k
-%   S_k = Compatible when both present and sem(C1) subseteq sem(C2)
-%   S_k = Conflict   when both present and sem(C1) not-subseteq sem(C2)
-%
-% Note: absence of C2 also yields Unknown (not vacuously Compatible),
-% because the absent policy's intended scope is not known (paper text).
-fof(subs_c1_absent, axiom, ![L1,H1,L2,H2]:
-    (subs_verdict(L1,H1,absent,L2,H2,present) = unknown)).
-fof(subs_c2_absent, axiom, ![L1,H1,L2,H2]:
-    (subs_verdict(L1,H1,present,L2,H2,absent) = unknown)).
-fof(subs_both_absent, axiom, ![L1,H1,L2,H2]:
-    (subs_verdict(L1,H1,absent,L2,H2,absent) = unknown)).
-fof(subs_present_yes, axiom, ![L1,H1,L2,H2]:
-    (axis_subsumes(L1,H1,L2,H2)
-     => subs_verdict(L1,H1,present,L2,H2,present) = compatible)).
-fof(subs_present_no, axiom, ![L1,H1,L2,H2]:
-    (~axis_subsumes(L1,H1,L2,H2)
-     => subs_verdict(L1,H1,present,L2,H2,present) = conflict)).
-fof(subs_verdict_total, axiom, ![L1,H1,P1,L2,H2,P2]:
-    ((is_presence(P1) & is_presence(P2)) =>
-     (subs_verdict(L1,H1,P1,L2,H2,P2) = compatible |
-      subs_verdict(L1,H1,P1,L2,H2,P2) = conflict |
-      subs_verdict(L1,H1,P1,L2,H2,P2) = unknown))).
-% ==========================================================================
-% Box-level containment aggregation          [Paper: def:box-containment]
-% ==========================================================================
-% box_subs/2 is BINARY; apply iteratively over all per-axis verdicts:
-%   box_subs(box_subs(box_subs(S1,S2),S3),S4)  for 4 axes.
-%
-% box_subs(V1,V2) aggregates per-axis subs_verdict values:
-%   Compatible iff both V1 and V2 are Compatible
-%   Conflict   iff at least one of V1, V2 is Conflict
-%   Unknown    otherwise (mixed Compatible/Unknown, no Conflict)
-%
-% ASYMMETRIC by design: box_subs(V1,V2) != box_subs(V2,V1) in general,
-% matching the asymmetry of containment vs. reverse containment.
-fof(box_subs_compat, axiom, ![V1,V2]:
-    (((is_verdict(V1) & is_verdict(V2)) &
-      V1 = compatible & V2 = compatible)
-     => box_subs(V1,V2) = compatible)).
-fof(box_subs_conflict, axiom, ![V1,V2]:
-    (((is_verdict(V1) & is_verdict(V2)) &
-      (V1 = conflict | V2 = conflict))
-     => box_subs(V1,V2) = conflict)).
-fof(box_subs_unknown, axiom, ![V1,V2]:
-    (((is_verdict(V1) & is_verdict(V2)) &
-      ~(V1 = compatible & V2 = compatible) &
-      V1 != conflict & V2 != conflict)
-     => box_subs(V1,V2) = unknown)).
-fof(box_subs_total, axiom, ![V1,V2]:
-    ((is_verdict(V1) & is_verdict(V2)) =>
-     (box_subs(V1,V2) = compatible |
-      box_subs(V1,V2) = conflict |
-      box_subs(V1,V2) = unknown))).
+% subs_verdict/6: subsumption verdict on one axis, given presence tags.
+%   args: lo1, hi1, presence1, lo2, hi2, presence2
+%   presence = present | absent
+
+fof(presence_distinct, axiom, present != absent).
+fof(presence_total, axiom,
+    ! [P] : (is_presence(P) <=> (P = present | P = absent))).
+fof(is_presence_present, axiom, is_presence(present)).
+fof(is_presence_absent,  axiom, is_presence(absent)).
+
+% c1 absent: cannot determine subsumption
+fof(subs_c1_absent, axiom,
+    ! [L1,U1,L2,U2] :
+        subs_verdict(L1, U1, absent, L2, U2, present) = unknown).
+
+% c2 absent: cannot determine subsumption
+fof(subs_c2_absent, axiom,
+    ! [L1,U1,L2,U2] :
+        subs_verdict(L1, U1, present, L2, U2, absent) = unknown).
+
+% Both absent: unknown
+fof(subs_both_absent, axiom,
+    ! [L1,U1,L2,U2] :
+        subs_verdict(L1, U1, absent, L2, U2, absent) = unknown).
+
+% Both present + subsumed: compatible
+fof(subs_present_yes, axiom,
+    ! [L1,U1,L2,U2] :
+        (axis_subsumes(L1, U1, L2, U2) =>
+         subs_verdict(L1, U1, present, L2, U2, present) = compatible)).
+
+% Both present + not subsumed: conflict
+fof(subs_present_no, axiom,
+    ! [L1,U1,L2,U2] :
+        (~ axis_subsumes(L1, U1, L2, U2) =>
+         subs_verdict(L1, U1, present, L2, U2, present) = conflict)).
+
+fof(subs_verdict_total, axiom,
+    ! [L1,U1,P1,L2,U2,P2] :
+        ((is_presence(P1) & is_presence(P2))
+         => (subs_verdict(L1, U1, P1, L2, U2, P2) = compatible |
+             subs_verdict(L1, U1, P1, L2, U2, P2) = conflict   |
+             subs_verdict(L1, U1, P1, L2, U2, P2) = unknown))).
+
+% box_subs/2: combination of per-axis subsumption verdicts into a box verdict.
+% Same shape as box_verdict but defined separately for subsumption queries.
+
+fof(box_subs_compat, axiom,
+    ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
+                  V1 = compatible & V2 = compatible)
+                 => box_subs(V1, V2) = compatible)).
+
+fof(box_subs_conflict, axiom,
+    ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
+                  (V1 = conflict | V2 = conflict))
+                 => box_subs(V1, V2) = conflict)).
+
+fof(box_subs_unknown, axiom,
+    ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
+                  ~(V1 = compatible & V2 = compatible) &
+                  V1 != conflict & V2 != conflict)
+                 => box_subs(V1, V2) = unknown)).
+
+fof(box_subs_total, axiom,
+    ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2))
+                 => (box_subs(V1, V2) = compatible |
+                     box_subs(V1, V2) = conflict |
+                     box_subs(V1, V2) = unknown))).

@@ -6,23 +6,23 @@
 % English  : HD video: width [640, 1920], height [480, 1080].
 %           : Witness: (x,y) = (1280, 720) -- classic 720p resolution.
 %
-% Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL768-1.p
 %
 % Status   : Satisfiable
-% Rating   : 0.00 v9.0.0
+% Verdict  : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : SAT — axiom layer consistency witness.
-%           : No conjecture; model finder confirms satisfiability.
+% Comments : Axis decomposition tier. ISWC 2026.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL768-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 
-% ─── Named constants and witness axioms ────────────────────────────────
+% ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v480,  axiom, val(v480)).
 fof(val_v640,  axiom, val(v640)).
 fof(val_v720,  axiom, val(v720)).
@@ -37,5 +37,7 @@ fof(ord_v1280_v1920, axiom, less(v1280, v1920)).
 fof(distinct, axiom, $distinct(v480, v640, v720, v1080, v1280, v1920)).
 fof(witness_x, axiom, leq(v640, v1280) & leq(v1280, v1920)).
 fof(witness_y, axiom, leq(v480, v720)  & leq(v720,  v1080)).
-% ─── No conjecture — satisfiability check ───────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
+fof(odrl768, conjecture,
+    None).
 %--------------------------------------------------------------------------

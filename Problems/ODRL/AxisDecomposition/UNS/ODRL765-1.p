@@ -9,17 +9,17 @@
 %           : leq(w,v600), and leq(v800,w) with less(v600,v800) gives less(w,v800)
 %           : and less(v800,w) — irreflexivity closes the proof.
 %
-% Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
+% Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
 % Names    : ODRL765-1.p
 %
 % Status   : Unsatisfiable
-% Rating   : 0.00 v9.0.0
+% Verdict  : Unsatisfiable
 % SPC      : FOF_UNS_RFN
 %
-% Comments : UNS — Remark 3.4 intra-policy self-contradiction.
-%           : Empty denotation: no request satisfies the constraint.
+% Comments : Axis decomposition tier. ISWC 2026.
+%           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
 %           : Policy source: Policies/ODRL765-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
@@ -35,5 +35,7 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
 fof(wit_val,      axiom, val(w)).
 fof(wit_in_lopen, axiom, in_lopen(w, v0, v600)).
 fof(wit_leq,      axiom, leq(v800, w)).
-% ─── No conjecture — contradiction in axioms ─────────────────────────
+% ─── Conjecture ────────────────────────────────────────────────────
+fof(odrl765, conjecture,
+    None).
 %--------------------------------------------------------------------------

@@ -51,6 +51,17 @@ box_subs chaining reduction (verified by hand):
 
 _SUBS_SMT_PLACEHOLDER = "(assert (not (= x x)))"
 
+
+# Real UF SMT encodings for verdict-algebra problems (ODRL652-657)
+from smt_axioms import (
+    PREAMBLE_VERDICT, PREAMBLE_PRESENCE, PREAMBLE_BOUND_SORT,
+    DECL_AXIS_SUBSUMES, DECL_SUBS_VERDICT, DECL_BOX_SUBS,
+    AXIOM_SUBS_C1_ABSENT, AXIOM_SUBS_C2_ABSENT, AXIOM_SUBS_BOTH_ABSENT,
+    AXIOM_SUBS_PRESENT_YES, AXIOM_SUBS_PRESENT_NO,
+    AXIOM_BOX_SUBS_COMPAT, AXIOM_BOX_SUBS_CONFLICT, AXIOM_BOX_SUBS_UNKNOWN,
+    declare_bounds,
+)
+
 PROBLEMS = [
     # ──────────────────────────────────────────────────────────────────
     # ODRL650 — 1-axis containment: lteq 600 ⊆ lteq 800 → Compatible
@@ -171,7 +182,7 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
         "id":            "ODRL652",
         "subdir":        "BoxContainment",
         "name":          "4-axis box containment: all axes A subsumes B → Compatible",
-        "relation":      "subsumption",
+        "relation":      "verdict_algebra",
         "verdict":       "Compatible",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -266,9 +277,23 @@ fof(hint_a, axiom, axis_subsumes(v0,v150,v0,v300)).
             "    subs_verdict(v0,v150,present,v0,v300,present))\n"
             "  = compatible"
         ),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _SUBS_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + PREAMBLE_PRESENCE + PREAMBLE_BOUND_SORT + DECL_AXIS_SUBSUMES + DECL_SUBS_VERDICT + DECL_BOX_SUBS + declare_bounds(["v0", "v16", "v32", "v150", "v300", "v400", "v600", "v800"]),
+        "smt2_asserts": AXIOM_SUBS_PRESENT_YES + AXIOM_SUBS_PRESENT_NO + AXIOM_BOX_SUBS_COMPAT + AXIOM_BOX_SUBS_CONFLICT + AXIOM_BOX_SUBS_UNKNOWN + "; axis_subsumes ground hints (positive on all 4 axes)\n"
+                          "(assert (axis_subsumes v0 v600 v0 v800))\n"
+                          "(assert (axis_subsumes v0 v400 v0 v800))\n"
+                          "(assert (axis_subsumes v0 v16  v0 v32))\n"
+                          "(assert (axis_subsumes v0 v150 v0 v300))\n"
+                          "; Negated conjecture: 4-axis box_subs chain != compatible\n"
+                          "(assert (not (=\n"
+                          "  (box_subs\n"
+                          "    (box_subs\n"
+                          "      (box_subs\n"
+                          "        (subs_verdict v0 v600 present v0 v800 present)\n"
+                          "        (subs_verdict v0 v400 present v0 v800 present))\n"
+                          "      (subs_verdict v0 v16 present v0 v32 present))\n"
+                          "    (subs_verdict v0 v150 present v0 v300 present))\n"
+                          "  compatible)))",
     },
     # ──────────────────────────────────────────────────────────────────
     # ODRL653 — 4-axis box: width axis A ⊄ B → Conflict
@@ -281,7 +306,7 @@ fof(hint_a, axiom, axis_subsumes(v0,v150,v0,v300)).
         "id":            "ODRL653",
         "subdir":        "BoxContainment",
         "name":          "4-axis box containment: width axis escapes → Conflict",
-        "relation":      "subsumption",
+        "relation":      "verdict_algebra",
         "verdict":       "Conflict",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -365,9 +390,12 @@ fof(no_subs_hint, axiom, ~axis_subsumes(v0, v800, v0, v600)).
 """,
         # Width: less(v600,v800) so ~axis_subsumes(v0,v800,v0,v600) → conflict
         "fof_conjecture": "subs_verdict(v0, v800, present, v0, v600, present) = conflict",
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _SUBS_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + PREAMBLE_PRESENCE + PREAMBLE_BOUND_SORT + DECL_AXIS_SUBSUMES + DECL_SUBS_VERDICT + declare_bounds(["v0", "v600", "v800"]),
+        "smt2_asserts": AXIOM_SUBS_PRESENT_YES + AXIOM_SUBS_PRESENT_NO + "; axis_subsumes ground hint (negative)\n"
+                          "(assert (not (axis_subsumes v0 v800 v0 v600)))\n"
+                          "; Negated conjecture\n"
+                          "(assert (not (= (subs_verdict v0 v800 present v0 v600 present) conflict)))",
     },
     # ──────────────────────────────────────────────────────────────────
     # ODRL654 — C1 absent on width axis → Unknown
@@ -378,7 +406,7 @@ fof(no_subs_hint, axiom, ~axis_subsumes(v0, v800, v0, v600)).
         "id":            "ODRL654",
         "subdir":        "BoxContainment",
         "name":          "C1 absent on width axis → Unknown",
-        "relation":      "subsumption",
+        "relation":      "verdict_algebra",
         "verdict":       "Unknown",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -414,9 +442,10 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
         "fof_conjecture": (
             "subs_verdict(v0,v600,absent,v0,v800,present) = unknown"
         ),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _SUBS_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + PREAMBLE_PRESENCE + PREAMBLE_BOUND_SORT + DECL_SUBS_VERDICT + declare_bounds(["v0", "v600", "v800"]),
+        "smt2_asserts": AXIOM_SUBS_C1_ABSENT + "; Negated conjecture\n"
+                          "(assert (not (= (subs_verdict v0 v600 absent v0 v800 present) unknown)))",
     },
     # ──────────────────────────────────────────────────────────────────
     # ODRL655 — C2 absent on width axis → Unknown
@@ -427,7 +456,7 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
         "id":            "ODRL655",
         "subdir":        "BoxContainment",
         "name":          "C2 absent on width axis → Unknown",
-        "relation":      "subsumption",
+        "relation":      "verdict_algebra",
         "verdict":       "Unknown",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -463,9 +492,10 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
         "fof_conjecture": (
             "subs_verdict(v0,v600,present,v0,v800,absent) = unknown"
         ),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _SUBS_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + PREAMBLE_PRESENCE + PREAMBLE_BOUND_SORT + DECL_SUBS_VERDICT + declare_bounds(["v0", "v600", "v800"]),
+        "smt2_asserts": AXIOM_SUBS_C2_ABSENT + "; Negated conjecture\n"
+                          "(assert (not (= (subs_verdict v0 v600 present v0 v800 absent) unknown)))",
     },
     # ──────────────────────────────────────────────────────────────────
     # ODRL656 — Both absent on width axis → Unknown
@@ -476,7 +506,7 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
         "id":            "ODRL656",
         "subdir":        "BoxContainment",
         "name":          "Both absent on width axis → Unknown",
-        "relation":      "subsumption",
+        "relation":      "verdict_algebra",
         "verdict":       "Unknown",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -507,9 +537,10 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
         "fof_conjecture": (
             "subs_verdict(v0,v600,absent,v0,v800,absent) = unknown"
         ),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _SUBS_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + PREAMBLE_PRESENCE + PREAMBLE_BOUND_SORT + DECL_SUBS_VERDICT + declare_bounds(["v0", "v600", "v800"]),
+        "smt2_asserts": AXIOM_SUBS_BOTH_ABSENT + "; Negated conjecture\n"
+                          "(assert (not (= (subs_verdict v0 v600 absent v0 v800 absent) unknown)))",
     },
     # ──────────────────────────────────────────────────────────────────
     # ODRL657 — 4-axis box: width C1 absent + 3 compatible → Unknown
@@ -526,7 +557,7 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
         "id":            "ODRL657",
         "subdir":        "BoxContainment",
         "name":          "4-axis box: absent width axis propagates Unknown",
-        "relation":      "subsumption",
+        "relation":      "verdict_algebra",
         "verdict":       "Unknown",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
@@ -609,8 +640,21 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v800)).
             "    subs_verdict(v0,v150,present,v0,v300,present))\n"
             "  = unknown"
         ),
-        "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const x Real)",
-        "smt2_asserts": _SUBS_SMT_PLACEHOLDER,
+        "smt2_logic":   "UF",
+        "smt2_decls":   PREAMBLE_VERDICT + PREAMBLE_PRESENCE + PREAMBLE_BOUND_SORT + DECL_AXIS_SUBSUMES + DECL_SUBS_VERDICT + DECL_BOX_SUBS + declare_bounds(["v0", "v16", "v32", "v150", "v300", "v400", "v800"]),
+        "smt2_asserts": AXIOM_SUBS_C1_ABSENT + AXIOM_SUBS_PRESENT_YES + AXIOM_SUBS_PRESENT_NO + AXIOM_BOX_SUBS_COMPAT + AXIOM_BOX_SUBS_CONFLICT + AXIOM_BOX_SUBS_UNKNOWN + "; axis_subsumes ground hints for the 3 present axes\n"
+                          "(assert (axis_subsumes v0 v400 v0 v800))\n"
+                          "(assert (axis_subsumes v0 v16  v0 v32))\n"
+                          "(assert (axis_subsumes v0 v150 v0 v300))\n"
+                          "; Negated conjecture: 4-axis chain (width absent) != unknown\n"
+                          "(assert (not (=\n"
+                          "  (box_subs\n"
+                          "    (box_subs\n"
+                          "      (box_subs\n"
+                          "        (subs_verdict v0 v800 absent  v0 v800 present)\n"
+                          "        (subs_verdict v0 v400 present v0 v800 present))\n"
+                          "      (subs_verdict v0 v16 present v0 v32 present))\n"
+                          "    (subs_verdict v0 v150 present v0 v300 present))\n"
+                          "  unknown)))",
     },
 ]
