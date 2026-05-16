@@ -12,11 +12,10 @@
 ; --------------------------------------------------------------------------
 
 (set-logic QF_LRA)
-(declare-const u Real)
-(declare-const v Real)
-(assert (>= u 0.0)) (assert (<= u 1200.0))
-(assert (>= v 0.0)) (assert (<= v 1200.0))
-(assert (< u v))
-(assert (not (< u v)))
+(declare-const x Real)
+; Policy-level disjointness: [0, 400] and [800, infinity) share no point.
+(assert (>= x 0.0))
+(assert (<= x 400.0))
+(assert (>= x 800.0))
 (check-sat)
 (exit)

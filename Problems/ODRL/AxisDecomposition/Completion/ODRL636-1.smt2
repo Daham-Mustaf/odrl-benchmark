@@ -13,6 +13,7 @@
 
 (set-logic QF_LRA)
 (declare-const v Real)
+; Boundary case: v=InfD=0 must be in the closed domain [0, 1200].
 (assert (= v 0.0))
 (assert (not (and (>= v 0.0) (<= v 1200.0))))
 (check-sat)

@@ -4,7 +4,7 @@
 % Problem  : completion_compat at InfD: V=InfD is valid for eq completion
 % Version  : 1.0
 % English  : def:completion: V=InfD is in [InfD,SupD] so completion_compatible holds.
-%           : completion_compatible(v0, v0, v1200) — infimum as eq value.
+%           : completion_compatible(v0, v0, v1200) -- infimum as eq value.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

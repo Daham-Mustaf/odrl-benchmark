@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : COMPL000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Completion axioms
+% Axioms   : Completion axioms (Theorem 6.10, Unknown Soundness)
 % Version  : 1.0
-% English  : Verdict completion under sharp and range modes.
+% English  : completion_compatible: V in [InfD,SupD] suffices for compatible completion. completion_conflict: U<V in [InfD,SupD] witnesses conflict completion. axis_conflict: two intervals conflict iff one ends strictly before the other begins.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,16 +13,45 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 6 axioms: 6 completion cases.
+% Comments : 3 axioms: 3 biconditionals: completion_compatible + completion_conflict + axis_conflict.
 %--------------------------------------------------------------------------
-% Completion: extends single-axis verdicts when a constraint is absent.
-% completed/3: completed(verdict_in, completion_kind, verdict_out)
-% kind = sharp : verdict propagates unchanged
-% kind = range : verdict propagates unchanged
+% Section 1: completion_compatible/3  (Theorem 6.10, compatible completion)
+%
+% completion_compatible(V, InfD, SupD) holds iff value V can serve as the
+% witness in the (eq V) compatible completion -- i.e., V lies in the
+% effective axis domain [InfD, SupD].
+%
+% Used by: ODRL630 (interior), ODRL632 (sharpness), ODRL636 (boundary V=InfD).
 
-fof(complete_sharp_compat,   axiom, completed(compatible, sharp, compatible)).
-fof(complete_sharp_conflict, axiom, completed(conflict,   sharp, conflict)).
-fof(complete_sharp_unknown,  axiom, completed(unknown,    sharp, unknown)).
-fof(complete_range_compat,   axiom, completed(compatible, range, compatible)).
-fof(complete_range_conflict, axiom, completed(conflict,   range, conflict)).
-fof(complete_range_unknown,  axiom, completed(unknown,    range, unknown)).
+fof(completion_compatible_def, axiom,
+    ! [V, InfD, SupD] :
+      ( completion_compatible(V, InfD, SupD)
+    <=> ( leq(InfD, V) & leq(V, SupD) ) )).
+
+% Section 2: completion_conflict/4  (Theorem 6.10, conflict completion)
+%
+% completion_conflict(U, V, InfD, SupD) holds iff (U, V) can serve as the
+% pair in the (lteq U) / (gteq V) conflict completion: U < V strictly, and
+% both U and V lie in [InfD, SupD].  The strictness is essential -- equal
+% endpoints with both intervals closed share that point and do not
+% conflict (cf. Theorem 5.8 prec_cc case).
+%
+% Used by: ODRL631 (witness pair), ODRL633 (sharpness), ODRL637 (strictness).
+
+fof(completion_conflict_def, axiom,
+    ! [U, V, InfD, SupD] :
+      ( completion_conflict(U, V, InfD, SupD)
+    <=> ( leq(InfD, U) & less(U, V) & leq(V, SupD) ) )).
+
+% Section 3: axis_conflict/4  (Theorem 5.8 cc-case, encoded directly)
+%
+% Two closed intervals are in conflict iff either ends strictly before
+% the other begins.  This duplicates the cc case of disjoint/8 from
+% PREC000-0.ax in order to keep Completion problems self-contained.
+%
+% Used by: ODRL634 (monotone_conflict / ground instance).
+
+fof(axis_conflict_def, axiom,
+    ! [L1, U1, L2, U2] :
+      ( axis_conflict(L1, U1, L2, U2)
+    <=> ( less(U1, L2) | less(U2, L1) ) )).

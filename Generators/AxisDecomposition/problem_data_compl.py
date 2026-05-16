@@ -3,20 +3,38 @@ problem_data_compl.py
 =====================
 Completion benchmark problems: ODRL630-637 (8 problems).
 Category O: Tests completion_compatible/3, completion_conflict/4,
-sharpness, and monotone_conflict from COMPL000-0.ax.
-Include pattern:
+axis_conflict/4, monotone_conflict (Prop 6.9), and box_verdict.
+
+Include pattern (default):
     include('Axioms/ORD000-0.ax').
     include('Axioms/COMPL000-0.ax').
     include('Axioms/AXIS000-0.ax').
+
+ODRL634 additionally includes SUBS000-0.ax for axis_subsumes.
+
 Problem overview:
-  ODRL630 — completion_compat: V in [InfD,SupD] => completion_compatible  Theorem
-  ODRL631 — completion_conflict: U<V in domain => completion_conflict      Theorem
-  ODRL632 — sharpness_compat: completion yields Compatible                 Theorem
-  ODRL633 — sharpness_conflict: completion yields Conflict                 Theorem
-  ODRL634 — monotone_conflict: subsumes + conflict => conflict             Theorem
-  ODRL635 — unknown_sound: no constrained axis conflicts => Unknown        Theorem
-  ODRL636 — completion_compat at boundary: V=InfD works for eq             Theorem
-  ODRL637 — completion_conflict requires U<V strictly                      Theorem
+  ODRL630 -- completion_compat: V in [InfD,SupD] => completion_compatible   Theorem
+  ODRL631 -- completion_conflict: U<V in domain => completion_conflict      Theorem
+  ODRL632 -- sharpness_compat: completion yields Compatible                 Theorem
+  ODRL633 -- sharpness_conflict: completion yields Conflict                 Theorem
+  ODRL634 -- monotone_conflict (Prop 6.9): subsumes + conflict => conflict  Theorem
+  ODRL635 -- unknown_sound: box_verdict(compatible, unknown) = unknown      Theorem
+  ODRL636 -- completion_compat at boundary: V=InfD works for eq             Theorem
+  ODRL637 -- completion_conflict requires U<V strictly                      Theorem
+
+Change log (v1.1):
+  - ODRL630 SMT: was (assert P)(assert Q)(assert (not (and P Q))) propositional
+                 tautology.  Now a membership test at v=600 in [0, 1200].
+  - ODRL631 SMT: was (assert (< u v))(assert (not (< u v))) propositional
+                 tautology.  Now policy-level disjointness [0,400] vs [800,inf).
+  - ODRL632 SMT: same tautology pattern as 630.  Now membership at v=400.
+  - ODRL633 SMT: same tautology pattern as 631.  Now policy-level disjointness.
+  - ODRL634 FOF: was a ground axis_conflict claim, mislabeled "monotonicity".
+                 Now tests Prop 6.9 monotonicity: subsumes + conflict => conflict.
+                 Adds SUBS000-0.ax to includes for axis_subsumes/4.
+  - ODRL637 FOF: was a vacuous universal collapsing to plain irreflexivity.
+                 Now tests ~completion_conflict(v600, v600, v0, v1200) directly,
+                 i.e., the strictness requirement of completion_conflict.
 """
 
 # Real UF SMT encoding for ODRL635 (box_verdict verdict-algebra)
@@ -25,9 +43,11 @@ from smt_axioms import (
 )
 
 PROBLEMS = [
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL630 — completion_compat: V in domain => completion_compatible
-    # ─────────────────────────────────────────────────────────────────
+
+    # =====================================================================
+    # ODRL630 -- completion_compat: V in domain => completion_compatible
+    # SMT v1.1: tautology removed; now membership test at v=600 in [0,1200].
+    # =====================================================================
     {
         "id":            "ODRL630",
         "subdir":        "Completion",
@@ -64,12 +84,19 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const v Real)",
         "smt2_asserts": """\
-(assert (>= v 0.0)) (assert (<= v 1200.0))
-(assert (not (and (>= v 0.0) (<= v 1200.0))))""",
+; Membership at the specific witness v=600 (verified semantic by substitution:
+; flipping v to 2000 makes this sat).
+(assert (= v 600.0))
+(assert (not (and (>= v 0.0) (<= v 1200.0))))
+""",
     },
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL631 — completion_conflict: U<V in domain => completion_conflict
-    # ─────────────────────────────────────────────────────────────────
+
+    # =====================================================================
+    # ODRL631 -- completion_conflict: U<V in domain => completion_conflict
+    # SMT v1.1: tautology removed; now policy-level disjointness encoding.
+    # The (lteq 400) policy after completion has denotation [0, 400]; the
+    # (gteq 800) policy has denotation [800, infinity).  No x is in both.
+    # =====================================================================
     {
         "id":            "ODRL631",
         "subdir":        "Completion",
@@ -108,16 +135,19 @@ fof(distinct, axiom, $distinct(v0, v400, v800, v1200)).
 """,
         "fof_conjecture": "completion_conflict(v400, v800, v0, v1200)",
         "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const u Real)\n(declare-const v Real)",
+        "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\
-(assert (>= u 0.0)) (assert (<= u 1200.0))
-(assert (>= v 0.0)) (assert (<= v 1200.0))
-(assert (< u v))
-(assert (not (< u v)))""",
+; Policy-level disjointness: [0, 400] and [800, infinity) share no point.
+(assert (>= x 0.0))
+(assert (<= x 400.0))
+(assert (>= x 800.0))
+""",
     },
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL632 — sharpness_compat: U<V in domain => completion_compatible(U)
-    # ─────────────────────────────────────────────────────────────────
+
+    # =====================================================================
+    # ODRL632 -- sharpness_compat: completion_compatible at v=v400
+    # SMT v1.1: tautology removed; now membership test at v=400.
+    # =====================================================================
     {
         "id":            "ODRL632",
         "subdir":        "Completion",
@@ -157,12 +187,17 @@ fof(distinct, axiom, $distinct(v0, v400, v800, v1200)).
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const v Real)",
         "smt2_asserts": """\
-(assert (>= v 0.0)) (assert (<= v 1200.0))
-(assert (not (and (>= v 0.0) (<= v 1200.0))))""",
+; Membership at the specific witness v=400 (verified semantic by substitution:
+; flipping v to -50 makes this sat).
+(assert (= v 400.0))
+(assert (not (and (>= v 0.0) (<= v 1200.0))))
+""",
     },
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL633 — sharpness_conflict: U<V in domain => conflict completion exists
-    # ─────────────────────────────────────────────────────────────────
+
+    # =====================================================================
+    # ODRL633 -- sharpness_conflict: completion_conflict at (v400, v800)
+    # SMT v1.1: tautology removed; same policy-level disjointness as ODRL631.
+    # =====================================================================
     {
         "id":            "ODRL633",
         "subdir":        "Completion",
@@ -200,31 +235,46 @@ fof(distinct, axiom, $distinct(v0, v400, v800, v1200)).
 """,
         "fof_conjecture": "completion_conflict(v400, v800, v0, v1200)",
         "smt2_logic": "QF_LRA",
-        "smt2_decls": "(declare-const u Real)\n(declare-const v Real)",
+        "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\
-(assert (>= u 0.0)) (assert (<= u 1200.0))
-(assert (>= v 0.0)) (assert (<= v 1200.0))
-(assert (< u v))
-(assert (not (< u v)))""",
+; Policy-level disjointness: [0, 400] and [800, infinity) share no point.
+(assert (>= x 0.0))
+(assert (<= x 400.0))
+(assert (>= x 800.0))
+""",
     },
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL634 — monotone_conflict: axis_subsumes + conflict => conflict
-    # ─────────────────────────────────────────────────────────────────
+
+    # =====================================================================
+    # ODRL634 -- monotone_conflict (Prop 6.9)
+    # FOF v1.1: was a ground axis_conflict claim mislabeled as monotonicity.
+    # Now tests the actual monotonicity theorem:
+    #   axis_subsumes(A1, A2) & axis_conflict(A2, B) => axis_conflict(A1, B).
+    # With A1=[v200,v400], A2=[v0,v600], B=[v800,v1200]:
+    #   premise 1: axis_subsumes(v200,v400, v0,v600)  -- [v200,v400] in [v0,v600]
+    #   premise 2: axis_conflict(v0,v600, v800,v1200) -- via less(v600, v800)
+    #   conclude:  axis_conflict(v200,v400, v800,v1200) -- via less(v400, v800)
+    # Adds SUBS000-0.ax to includes for axis_subsumes/4.
+    # NOTE: requires SUBS000-0.ax to define axis_subsumes biconditionally.
+    # =====================================================================
     {
         "id":            "ODRL634",
         "subdir":        "Completion",
-        "name":          "monotone_conflict: subsumes and conflict implies conflict",
+        "name":          "monotone_conflict (Prop 6.9): subsumes & conflict implies conflict",
         "relation":      "conflict",
         "verdict":       "Conflict",
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Medium",
-        "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
+        "includes": [
+            "ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"
+        ],
         "needs_density": False,
         "description": (
-            "prop:monotone: [v200,v400] ⊆ [v0,v600] and [v0,v600] conflicts [v800,v1200]\n"
-            "=> [v200,v400] conflicts [v800,v1200].\n"
-            "monotone_conflict: axis_subsumes(A1,A2) & axis_conflict(A2,B) => axis_conflict(A1,B).\n"
+            "prop:monotone Prop 6.9:\n"
+            "  axis_subsumes(A1, A2) & axis_conflict(A2, B) => axis_conflict(A1, B).\n"
+            "Instance: A1=[v200,v400], A2=[v0,v600], B=[v800,v1200].\n"
+            "[v200,v400] is contained in [v0,v600]; [v0,v600] conflicts [v800,v1200];\n"
+            "therefore [v200,v400] conflicts [v800,v1200].\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -260,17 +310,25 @@ fof(ord_v800_v1200, axiom, less(v800, v1200)).
 fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800, v1200)).
 """,
         "fof_conjecture": (
-            "axis_conflict(v200, v400, v800, v1200)"
+            "(axis_subsumes(v200, v400, v0, v600)"
+            " & axis_conflict(v0, v600, v800, v1200))"
+            " => axis_conflict(v200, v400, v800, v1200)"
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\
-(assert (>= x 200.0)) (assert (<= x 400.0))
-(assert (>= x 800.0))""",
+; Inner interval [200, 400] and outer-conflict witness [800, infinity):
+; disjoint because 400 < 800.
+(assert (>= x 200.0))
+(assert (<= x 400.0))
+(assert (>= x 800.0))
+""",
     },
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL635 — unknown_sound: Unknown is correctly assigned
-    # ─────────────────────────────────────────────────────────────────
+
+    # =====================================================================
+    # ODRL635 -- unknown_sound: Unknown is correctly assigned
+    # (No changes from v1.0; already semantic on both sides.)
+    # =====================================================================
     {
         "id":            "ODRL635",
         "subdir":        "Completion",
@@ -295,11 +353,13 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "smt2_logic":   "UF",
         "smt2_decls":   PREAMBLE_VERDICT + DECL_BOX_VERDICT,
         "smt2_asserts": AXIOM_BOX_UNKNOWN + "; Negated conjecture\n"
-                            "(assert (not (= (box_verdict compatible unknown) unknown)))",
+                        "(assert (not (= (box_verdict compatible unknown) unknown)))",
     },
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL636 — completion_compat at InfD (boundary V=InfD is ok for eq)
-    # ─────────────────────────────────────────────────────────────────
+
+    # =====================================================================
+    # ODRL636 -- completion_compat at InfD (boundary case)
+    # (No changes from v1.0; already semantic on both sides.)
+    # =====================================================================
     {
         "id":            "ODRL636",
         "subdir":        "Completion",
@@ -313,7 +373,7 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
         "needs_density": False,
         "description": (
             "def:completion: V=InfD is in [InfD,SupD] so completion_compatible holds.\n"
-            "completion_compatible(v0, v0, v1200) — infimum as eq value.\n"
+            "completion_compatible(v0, v0, v1200) -- infimum as eq value.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -334,12 +394,20 @@ fof(distinct, axiom, $distinct(v0, v1200)).
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const v Real)",
         "smt2_asserts": """\
+; Boundary case: v=InfD=0 must be in the closed domain [0, 1200].
 (assert (= v 0.0))
-(assert (not (and (>= v 0.0) (<= v 1200.0))))""",
+(assert (not (and (>= v 0.0) (<= v 1200.0))))
+""",
     },
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL637 — completion_conflict requires strict U<V
-    # ─────────────────────────────────────────────────────────────────
+
+    # =====================================================================
+    # ODRL637 -- completion_conflict requires strict U<V
+    # FOF v1.1: was "![U,V,InfD,SupD]: ~less(U,U)" which collapses to plain
+    # irreflexivity (closes from ORD000 alone, never engages COMPL000).
+    # Now tests the actual strictness requirement: completion_conflict at
+    # U=V must not hold, because completion_conflict_def has less(U,V) as
+    # one of its conjuncts and less is irreflexive.
+    # =====================================================================
     {
         "id":            "ODRL637",
         "subdir":        "Completion",
@@ -352,7 +420,7 @@ fof(distinct, axiom, $distinct(v0, v1200)).
         "includes":      ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
-            "def:completion: less(U,V) is required — equal values give no conflict.\n"
+            "def:completion: less(U,V) is required -- equal values give no conflict.\n"
             "~completion_conflict(v600, v600, v0, v1200) because ~less(v600,v600).\n"
         ),
         "ttl": """\
@@ -372,11 +440,15 @@ fof(ord_v0_v600,    axiom, less(v0, v600)).
 fof(ord_v600_v1200, axiom, less(v600, v1200)).
 fof(distinct, axiom, $distinct(v0, v600, v1200)).
 """,
-        "fof_conjecture": "![U,V,InfD,SupD]: (~less(U,U))",
+        "fof_conjecture": "~completion_conflict(v600, v600, v0, v1200)",
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const u Real)",
         "smt2_asserts": """\
+; Arithmetic embodiment of the strict-less requirement: u cannot be both
+; equal to 600 and strictly less than 600.  Mirrors the irreflexivity that
+; refutes the middle conjunct of completion_conflict_def at U=V.
 (assert (= u 600.0))
-(assert (< u 600.0))""",
+(assert (< u 600.0))
+""",
     },
 ]

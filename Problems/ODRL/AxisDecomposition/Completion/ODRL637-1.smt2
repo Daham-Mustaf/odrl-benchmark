@@ -13,6 +13,9 @@
 
 (set-logic QF_LRA)
 (declare-const u Real)
+; Arithmetic embodiment of the strict-less requirement: u cannot be both
+; equal to 600 and strictly less than 600.  Mirrors the irreflexivity that
+; refutes the middle conjunct of completion_conflict_def at U=V.
 (assert (= u 600.0))
 (assert (< u 600.0))
 (check-sat)

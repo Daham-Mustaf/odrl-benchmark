@@ -1,11 +1,13 @@
 %--------------------------------------------------------------------------
 % File     : ODRL634-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : monotone_conflict: subsumes and conflict implies conflict
+% Problem  : monotone_conflict (Prop 6.9): subsumes & conflict implies conflict
 % Version  : 1.0
-% English  : prop:monotone: [v200,v400] ⊆ [v0,v600] and [v0,v600] conflicts [v800,v1200]
-%           : => [v200,v400] conflicts [v800,v1200].
-%           : monotone_conflict: axis_subsumes(A1,A2) & axis_conflict(A2,B) => axis_conflict(A1,B).
+% English  : prop:monotone Prop 6.9:
+%           : axis_subsumes(A1, A2) & axis_conflict(A2, B) => axis_conflict(A1, B).
+%           : Instance: A1=[v200,v400], A2=[v0,v600], B=[v800,v1200].
+%           : [v200,v400] is contained in [v0,v600]; [v0,v600] conflicts [v800,v1200];
+%           : therefore [v200,v400] conflicts [v800,v1200].
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -24,6 +26,7 @@
 include('Axioms/ORD000-0.ax').
 include('Axioms/COMPL000-0.ax').
 include('Axioms/AXIS000-0.ax').
+include('Axioms/SUBS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0,    axiom, val(v0)).
@@ -46,5 +49,5 @@ fof(ord_v800_v1200, axiom, less(v800, v1200)).
 fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800, v1200)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl634, conjecture,
-    axis_conflict(v200, v400, v800, v1200)).
+    (axis_subsumes(v200, v400, v0, v600) & axis_conflict(v0, v600, v800, v1200)) => axis_conflict(v200, v400, v800, v1200)).
 %--------------------------------------------------------------------------

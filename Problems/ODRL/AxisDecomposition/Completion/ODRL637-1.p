@@ -3,7 +3,7 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : completion_conflict requires strict U<V: U=V gives no conflict
 % Version  : 1.0
-% English  : def:completion: less(U,V) is required — equal values give no conflict.
+% English  : def:completion: less(U,V) is required -- equal values give no conflict.
 %           : ~completion_conflict(v600, v600, v0, v1200) because ~less(v600,v600).
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
@@ -33,5 +33,5 @@ fof(ord_v600_v1200, axiom, less(v600, v1200)).
 fof(distinct, axiom, $distinct(v0, v600, v1200)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl637, conjecture,
-    ![U,V,InfD,SupD]: (~less(U,U))).
+    ~completion_conflict(v600, v600, v0, v1200)).
 %--------------------------------------------------------------------------

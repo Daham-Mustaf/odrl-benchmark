@@ -13,7 +13,9 @@
 
 (set-logic QF_LRA)
 (declare-const v Real)
-(assert (>= v 0.0)) (assert (<= v 1200.0))
+; Membership at the specific witness v=400 (verified semantic by substitution:
+; flipping v to -50 makes this sat).
+(assert (= v 400.0))
 (assert (not (and (>= v 0.0) (<= v 1200.0))))
 (check-sat)
 (exit)
