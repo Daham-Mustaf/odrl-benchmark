@@ -13,8 +13,9 @@
 
 (set-logic QF_LRA)
 (declare-const v Real)
-(assert (> v 0.0))
-(assert (<= v 1200.0))
-(assert (> v 1200.0))
+; Pin-witness: v=600 outside-domain-or-equal-InfD => negation of wf_lt.
+; Three disjuncts: v<0, v>1200, v=0.  All false at v=600 => unsat.
+(assert (= v 600.0))
+(assert (or (< v 0.0) (> v 1200.0) (= v 0.0)))
 (check-sat)
 (exit)

@@ -9,31 +9,44 @@ Include pattern:
     include('Axioms/AXIS000-0.ax').
 
 Problem overview:
-  ODRL610 — wf_eq: V in [InfD,SupD]                    Theorem
-  ODRL611 — wf_lteq: V in [InfD,SupD]                  Theorem
-  ODRL612 — wf_gteq: V in [InfD,SupD]                  Theorem
-  ODRL613 — wf_lt: V != InfD required                  Theorem
-  ODRL614 — wf_lt violation: V=InfD => not wf          Theorem
-  ODRL615 — wf_gt: V != SupD required                  Theorem
-  ODRL616 — wf_gt violation: V=SupD => not wf           Theorem
-  ODRL617 — nonempty: wf => sem_nonempty (all 5 ops)   Theorem
+  ODRL610 -- wf_eq: V in [InfD,SupD]                                Theorem
+  ODRL611 -- wf_lteq: V in [InfD,SupD]                              Theorem
+  ODRL612 -- wf_gteq: V in [InfD,SupD]                              Theorem
+  ODRL613 -- wf_lt: V != InfD required                              Theorem
+  ODRL614 -- wf_lt violation: V=InfD => not wf                      Theorem
+  ODRL615 -- wf_gt: V != SupD required                              Theorem
+  ODRL616 -- wf_gt violation: V=SupD => not wf                      Theorem
+  ODRL617 -- nonempty (FOL-only): wf(lt) => sem_nonempty(lt)        Theorem
 
-SMT convention (all Theorem problems):
-    assert domain hypotheses + negated conjecture → UNSAT.
-    The negated conjecture is the arithmetic negation of what
-    wf/sem_nonempty asserts, residualised under the hypotheses.
+Change log (v1.1):
+  - ODRL610 SMT: was structurally (v in D) AND (v not in D), tautological
+                 regardless of D's bounds.  Now pin-witness pattern:
+                 v = 600 AND v not in [0, 1200].
+  - ODRL611 SMT: was (<= v 1200) AND (not (<= v 1200)), P AND NOT P.
+                 Now pin-witness pattern (same shape as ODRL610).
+  - ODRL612 SMT: was (>= v 0) AND (not (>= v 0)), P AND NOT P.
+                 Now pin-witness pattern (same shape as ODRL610).
+  - ODRL613 SMT: was (<= v 1200) AND (> v 1200), P AND NOT P.
+                 Now pin-witness with v=InfD disjunct in the negation.
+  - ODRL615 SMT: was (< v 1200) AND (>= v 1200), P AND NOT P.
+                 Now pin-witness with v=SupD disjunct in the negation.
+  - ODRL617 SMT: was (> v 0) AND (<= v 0), P AND NOT P.  The underlying
+                 implication wf(lt) => sem_nonempty(lt) is arithmetically
+                 vacuous (both sides reduce to V > InfD), so no semantic
+                 SMT encoding exists.  Dropped (FOL-only), like ODRL608 in
+                 ConflictCriterion and ODRL637 in Completion's earlier rev.
+  - ODRL614 SMT, ODRL616 SMT: kept (irreflexivity-at-a-point pattern;
+                 specific value matters, like ODRL637 in Completion).
 """
 
 PROBLEMS = [
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL610 — wf_eq: value inside domain is well-formed
-    #
-    # FIX: SMT (assert (not (= v v))) = v≠v is tautologically false —
-    #      always UNSAT regardless of domain, tests nothing.
-    #      Replaced with (assert (or (< v 0.0) (> v 1200.0))):
-    #      the negated wf_eq condition V ∉ [InfD,SupD].
-    #      Combined with v >= 0 & v <= 1200 → UNSAT 
-    # ─────────────────────────────────────────────────────────────────
+
+    # =====================================================================
+    # ODRL610 -- wf_eq: value inside domain is well-formed
+    # SMT v1.1: pin-witness pattern.  v = 600 (the specific witness from
+    # the FOL conjecture) and assert the negated wf_eq condition:
+    # v not in [0, 1200].  Unsat depends on 0 <= 600 <= 1200.
+    # =====================================================================
     {
         "id":            "ODRL610",
         "subdir":        "WellFormedness",
@@ -45,7 +58,7 @@ PROBLEMS = [
         "difficulty":    "Easy",
         "needs_density": False,
         "description": (
-            "def:profile wf_eq: leq(InfD,V) & leq(V,SupD) => wf(eq,V,InfD,SupD)\n"
+            "def:well-formed wf_eq: leq(InfD,V) & leq(V,SupD) => wf(eq,V,InfD,SupD)\n"
             "v600 in [v0,v1200] is well-formed for eq operator.\n"
         ),
         "ttl": """\
@@ -70,14 +83,18 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "smt2_logic":  "QF_LRA",
         "smt2_decls":  "(declare-const v Real)",
         "smt2_asserts": """\
-(assert (>= v 0.0))
-(assert (<= v 1200.0))
-(assert (or (< v 0.0) (> v 1200.0)))""",
+; Pin the witness v=600 and assert the negated wf_eq condition.
+; Unsat iff 600 is in [0, 1200].  Verified semantic by perturbation:
+; changing v=600 -> v=2000, or upper 1200 -> 500, flips to sat.
+(assert (= v 600.0))
+(assert (or (< v 0.0) (> v 1200.0)))
+""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL611 — wf_lteq
-    # ─────────────────────────────────────────────────────────────────
+    # =====================================================================
+    # ODRL611 -- wf_lteq: same shape as wf_eq (V in domain is sufficient)
+    # SMT v1.1: same pin-witness pattern as ODRL610.
+    # =====================================================================
     {
         "id":            "ODRL611",
         "subdir":        "WellFormedness",
@@ -89,7 +106,7 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "difficulty":    "Easy",
         "needs_density": False,
         "description": (
-            "def:profile wf_lteq: leq(InfD,V) & leq(V,SupD) => wf(lteq,V,InfD,SupD)\n"
+            "def:well-formed wf_lteq: leq(InfD,V) & leq(V,SupD) => wf(lteq,V,InfD,SupD)\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -113,14 +130,15 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "smt2_logic":  "QF_LRA",
         "smt2_decls":  "(declare-const v Real)",
         "smt2_asserts": """\
-(assert (>= v 0.0))
-(assert (<= v 1200.0))
-(assert (not (<= v 1200.0)))""",
+; Pin-witness: v=600 in [0, 1200] => wf_lteq holds.
+(assert (= v 600.0))
+(assert (or (< v 0.0) (> v 1200.0)))
+""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL612 — wf_gteq
-    # ─────────────────────────────────────────────────────────────────
+    # =====================================================================
+    # ODRL612 -- wf_gteq: same shape as wf_eq
+    # =====================================================================
     {
         "id":            "ODRL612",
         "subdir":        "WellFormedness",
@@ -132,7 +150,7 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "difficulty":    "Easy",
         "needs_density": False,
         "description": (
-            "def:profile wf_gteq: leq(InfD,V) & leq(V,SupD) => wf(gteq,V,InfD,SupD)\n"
+            "def:well-formed wf_gteq: leq(InfD,V) & leq(V,SupD) => wf(gteq,V,InfD,SupD)\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -156,23 +174,17 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "smt2_logic":  "QF_LRA",
         "smt2_decls":  "(declare-const v Real)",
         "smt2_asserts": """\
-(assert (>= v 0.0))
-(assert (>= 1200.0 v))
-(assert (not (>= v 0.0)))""",
+; Pin-witness: v=600 in [0, 1200] => wf_gteq holds.
+(assert (= v 600.0))
+(assert (or (< v 0.0) (> v 1200.0)))
+""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL613 — wf_lt: V strictly inside domain
-    #
-    # FIX: SMT (assert (not (< v 1200.0))) = v >= 1200.
-    #      Combined with (assert (<= v 1200.0)): v = 1200.
-    #      Combined with (assert (> v 0.0)): v=1200 satisfies all → SAT.
-    #      status_smt was "unsat" — wrong.
-    #      Fix: (assert (> v 1200.0)).
-    #      Residual negation of wf_lt given v > 0 & v <= 1200:
-    #        ~wf_lt = v<0 | v>1200 | v=0; hypotheses rule out v<0 and v=0;
-    #        remainder is v > 1200. With v <= 1200 → UNSAT 
-    # ─────────────────────────────────────────────────────────────────
+    # =====================================================================
+    # ODRL613 -- wf_lt: V strictly above InfD
+    # SMT v1.1: pin-witness pattern.  Negated wf_lt is "v outside domain
+    # OR v = InfD".  With witness v=600, all three disjuncts fail.
+    # =====================================================================
     {
         "id":            "ODRL613",
         "subdir":        "WellFormedness",
@@ -184,7 +196,7 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "difficulty":    "Easy",
         "needs_density": False,
         "description": (
-            "def:profile wf_lt condition (ii): V != InfD required.\n"
+            "def:well-formed wf_lt: V in [InfD,SupD] & V != InfD => wf(lt,V,InfD,SupD)\n"
             "v600 != v0 and v600 in [v0,v1200] => wf(lt,v600,v0,v1200).\n"
         ),
         "ttl": """\
@@ -209,14 +221,20 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "smt2_logic":  "QF_LRA",
         "smt2_decls":  "(declare-const v Real)",
         "smt2_asserts": """\
-(assert (> v 0.0))
-(assert (<= v 1200.0))
-(assert (> v 1200.0))""",
+; Pin-witness: v=600 outside-domain-or-equal-InfD => negation of wf_lt.
+; Three disjuncts: v<0, v>1200, v=0.  All false at v=600 => unsat.
+(assert (= v 600.0))
+(assert (or (< v 0.0) (> v 1200.0) (= v 0.0)))
+""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL614 — wf_lt violation: V=InfD => NOT wf(lt)
-    # ─────────────────────────────────────────────────────────────────
+    # =====================================================================
+    # ODRL614 -- wf_lt violation: V=InfD => NOT wf(lt)
+    # SMT v1.1: unchanged.  The (= v 0) AND (< v 0) pattern is
+    # irreflexivity-at-a-point: substituting different cutoffs flips the
+    # result, so the specific value 0 matters.  Same shape as ODRL637 in
+    # Completion's earlier revision.
+    # =====================================================================
     {
         "id":            "ODRL614",
         "subdir":        "WellFormedness",
@@ -228,8 +246,8 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "difficulty":    "Easy",
         "needs_density": False,
         "description": (
-            "def:profile condition (ii): V=InfD => ~wf(lt,V,InfD,SupD)\n"
-            "lt at the infimum gives empty denotation — not well-formed.\n"
+            "def:well-formed condition (ii): V=InfD => ~wf(lt,V,InfD,SupD)\n"
+            "lt at the infimum gives empty denotation -- not well-formed.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -248,28 +266,21 @@ fof(ord_v0_v1200, axiom, less(v0, v1200)).
 fof(distinct, axiom, $distinct(v0, v1200)).
 """,
         "fof_conjecture": "~wf(lt, v0, v0, v1200)",
-        # Tests that denotation of lt InfD = [InfD,InfD) = ∅:
-        # no v satisfies v >= 0 and v < 0 simultaneously.
         "smt2_logic":  "QF_LRA",
         "smt2_decls":  "(declare-const v Real)",
         "smt2_asserts": """\
+; Irreflexivity at the value 0: lt at InfD requires V != InfD, but v=0
+; here.  Mirrors the FOL conjecture's derivation via wf_lt_def's third
+; conjunct V != InfD failing at v=InfD=0.
 (assert (= v 0.0))
-(assert (< v 0.0))""",
+(assert (< v 0.0))
+""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL615 — wf_gt: V strictly below SupD
-    #
-    # FIX: SMT (assert (not (> v 0.0))) = v <= 0.
-    #      Combined with (assert (>= v 0.0)): v = 0.
-    #      Combined with (assert (< v 1200.0)): 0 < 1200  → SAT.
-    #      status_smt was "unsat" — wrong.
-    #      Fix: (assert (>= v 1200.0)).
-    #      Residual negation of wf_gt given v >= 0 & v < 1200:
-    #        ~wf_gt = v<0 | v>1200 | v=1200; hypotheses rule out v<0,
-    #        v>1200, and v=1200; so negation is (>= v 1200.0).
-    #      With v < 1200 → UNSAT 
-    # ─────────────────────────────────────────────────────────────────
+    # =====================================================================
+    # ODRL615 -- wf_gt: V strictly below SupD
+    # SMT v1.1: pin-witness pattern with v=SupD disjunct.
+    # =====================================================================
     {
         "id":            "ODRL615",
         "subdir":        "WellFormedness",
@@ -281,7 +292,7 @@ fof(distinct, axiom, $distinct(v0, v1200)).
         "difficulty":    "Easy",
         "needs_density": False,
         "description": (
-            "def:profile condition (iii): V != SupD required for gt.\n"
+            "def:well-formed wf_gt: V in [InfD,SupD] & V != SupD => wf(gt,V,InfD,SupD)\n"
             "v600 != v1200 and v600 in [v0,v1200] => wf(gt,v600,v0,v1200).\n"
         ),
         "ttl": """\
@@ -306,14 +317,17 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "smt2_logic":  "QF_LRA",
         "smt2_decls":  "(declare-const v Real)",
         "smt2_asserts": """\
-(assert (>= v 0.0))
-(assert (< v 1200.0))
-(assert (>= v 1200.0))""",
+; Pin-witness: v=600 outside-domain-or-equal-SupD => negation of wf_gt.
+; Three disjuncts: v<0, v>1200, v=1200.  All false at v=600 => unsat.
+(assert (= v 600.0))
+(assert (or (< v 0.0) (> v 1200.0) (= v 1200.0)))
+""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL616 — wf_gt violation: V=SupD => NOT wf(gt)
-    # ─────────────────────────────────────────────────────────────────
+    # =====================================================================
+    # ODRL616 -- wf_gt violation: V=SupD => NOT wf(gt)
+    # SMT v1.1: unchanged (irreflexivity at value 1200).
+    # =====================================================================
     {
         "id":            "ODRL616",
         "subdir":        "WellFormedness",
@@ -325,8 +339,8 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "difficulty":    "Easy",
         "needs_density": False,
         "description": (
-            "def:profile condition (iii): V=SupD => ~wf(gt,V,InfD,SupD)\n"
-            "gt at the supremum gives empty denotation — not well-formed.\n"
+            "def:well-formed condition (iii): V=SupD => ~wf(gt,V,InfD,SupD)\n"
+            "gt at the supremum gives empty denotation -- not well-formed.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -345,40 +359,41 @@ fof(ord_v0_v1200, axiom, less(v0, v1200)).
 fof(distinct, axiom, $distinct(v0, v1200)).
 """,
         "fof_conjecture": "~wf(gt, v1200, v0, v1200)",
-        # Tests that denotation of gt SupD = (SupD,∞) = ∅:
-        # no v satisfies v = 1200 and v > 1200 simultaneously.
         "smt2_logic":  "QF_LRA",
         "smt2_decls":  "(declare-const v Real)",
         "smt2_asserts": """\
+; Irreflexivity at value 1200: gt at SupD requires V != SupD, but v=1200.
+; Mirrors the FOL via wf_gt_def's third conjunct V != SupD failing.
 (assert (= v 1200.0))
-(assert (> v 1200.0))""",
+(assert (> v 1200.0))
+""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL617 — nonempty: wf(lt) => sem_nonempty(lt)
-    #
-    # FIX: SMT (assert (not (< v 1200.0))) = v >= 1200.
-    #      Same root bug as ODRL613: v=1200 satisfies all three
-    #      asserts → SAT. status_smt was "unsat" — wrong.
-    #      Fix: (assert (<= v 0.0)).
-    #      sem_nonempty(lt, V, InfD, SupD) means [InfD, V) is non-empty,
-    #      i.e., V > InfD. Given hypothesis v > 0 (V > InfD = 0),
-    #      negated sem_nonempty = V <= InfD = v <= 0.
-    #      With v > 0 → UNSAT 
-    # ─────────────────────────────────────────────────────────────────
+    # =====================================================================
+    # ODRL617 -- nonempty: wf(lt) => sem_nonempty(lt)
+    # SMT v1.1: DROPPED (FOL-only).  The implication is arithmetically
+    # vacuous because wf_lt's load-bearing condition (V > InfD) IS
+    # sem_nonempty_lt's condition.  Any SMT encoding reduces to P AND ~P
+    # at the arithmetic level.  Same situation as ODRL608 in
+    # ConflictCriterion (OR-commutativity) and ODRL614 in earlier
+    # Completion (negative existence).  status_smt = None and the writer
+    # should skip the .smt2 file for this problem.
+    # =====================================================================
     {
         "id":            "ODRL617",
         "subdir":        "WellFormedness",
-        "name":          "nonempty: wf(lt) implies sem_nonempty(lt)",
+        "name":          "nonempty: wf(lt) implies sem_nonempty(lt) (FOL-only)",
         "relation":      "conflict",
         "verdict":       "Conflict",
         "status_fof":    "Theorem",
-        "status_smt":    "unsat",
+        "status_smt":    None,
         "difficulty":    "Easy",
         "needs_density": False,
         "description": (
             "lem:totality: wf(lt,V,InfD,SupD) => sem_nonempty(lt,V,InfD,SupD)\n"
             "Every well-formed constraint has a non-empty denotation.\n"
+            "FOL-only: no faithful SMT encoding -- the implication is\n"
+            "arithmetically vacuous since both sides reduce to V > InfD.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -401,14 +416,8 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "fof_conjecture": (
             "wf(lt, v600, v0, v1200) => sem_nonempty(lt, v600, v0, v1200)"
         ),
-        # sem_nonempty(lt,V,InfD,SupD): the interval [InfD,V) is non-empty.
-        # Arithmetic equivalent: V > InfD (= v > 0, given by hypothesis).
-        # Negated: V <= InfD = v <= 0. Contradicts hypothesis v > 0 → UNSAT.
-        "smt2_logic":  "QF_LRA",
-        "smt2_decls":  "(declare-const v Real)",
-        "smt2_asserts": """\
-(assert (> v 0.0))
-(assert (<= v 1200.0))
-(assert (<= v 0.0))""",
+        "smt2_logic":   "",
+        "smt2_decls":   "",
+        "smt2_asserts": "",
     },
 ]

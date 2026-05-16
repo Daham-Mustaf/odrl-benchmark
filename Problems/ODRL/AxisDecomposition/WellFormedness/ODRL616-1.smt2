@@ -13,6 +13,8 @@
 
 (set-logic QF_LRA)
 (declare-const v Real)
+; Irreflexivity at value 1200: gt at SupD requires V != SupD, but v=1200.
+; Mirrors the FOL via wf_gt_def's third conjunct V != SupD failing.
 (assert (= v 1200.0))
 (assert (> v 1200.0))
 (check-sat)

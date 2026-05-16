@@ -1,3 +1,17 @@
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .
+# Verdict-algebra witness: width-axis compatible (both policies agree),
+# depth-axis unknown (policy A constrains it, policy B does not).
+# boxV = min(Compatible, Unknown) = Unknown.
+drk:policyA a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:eq ; odrl:rightOperand "1500"^^xsd:decimal ],
+                    [ odrl:leftOperand oax:absoluteSizeDepth ;
+      odrl:operator odrl:lteq ; odrl:rightOperand "50"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:eq ; odrl:rightOperand "1500"^^xsd:decimal ] ] .

@@ -68,7 +68,12 @@ PROBLEMS = [
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ;
+# Compatible completion: add (eq 600) to BOTH policies (Thm 6.10).
+drk:policyA a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:eq ; odrl:rightOperand "600"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
       odrl:operator odrl:eq ; odrl:rightOperand "600"^^xsd:decimal ] ] .""",
@@ -118,10 +123,15 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ;
+# Conflict completion: lteq 400 to policy A, gteq 800 to policy B (Thm 6.10).
+drk:policyA a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
-      odrl:operator odrl:lteq ; odrl:rightOperand "400"^^xsd:decimal ] ] .""",
+      odrl:operator odrl:lteq ; odrl:rightOperand "400"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:gteq ; odrl:rightOperand "800"^^xsd:decimal ] ] .""",
         "fof_extra_decls": """\
 fof(val_v0,    axiom, val(v0)).
 fof(val_v400,  axiom, val(v400)).
@@ -169,7 +179,12 @@ fof(distinct, axiom, $distinct(v0, v400, v800, v1200)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ;
+# Compatible completion (sharpness witness): add (eq 400) to BOTH policies.
+drk:policyA a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:eq ; odrl:rightOperand "400"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
       odrl:operator odrl:eq ; odrl:rightOperand "400"^^xsd:decimal ] ] .""",
@@ -219,10 +234,14 @@ fof(distinct, axiom, $distinct(v0, v400, v800, v1200)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ;
+drk:policyA a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
-      odrl:operator odrl:lteq ; odrl:rightOperand "400"^^xsd:decimal ] ] .""",
+      odrl:operator odrl:lteq ; odrl:rightOperand "400"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:gteq ; odrl:rightOperand "800"^^xsd:decimal ] ] .""",
         "fof_extra_decls": """\
 fof(val_v0,    axiom, val(v0)).
 fof(val_v400,  axiom, val(v400)).
@@ -346,8 +365,22 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800, v1200)).
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
+# Verdict-algebra witness: width-axis compatible (both policies agree),
+# depth-axis unknown (policy A constrains it, policy B does not).
+# boxV = min(Compatible, Unknown) = Unknown.
+drk:policyA a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:eq ; odrl:rightOperand "1500"^^xsd:decimal ],
+                    [ odrl:leftOperand oax:absoluteSizeDepth ;
+      odrl:operator odrl:lteq ; odrl:rightOperand "50"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:eq ; odrl:rightOperand "1500"^^xsd:decimal ] ] .""",
         "fof_extra_decls": "",
         "fof_conjecture": "box_verdict(compatible, unknown) = unknown",
         "smt2_logic":   "UF",
@@ -380,7 +413,17 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ;
+# Boundary case: V = InfD = 0, the lowest valid value in the domain.
+# Compatible completion adds (eq 0) to BOTH policies.
+# Result: UNSAT
+# Interpretation:
+#   ∄ assignment satisfying both equality and strict precedence
+#   U = V ∧ U < V is inconsistent in linear real arithmetic
+drk:policyA a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:eq ; odrl:rightOperand "0"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
       odrl:operator odrl:eq ; odrl:rightOperand "0"^^xsd:decimal ] ] .""",
@@ -423,15 +466,22 @@ fof(distinct, axiom, $distinct(v0, v1200)).
             "def:completion: less(U,V) is required -- equal values give no conflict.\n"
             "~completion_conflict(v600, v600, v0, v1200) because ~less(v600,v600).\n"
         ),
-        "ttl": """\
+"ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ;
+# Attempted conflict completion at U = V = 600. The pair (lteq 600, gteq 600)
+# leaves the policies overlapping at the shared point 600, so the conflict
+# completion does NOT succeed -- this is the strictness witness.
+drk:policyA a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
-      odrl:operator odrl:eq ; odrl:rightOperand "600"^^xsd:decimal ] ] .""",
+      odrl:operator odrl:lteq ; odrl:rightOperand "600"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:gteq ; odrl:rightOperand "600"^^xsd:decimal ] ] .""",
         "fof_extra_decls": """\
 fof(val_v0,    axiom, val(v0)).
 fof(val_v600,  axiom, val(v600)).
@@ -447,6 +497,11 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
 ; Arithmetic embodiment of the strict-less requirement: u cannot be both
 ; equal to 600 and strictly less than 600.  Mirrors the irreflexivity that
 ; refutes the middle conjunct of completion_conflict_def at U=V.
+; SMT counterpart of the FOL claim ~completion_conflict(v600, v600, v0, v1200).
+; By completion_conflict_def, that FOL claim reduces to ~less(v600, v600).
+; QF_LRA's built-in irreflexivity of < on the reals gives the same fact:
+; u = 600 AND u < 600 is unsat.  The two decision procedures take
+; different paths to the same conclusion.
 (assert (= u 600.0))
 (assert (< u 600.0))
 """,

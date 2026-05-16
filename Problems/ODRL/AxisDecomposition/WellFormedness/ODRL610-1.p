@@ -3,7 +3,7 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : wf_eq: value inside domain is well-formed
 % Version  : 1.0
-% English  : def:profile wf_eq: leq(InfD,V) & leq(V,SupD) => wf(eq,V,InfD,SupD)
+% English  : def:well-formed wf_eq: leq(InfD,V) & leq(V,SupD) => wf(eq,V,InfD,SupD)
 %           : v600 in [v0,v1200] is well-formed for eq operator.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).

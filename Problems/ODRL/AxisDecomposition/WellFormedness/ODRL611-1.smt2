@@ -13,8 +13,8 @@
 
 (set-logic QF_LRA)
 (declare-const v Real)
-(assert (>= v 0.0))
-(assert (<= v 1200.0))
-(assert (not (<= v 1200.0)))
+; Pin-witness: v=600 in [0, 1200] => wf_lteq holds.
+(assert (= v 600.0))
+(assert (or (< v 0.0) (> v 1200.0)))
 (check-sat)
 (exit)

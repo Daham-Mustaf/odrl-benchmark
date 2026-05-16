@@ -13,8 +13,10 @@
 
 (set-logic QF_LRA)
 (declare-const v Real)
-(assert (>= v 0.0))
-(assert (<= v 1200.0))
+; Pin the witness v=600 and assert the negated wf_eq condition.
+; Unsat iff 600 is in [0, 1200].  Verified semantic by perturbation:
+; changing v=600 -> v=2000, or upper 1200 -> 500, flips to sat.
+(assert (= v 600.0))
 (assert (or (< v 0.0) (> v 1200.0)))
 (check-sat)
 (exit)

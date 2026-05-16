@@ -16,6 +16,11 @@
 ; Arithmetic embodiment of the strict-less requirement: u cannot be both
 ; equal to 600 and strictly less than 600.  Mirrors the irreflexivity that
 ; refutes the middle conjunct of completion_conflict_def at U=V.
+; SMT counterpart of the FOL claim ~completion_conflict(v600, v600, v0, v1200).
+; By completion_conflict_def, that FOL claim reduces to ~less(v600, v600).
+; QF_LRA's built-in irreflexivity of < on the reals gives the same fact:
+; u = 600 AND u < 600 is unsat.  The two decision procedures take
+; different paths to the same conclusion.
 (assert (= u 600.0))
 (assert (< u 600.0))
 (check-sat)

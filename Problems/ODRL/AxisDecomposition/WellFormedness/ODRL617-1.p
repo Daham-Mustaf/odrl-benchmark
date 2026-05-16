@@ -1,10 +1,12 @@
 %--------------------------------------------------------------------------
 % File     : ODRL617-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : nonempty: wf(lt) implies sem_nonempty(lt)
+% Problem  : nonempty: wf(lt) implies sem_nonempty(lt) (FOL-only)
 % Version  : 1.0
 % English  : lem:totality: wf(lt,V,InfD,SupD) => sem_nonempty(lt,V,InfD,SupD)
 %           : Every well-formed constraint has a non-empty denotation.
+%           : FOL-only: no faithful SMT encoding -- the implication is
+%           : arithmetically vacuous since both sides reduce to V > InfD.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

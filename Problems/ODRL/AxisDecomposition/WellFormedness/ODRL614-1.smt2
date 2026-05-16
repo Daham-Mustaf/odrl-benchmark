@@ -13,6 +13,9 @@
 
 (set-logic QF_LRA)
 (declare-const v Real)
+; Irreflexivity at the value 0: lt at InfD requires V != InfD, but v=0
+; here.  Mirrors the FOL conjecture's derivation via wf_lt_def's third
+; conjunct V != InfD failing at v=InfD=0.
 (assert (= v 0.0))
 (assert (< v 0.0))
 (check-sat)

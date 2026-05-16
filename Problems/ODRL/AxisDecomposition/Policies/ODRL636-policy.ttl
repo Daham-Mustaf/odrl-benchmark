@@ -2,7 +2,17 @@
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ;
+# Boundary case: V = InfD = 0, the lowest valid value in the domain.
+# Compatible completion adds (eq 0) to BOTH policies.
+# Result: UNSAT
+# Interpretation:
+#   ∄ assignment satisfying both equality and strict precedence
+#   U = V ∧ U < V is inconsistent in linear real arithmetic
+drk:policyA a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:eq ; odrl:rightOperand "0"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
       odrl:operator odrl:eq ; odrl:rightOperand "0"^^xsd:decimal ] ] .

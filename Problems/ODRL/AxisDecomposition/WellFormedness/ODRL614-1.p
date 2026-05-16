@@ -3,8 +3,8 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : wf_lt violation: V=InfD implies not wf(lt)
 % Version  : 1.0
-% English  : def:profile condition (ii): V=InfD => ~wf(lt,V,InfD,SupD)
-%           : lt at the infimum gives empty denotation — not well-formed.
+% English  : def:well-formed condition (ii): V=InfD => ~wf(lt,V,InfD,SupD)
+%           : lt at the infimum gives empty denotation -- not well-formed.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

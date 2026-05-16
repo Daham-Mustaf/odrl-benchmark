@@ -2,7 +2,14 @@
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-drk:policy a odrl:Set ;
+# Attempted conflict completion at U = V = 600. The pair (lteq 600, gteq 600)
+# leaves the policies overlapping at the shared point 600, so the conflict
+# completion does NOT succeed -- this is the strictness witness.
+drk:policyA a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
-      odrl:operator odrl:eq ; odrl:rightOperand "600"^^xsd:decimal ] ] .
+      odrl:operator odrl:lteq ; odrl:rightOperand "600"^^xsd:decimal ] ] .
+drk:policyB a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
+      odrl:operator odrl:gteq ; odrl:rightOperand "600"^^xsd:decimal ] ] .

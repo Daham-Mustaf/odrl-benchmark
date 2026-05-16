@@ -3,7 +3,7 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : wf_gt: V strictly below SupD is well-formed
 % Version  : 1.0
-% English  : def:profile condition (iii): V != SupD required for gt.
+% English  : def:well-formed wf_gt: V in [InfD,SupD] & V != SupD => wf(gt,V,InfD,SupD)
 %           : v600 != v1200 and v600 in [v0,v1200] => wf(gt,v600,v0,v1200).
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).

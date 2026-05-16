@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : WF000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Well-formedness conditions
+% Axioms   : Well-formedness predicates (Definition 4, Lemma 5)
 % Version  : 1.0
-% English  : well_formed/2: marks an axis-constraint pair as having non-empty denotation.
+% English  : wf/4 biconditionals (Def 4) and sem_nonempty/4 biconditionals (Lemma 5) for all 5 ODRL dimensional operators.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,24 +13,78 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 5 axioms: 5 well_formed cases for the 5 ODRL operators.
+% Comments : 10 axioms: 5 wf biconditionals + 5 sem_nonempty biconditionals = 10 axioms.
 %--------------------------------------------------------------------------
-% well_formed/2: marks an axis-constraint pair as well-formed.
-% Definition: a constraint pair (op, v) is well-formed when its denotation
-% is non-empty over the effective axis domain.
-% The .p files supply specific well_formed instances or violations.
+% Section 1: wf/4  (Definition 4, Well-formed constraint)
+%
+% wf(Op, V, InfD, SupD) holds iff (Op V) is a well-formed constraint
+% over domain [InfD, SupD]:
+%   eq, lteq, gteq: V in [InfD, SupD]
+%   lt:             V in [InfD, SupD] AND V != InfD
+%   gt:             V in [InfD, SupD] AND V != SupD
+%
+% Used by: ODRL610-616 (positive and negative wf cases per operator).
 
-fof(wf_eq, axiom,
-    ! [V] : (val(V) => well_formed(eq, V))).
+fof(wf_eq_def, axiom,
+    ! [V, InfD, SupD] :
+      ( wf(eq, V, InfD, SupD)
+    <=> ( leq(InfD, V) & leq(V, SupD) ) )).
 
-fof(wf_lteq, axiom,
-    ! [V] : (val(V) => well_formed(lteq, V))).
+fof(wf_lteq_def, axiom,
+    ! [V, InfD, SupD] :
+      ( wf(lteq, V, InfD, SupD)
+    <=> ( leq(InfD, V) & leq(V, SupD) ) )).
 
-fof(wf_gteq, axiom,
-    ! [V] : (val(V) => well_formed(gteq, V))).
+fof(wf_gteq_def, axiom,
+    ! [V, InfD, SupD] :
+      ( wf(gteq, V, InfD, SupD)
+    <=> ( leq(InfD, V) & leq(V, SupD) ) )).
 
-fof(wf_lt_open, axiom,
-    ! [V] : (val(V) => (? [X] : (val(X) & less(X, V)) => well_formed(lt, V)))).
+fof(wf_lt_def, axiom,
+    ! [V, InfD, SupD] :
+      ( wf(lt, V, InfD, SupD)
+    <=> ( leq(InfD, V) & leq(V, SupD) & V != InfD ) )).
 
-fof(wf_gt_open, axiom,
-    ! [V] : (val(V) => (? [X] : (val(X) & less(V, X)) => well_formed(gt, V)))).
+fof(wf_gt_def, axiom,
+    ! [V, InfD, SupD] :
+      ( wf(gt, V, InfD, SupD)
+    <=> ( leq(InfD, V) & leq(V, SupD) & V != SupD ) )).
+
+% Section 2: sem_nonempty/4  (Lemma "Well-formed denotation" case analysis)
+%
+% sem_nonempty(Op, V, InfD, SupD) holds iff the denotation of (Op V),
+% intersected with [InfD, SupD], is non-empty:
+%   eq:    V in [InfD, SupD]               (the singleton {V} hits the domain)
+%   lteq:  V >= InfD                       ([InfD, min(V, SupD)] non-empty)
+%   gteq:  V <= SupD                       ([max(V, InfD), SupD] non-empty)
+%   lt:    V >  InfD                       ([InfD, V) non-empty)
+%   gt:    V <  SupD                       ((V, SupD] non-empty)
+%
+% Lemma "Well-formed denotation" says wf => sem_nonempty.
+%
+% Used by: ODRL617 (the wf(lt) => sem_nonempty(lt) implication).
+
+fof(sem_nonempty_eq_def, axiom,
+    ! [V, InfD, SupD] :
+      ( sem_nonempty(eq, V, InfD, SupD)
+    <=> ( leq(InfD, V) & leq(V, SupD) ) )).
+
+fof(sem_nonempty_lteq_def, axiom,
+    ! [V, InfD, SupD] :
+      ( sem_nonempty(lteq, V, InfD, SupD)
+    <=> leq(InfD, V) )).
+
+fof(sem_nonempty_gteq_def, axiom,
+    ! [V, InfD, SupD] :
+      ( sem_nonempty(gteq, V, InfD, SupD)
+    <=> leq(V, SupD) )).
+
+fof(sem_nonempty_lt_def, axiom,
+    ! [V, InfD, SupD] :
+      ( sem_nonempty(lt, V, InfD, SupD)
+    <=> less(InfD, V) )).
+
+fof(sem_nonempty_gt_def, axiom,
+    ! [V, InfD, SupD] :
+      ( sem_nonempty(gt, V, InfD, SupD)
+    <=> less(V, SupD) )).
