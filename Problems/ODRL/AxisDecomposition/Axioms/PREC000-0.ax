@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : PREC000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Endpoint precedence (Def 5.5)
+% Axioms   : Endpoint precedence, disjointness criterion, and operator-tag mapping
 % Version  : 1.0
-% English  : prec/4 biconditional: U with tag T_u precedes L with tag T_l iff less(U,L) or (U=L and one tag is open).
+% English  : prec/4 biconditionals for cc/oc/co/oo (Definition 5); disjoint/8 biconditional (Theorem 2); upper_tag/lower_tag facts for the five ODRL dimensional operators.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,16 +13,81 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 2 axioms: 1 tag-distinctness + 1 biconditional.
+% Comments : 16 axioms: 3 tag-sort + 4 prec biconditionals + 1 disjoint biconditional + 6 tag facts + 2 functionality axioms.
 %--------------------------------------------------------------------------
-% Endpoint precedence from Def 5.5:
-% prec(U, L, T_u, T_l) holds iff
-%   less(U, L)  OR  (U = L AND at least one of T_u, T_l is open).
-% Tags: c (closed), o (open).
+% Section 1: Tag sort
+% prec/4's third and fourth arguments are openness tags drawn from {c, o}.
+% Without c != o, a model can collapse the two and silently merge
+% prec_cc with prec_oc; negative problems will misbehave.
 
+fof(tag_c,         axiom, tag(c)).
+fof(tag_o,         axiom, tag(o)).
 fof(tags_distinct, axiom, c != o).
 
-fof(prec_iff, axiom,
-    ! [U,L,Tu,Tl] :
-        (prec(U, L, Tu, Tl) <=>
-         (less(U, L) | (U = L & (Tu = o | Tl = o))))).
+% Section 2: Endpoint precedence (Definition 5)
+% u prec l iff (u < l) OR (u = l AND at least one endpoint is open).
+%
+% Case split by (upper_tag, lower_tag):
+%   (c,c) both closed -> u prec l iff u < l       (strict)
+%   (o,c) upper open  -> u prec l iff u <= l
+%   (c,o) lower open  -> u prec l iff u <= l
+%   (o,o) both open   -> u prec l iff u <= l
+%
+% Used by: ODRL600 (cc fwd), ODRL601 (cc bwd), ODRL602 (oc fwd),
+%          ODRL603 (co fwd), ODRL604 (oo fwd), ODRL605 (cc fwd via disjoint),
+%          ODRL606 (cc bwd via disjoint), ODRL607 (co fwd via disjoint).
+
+fof(prec_cc, axiom,
+    ! [U,L] : (prec(U, L, c, c) <=> less(U, L))).
+
+fof(prec_oc, axiom,
+    ! [U,L] : (prec(U, L, o, c) <=> leq(U, L))).
+
+fof(prec_co, axiom,
+    ! [U,L] : (prec(U, L, c, o) <=> leq(U, L))).
+
+fof(prec_oo, axiom,
+    ! [U,L] : (prec(U, L, o, o) <=> leq(U, L))).
+
+% Section 3: Disjointness criterion (Theorem 2)
+% disjoint([L1,U1] tagged (CL1,CU1), [L2,U2] tagged (CL2,CU2)) iff
+%   prec(U1, L2, CU1, CL2)  OR  prec(U2, L1, CU2, CL1).
+%
+% Biconditional needed for ODRL606 (non-disjoint at shared closed endpoint)
+% and ODRL608 (symmetry of disjoint via OR-commutativity).
+
+fof(disjoint_def, axiom,
+    ! [L1,U1,CL1,CU1,L2,U2,CL2,CU2] :
+      ( disjoint(L1, U1, CL1, CU1, L2, U2, CL2, CU2)
+    <=> ( prec(U1, L2, CU1, CL2)
+        | prec(U2, L1, CU2, CL1) ) )).
+
+% Section 4: Operator-to-tag mapping (Definition 3)
+% Each ODRL operator defines an upper boundary, a lower boundary, or both:
+%
+%   eq v   denotes {v}        -- defines both upper (closed) and lower (closed).
+%   lteq v denotes (-inf, v]  -- defines upper (closed) only.
+%   gteq v denotes [v, +inf)  -- defines lower (closed) only.
+%   lt v   denotes (-inf, v)  -- defines upper (open) only.
+%   gt v   denotes (v, +inf)  -- defines lower (open) only.
+%
+% The previous version asserted upper_tag(gteq, c) and upper_tag(gt, c);
+% those are wrong because neither operator constrains the upper side.
+% Used by: ODRL609 (operator-tag unit facts directly).
+
+% Upper-tag facts
+fof(upper_tag_eq,   axiom, upper_tag(eq,   c)).
+fof(upper_tag_lteq, axiom, upper_tag(lteq, c)).
+fof(upper_tag_lt,   axiom, upper_tag(lt,   o)).
+
+% Lower-tag facts
+fof(lower_tag_eq,   axiom, lower_tag(eq,   c)).
+fof(lower_tag_gteq, axiom, lower_tag(gteq, c)).
+fof(lower_tag_gt,   axiom, lower_tag(gt,   o)).
+
+% Functionality: each operator has at most one tag per side
+fof(upper_tag_functional, axiom,
+    ! [OP,T1,T2] : ((upper_tag(OP, T1) & upper_tag(OP, T2)) => T1 = T2)).
+
+fof(lower_tag_functional, axiom,
+    ! [OP,T1,T2] : ((lower_tag(OP, T1) & lower_tag(OP, T2)) => T1 = T2)).

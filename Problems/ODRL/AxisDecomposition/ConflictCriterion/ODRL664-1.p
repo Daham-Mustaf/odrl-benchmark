@@ -1,25 +1,26 @@
 %--------------------------------------------------------------------------
-% File     : ODRL608-1.p
+% File     : ODRL664-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : disjoint symmetry: disjoint(A,B) iff disjoint(B,A)
+% Problem  : negative: upper_tag(gteq,c) is NOT derivable
 % Version  : 1.0
-% English  : thm:criterion symmetry: disjoint is symmetric.
-%           : disjoint(L1,U1,CL1,CU1,L2,U2,CL2,CU2) <=> disjoint(L2,U2,CL2,CU2,L1,U1,CL1,CU1)
-%           : FOL-only: no faithful SMT encoding of OR-commutativity.
+% English  : Negative existence test: upper_tag(gteq, c) must NOT be derivable
+%           : from PREC000-0.ax v1.1, because gteq does not constrain the
+%           : upper side of the interval.  Regression test for the previous
+%           : version's bug.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Names    : ODRL608-1.p
+% Names    : ODRL664-1.p
 %
-% Status   : Theorem
-% Verdict  : Conflict
+% Status   : CounterSatisfiable
+% Verdict  : Unknown
 % Relation : conflict
-% SPC      : FOF_THM_RFN
+% SPC      : FOF_CSA_RFN
 %
 % Comments : Axis decomposition tier. ISWC 2026.
 %           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
-%           : Policy source: Policies/ODRL608-policy.ttl
+%           : Policy source: Policies/ODRL664-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
@@ -27,8 +28,6 @@ include('Axioms/PREC000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 % ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl608, conjecture,
-    ![L1,U1,CL1,CU1,L2,U2,CL2,CU2]:
-    (disjoint(L1,U1,CL1,CU1,L2,U2,CL2,CU2) <=>
-     disjoint(L2,U2,CL2,CU2,L1,U1,CL1,CU1))).
+fof(odrl664, conjecture,
+    upper_tag(gteq, c)).
 %--------------------------------------------------------------------------

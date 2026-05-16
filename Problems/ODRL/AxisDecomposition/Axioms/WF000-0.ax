@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : WF000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Well-formedness (Def 4.4)
+% Axioms   : Well-formedness conditions
 % Version  : 1.0
-% English  : wf/4 biconditional: (Op,V) is well-formed on [Inf,Sup] iff V in domain and boundary exclusions hold.
+% English  : well_formed/2: marks an axis-constraint pair as having non-empty denotation.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,31 +13,24 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 5 axioms: 5 biconditional well-formedness cases.
+% Comments : 5 axioms: 5 well_formed cases for the 5 ODRL operators.
 %--------------------------------------------------------------------------
-% Well-formedness from Def 4.4 (Well-formed constraint):
-% (Op, V) on domain [Inf, Sup] is well-formed iff
-%   V is in the domain  AND
-%   Op = lt forbids V = Inf  AND
-%   Op = gt forbids V = Sup.
-% Each case is a biconditional so both wf and ~wf are derivable.
+% well_formed/2: marks an axis-constraint pair as well-formed.
+% Definition: a constraint pair (op, v) is well-formed when its denotation
+% is non-empty over the effective axis domain.
+% The .p files supply specific well_formed instances or violations.
 
-fof(wf_eq_iff, axiom,
-    ! [V,Inf,Sup] :
-        (wf(eq, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup)))).
+fof(wf_eq, axiom,
+    ! [V] : (val(V) => well_formed(eq, V))).
 
-fof(wf_lteq_iff, axiom,
-    ! [V,Inf,Sup] :
-        (wf(lteq, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup)))).
+fof(wf_lteq, axiom,
+    ! [V] : (val(V) => well_formed(lteq, V))).
 
-fof(wf_gteq_iff, axiom,
-    ! [V,Inf,Sup] :
-        (wf(gteq, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup)))).
+fof(wf_gteq, axiom,
+    ! [V] : (val(V) => well_formed(gteq, V))).
 
-fof(wf_lt_iff, axiom,
-    ! [V,Inf,Sup] :
-        (wf(lt, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup) & V != Inf))).
+fof(wf_lt_open, axiom,
+    ! [V] : (val(V) => (? [X] : (val(X) & less(X, V)) => well_formed(lt, V)))).
 
-fof(wf_gt_iff, axiom,
-    ! [V,Inf,Sup] :
-        (wf(gt, V, Inf, Sup) <=> (leq(Inf, V) & leq(V, Sup) & V != Sup))).
+fof(wf_gt_open, axiom,
+    ! [V] : (val(V) => (? [X] : (val(X) & less(V, X)) => well_formed(gt, V)))).

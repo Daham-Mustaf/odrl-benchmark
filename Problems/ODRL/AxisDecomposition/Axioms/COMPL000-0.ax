@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : COMPL000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Completion verdicts (Thm 6.10)
+% Axioms   : Completion axioms
 % Version  : 1.0
-% English  : completion_compatible/3 and completion_conflict/4 biconditionals.
+% English  : Verdict completion under sharp and range modes.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,20 +13,16 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 2 axioms: 2 completion biconditionals.
+% Comments : 6 axioms: 6 completion cases.
 %--------------------------------------------------------------------------
-% Completion verdicts (Thm 6.10 Unknown Soundness):
-% completion_compatible(V, Inf, Sup): equality completion at V yields Compatible
-%   (V must be in the domain).
-% completion_conflict(V1, V2, Inf, Sup): lower/upper bound completion
-%   yields Conflict when V2 < V1, both within domain.
+% Completion: extends single-axis verdicts when a constraint is absent.
+% completed/3: completed(verdict_in, completion_kind, verdict_out)
+% kind = sharp : verdict propagates unchanged
+% kind = range : verdict propagates unchanged
 
-fof(completion_compat_iff, axiom,
-    ! [V,Inf,Sup] :
-        (completion_compatible(V, Inf, Sup)
-         <=> (leq(Inf, V) & leq(V, Sup)))).
-
-fof(completion_conflict_iff, axiom,
-    ! [V1,V2,Inf,Sup] :
-        (completion_conflict(V1, V2, Inf, Sup)
-         <=> (less(V2, V1) & leq(Inf, V2) & leq(V1, Sup)))).
+fof(complete_sharp_compat,   axiom, completed(compatible, sharp, compatible)).
+fof(complete_sharp_conflict, axiom, completed(conflict,   sharp, conflict)).
+fof(complete_sharp_unknown,  axiom, completed(unknown,    sharp, unknown)).
+fof(complete_range_compat,   axiom, completed(compatible, range, compatible)).
+fof(complete_range_conflict, axiom, completed(conflict,   range, conflict)).
+fof(complete_range_unknown,  axiom, completed(unknown,    range, unknown)).

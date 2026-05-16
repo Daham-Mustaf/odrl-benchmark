@@ -1,16 +1,16 @@
 %--------------------------------------------------------------------------
-% File     : ODRL608-1.p
+% File     : ODRL661-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : disjoint symmetry: disjoint(A,B) iff disjoint(B,A)
+% Problem  : prec_oc at strict less: less(a,b) implies prec(a,b,o,c)
 % Version  : 1.0
-% English  : thm:criterion symmetry: disjoint is symmetric.
-%           : disjoint(L1,U1,CL1,CU1,L2,U2,CL2,CU2) <=> disjoint(L2,U2,CL2,CU2,L1,U1,CL1,CU1)
-%           : FOL-only: no faithful SMT encoding of OR-commutativity.
+% English  : thm:criterion prec_oc strict: less(a,b) => prec(a,b,o,c)
+%           : Tests prec_oc at strict separation (a<b), complementing
+%           : ODRL602 which tests it at equal endpoints (a=b via leq reflexivity).
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
 % Authors  : Mustafa, D. & Sutcliffe, G.
-% Names    : ODRL608-1.p
+% Names    : ODRL661-1.p
 %
 % Status   : Theorem
 % Verdict  : Conflict
@@ -19,16 +19,18 @@
 %
 % Comments : Axis decomposition tier. ISWC 2026.
 %           : Requires Axioms/ORD000-0.ax + Axioms/AXIS000-0.ax.
-%           : Policy source: Policies/ODRL608-policy.ttl
+%           : Policy source: Policies/ODRL661-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
 include('Axioms/PREC000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
+fof(val_a,     axiom, val(a)).
+fof(val_b,     axiom, val(b)).
+fof(ord_a_b,   axiom, less(a, b)).
+fof(distinct,  axiom, $distinct(a, b)).
 % ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl608, conjecture,
-    ![L1,U1,CL1,CU1,L2,U2,CL2,CU2]:
-    (disjoint(L1,U1,CL1,CU1,L2,U2,CL2,CU2) <=>
-     disjoint(L2,U2,CL2,CU2,L1,U1,CL1,CU1))).
+fof(odrl661, conjecture,
+    prec(a, b, o, c)).
 %--------------------------------------------------------------------------

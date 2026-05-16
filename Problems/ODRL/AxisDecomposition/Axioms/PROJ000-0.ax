@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : PROJ000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Box projection (Thm 5.10)
+% Axioms   : Projection axioms
 % Version  : 1.0
-% English  : in_box2 and in_box3 are Cartesian product membership predicates.
+% English  : Box membership iff per-axis membership holds.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,18 +13,17 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 2 axioms: 2 box-membership biconditionals.
+% Comments : 2 axioms: 2 projection axioms (2D and 3D).
 %--------------------------------------------------------------------------
-% Box membership (Thm 5.10 Projection):
-% in_box2(X, Y, L1, U1, L2, U2) iff X in [L1,U1] AND Y in [L2,U2]
-% in_box3 similarly for 3D.
+% projection/2: maps a 2D/3D box constraint to its per-axis projections.
+% box_member(X, L1, U1, Y, L2, U2) iff X in [L1,U1] AND Y in [L2,U2]
 
-fof(in_box2_iff, axiom,
+fof(box_member_2d, axiom,
     ! [X,Y,L1,U1,L2,U2] :
-        (in_box2(X, Y, L1, U1, L2, U2)
+        (box_member(X, L1, U1, Y, L2, U2)
          <=> (in_closed(X, L1, U1) & in_closed(Y, L2, U2)))).
 
-fof(in_box3_iff, axiom,
+fof(box_member_3d, axiom,
     ! [X,Y,Z,L1,U1,L2,U2,L3,U3] :
-        (in_box3(X, Y, Z, L1, U1, L2, U2, L3, U3)
+        (box_member3(X, L1, U1, Y, L2, U2, Z, L3, U3)
          <=> (in_closed(X, L1, U1) & in_closed(Y, L2, U2) & in_closed(Z, L3, U3)))).

@@ -1,0 +1,248 @@
+problem,subdir,header_ok,header_msg,includes_ok,includes_msg,predicates_ok,predicates_msg,fof_syntax_ok,fof_syntax_msg,smt_syntax_ok,smt_syntax_msg,ttl_syntax_ok,ttl_syntax_msg,verdict,relation,expected_status,expected_smt,fof_szs,smt_szs,fof_audit_ok,smt_audit_ok
+ODRL420-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL421-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL422-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL423-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL424-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL425-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL426-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL427-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL428-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL429-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL430-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL431-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL432-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL433-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL434-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,subsumption,Theorem,sat,,,-,-
+ODRL435-1,Boundary,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL320-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL321-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL322-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL323-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL324-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL325-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL326-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL327-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL328-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL329-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL330-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL331-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL332-1,Box2D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,subsumption,Theorem,sat,,,-,-
+ODRL333-1,Box2D,Y,,Y,,N,"undefined predicates: ['axis_conflict', 'axis_subsumes', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL334-1,Box2D,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL340-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL341-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL342-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL343-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL344-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL345-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL346-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL347-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,compatible,Theorem,sat,,,-,-
+ODRL348-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL349-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL350-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,subsumption,Theorem,sat,,,-,-
+ODRL351-1,Box3D,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL352-1,Box3D,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL353-1,Box3D,Y,,Y,,N,"undefined predicates: ['axis_conflict', 'axis_subsumes', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL650-1,BoxContainment,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL651-1,BoxContainment,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,subsumption,Theorem,sat,,,-,-
+ODRL652-1,BoxContainment,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,verdict_algebra,Theorem,unsat,,,-,-
+ODRL653-1,BoxContainment,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,verdict_algebra,Theorem,unsat,,,-,-
+ODRL654-1,BoxContainment,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Unknown,verdict_algebra,Theorem,unsat,,,-,-
+ODRL655-1,BoxContainment,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Unknown,verdict_algebra,Theorem,unsat,,,-,-
+ODRL656-1,BoxContainment,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Unknown,verdict_algebra,Theorem,unsat,,,-,-
+ODRL657-1,BoxContainment,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Unknown,verdict_algebra,Theorem,unsat,,,-,-
+ODRL700-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL701-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL702-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL703-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL704-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL705-1,CSA,Y,,Y,,N,"undefined predicates: ['disjoint', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL706-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL707-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL708-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL709-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL710-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL711-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL712-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL713-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL714-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL715-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL716-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL717-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL718-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL719-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL720-1,CSA,Y,,Y,,N,"undefined predicates: ['box2_conflict', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL721-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL722-1,CSA,Y,,Y,,N,"undefined predicates: ['disjoint', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL723-1,CSA,Y,,Y,,N,"undefined predicates: ['disjoint', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL724-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL725-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL726-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL727-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL728-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL729-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL730-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL731-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL732-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL733-1,CSA,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,verdict_algebra,CounterSatisfiable,unsat,,,-,-
+ODRL734-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL735-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL736-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL737-1,CSA,Y,,Y,,N,"undefined predicates: ['box2_compatible', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL738-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL739-1,CSA,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),CounterSatisfiable,,CounterSatisfiable,,,,-,-
+ODRL630-1,Completion,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL631-1,Completion,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL632-1,Completion,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL633-1,Completion,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL634-1,Completion,Y,,Y,,N,"undefined predicates: ['axis_conflict', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL635-1,Completion,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,verdict_algebra,Theorem,unsat,,,-,-
+ODRL636-1,Completion,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL637-1,Completion,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL360-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL361-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL362-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL363-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL364-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL365-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL366-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL367-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL368-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL369-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,subsumption,Theorem,sat,,,-,-
+ODRL370-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL371-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL640-1,Composition,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,verdict_algebra,Theorem,unsat,,,-,-
+ODRL641-1,Composition,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,verdict_algebra,Theorem,unsat,,,-,-
+ODRL642-1,Composition,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Unknown,verdict_algebra,Theorem,unsat,,,-,-
+ODRL643-1,Composition,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,verdict_algebra,Theorem,unsat,,,-,-
+ODRL644-1,Composition,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,verdict_algebra,Theorem,unsat,,,-,-
+ODRL645-1,Composition,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,verdict_algebra,Theorem,unsat,,,-,-
+ODRL646-1,Composition,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,verdict_algebra,Theorem,unsat,,,-,-
+ODRL647-1,Composition,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,verdict_algebra,Theorem,unsat,,,-,-
+ODRL648-1,Composition,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL649-1,Composition,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,verdict_algebra,Theorem,unsat,,,-,-
+ODRL600-1,ConflictCriterion,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL601-1,ConflictCriterion,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL602-1,ConflictCriterion,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL603-1,ConflictCriterion,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL604-1,ConflictCriterion,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL605-1,ConflictCriterion,Y,,Y,,N,"undefined predicates: ['disjoint', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL606-1,ConflictCriterion,Y,,Y,,N,"undefined predicates: ['disjoint', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL607-1,ConflictCriterion,Y,,Y,,N,"undefined predicates: ['disjoint', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL608-1,ConflictCriterion,Y,,Y,,N,undefined predicates: ['disjoint'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL609-1,ConflictCriterion,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL440-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL441-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL442-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL443-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL444-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL445-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL446-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL447-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL448-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,subsumption,Theorem,sat,,,-,-
+ODRL449-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL450-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL451-1,LogicalOr,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL460-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL461-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL462-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL463-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL464-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL465-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL466-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL467-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL468-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,subsumption,Theorem,sat,,,-,-
+ODRL469-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL470-1,LogicalXone,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL400-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL401-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL402-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL403-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL404-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL405-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL406-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL407-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL408-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL409-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL410-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL411-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL412-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL413-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL414-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,subsumption,Theorem,sat,,,-,-
+ODRL415-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL416-1,PolicyQuality,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL620-1,Projection,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL621-1,Projection,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL622-1,Projection,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL623-1,Projection,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL624-1,Projection,Y,,Y,,N,"undefined predicates: ['box2_compatible', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL625-1,Projection,Y,,Y,,N,"undefined predicates: ['box2_conflict', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL626-1,Projection,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL627-1,Projection,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL628-1,Projection,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL629-1,Projection,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL750-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL751-1,SAT,Y,,Y,,N,"undefined predicates: ['axis_compatible', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL752-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL753-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL754-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL755-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL756-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],N,parse error,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL757-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL758-1,SAT,Y,,Y,,N,"undefined predicates: ['axis_compatible', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL759-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL763-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL764-1,SAT,Y,,Y,,Y,,Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL767-1,SAT,Y,,Y,,N,"undefined predicates: ['axis_conflict', 'distinct']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL768-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL769-1,SAT,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Satisfiable,,Satisfiable,,,,-,-
+ODRL500-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL501-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL502-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL503-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL504-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL505-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL506-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL507-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,verdict_algebra,Theorem,unsat,,,-,-
+ODRL508-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL509-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL510-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL511-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL512-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,verdict_algebra,Theorem,unsat,,,-,-
+ODRL513-1,SemanticCore,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,verdict_algebra,Theorem,unsat,,,-,-
+ODRL300-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL301-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL302-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL303-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL304-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL305-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL306-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL307-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL308-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL309-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL310-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,subsumption,Theorem,sat,,,-,-
+ODRL311-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL312-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,subsumption,Theorem,unsat,,,-,-
+ODRL313-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL314-1,SingleAxis,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Compatible,conflict,Theorem,sat,,,-,-
+ODRL760-1,UNS,Y,,Y,,N,undefined predicates: ['distinct'],N,parse error,Y,,Y,(rdflib unavailable; passed regex sniff),Unsatisfiable,,Unsatisfiable,,,,-,-
+ODRL761-1,UNS,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Unsatisfiable,,Unsatisfiable,,,,-,-
+ODRL762-1,UNS,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Unsatisfiable,,Unsatisfiable,,,,-,-
+ODRL765-1,UNS,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Unsatisfiable,,Unsatisfiable,,,,-,-
+ODRL766-1,UNS,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Unsatisfiable,,Unsatisfiable,,,,-,-
+ODRL610-1,WellFormedness,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL611-1,WellFormedness,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL612-1,WellFormedness,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL613-1,WellFormedness,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL614-1,WellFormedness,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL615-1,WellFormedness,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL616-1,WellFormedness,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+ODRL617-1,WellFormedness,Y,,Y,,N,"undefined predicates: ['distinct', 'sem_nonempty']",Y,,Y,,Y,(rdflib unavailable; passed regex sniff),Conflict,conflict,Theorem,unsat,,,-,-
+HARD001+1,Hard,N,Theorem but Verdict=None,Y,,N,"undefined predicates: ['axis_conflict', 'axis_subsumes', 'disjoint', 'interval', 'intervals']",Y,,-,no .smt2,Y,(rdflib unavailable; passed regex sniff),,,Theorem,,,,-,-
+HARD001-SAT+1,Hard,Y,,Y,,N,undefined predicates: ['distinct'],Y,,Y,,-,no .ttl,,,Satisfiable,,,,-,-
+HARD002+1,Hard,N,Theorem but Verdict=None,Y,,N,"undefined predicates: ['applicable', 'finder', 'prover']",Y,,-,no .smt2,Y,(rdflib unavailable; passed regex sniff),,,Theorem,,,,-,-
+NFV001+1,Hard,N,Theorem but Verdict=None,Y,,N,"undefined predicates: ['axis_conflict', 'verdict']",Y,,-,no .smt2,Y,(rdflib unavailable; passed regex sniff),,,Theorem,,,,-,-
+NFV001-SAT+1,Hard,Y,,Y,,N,"undefined predicates: ['axis_conflict', 'distinct']",Y,,Y,,-,no .ttl,,,Satisfiable,,,,-,-
+NFV002+1,Hard,N,Theorem but Verdict=None,Y,,N,"undefined predicates: ['axis_compatible', 'overlap', 'verdict']",Y,,-,no .smt2,Y,(rdflib unavailable; passed regex sniff),,,Theorem,,,,-,-
+NFV002-SAT+1,Hard,Y,,Y,,N,"undefined predicates: ['axis_compatible', 'distinct']",Y,,Y,,-,no .ttl,,,Satisfiable,,,,-,-

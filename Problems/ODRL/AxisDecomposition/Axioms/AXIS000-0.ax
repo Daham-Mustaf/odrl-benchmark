@@ -3,7 +3,7 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Axioms   : Interval denotations and verdict algebra
 % Version  : 1.0
-% English  : Section A: interval predicates. Section B: three-valued Verdict. Section C: box_verdict with totality.
+% English  : Section A: in_open/in_lopen/in_ropen/in_closed. Section B: three-valued Verdict constants. Section C: box_verdict combinator.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,9 +13,9 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 13 axioms: 4 interval defs + 4 verdict facts + 4 box_verdict cases.
+% Comments : 12 axioms: 4 interval defs + 4 verdict facts + 3 box_verdict cases.
 %--------------------------------------------------------------------------
-% ─── Section A: Interval membership predicates ─────────────────────────────
+% Section A: Interval membership predicates
 % in_open(X, L, U)   <=>  L < X < U     (open at both ends)
 % in_lopen(X, L, U)  <=>  L < X <= U    (left-open, right-closed)
 % in_ropen(X, L, U)  <=>  L <= X < U    (left-closed, right-open)
@@ -33,7 +33,8 @@ fof(in_ropen_def, axiom,
 fof(in_closed_def, axiom,
     ! [X,L,U] : (in_closed(X, L, U) <=> (leq(L, X) & leq(X, U)))).
 
-% ─── Section B: Three-valued verdict constants ─────────────────────────────
+% Section B: Three-valued verdict constants
+
 fof(verdicts_distinct, axiom,
     $distinct(compatible, conflict, unknown)).
 
@@ -44,9 +45,7 @@ fof(is_verdict_compatible, axiom, is_verdict(compatible)).
 fof(is_verdict_conflict,   axiom, is_verdict(conflict)).
 fof(is_verdict_unknown,    axiom, is_verdict(unknown)).
 
-% ─── Section C: box_verdict (per-axis combination, Def 6.6) ──────────────
-% For 3-axis boxes we fold pairwise: box_verdict(V1, box_verdict(V2, V3)).
-% min is associative, so the folding direction does not matter.
+% Section C: box_verdict (per-axis combination, 2D and 3D boxes)
 
 fof(box_conflict, axiom,
     ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
@@ -63,10 +62,3 @@ fof(box_unknown, axiom,
                   (V1 = unknown | V2 = unknown) &
                   V1 != conflict & V2 != conflict)
                  => box_verdict(V1, V2) = unknown)).
-
-% Totality of box_verdict (added per review): helps E close codomain reasoning.
-fof(box_verdict_total, axiom,
-    ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2))
-                 => (box_verdict(V1, V2) = compatible |
-                     box_verdict(V1, V2) = conflict |
-                     box_verdict(V1, V2) = unknown))).

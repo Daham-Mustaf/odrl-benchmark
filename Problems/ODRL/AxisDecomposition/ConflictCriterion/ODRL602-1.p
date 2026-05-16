@@ -5,7 +5,6 @@
 % Version  : 1.0
 % English  : thm:criterion prec_oc: leq(v5,v5) => prec(v5,v5,o,c)
 %           : Open upper v5 (excluded), closed lower v5: equal is sufficient.
-%           : Interval 1 ends before v5, interval 2 starts at v5 => disjoint.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

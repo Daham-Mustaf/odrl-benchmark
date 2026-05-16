@@ -12,9 +12,9 @@
 ; --------------------------------------------------------------------------
 
 (set-logic QF_LRA)
-(declare-const u Real)
-(declare-const l Real)
-(assert (< u l))
-(assert (not (< u l)))
+(declare-const x Real)
+(assert (> x 0.0))
+(assert (<= x 500.0))    ; sem(lteq 500)
+(assert (>= x 600.0))    ; sem(gteq 600)
 (check-sat)
 (exit)
