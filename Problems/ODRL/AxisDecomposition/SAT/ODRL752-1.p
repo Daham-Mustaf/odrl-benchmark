@@ -29,7 +29,5 @@ fof(val_v6, axiom, val(v6)).
 fof(ord_v5_v6, axiom, less(v5, v6)).
 fof(distinct, axiom, $distinct(v5, v6)).
 fof(prec_witness, axiom, prec(v5, v6, c, c)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl752, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

@@ -32,7 +32,5 @@ fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
 fof(compat_witness, axiom, axis_compatible(v0, v600, v400, v800)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl751, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

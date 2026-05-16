@@ -29,7 +29,5 @@ fof(ord_v0_v400,   axiom, less(v0,   v400)).
 fof(ord_v400_v800, axiom, less(v400, v800)).
 fof(distinct, axiom, $distinct(v0, v400, v800)).
 fof(witness,  axiom, in_lopen(v400, v0, v800)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl755, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

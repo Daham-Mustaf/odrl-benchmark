@@ -45,7 +45,5 @@ fof(distinct, axiom, $distinct(v8, v16, v32, v100, v200, v300, v400, v600, v800)
 fof(witness_x, axiom, leq(v200, v400) & leq(v400, v800)).
 fof(witness_y, axiom, leq(v100, v300) & leq(v300, v600)).
 fof(witness_z, axiom, leq(v8,   v16)  & leq(v16,  v32)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl759, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

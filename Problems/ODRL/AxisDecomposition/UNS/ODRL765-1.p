@@ -35,7 +35,5 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
 fof(wit_val,      axiom, val(w)).
 fof(wit_in_lopen, axiom, in_lopen(w, v0, v600)).
 fof(wit_leq,      axiom, leq(v800, w)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl765, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

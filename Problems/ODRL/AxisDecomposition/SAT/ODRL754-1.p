@@ -31,7 +31,5 @@ fof(ord_v0_v600,    axiom, less(v0, v600)).
 fof(ord_v600_v1200, axiom, less(v600, v1200)).
 fof(distinct, axiom, $distinct(v0, v600, v1200)).
 fof(compl_witness, axiom, completion_compatible(v600, v0, v1200)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl754, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

@@ -49,7 +49,5 @@ fof(witness_x, axiom, leq(v200, v400) & leq(v400, v800)).
 fof(witness_y, axiom, leq(v100, v300) & leq(v300, v600)).
 fof(witness_z, axiom, leq(v8,   v16)  & leq(v16,  v32)).
 fof(witness_w, axiom, leq(v72,  v150) & leq(v150, v300)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl769, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

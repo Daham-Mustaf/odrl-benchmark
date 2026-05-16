@@ -29,7 +29,5 @@ fof(val_v1200, axiom, val(v1200)).
 fof(ord_v0_v600,    axiom, less(v0, v600)).
 fof(ord_v600_v1200, axiom, less(v600, v1200)).
 fof(distinct, axiom, $distinct(v0, v600, v1200)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl750, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

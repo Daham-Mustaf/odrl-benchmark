@@ -3,25 +3,15 @@ writers.py
 ==========
 Writes .p (FOF/TPTP), .smt2 (SMT-LIB), and .ttl (Turtle) files
 for the ODRL Axis Decomposition benchmark.
-
-Conventions:
-- If fof_conjecture is None or empty, NO conjecture line is emitted.
-  The prover then refutes the axiom set (for UNS-style Unsatisfiable
-  problems) or model-builds it (for SAT-style Satisfiable problems).
-- If status_smt is None or smt2_asserts is empty, NO .smt2 file is
-  generated. Problem is FOL-only.
 """
 import sys
 from pathlib import Path
-
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from header import problem_header, SMTHeader
-
 
 def write_fof_problem(p: dict, out_dir: Path) -> Path:
     subdir = out_dir / p["subdir"]
     subdir.mkdir(parents=True, exist_ok=True)
-
     # Includes are built as follows:
     #   1. start from p['includes'] if set, else a default of ORD000+AXIS000
     #      (+ ORD001 if needs_density)
@@ -47,25 +37,12 @@ def write_fof_problem(p: dict, out_dir: Path) -> Path:
     if cat_axiom and cat_axiom not in inc_list:
         inc_list.append(cat_axiom)
     includes = "".join(f"include('Axioms/{ax}').\n" for ax in inc_list)
-
-    # Build conjecture block. SKIP entirely when fof_conjecture is None or empty
-    # (UNS / SAT problems: prover refutes/satisfies the axiom set directly).
-    conj = p.get("fof_conjecture")
-    if conj is None or (isinstance(conj, str) and conj.strip() == ""):
-        conjecture_fof = ""
-        conjecture_header = (
-            "% (No conjecture: prover refutes/satisfies the axiom set.)\n"
-        )
-    else:
-        conj_id = p["id"].lower()
-        conjecture_fof = (
-            f"fof({conj_id}, conjecture,\n"
-            f"    {conj}).\n"
-        )
-        conjecture_header = (
-            "% ─── Conjecture " + "─" * 52 + "\n"
-        )
-
+    conj_id = p["id"].lower()
+    conjecture_fof = (
+        f"fof({conj_id}, conjecture,\n"
+        f"    {p['fof_conjecture']}).\n"
+    )
+    fof_body = includes + "\n" + p["fof_extra_decls"] + conjecture_fof
     header = problem_header(p, "axis", "")
     content = (
         header
@@ -74,38 +51,22 @@ def write_fof_problem(p: dict, out_dir: Path) -> Path:
         + "% ─── Named constants and ordering "
         + "─" * 37 + "\n"
         + p["fof_extra_decls"]
-        + conjecture_header
+        + "% ─── Conjecture "
+        + "─" * 52 + "\n"
         + conjecture_fof
         + "%--------------------------------------------------------------------------\n"
     )
-
     path = subdir / f"{p['id']}-1.p"
     path.write_text(content, encoding="utf-8")
     return path
 
-
-def write_smt2_problem(p: dict, out_dir: Path) -> Path | None:
-    """
-    Write the .smt2 file for a problem.
-
-    Returns None (without writing) if:
-      - status_smt is None  (FOL-only problem), or
-      - smt2_asserts is missing or empty.
-
-    This handles ODRL608 (symmetry meta-theorem), ODRL614 (negative
-    existence test), ODRL617 (arithmetically vacuous), and similar.
-    """
-    if p.get("status_smt") is None:
-        return None
-    asserts = (p.get("smt2_asserts") or "").strip()
-    if not asserts:
-        return None
-
+def write_smt2_problem(p: dict, out_dir: Path) -> Path:
     subdir = out_dir / p["subdir"]
     subdir.mkdir(parents=True, exist_ok=True)
 
-    logic = p.get("smt2_logic", "QF_LRA")
-    decls = p.get("smt2_decls", "(declare-const x Real)")
+    logic   = p.get("smt2_logic", "QF_LRA")
+    decls   = p.get("smt2_decls", "(declare-const x Real)")
+    asserts = p["smt2_asserts"].strip()
 
     smt_header = SMTHeader(
         file     = f"{p['id']}-1.smt2",
@@ -134,7 +95,6 @@ def write_smt2_problem(p: dict, out_dir: Path) -> Path | None:
     path = subdir / f"{p['id']}-1.smt2"
     path.write_text(content, encoding="utf-8")
     return path
-
 
 def write_ttl_policy(p: dict, policies_dir: Path) -> Path:
     policies_dir.mkdir(parents=True, exist_ok=True)

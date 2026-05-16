@@ -33,7 +33,5 @@ fof(val_v1200, axiom, val(v1200)).
 fof(ord_v0_v1200, axiom, less(v0, v1200)).
 fof(distinct, axiom, $distinct(v0, v1200)).
 fof(policy_assertion, axiom, wf(lt, v0, v0, v1200)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl762, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

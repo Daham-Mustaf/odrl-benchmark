@@ -26,7 +26,5 @@ include('Axioms/AXIS000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(v_distinct, axiom, conflict != compatible & compatible != unknown & conflict != unknown).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl764, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

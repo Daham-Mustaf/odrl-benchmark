@@ -36,7 +36,5 @@ fof(ord_v600_v700, axiom, less(v600, v700)).
 fof(distinct, axiom, $distinct(v0, v600, v700)).
 fof(witness_in_eq,   axiom, in_closed(witness, v600, v600)).
 fof(witness_in_gteq, axiom, leq(v700, witness)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl760, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

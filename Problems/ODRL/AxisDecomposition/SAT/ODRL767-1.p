@@ -43,7 +43,5 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v5, v6)).
 fof(cf_width,  axiom, axis_conflict(v1, v2, v3, v4)).
 fof(cf_height, axiom, axis_conflict(v2, v3, v4, v5)).
 fof(cf_depth,  axiom, axis_conflict(v3, v4, v5, v6)).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl767, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

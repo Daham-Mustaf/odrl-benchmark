@@ -31,7 +31,5 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v600, v800)).
 fof(wit_eq1, axiom, w = v600).
 fof(wit_eq2, axiom, w = v800).
-% ─── Conjecture ────────────────────────────────────────────────────
-fof(odrl766, conjecture,
-    None).
+% (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------
