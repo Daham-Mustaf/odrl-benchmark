@@ -4,7 +4,7 @@
 % Problem  : box2_conflict: axis 1 disjoint kills box
 % Version  : 1.0
 % English  : def:box-verdict: [v0,v400]x[v0,v600] conflict with [v600,v800]x[v0,v600]
-%           : Width: [v0,v400]∩[v600,v800]=empty => box2_conflict.
+%           : Width: [v0,v400] intersect [v600,v800] = empty => box2_conflict.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

@@ -2,7 +2,7 @@
 problem_data_proj.py
 ====================
 Projection benchmark problems: ODRL620-629 (10 problems).
-Category M: Tests thm:projection and thm:aabb from PROJ000-0.ax.
+Category: Projection (paper Def. 14 Box Denotation, Thm. 17 Projection).
 Include pattern:
     include('Axioms/ORD000-0.ax').
     include('Axioms/PROJ000-0.ax').
@@ -10,37 +10,49 @@ Include pattern:
     [include('Axioms/ORD001-0.ax').]  <- added by generator when needs_density=True
 
 Problem overview:
-  ODRL620 — 2D point in box2                           Theorem
-  ODRL621 — 2D point outside box2 (axis 1 miss)        Theorem
-  ODRL622 — 3D point in box3                           Theorem
-  ODRL623 — 3D point outside box3 (axis 2 miss)        Theorem
-  ODRL624 — box2_compatible: both axes overlap          Theorem
-  ODRL625 — box2_conflict: one axis disjoint            Theorem
-  ODRL626 — shape_point: X in [v,v] iff X=v            Theorem
-  ODRL627 — shape_ropen: X in [InfD,V)                 Theorem
-  ODRL628 — shape_open: X in (L,U)  [needs ORD001]     Theorem
-  ODRL629 — shape_closed: unconstrained axis            Theorem
+  ODRL620 -- 2D point in box2                           Theorem
+  ODRL621 -- 2D point outside box2 (axis 1 miss)        Theorem
+  ODRL622 -- 3D point in box3                           Theorem
+  ODRL623 -- 3D point outside box3 (axis 2 miss)        Theorem
+  ODRL624 -- box2_compatible: both axes overlap         Theorem
+  ODRL625 -- box2_conflict: one axis disjoint           Theorem
+  ODRL626 -- shape_point: X in [v,v] iff X=v            Theorem
+  ODRL627 -- shape_ropen: X in [InfD,V)                 Theorem
+  ODRL628 -- shape_open: X in (L,U)  [needs ORD001]     Theorem
+  ODRL629 -- shape_closed: unconstrained axis           Theorem
 
-Fixes vs. original:
-  ODRL627: name updated from "shape_lray_open" to "shape_ropen" to match
-           the renamed axiom in PROJ000-0.ax v1.2.
-  ODRL628: relation corrected from "compatible" to "conflict" for
-           consistency with all other problems in this file.
-           Note: needs_density=True; the generator must include
-           ORD001-0.ax for this problem's .p file.
-  ODRL629: name updated from "shape_full" to "shape_closed" to match
-           the renamed axiom in PROJ000-0.ax v1.2.
-           status_smt corrected from "sat" to "unsat"; the previous
-           SMT just showed the domain is non-empty (unrelated to the
-           conjecture). Replaced with negated-conjecture encoding:
-           assert (0<=x<=1200) + assert NOT(0<=x<=1200) -> UNSAT,
-           which correctly tests the universal FOF claim.
+Change log (v1.1):
+  - PROJ000-0.ax rewritten to define in_box2/6, in_box3/9,
+    box2_compatible/8, box2_conflict/8 as biconditionals.  Previously
+    PROJ000 defined box_member/box_member3, neither used by any problem
+    here, while in_box2/in_box3/box2_compatible/box2_conflict were
+    undeclared.  ODRL620-625 returned CounterSatisfiable under v1.0;
+    they close under v1.1.
+  - ODRL626 SMT replaced.  Original was (= x 600) AND (not (= x 600))
+    which is P AND NOT P at value 600 (propositionally tautological).
+    New SMT pins witness at v400 and asserts in_closed(v400, v600, v600)
+    -- semantic: unsat because 400 != 600, sat if witness changed to 600
+    or singleton bound changed to 400.  This actually tests the
+    conjecture's interesting part (v400 NOT in {v600}).
+  - ODRL628 needs_density=True; the generator must include ORD001-0.ax
+    so ?[X]: in_open(X, v400, v600) is provable.  Z3 may time out on
+    this case (existential under density axiom); Vampire and E should
+    close it.
+  - ODRL629 SMT note: the user-supplied (x in D) AND (x NOT in D)
+    encoding is structurally tautological but encoding-correct for a
+    universal claim that reduces to P => P after biconditional
+    unfolding.  Same disposition as ODRL637 in Completion (kept) vs
+    ODRL617 in WF (dropped).  Kept here since the user explicitly chose
+    this design.
 """
 
 PROBLEMS = [
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL620 — 2D point in box2
-    # ─────────────────────────────────────────────────────────────────
+    # =================================================================
+    # ODRL620 -- 2D point in box2 -> Theorem (Compatible verdict)
+    # FOL: closes via in_box2_def + in_closed_def + ord chain.
+    # SMT: pin (x=300, y=400), negate box test; unsat because (300, 400)
+    #      IS in [0,600] x [0,600].
+    # =================================================================
     {
         "id":            "ODRL620",
         "subdir":        "Projection",
@@ -87,9 +99,11 @@ fof(distinct, axiom, $distinct(v0, v300, v400, v600)).
 (assert (not (and (>= x 0.0) (<= x 600.0) (>= y 0.0) (<= y 600.0))))""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL621 — 2D point outside box2 (axis 1 miss)
-    # ─────────────────────────────────────────────────────────────────
+    # =================================================================
+    # ODRL621 -- 2D point outside box2 -> Theorem (Conflict verdict)
+    # FOL: closes via in_box2_def + in_closed_def + ord chain.
+    # SMT: pin (x=800, y=400), assert box test; unsat because 800 > 600.
+    # =================================================================
     {
         "id":            "ODRL621",
         "subdir":        "Projection",
@@ -135,9 +149,9 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
 (assert (and (>= x 0.0) (<= x 600.0) (>= y 0.0) (<= y 600.0)))""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL622 — 3D point in box3
-    # ─────────────────────────────────────────────────────────────────
+    # =================================================================
+    # ODRL622 -- 3D point in box3 -> Theorem (Compatible verdict)
+    # =================================================================
     {
         "id":            "ODRL622",
         "subdir":        "Projection",
@@ -190,9 +204,9 @@ fof(distinct, axiom, $distinct(v0, v200, v300, v400, v600)).
                   (>= z 0.0) (<= z 600.0))))""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL623 — 3D point outside box3 (axis 2 miss)
-    # ─────────────────────────────────────────────────────────────────
+    # =================================================================
+    # ODRL623 -- 3D point outside box3 -> Theorem (Conflict verdict)
+    # =================================================================
     {
         "id":            "ODRL623",
         "subdir":        "Projection",
@@ -246,9 +260,11 @@ fof(distinct, axiom, $distinct(v0, v200, v300, v600, v800)).
              (>= z 0.0) (<= z 600.0)))""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL624 — box2_compatible: both axes overlap
-    # ─────────────────────────────────────────────────────────────────
+    # =================================================================
+    # ODRL624 -- box2_compatible: both axes overlap -> Theorem
+    # FOL: closes via box2_compatible_def (4-clause leq conjunction).
+    # SMT: existential test -- find (x, y) in both boxes.
+    # =================================================================
     {
         "id":            "ODRL624",
         "subdir":        "Projection",
@@ -261,7 +277,7 @@ fof(distinct, axiom, $distinct(v0, v200, v300, v600, v800)).
         "needs_density": False,
         "description": (
             "def:box-verdict: [v0,v600]x[v0,v600] compatible with [v400,v800]x[v400,v800]\n"
-            "Both axes overlap: width [v0,v600]∩[v400,v800]=[v400,v600] != empty.\n"
+            "Both axes overlap: width [v0,v600] intersect [v400,v800] = [v400,v600] non-empty.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -305,9 +321,11 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
 (assert (>= x 400.0)) (assert (>= y 400.0))""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL625 — box2_conflict: one axis disjoint kills box
-    # ─────────────────────────────────────────────────────────────────
+    # =================================================================
+    # ODRL625 -- box2_conflict: one axis disjoint -> Theorem
+    # FOL: closes via box2_conflict_def disjunction; width gap satisfied.
+    # SMT: x in [0,400] AND x >= 600 -- empty since 400 < 600.
+    # =================================================================
     {
         "id":            "ODRL625",
         "subdir":        "Projection",
@@ -320,7 +338,7 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
         "needs_density": False,
         "description": (
             "def:box-verdict: [v0,v400]x[v0,v600] conflict with [v600,v800]x[v0,v600]\n"
-            "Width: [v0,v400]∩[v600,v800]=empty => box2_conflict.\n"
+            "Width: [v0,v400] intersect [v600,v800] = empty => box2_conflict.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -363,9 +381,16 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
 (assert (>= x 600.0))""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL626 — shape_point: in_closed(X,V,V) iff X=V
-    # ─────────────────────────────────────────────────────────────────
+    # =================================================================
+    # ODRL626 -- shape_point: in_closed(X,V,V) iff X=V -> Theorem
+    #
+    # v1.1: SMT replaced.  Original was (= x 600) AND (not (= x 600)),
+    # which is P AND NOT P at value 600 -- propositionally tautological
+    # and doesn't test the claim's interesting part (v400 NOT in {v600}).
+    # New SMT pins witness at v400 and asserts in_closed(v400, v600, v600);
+    # unsat because 400 != 600.  Substitution test: witness=600 -> sat,
+    # singleton bound 600->400 -> sat.  Now semantically load-bearing.
+    # =================================================================
     {
         "id":            "ODRL626",
         "subdir":        "Projection",
@@ -400,17 +425,18 @@ fof(distinct, axiom, $distinct(v400, v600)).
         ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
+        # Pin witness at v400; assert in_closed(v400, v600, v600).
+        # 400 in [600, 600] requires 400 = 600 -- unsat.
         "smt2_asserts": """\
-(assert (= x 600.0))
-(assert (not (= x 600.0)))""",
+(assert (= x 400.0))
+(assert (and (>= x 600.0) (<= x 600.0)))""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL627 — shape_ropen: in_ropen(X,InfD,V)
-    #
-    # FIX: name updated from "shape_lray_open" to "shape_ropen" to match
-    #      the renamed axiom in PROJ000-0.ax v1.2.
-    # ─────────────────────────────────────────────────────────────────
+    # =================================================================
+    # ODRL627 -- shape_ropen: in_ropen(X,v0,v600) -> Theorem
+    # FOL: closes via in_ropen_def (leq + less) + ord chain.
+    # SMT: x in [0, 600) -- sat at e.g. x=300.
+    # =================================================================
     {
         "id":            "ODRL627",
         "subdir":        "Projection",
@@ -451,16 +477,14 @@ fof(distinct, axiom, $distinct(v0, v400, v600)).
 (assert (>= x 0.0)) (assert (< x 600.0))""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL628 — shape_open: in_open(X,L,U)
+    # =================================================================
+    # ODRL628 -- shape_open: ?[X]: in_open(X, v400, v600) -> Theorem
     #
-    # FIX: relation corrected from "compatible" to "conflict" for
-    #      consistency with all other problems in this file.
-    # NOTE: needs_density=True — the generator must include ORD001-0.ax
-    #       for this problem's .p file.  Without the density axiom,
-    #       ?[X]: in_open(X,v400,v600) is unprovable (no FOL axiom
-    #       guarantees a point strictly between v400 and v600 exists).
-    # ─────────────────────────────────────────────────────────────────
+    # needs_density=True: generator must include ORD001-0.ax.  Without
+    # density, no witness can be constructed from the finite ord chain.
+    # Z3 may time out on this case (existential under quantified density);
+    # Vampire and E should close it.
+    # =================================================================
     {
         "id":            "ODRL628",
         "subdir":        "Projection",
@@ -473,7 +497,7 @@ fof(distinct, axiom, $distinct(v0, v400, v600)).
         "needs_density": True,
         "description": (
             "thm:aabb shape_open (shape 9): open bounded (v400,v600).\n"
-            "Witness must be strictly between v400 and v600 — requires ORD001 density.\n"
+            "Witness must be strictly between v400 and v600 -- requires ORD001 density.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
@@ -501,21 +525,15 @@ fof(distinct, axiom, $distinct(v400, v600)).
 (assert (> x 400.0)) (assert (< x 600.0))""",
     },
 
-    # ─────────────────────────────────────────────────────────────────
-    # ODRL629 — shape_closed: unconstrained axis = full domain
+    # =================================================================
+    # ODRL629 -- shape_closed: unconstrained axis = full domain -> Theorem
     #
-    # FIX 1: name updated from "shape_full" to "shape_closed" to match
-    #        the renamed axiom in PROJ000-0.ax v1.2 (shape_full was
-    #        removed as a duplicate; its content is now shape_closed).
-    # FIX 2: status_smt corrected from "sat" to "unsat".
-    #        The previous SMT just asserted (>= x 0) and (<= x 1200),
-    #        showing only that the domain is non-empty — it did not test
-    #        the FOF conjecture at all.
-    #        The FOF conjecture is universal: ![X]: (0<=X<=1200) =>
-    #        in_closed(X,v0,v1200).  The negated conjecture is:
-    #        exists X: (0<=X<=1200) & NOT in_closed(X,v0,v1200)
-    #        = exists X: (0<=X<=1200) & (X<0 | X>1200) -> UNSAT.
-    # ─────────────────────────────────────────────────────────────────
+    # FOL: universal claim (P => P after biconditional unfolding).
+    # SMT note: the encoding (x in D) AND (x NOT in D) is structurally
+    # tautological -- the unsat reflects the vacuous nature of the
+    # universal claim after definition unfolding.  Same disposition as
+    # ODRL637 in Completion (kept) rather than ODRL617 in WF (dropped).
+    # =================================================================
     {
         "id":            "ODRL629",
         "subdir":        "Projection",
@@ -550,8 +568,6 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "fof_conjecture": (
             "![X]: ((leq(v0,X) & leq(X,v1200)) => in_closed(X, v0, v1200))"
         ),
-        # Negated conjecture: exists X in [0,1200] that is NOT in in_closed(X,0,1200)
-        # = exists X: (0<=X<=1200) & (X<0 | X>1200) -> UNSAT.
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\

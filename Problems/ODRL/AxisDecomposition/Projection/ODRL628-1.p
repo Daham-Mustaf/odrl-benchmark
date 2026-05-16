@@ -4,7 +4,7 @@
 % Problem  : thm:aabb shape_open: in_open(X,v400,v600)
 % Version  : 1.0
 % English  : thm:aabb shape_open (shape 9): open bounded (v400,v600).
-%           : Witness must be strictly between v400 and v600 — requires ORD001 density.
+%           : Witness must be strictly between v400 and v600 -- requires ORD001 density.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

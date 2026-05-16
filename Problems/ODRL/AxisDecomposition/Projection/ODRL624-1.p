@@ -4,7 +4,7 @@
 % Problem  : box2_compatible: both axes overlap
 % Version  : 1.0
 % English  : def:box-verdict: [v0,v600]x[v0,v600] compatible with [v400,v800]x[v400,v800]
-%           : Both axes overlap: width [v0,v600]∩[v400,v800]=[v400,v600] != empty.
+%           : Both axes overlap: width [v0,v600] intersect [v400,v800] = [v400,v600] non-empty.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

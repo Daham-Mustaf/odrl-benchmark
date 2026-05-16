@@ -13,7 +13,7 @@
 
 (set-logic QF_LRA)
 (declare-const x Real)
-(assert (= x 600.0))
-(assert (not (= x 600.0)))
+(assert (= x 400.0))
+(assert (and (>= x 600.0) (<= x 600.0)))
 (check-sat)
 (exit)

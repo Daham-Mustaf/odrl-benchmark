@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : PROJ000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Projection axioms
+% Axioms   : Box Denotation and Projection (Def. 14, Thm. 17)
 % Version  : 1.0
-% English  : Box membership iff per-axis membership holds.
+% English  : in_box2/6 + in_box3/9 + box2_compatible/8 + box2_conflict/8 biconditionals.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,17 +13,50 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 2 axioms: 2 projection axioms (2D and 3D).
+% Comments : 4 axioms: 4 biconditionals (was 2 unused box_member axioms in v1.0).
 %--------------------------------------------------------------------------
-% projection/2: maps a 2D/3D box constraint to its per-axis projections.
-% box_member(X, L1, U1, Y, L2, U2) iff X in [L1,U1] AND Y in [L2,U2]
+% =================================================================
+% in_box2/6  -- 2D box membership (Def. 14, Thm. 17 projection)
+%   in_box2(X, Y, L1, U1, L2, U2) iff (X, Y) is in [L1,U1] x [L2,U2],
+%   equivalently iff per-axis closed-interval membership holds.
+% =================================================================
+fof(in_box2_def, axiom,
+    ! [X, Y, L1, U1, L2, U2] :
+      ( in_box2(X, Y, L1, U1, L2, U2)
+    <=> ( in_closed(X, L1, U1) & in_closed(Y, L2, U2) ) )).
 
-fof(box_member_2d, axiom,
-    ! [X,Y,L1,U1,L2,U2] :
-        (box_member(X, L1, U1, Y, L2, U2)
-         <=> (in_closed(X, L1, U1) & in_closed(Y, L2, U2)))).
+% =================================================================
+% in_box3/9  -- 3D box membership (Def. 14, Thm. 17 projection)
+% =================================================================
+fof(in_box3_def, axiom,
+    ! [X, Y, Z, L1, U1, L2, U2, L3, U3] :
+      ( in_box3(X, Y, Z, L1, U1, L2, U2, L3, U3)
+    <=> ( in_closed(X, L1, U1)
+        & in_closed(Y, L2, U2)
+        & in_closed(Z, L3, U3) ) )).
 
-fof(box_member_3d, axiom,
-    ! [X,Y,Z,L1,U1,L2,U2,L3,U3] :
-        (box_member3(X, L1, U1, Y, L2, U2, Z, L3, U3)
-         <=> (in_closed(X, L1, U1) & in_closed(Y, L2, U2) & in_closed(Z, L3, U3)))).
+% =================================================================
+% box2_compatible/8  -- two 2D boxes overlap (Def. 21 box-verdict)
+%   box A = [L1A, U1A] x [L2A, U2A]
+%   box B = [L1B, U1B] x [L2B, U2B]
+%   overlap iff per-axis intersections are non-empty,
+%   equivalently iff max(L_A, L_B) <= min(U_A, U_B) per axis,
+%   equivalently iff (L_A <= U_B) AND (L_B <= U_A) per axis.
+% =================================================================
+fof(box2_compatible_def, axiom,
+    ! [L1A, U1A, L2A, U2A, L1B, U1B, L2B, U2B] :
+      ( box2_compatible(L1A, U1A, L2A, U2A, L1B, U1B, L2B, U2B)
+    <=> ( leq(L1A, U1B) & leq(L1B, U1A)
+        & leq(L2A, U2B) & leq(L2B, U2A) ) )).
+
+% =================================================================
+% box2_conflict/8  -- two 2D boxes disjoint (Conflict Criterion, Thm. 13)
+%   Disjoint iff some axis has disjoint intervals,
+%   equivalently iff (U_A < L_B) OR (U_B < L_A) for some axis,
+%   where < captures endpoint precedence for closed-closed intervals.
+% =================================================================
+fof(box2_conflict_def, axiom,
+    ! [L1A, U1A, L2A, U2A, L1B, U1B, L2B, U2B] :
+      ( box2_conflict(L1A, U1A, L2A, U2A, L1B, U1B, L2B, U2B)
+    <=> ( less(U1A, L1B) | less(U1B, L1A)
+        | less(U2A, L2B) | less(U2B, L2A) ) )).
