@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : AXIS000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Interval denotations and verdict algebra
+% Axioms   : Interval denotations, per-axis predicates, verdict algebra (v1.1)
 % Version  : 1.0
-% English  : Section A: in_open/in_lopen/in_ropen/in_closed. Section B: three-valued Verdict constants. Section C: box_verdict combinator.
+% English  : Section A: in_open/in_lopen/in_ropen/in_closed biconditionals. Section B: three-valued Verdict constants. Section C: box_verdict combinator + totality. Section D: axis_subsumes + axis_conflict biconditionals (closed-closed).
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,52 +13,80 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 12 axioms: 4 interval defs + 4 verdict facts + 3 box_verdict cases.
+% Comments : 15 axioms: 4 intervals + 5 verdict facts + 4 box_verdict cases + 2 axis predicates = 15 formulae (generator output reports +3 vs prior version: +box_verdict_total, +axis_subsumes_def, +axis_conflict_def).
 %--------------------------------------------------------------------------
-% Section A: Interval membership predicates
+% =================================================================
+% Section A: Interval membership predicates (Def 14)
 % in_open(X, L, U)   <=>  L < X < U     (open at both ends)
 % in_lopen(X, L, U)  <=>  L < X <= U    (left-open, right-closed)
 % in_ropen(X, L, U)  <=>  L <= X < U    (left-closed, right-open)
 % in_closed(X, L, U) <=>  L <= X <= U   (closed at both ends)
-
+% =================================================================
 fof(in_open_def, axiom,
     ! [X,L,U] : (in_open(X, L, U) <=> (less(L, X) & less(X, U)))).
-
 fof(in_lopen_def, axiom,
     ! [X,L,U] : (in_lopen(X, L, U) <=> (less(L, X) & leq(X, U)))).
-
 fof(in_ropen_def, axiom,
     ! [X,L,U] : (in_ropen(X, L, U) <=> (leq(L, X) & less(X, U)))).
-
 fof(in_closed_def, axiom,
     ! [X,L,U] : (in_closed(X, L, U) <=> (leq(L, X) & leq(X, U)))).
 
-% Section B: Three-valued verdict constants
-
+% =================================================================
+% Section B: Three-valued verdict constants (Def 27)
+% =================================================================
 fof(verdicts_distinct, axiom,
     $distinct(compatible, conflict, unknown)).
-
 fof(verdict_total, axiom,
     ! [V] : (is_verdict(V) <=> (V = compatible | V = conflict | V = unknown))).
-
 fof(is_verdict_compatible, axiom, is_verdict(compatible)).
 fof(is_verdict_conflict,   axiom, is_verdict(conflict)).
 fof(is_verdict_unknown,    axiom, is_verdict(unknown)).
 
-% Section C: box_verdict (per-axis combination, 2D and 3D boxes)
-
+% =================================================================
+% Section C: box_verdict (per-axis verdict combinator, Def 22)
+%   Compatible iff every V_k = Compatible
+%   Conflict iff some V_k = Conflict
+%   Unknown otherwise
+% =================================================================
 fof(box_conflict, axiom,
     ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
                   (V1 = conflict | V2 = conflict))
                  => box_verdict(V1, V2) = conflict)).
-
 fof(box_compatible, axiom,
     ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
                   V1 = compatible & V2 = compatible)
                  => box_verdict(V1, V2) = compatible)).
-
 fof(box_unknown, axiom,
     ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
                   (V1 = unknown | V2 = unknown) &
                   V1 != conflict & V2 != conflict)
                  => box_verdict(V1, V2) = unknown)).
+fof(box_verdict_total, axiom,
+    ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2))
+                 => (box_verdict(V1, V2) = compatible |
+                     box_verdict(V1, V2) = conflict |
+                     box_verdict(V1, V2) = unknown))).
+
+% =================================================================
+% Section D: Per-axis containment and disjointness (Def 21, Thm 13)
+%
+% axis_subsumes(L1, U1, L2, U2): [L1, U1] subseteq [L2, U2]
+%   closed-closed form: leq(L2, L1) & leq(U1, U2)
+%
+% axis_conflict(L1, U1, L2, U2): [L1, U1] cap [L2, U2] = empty
+%   closed-closed form (Conflict Criterion, Thm 13 with strict <):
+%   less(U1, L2) | less(U2, L1)
+%
+% These are the closed-closed instantiations of the paper's
+% endpoint-precedence-based definitions.  Mixed open/closed cases
+% use prec/2 from PREC000-0.ax instead.
+% =================================================================
+fof(axis_subsumes_def, axiom,
+    ! [L1, U1, L2, U2] :
+      ( axis_subsumes(L1, U1, L2, U2)
+    <=> ( leq(L2, L1) & leq(U1, U2) ) )).
+
+fof(axis_conflict_def, axiom,
+    ! [L1, U1, L2, U2] :
+      ( axis_conflict(L1, U1, L2, U2)
+    <=> ( less(U1, L2) | less(U2, L1) ) )).
