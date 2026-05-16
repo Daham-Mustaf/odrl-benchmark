@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : ODRL656-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : Both absent on width axis → Unknown
+% Problem  : Both absent on width axis -> Unknown
 % Version  : 1.0
 % English  : Neither C1 nor C2 constrains width (both absent).
 %           : subs_verdict(v0,v600,absent,v0,v800,absent) = unknown

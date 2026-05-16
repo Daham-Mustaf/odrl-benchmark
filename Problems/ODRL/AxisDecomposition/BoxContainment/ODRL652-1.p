@@ -1,13 +1,13 @@
 %--------------------------------------------------------------------------
 % File     : ODRL652-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : 4-axis box containment: all axes A subsumes B → Compatible
+% Problem  : 4-axis box containment: all axes A subsumed-by B -> Compatible
 % Version  : 1.0
-% English  : Width:  (0,600] ⊆ (0,800]  Compatible  less(v600,v800)
-%           : Height: (0,400] ⊆ (0,800]  Compatible  less(v400,v800)
-%           : Depth:  (0,16]  ⊆ (0,32]   Compatible  less(v16,v32)
-%           : Alt:    (0,150] ⊆ (0,300]  Compatible  less(v150,v300)
-%           : box_subs(box_subs(box_subs(C,C),C),C) = compatible [def:box-containment]
+% English  : Width:  (0,600] subseteq (0,800]  Compatible  less(v600,v800)
+%           : Height: (0,400] subseteq (0,800]  Compatible  less(v400,v800)
+%           : Depth:  (0,16]  subseteq (0,32]   Compatible  less(v16,v32)
+%           : Alt:    (0,150] subseteq (0,300]  Compatible  less(v150,v300)
+%           : box_subs(box_subs(box_subs(C,C),C),C) = compatible [Def. 23]
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : ODRL655-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : C2 absent on width axis → Unknown
+% Problem  : C2 absent on width axis -> Unknown
 % Version  : 1.0
 % English  : C2 does not constrain width (P2=absent).
 %           : Unknown-when-absent: intended scope of C2 not known.

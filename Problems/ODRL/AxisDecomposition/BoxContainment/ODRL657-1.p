@@ -3,10 +3,10 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : 4-axis box: absent width axis propagates Unknown
 % Version  : 1.0
-% English  : Width:  C1 absent → subs_verdict = unknown
-%           : Height: (0,400] ⊆ (0,800]  Compatible
-%           : Depth:  (0,16]  ⊆ (0,32]   Compatible
-%           : Alt:    (0,150] ⊆ (0,300]  Compatible
+% English  : Width:  C1 absent -> subs_verdict = unknown
+%           : Height: (0,400] subseteq (0,800]  Compatible
+%           : Depth:  (0,16]  subseteq (0,32]   Compatible
+%           : Alt:    (0,150] subseteq (0,300]  Compatible
 %           : box_subs(box_subs(box_subs(unknown,C),C),C) = unknown
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).

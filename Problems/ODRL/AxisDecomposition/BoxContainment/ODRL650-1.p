@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : ODRL650-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : 1-axis containment: lteq 600 subsumes lteq 800 → Compatible
+% Problem  : 1-axis containment: lteq 600 subsumed-by lteq 800 -> Compatible
 % Version  : 1.0
-% English  : Width: (0,600] ⊆ (0,800]  →  axis_subsumes(v0,v600,v0,v800)
+% English  : Width: (0,600] subseteq (0,800]  ->  axis_subsumes(v0,v600,v0,v800)
 %           : subs_verdict(v0,v600,present,v0,v800,present) = compatible
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).

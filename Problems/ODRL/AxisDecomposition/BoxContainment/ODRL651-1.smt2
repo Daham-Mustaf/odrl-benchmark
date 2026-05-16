@@ -1,7 +1,7 @@
 ; --------------------------------------------------------------------------
 ; File     : ODRL651-1.smt2
 ; Domain   : ODRL Policy / Axis Decomposition
-; Axioms   : 1-axis containment: lteq 800 does not subsume lteq 600 → Conflict
+; Axioms   : 1-axis containment: lteq 800 not subsumed-by lteq 600 -> Conflict
 ; Version  : 1.0
 ; Authors  : Mustafa, D. & Sutcliffe, G.
 ; Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).

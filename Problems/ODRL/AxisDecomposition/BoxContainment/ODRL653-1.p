@@ -1,13 +1,13 @@
 %--------------------------------------------------------------------------
 % File     : ODRL653-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : 4-axis box containment: width axis escapes → Conflict
+% Problem  : 4-axis box containment: width axis escapes -> Conflict
 % Version  : 1.0
-% English  : Width:  (0,800] ⊄ (0,600]  Conflict  ← escape axis
-%           : Height: (0,400] ⊆ (0,800]  Compatible
-%           : Depth:  (0,16]  ⊆ (0,32]   Compatible
-%           : Alt:    (0,150] ⊆ (0,300]  Compatible
-%           : box_subs chained: one Conflict → overall Conflict
+% English  : Width:  (0,800] not subseteq (0,600]  Conflict   <- escape axis
+%           : Height: (0,400] subseteq (0,800]  Compatible
+%           : Depth:  (0,16]  subseteq (0,32]   Compatible
+%           : Alt:    (0,150] subseteq (0,300]  Compatible
+%           : box_subs chain: any Conflict input -> Conflict overall
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -66,7 +66,17 @@ fof(ord_v400_v800, axiom, less(v400, v800)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800)).
 fof(no_subs_hint, axiom, ~axis_subsumes(v0, v800, v0, v600)).
+fof(hint_h, axiom, axis_subsumes(v0,v400,v0,v800)).
+fof(hint_d, axiom, axis_subsumes(v0,v16,v0,v32)).
+fof(hint_a, axiom, axis_subsumes(v0,v150,v0,v300)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl653, conjecture,
-    subs_verdict(v0, v800, present, v0, v600, present) = conflict).
+    box_subs(
+    box_subs(
+      box_subs(
+        subs_verdict(v0,v800,present,v0,v600,present),
+        subs_verdict(v0,v400,present,v0,v800,present)),
+      subs_verdict(v0,v16,present,v0,v32,present)),
+    subs_verdict(v0,v150,present,v0,v300,present))
+  = conflict).
 %--------------------------------------------------------------------------

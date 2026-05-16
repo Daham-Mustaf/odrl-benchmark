@@ -1,7 +1,7 @@
 ; --------------------------------------------------------------------------
 ; File     : ODRL656-1.smt2
 ; Domain   : ODRL Policy / Axis Decomposition
-; Axioms   : Both absent on width axis → Unknown
+; Axioms   : Both absent on width axis -> Unknown
 ; Version  : 1.0
 ; Authors  : Mustafa, D. & Sutcliffe, G.
 ; Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
