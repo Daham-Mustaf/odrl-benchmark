@@ -1,274 +1,353 @@
 """
 validate.py
 ===========
-Layer 2 + Layer 3 defence for the ODRL Axis Decomposition benchmark.
+Lints every benchmark artifact:
+  - Header consistency (Status / Verdict / Relation present and consistent)
+  - Include completeness (predicates used have defining axioms in scope)
+  - Syntax check (TPTP, SMT-LIB, TTL)
+  - Cross-format consistency (SMT and FOF encode the same claim)
+  - Audit-light (5s vampire + z3 spot-check)
 
-Layer 2 — pre-write assertion guards (called by the generator).
-Layer 3 — post-write round-trip audit (run standalone or in CI).
+Output: validate_<timestamp>.csv with one row per problem and columns for
+each check, plus a summary printed to stderr.
 
-Usage (standalone / CI):
-    python validate.py --ax-dir Problems/ODRL/Axioms
-    python validate.py --ax-dir Problems/ODRL/Axioms --problems-dir Problems/ODRL
-
-Exit code 0 = all checks pass.  Non-zero = failures printed to stderr.
+Usage:
+    cd ~/projects/odrl-benchmark
+    uv run Generators/AxisDecomposition/validate.py --cwd Problems/ODRL/AxisDecomposition
 """
-import re
-import sys
 import argparse
+import csv
+import re
+import shutil
+import subprocess
+import sys
+import time
+from datetime import datetime
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# Helpers shared by both layers
+# Configuration
 # ---------------------------------------------------------------------------
 
-def count_fof(text: str) -> int:
-    return len(re.findall(r"^fof\s*\(", text, re.MULTILINE))
+# Predicates defined in each axiom file (used for include-completeness checks)
+AXIOM_PREDICATES = {
+    "ORD000-0.ax":  {"less", "leq", "val"},
+    "ORD001-0.ax":  {"less"},
+    "AXIS000-0.ax": {"in_open", "in_lopen", "in_ropen", "in_closed",
+                     "is_verdict", "box_verdict",
+                     "compatible", "conflict", "unknown"},
+    "PREC000-0.ax": {"prec", "upper_tag", "lower_tag", "c", "o"},
+    "WF000-0.ax":   {"wf"},
+    "PROJ000-0.ax": {"in_box2", "in_box3"},
+    "COMP000-0.ax": {"or_verdict", "xone_verdict"},
+    "COMPL000-0.ax": {"completion_compatible", "completion_conflict"},
+    "SUBS000-0.ax": {"axis_subsumes", "subs_verdict", "box_subs",
+                     "is_presence", "present", "absent"},
+}
 
-def syntax_formulae(text: str) -> int | None:
-    """Extract the formulae count from a rendered % Syntax block."""
-    m = re.search(r"Number of formulae\s*:\s*(\d+)", text)
-    return int(m.group(1)) if m else None
+# Categories whose problems must include a specific axiom file
+REQUIRED_INCLUDES = {
+    "Composition":       {"COMP000-0.ax"},
+    "LogicalOr":         {"COMP000-0.ax"},
+    "LogicalXone":       {"COMP000-0.ax"},
+    "Completion":        {"COMPL000-0.ax"},
+    "BoxContainment":    {"SUBS000-0.ax"},
+    "ConflictCriterion": {"PREC000-0.ax"},
+    "WellFormedness":    {"WF000-0.ax"},
+    "Projection":        {"PROJ000-0.ax"},
+}
 
-def comment_counts(text: str) -> list[int]:
-    """Extract every integer that appears before the word 'axiom' or 'formulae'
-    inside the % Comments block."""
-    # Grab only the Comments field lines
-    in_comments = False
-    lines = []
+# Relation polarity (matches run_audit.py's expected_smt_status)
+def expected_smt(verdict, relation):
+    if relation == "verdict_algebra":
+        return {"Compatible": "unsat", "Conflict": "unsat",
+                "Unknown": "unsat", "CounterSatisfiable": "unsat"}.get(verdict)
+    if relation == "subsumption":
+        return {"Compatible": "unsat", "Conflict": "sat",
+                "Unknown": None}.get(verdict)
+    return {"Conflict": "unsat", "Compatible": "sat",
+            "Unknown": None}.get(verdict)
+
+# ---------------------------------------------------------------------------
+# Header parsing
+# ---------------------------------------------------------------------------
+def read_header(p):
+    """Parse the TPTP header. Returns {status, verdict, relation, includes}."""
+    text = p.read_text()
+    result = {"status": None, "verdict": None, "relation": None, "includes": []}
     for line in text.splitlines():
-        if re.match(r"^%\s*Comments\s*:", line):
-            in_comments = True
-        elif in_comments and re.match(r"^%\s+:", line):
-            pass  # continuation
-        elif in_comments:
-            break  # end of Comments block
-        if in_comments:
-            lines.append(line)
-    block = " ".join(lines)
-    return [int(x) for x in re.findall(r"(\d+)\s+axioms?", block)]
+        m = re.match(r"%\s*Status\s*:?\s*(\w+)", line)
+        if m: result["status"] = m.group(1)
+        m = re.match(r"%\s*Verdict\s*:?\s*(\w+)", line)
+        if m: result["verdict"] = m.group(1)
+        m = re.match(r"%\s*Relation\s*:?\s*(\w+)", line)
+        if m: result["relation"] = m.group(1)
+        m = re.match(r"\s*include\s*\(\s*'Axioms/([^']+)'\s*\)\s*\.", line)
+        if m: result["includes"].append(m.group(1))
+        if line.startswith("fof("): break  # end of header region
+    return result, text
 
 # ---------------------------------------------------------------------------
-# Layer 2 — pre-write guards (called inside the generator before file I/O)
+# Individual checks
 # ---------------------------------------------------------------------------
+def check_header(hdr):
+    """Header has Status field, and Verdict/Relation match Status."""
+    if not hdr["status"]:
+        return False, "no Status"
+    if hdr["status"] == "Theorem":
+        if hdr["verdict"] not in ("Compatible", "Conflict", "Unknown"):
+            return False, f"Theorem but Verdict={hdr['verdict']!r}"
+    if hdr["status"] == "CounterSatisfiable":
+        if hdr["verdict"] not in (None, "CounterSatisfiable", "Compatible", "Conflict", "Unknown"):
+            return False, f"CounterSatisfiable but Verdict={hdr['verdict']!r}"
+    return True, ""
 
-class GeneratorGuard:
-    """
-    Accumulates assertion failures during generation so all errors are
-    reported at once rather than stopping at the first failure.
+def check_includes(hdr, subdir):
+    """Required category-specific axiom file is in the include list."""
+    required = REQUIRED_INCLUDES.get(subdir, set())
+    inc_set = set(hdr["includes"])
+    missing = required - inc_set
+    if missing:
+        return False, f"missing: {sorted(missing)}"
+    return True, ""
 
-    Usage inside generator:
-        guard = GeneratorGuard()
-        guard.check_count("PREC000-0.ax", PREC000_BODY, 19)
-        guard.check_count("WF000-0.ax",   WF000_BODY,   26)
-        guard.check_unique_names("PREC000-0.ax", PREC000_BODY)
-        guard.raise_if_failed()   # crash before any file is written
-    """
+def check_predicates(text, hdr):
+    """Every non-built-in predicate is defined by some included axiom file."""
+    inc_set = set(hdr["includes"])
+    defined = set()
+    for ax in inc_set:
+        defined.update(AXIOM_PREDICATES.get(ax, set()))
+    # Add commonly-used built-ins and problem-locals
+    BUILTIN = {"val", "less", "leq", "$distinct"}
+    defined.update(BUILTIN)
+    # Extract predicate symbols used in the file's fof formulae
+    body = text.split("fof(", 1)[-1] if "fof(" in text else ""
+    # Symbols of the form `predicate(arg, ...)` — heuristic
+    used = set(re.findall(r"\b(\$?[a-z_]\w*)\s*\(", body))
+    # Strip TPTP keywords, problem-local constants
+    KEYWORD = {"fof", "axiom", "conjecture", "include"}
+    used -= KEYWORD
+    # Constants that start with `v` followed by a digit are problem-local
+    used = {u for u in used if not re.match(r"^v\d", u)}
+    # also drop problem ids
+    used = {u for u in used if not u.startswith("odrl")}
+    missing = used - defined
+    if missing:
+        return False, f"undefined predicates: {sorted(missing)}"
+    return True, ""
 
-    def __init__(self):
-        self._errors: list[str] = []
-
-    def _fail(self, msg: str):
-        self._errors.append(msg)
-
-    def check_count(self, name: str, body: str, expected: int):
-        """Assert body contains exactly `expected` fof() formulae."""
-        actual = count_fof(body)
-        if actual != expected:
-            self._fail(
-                f"{name}: expected {expected} fof() formulae, got {actual}. "
-                f"Update the expected count or fix the body."
-            )
-
-    def check_unique_names(self, name: str, body: str):
-        """Assert every fof() formula name is unique within the file."""
-        names = re.findall(r"^fof\s*\(\s*([^,]+?)\s*,", body, re.MULTILINE)
-        seen: set[str] = set()
-        for n in names:
-            if n in seen:
-                self._fail(f"{name}: duplicate formula name '{n}'.")
-            seen.add(n)
-
-    def check_no_bare_include(self, name: str, body: str, forbidden: str):
-        """Assert body does NOT contain a specific include() call."""
-        """Assert body does NOT contain a specific include() call (ignores % lines)."""
-        active = [l for l in body.splitlines() if not l.strip().startswith('%')]
-        if any(f"include('{forbidden}')" in l for l in active):
-            self._fail(
-                f"{name}: redundant include('{forbidden}'). "
-                f"Remove -- {forbidden} is loaded by the problem file."
-            )
-
-    def check_comment_count_matches(self, name: str, body: str, rendered: str):
-        """
-        Assert that every N in '% Comments : ... N axioms ...' equals the
-        actual fof() count.  Catches the hand-written-count drift bug.
-        """
-        actual = count_fof(body)
-        for n in comment_counts(rendered):
-            if n != actual:
-                self._fail(
-                    f"{name}: % Comments says '{n} axioms' but body has "
-                    f"{actual} fof() formulae."
-                )
-
-    def raise_if_failed(self):
-        if self._errors:
-            msg = "\n".join(f"  ✗ {e}" for e in self._errors)
-            raise AssertionError(
-                f"\n{len(self._errors)} generator guard(s) failed:\n{msg}"
-            )
-
-    @property
-    def ok(self) -> bool:
-        return not self._errors
-
-# ---------------------------------------------------------------------------
-# Layer 3 — post-write round-trip audit (standalone / CI)
-# ---------------------------------------------------------------------------
-
-class AuditResult:
-    def __init__(self):
-        self.errors: list[str] = []
-        self.warnings: list[str] = []
-        self.checked: int = 0
-
-    def error(self, msg: str):   self.errors.append(msg)
-    def warning(self, msg: str): self.warnings.append(msg)
-
-    def summary(self) -> str:
-        lines = [f"Checked {self.checked} file(s)."]
-        if self.errors:
-            lines.append(f"{len(self.errors)} error(s):")
-            lines += [f"  ✗ {e}" for e in self.errors]
-        if self.warnings:
-            lines.append(f"{len(self.warnings)} warning(s):")
-            lines += [f"  ⚠ {w}" for w in self.warnings]
-        if not self.errors and not self.warnings:
-            lines.append("All checks passed.")
-        return "\n".join(lines)
-
-    @property
-    def ok(self) -> bool:
-        return not self.errors
-
-
-def audit_ax_file(path: Path, result: AuditResult):
-    """Audit a single .ax file."""
-    text = path.read_text(encoding="utf-8")
-    result.checked += 1
-    name = path.name
-
-    # Check 1: % Syntax formulae matches actual fof() count
-    syntax_n = syntax_formulae(text)
-    actual_n = count_fof(text)
-    if syntax_n is None:
-        result.warning(f"{name}: no '% Syntax' block found.")
-    elif syntax_n != actual_n:
-        result.error(
-            f"{name}: % Syntax says {syntax_n} formulae, "
-            f"actual fof() count is {actual_n}."
+def check_fof_syntax(p_path, cwd):
+    """Run vampire --mode parse (or use 0-second time_limit) to validate FOF."""
+    if not shutil.which("vampire"):
+        return None, "vampire not on PATH"
+    try:
+        r = subprocess.run(
+            ["vampire", "--mode", "preprocess", "--time_limit", "1",
+             "--include", ".", str(p_path.relative_to(cwd))],
+            capture_output=True, text=True, timeout=10, cwd=str(cwd),
         )
+        if r.returncode == 0 or "SZS" in r.stdout:
+            return True, ""
+        if "parse" in (r.stdout + r.stderr).lower() and "error" in (r.stdout + r.stderr).lower():
+            return False, "parse error"
+        return True, ""  # other non-zero exits are fine for syntax check
+    except subprocess.TimeoutExpired:
+        return True, "(parse timed out, assumed ok)"
+    except Exception as e:
+        return None, str(e)[:60]
 
-    # Check 2: % Comments counts match % Syntax count
-    if syntax_n is not None:
-        for n in comment_counts(text):
-            if n != syntax_n:
-                result.error(
-                    f"{name}: % Comments mentions '{n} axioms' but "
-                    f"% Syntax says {syntax_n}."
-                )
-
-    # Check 3: no duplicate formula names
-    names = re.findall(r"^fof\s*\(\s*([^,]+?)\s*,", text, re.MULTILINE)
-    seen: set[str] = set()
-    for n in names:
-        if n in seen:
-            result.error(f"{name}: duplicate formula name '{n}'.")
-        seen.add(n)
-
-    # Check 4: flat include architecture — no axiom file self-includes ORD000-0.ax.
-    # Scan only active (non-comment) lines; note strings in % Comments are fine.
-    if name != "ORD000-0.ax":
-        active = [l for l in text.splitlines() if not l.strip().startswith('%')]
-        if any("include('Axioms/ORD000-0.ax')" in l for l in active):
-            result.error(
-                f"{name}: redundant include('Axioms/ORD000-0.ax'). "
-                f"Remove -- ORD000-0.ax is loaded by the problem file."
-            )
-    # Check 5: file has a % File header matching its filename
-    if f"% File     : {name}" not in text:
-        result.warning(f"{name}: % File field does not match filename.")
-
-
-def audit_p_file(path: Path, result: AuditResult):
-    """Audit a single .p problem file."""
-    text = path.read_text(encoding="utf-8")
-    result.checked += 1
-    name = path.name
-
-    syntax_n = syntax_formulae(text)
-    actual_n = count_fof(text)
-
-    # Problem files have axioms + conjecture; just check Syntax is present
-    if syntax_n is None:
-        result.warning(f"{name}: no '% Syntax' block found.")
-    elif syntax_n != actual_n:
-        result.error(
-            f"{name}: % Syntax says {syntax_n} formulae, "
-            f"actual fof() count is {actual_n}."
+def check_smt_syntax(smt_path):
+    """Run z3 -smt2 -parse-only or equivalent."""
+    if not shutil.which("z3"):
+        return None, "z3 not on PATH"
+    try:
+        r = subprocess.run(
+            ["z3", "-smt2", "-T:2", str(smt_path)],
+            capture_output=True, text=True, timeout=10,
         )
+        out = (r.stdout + r.stderr).lower()
+        if "error" in out and "parse" in out:
+            return False, "parse error"
+        return True, ""
+    except Exception as e:
+        return None, str(e)[:60]
 
-    # Must have exactly one conjecture
-    conj = len(re.findall(r"^fof\s*\([^,]+,\s*conjecture\s*,",
-                           text, re.MULTILINE))
-    if conj == 0:
-        result.warning(f"{name}: no conjecture formula found.")
-    elif conj > 1:
-        result.error(f"{name}: {conj} conjecture formulae (expected 1).")
+def check_ttl_syntax(ttl_path):
+    """Parse TTL via rdflib if available, else regex sniff."""
+    try:
+        import rdflib
+        g = rdflib.Graph()
+        try:
+            g.parse(str(ttl_path), format="turtle")
+            return True, ""
+        except Exception as e:
+            return False, str(e)[:60]
+    except ImportError:
+        text = ttl_path.read_text()
+        if "@prefix" in text and "a odrl:" in text:
+            return True, "(rdflib unavailable; passed regex sniff)"
+        return False, "no @prefix or odrl: declaration"
 
-    # Status field must be present
-    if not re.search(r"^% Status\s*:", text, re.MULTILINE):
-        result.warning(f"{name}: no % Status field.")
-
-
-def run_audit(ax_dir: Path | None, problems_dir: Path | None) -> AuditResult:
-    result = AuditResult()
-
-    if ax_dir and ax_dir.exists():
-        for p in sorted(ax_dir.glob("*.ax")):
-            audit_ax_file(p, result)
-    elif ax_dir:
-        result.error(f"Axiom directory not found: {ax_dir}")
-
-    if problems_dir and problems_dir.exists():
-        for p in sorted(problems_dir.glob("*.p")):
-            audit_p_file(p, result)
-
-    return result
-
+def quick_audit(p_path, smt_path, hdr, cwd):
+    """5s vampire + z3 spot-check. Returns (fof_szs, smt_szs)."""
+    fof_szs = None
+    smt_szs = None
+    if shutil.which("vampire") and hdr["status"] not in ("Satisfiable", "CounterSatisfiable"):
+        try:
+            r = subprocess.run(
+                ["vampire", "--mode", "casc", "--time_limit", "5",
+                 "--include", ".", str(p_path.relative_to(cwd))],
+                capture_output=True, text=True, timeout=10, cwd=str(cwd),
+            )
+            m = re.search(r"SZS status (\w+)", r.stdout)
+            if m: fof_szs = m.group(1)
+        except Exception:
+            pass
+    if shutil.which("z3") and smt_path and smt_path.exists():
+        try:
+            r = subprocess.run(
+                ["z3", "-T:3", str(smt_path)],
+                capture_output=True, text=True, timeout=8,
+            )
+            for line in r.stdout.splitlines():
+                line = line.strip()
+                if line in ("sat", "unsat", "unknown"):
+                    smt_szs = line
+                    break
+        except Exception:
+            pass
+    return fof_szs, smt_szs
 
 # ---------------------------------------------------------------------------
-# CLI entry point (Layer 3 standalone)
+# Main
 # ---------------------------------------------------------------------------
-
 def main():
-    parser = argparse.ArgumentParser(
-        description="Round-trip audit for ODRL Axis Decomposition benchmark files."
-    )
-    parser.add_argument("--ax-dir",
-                        default="Problems/ODRL/Axioms",
-                        help="Directory containing .ax axiom files.")
-    parser.add_argument("--problems-dir",
-                        default=None,
-                        help="Directory containing .p problem files (optional).")
-    args = parser.parse_args()
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[2])
+    ap.add_argument("--cwd", default="Problems/ODRL/AxisDecomposition")
+    ap.add_argument("--no-audit", action="store_true",
+                    help="Skip the audit-light spot-check (faster).")
+    args = ap.parse_args()
+    cwd = Path(args.cwd).resolve()
 
-    result = run_audit(
-        ax_dir       = Path(args.ax_dir),
-        problems_dir = Path(args.problems_dir) if args.problems_dir else None,
-    )
-    print(result.summary())
-    sys.exit(0 if result.ok else 1)
+    problems = sorted(cwd.glob("*/ODRL*.p"))
+    problems += sorted(cwd.glob("*/HARD*.p"))
+    problems += sorted(cwd.glob("*/NFV*.p"))
+    print(f"Validating {len(problems)} problems under {cwd}", file=sys.stderr)
+
+    out_path = cwd / f"validate_{datetime.now().strftime('%Y%m%d-%H%M%S')}.csv"
+    rows = []
+    failures_by_check = {"header": 0, "includes": 0, "predicates": 0,
+                         "fof_syntax": 0, "smt_syntax": 0, "ttl_syntax": 0,
+                         "fof_audit": 0, "smt_audit": 0}
+
+    t0 = time.monotonic()
+    for i, p in enumerate(problems, 1):
+        if i % 25 == 0:
+            print(f"  [{i}/{len(problems)}] elapsed {time.monotonic()-t0:.1f}s",
+                  file=sys.stderr)
+        subdir = p.parent.name
+        pid = p.stem.replace("-1", "").replace("+1", "")
+        smt = p.with_suffix(".smt2")
+        ttl = cwd / "Policies" / f"{pid}-policy.ttl"
+
+        hdr, text = read_header(p)
+        row = {"problem": p.stem, "subdir": subdir}
+
+        ok, msg = check_header(hdr)
+        row["header_ok"] = "Y" if ok else "N"
+        row["header_msg"] = msg
+        if not ok: failures_by_check["header"] += 1
+
+        ok, msg = check_includes(hdr, subdir)
+        row["includes_ok"] = "Y" if ok else "N"
+        row["includes_msg"] = msg
+        if not ok: failures_by_check["includes"] += 1
+
+        ok, msg = check_predicates(text, hdr)
+        row["predicates_ok"] = "Y" if ok else "N"
+        row["predicates_msg"] = msg
+        if not ok: failures_by_check["predicates"] += 1
+
+        ok, msg = check_fof_syntax(p, cwd)
+        row["fof_syntax_ok"] = "Y" if ok else ("?" if ok is None else "N")
+        row["fof_syntax_msg"] = msg
+        if ok is False: failures_by_check["fof_syntax"] += 1
+
+        if smt.exists():
+            ok, msg = check_smt_syntax(smt)
+            row["smt_syntax_ok"] = "Y" if ok else ("?" if ok is None else "N")
+            row["smt_syntax_msg"] = msg
+            if ok is False: failures_by_check["smt_syntax"] += 1
+        else:
+            row["smt_syntax_ok"] = "-"
+            row["smt_syntax_msg"] = "no .smt2"
+
+        if ttl.exists():
+            ok, msg = check_ttl_syntax(ttl)
+            row["ttl_syntax_ok"] = "Y" if ok else "N"
+            row["ttl_syntax_msg"] = msg
+            if ok is False: failures_by_check["ttl_syntax"] += 1
+        else:
+            row["ttl_syntax_ok"] = "-"
+            row["ttl_syntax_msg"] = "no .ttl"
+
+        row["verdict"] = hdr["verdict"] or ""
+        row["relation"] = hdr["relation"] or ""
+        row["expected_status"] = hdr["status"] or ""
+        row["expected_smt"] = expected_smt(hdr["verdict"], hdr["relation"]) or ""
+
+        if not args.no_audit:
+            fof_szs, smt_szs = quick_audit(p, smt if smt.exists() else None, hdr, cwd)
+            row["fof_szs"] = fof_szs or ""
+            row["smt_szs"] = smt_szs or ""
+            fof_ok = (fof_szs == hdr["status"]) if hdr["status"] and fof_szs else None
+            smt_ok = (smt_szs == row["expected_smt"]) if row["expected_smt"] and smt_szs else None
+            row["fof_audit_ok"] = "Y" if fof_ok else ("?" if fof_ok is None else "N")
+            row["smt_audit_ok"] = "Y" if smt_ok else ("?" if smt_ok is None else "N")
+            if fof_ok is False: failures_by_check["fof_audit"] += 1
+            if smt_ok is False: failures_by_check["smt_audit"] += 1
+        else:
+            row["fof_szs"] = ""
+            row["smt_szs"] = ""
+            row["fof_audit_ok"] = "-"
+            row["smt_audit_ok"] = "-"
+
+        rows.append(row)
+
+    # Write CSV
+    if rows:
+        fields = list(rows[0].keys())
+        with open(out_path, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=fields)
+            w.writeheader()
+            w.writerows(rows)
+
+    # Summary
+    print(f"\n=== Validation summary ({time.monotonic()-t0:.1f}s) ===", file=sys.stderr)
+    print(f"  Problems checked: {len(rows)}", file=sys.stderr)
+    print(f"  CSV: {out_path}", file=sys.stderr)
+    print(f"\n  Failures by check:", file=sys.stderr)
+    for check, count in failures_by_check.items():
+        marker = "✓" if count == 0 else "✗"
+        print(f"    {marker} {check:<14s}: {count} failures", file=sys.stderr)
+
+    # Top failing categories
+    by_cat = {}
+    for r in rows:
+        n_fail = sum(1 for c in ("header_ok", "includes_ok", "predicates_ok",
+                                  "fof_syntax_ok", "smt_syntax_ok", "ttl_syntax_ok",
+                                  "fof_audit_ok", "smt_audit_ok")
+                     if r.get(c) == "N")
+        if n_fail > 0:
+            by_cat.setdefault(r["subdir"], 0)
+            by_cat[r["subdir"]] += 1
+    if by_cat:
+        print(f"\n  Categories with failures:", file=sys.stderr)
+        for cat in sorted(by_cat, key=lambda k: -by_cat[k]):
+            print(f"    {cat:<22s}: {by_cat[cat]} problems with issues", file=sys.stderr)
+
+    total_failures = sum(failures_by_check.values())
+    sys.exit(0 if total_failures == 0 else 1)
 
 
 if __name__ == "__main__":

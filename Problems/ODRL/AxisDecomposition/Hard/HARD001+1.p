@@ -28,6 +28,7 @@ include('Axioms/ORD001-0.ax').
 include('Axioms/AXIS000-0.ax').
 include('Axioms/PREC000-0.ax').
 include('Axioms/COMPL000-0.ax').
+include('Axioms/WF000-0.ax').
 
 % ==========================================================================
 % Hypotheses: raw ordering facts + domain bounds only.

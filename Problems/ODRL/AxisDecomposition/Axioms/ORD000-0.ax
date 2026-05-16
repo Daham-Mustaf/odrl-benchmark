@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
 % File     : ORD000-0.ax
 % Domain   : ODRL Policy / Axis Decomposition
-% Axioms   : Strict linear order over axis values
+% Axioms   : Strict linear order over axis values (with trichotomy)
 % Version  : 1.0
-% English  : Irreflexivity, transitivity, asymmetry of less/2; leq is reflexive closure.
+% English  : Strict linear order with trichotomy on val/1; leq is reflexive closure.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,10 +13,10 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 4 axioms: ord-irrefl + ord-trans + ord-asym + leq-def.
+% Comments : 5 axioms: 5 axioms: irrefl + trans + asym + trichotomy + leq-def.
 %--------------------------------------------------------------------------
-% Strict linear order: less/2 is irreflexive, transitive, and trichotomous
-% over the val/1 sort. val(X) marks X as an axis value.
+% Strict linear order on values declared by val/1.
+% (Universal quantification kept over the universe for prover-friendliness.)
 
 fof(less_irreflexive, axiom,
     ! [X] : ~ less(X, X)).
@@ -27,6 +27,12 @@ fof(less_transitive, axiom,
 fof(less_asymmetric, axiom,
     ! [X,Y] : (less(X, Y) => ~ less(Y, X))).
 
-% leq is reflexive closure of less
+% Trichotomy: total order over axis values (Def 6 of paper).
+% Restricted to val/1 to keep the axiom safe for non-axis terms.
+fof(less_trichotomy, axiom,
+    ! [X,Y] : ((val(X) & val(Y))
+               => (X = Y | less(X, Y) | less(Y, X)))).
+
+% leq is reflexive closure of less.
 fof(leq_def, axiom,
     ! [X,Y] : (leq(X, Y) <=> (less(X, Y) | X = Y))).

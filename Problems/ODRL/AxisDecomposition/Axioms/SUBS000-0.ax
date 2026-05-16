@@ -3,7 +3,7 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Axioms   : Subsumption: axis_subsumes, subs_verdict, box_subs
 % Version  : 1.0
-% English  : Per-axis subsumption with presence tags + box-level combination.
+% English  : axis_subsumes biconditional + presence tags + subs_verdict + box_subs.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -13,44 +13,43 @@
 % Status   : Satisfiable
 % SPC      : FOF_SAT_RFN
 %
-% Comments : 14 axioms: 4 presence + 5 subs_verdict cases + 4 box_subs cases.
+% Comments : 15 axioms: 1 axis-subsumes def + 4 presence + 6 subs_verdict + 4 box_subs.
 %--------------------------------------------------------------------------
-% axis_subsumes/4: per-axis interval containment check.
-%   axis_subsumes(L1, U1, L2, U2) iff [L1,U1] subseteq [L2,U2]
-%   (defined via leq comparisons; specific facts asserted in .p files)
+% Per-axis subsumption with presence tags + box-level combination
+% (Def 6.7 Box Containment, with explicit presence-tag predicates).
 
-% subs_verdict/6: subsumption verdict on one axis, given presence tags.
-%   args: lo1, hi1, presence1, lo2, hi2, presence2
-%   presence = present | absent
+% --- Subsumption between two closed intervals ---
+% axis_subsumes(L1, U1, L2, U2) iff [L1,U1] ⊆ [L2,U2]
+% (added per review: replaces per-problem ground-fact assertions).
+fof(axis_subsumes_def, axiom,
+    ! [L1,U1,L2,U2] :
+        (axis_subsumes(L1, U1, L2, U2) <=> (leq(L2, L1) & leq(U1, U2)))).
 
+% --- Presence tags for missing-information modelling ---
 fof(presence_distinct, axiom, present != absent).
 fof(presence_total, axiom,
     ! [P] : (is_presence(P) <=> (P = present | P = absent))).
 fof(is_presence_present, axiom, is_presence(present)).
 fof(is_presence_absent,  axiom, is_presence(absent)).
 
-% c1 absent: cannot determine subsumption
+% --- subs_verdict cases ---
 fof(subs_c1_absent, axiom,
     ! [L1,U1,L2,U2] :
         subs_verdict(L1, U1, absent, L2, U2, present) = unknown).
 
-% c2 absent: cannot determine subsumption
 fof(subs_c2_absent, axiom,
     ! [L1,U1,L2,U2] :
         subs_verdict(L1, U1, present, L2, U2, absent) = unknown).
 
-% Both absent: unknown
 fof(subs_both_absent, axiom,
     ! [L1,U1,L2,U2] :
         subs_verdict(L1, U1, absent, L2, U2, absent) = unknown).
 
-% Both present + subsumed: compatible
 fof(subs_present_yes, axiom,
     ! [L1,U1,L2,U2] :
         (axis_subsumes(L1, U1, L2, U2) =>
          subs_verdict(L1, U1, present, L2, U2, present) = compatible)).
 
-% Both present + not subsumed: conflict
 fof(subs_present_no, axiom,
     ! [L1,U1,L2,U2] :
         (~ axis_subsumes(L1, U1, L2, U2) =>
@@ -63,9 +62,7 @@ fof(subs_verdict_total, axiom,
              subs_verdict(L1, U1, P1, L2, U2, P2) = conflict   |
              subs_verdict(L1, U1, P1, L2, U2, P2) = unknown))).
 
-% box_subs/2: combination of per-axis subsumption verdicts into a box verdict.
-% Same shape as box_verdict but defined separately for subsumption queries.
-
+% --- box_subs: combine per-axis subsumption verdicts into a box verdict ---
 fof(box_subs_compat, axiom,
     ! [V1,V2] : ((is_verdict(V1) & is_verdict(V2) &
                   V1 = compatible & V2 = compatible)
