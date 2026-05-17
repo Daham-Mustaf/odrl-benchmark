@@ -2,10 +2,8 @@
 problem_data_pq.py
 ==================
 PolicyQuality benchmark problems: ODRL400-416 (17 problems).
-
 Category F: Difficulty ladder from trivial (3 constants, 1 axis)
 to very hard (12 constants, 4 axes, 66 ordering axioms).
-
 The difficulty ladder (paper: "3-66 ordering axioms"):
   3  axioms: ODRL400-401, 403 (1D, 3 constants)
   6  axioms: ODRL404 (2D, 4 constants)
@@ -15,26 +13,42 @@ The difficulty ladder (paper: "3-66 ordering axioms"):
   36 axioms: ODRL408, 409 (4D, 9 constants)
   55 axioms: ODRL414 (4D, 11 constants)
   66 axioms: ODRL412, 413, 415 (4D, 12 constants) — maximum
-
 Axes used by dimension:
   1D: X = oax:absoluteSizeWidth
   2D: X = width, Y = oax:absoluteSizeHeight
   3D: X = width, Y = height, Z = oax:absoluteSizeDepth
   4D: X = width, Y = height, Z = depth,
       W = oax:spatialCoordinatesAltitude
-
 Domain lower bounds:
   Standard: v0 (excluded, D_k=(0,∞))
   Fractional: v1=1, v2=2, v3=3, v4=4 (ODRL412-415)
-
 TTL: explicit odrl:and for multi-axis policies.
      Single-constraint policies use plain odrl:constraint.
 SMT2 comments use ; not %.
 TTL prefix: drk: <http://w3id.org/drk/ontology/>
+
+Fixes applied (v1.1 audit):
+  ODRL409: normalised dict-key indentation; previous version had 10-space
+           indents on `verdict`, `status_fof`, `status_smt`, `difficulty`,
+           `needs_density`, and `description` while the rest of the dict
+           used 8 spaces. Python accepted it but it looked malformed.
+           Also added a comment explaining why 'needs_density' is False
+           despite the description mentioning density --- the chain
+           contains a named constant in every required open interval
+           (v300 in (200,800), v200 in (100,500), v16 in (8,32), v100 in
+           (72,300)), so the prover finds ground witnesses and density
+           is not needed.
+
+  ODRL414: removed commented-out alternative fof_conjecture (dead code).
+           Clarified description: the conjecture is existential, finding
+           a 4-tuple (X=v600, Y=v1080-ish, Z=v72, W=v16) that lies in A
+           but escapes B on multiple axes. Existence of such a
+           counter-witness establishes that A is NOT subsumed by B
+           (subsumption Conflict).
+
+All 17 problems verified to close as Theorem under ORD000+AXIS000.
 """
-
 PROBLEMS = [
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL400 — 1D Conflict (3 constants, minimum difficulty)
     # ──────────────────────────────────────────────────────────────────
@@ -57,7 +71,6 @@ PROBLEMS = [
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -67,7 +80,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -96,7 +108,6 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
 (assert (<= x 600.0))
 (assert (>= x 800.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL401 — 1D Compatible (3 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -119,7 +130,6 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -129,7 +139,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "800"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -158,7 +167,6 @@ fof(distinct, axiom, $distinct(v0, v200, v800)).
 (assert (<= x 800.0))
 (assert (>= x 200.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL402 — 2D Conflict via width (5 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -182,7 +190,6 @@ fof(distinct, axiom, $distinct(v0, v200, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -197,7 +204,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -240,7 +246,6 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800)).
 (assert (> x 0.0)) (assert (<= x 400.0)) (assert (>= x 800.0))
 (assert (> y 0.0)) (assert (<= y 600.0)) (assert (>= y 200.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL403 — 1D subsumption Compatible (3 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -263,7 +268,6 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -273,7 +277,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "400"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -302,7 +305,6 @@ fof(distinct, axiom, $distinct(v0, v400, v800)).
 (assert (<= x 400.0))
 (assert (not (<= x 800.0)))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL404 — 2D oc boundary conflict × compatible (4 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -326,7 +328,6 @@ fof(distinct, axiom, $distinct(v0, v400, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -341,7 +342,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -379,7 +379,6 @@ fof(distinct, axiom, $distinct(v0, v200, v600, v800)).
 (assert (> x 0.0)) (assert (< x 600.0)) (assert (>= x 600.0))
 (assert (> y 0.0)) (assert (<= y 800.0)) (assert (>= y 200.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL405 — 3D mixed operators Compatible (7 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -404,7 +403,6 @@ fof(distinct, axiom, $distinct(v0, v200, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -422,7 +420,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -483,7 +480,6 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v200, v400, v600, v800)).
 (assert (> y 0.0)) (assert (<= y 400.0)) (assert (>= y 200.0))
 (assert (> z 0.0)) (assert (<= z 32.0)) (assert (>= z 16.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL406 — 2D near-miss gap=1 both axes (5 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -507,7 +503,6 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v200, v400, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -522,7 +517,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -565,7 +559,6 @@ fof(distinct, axiom, $distinct(v0, v399, v401, v599, v601)).
 (assert (> x 0.0)) (assert (<= x 599.0)) (assert (>= x 601.0))
 (assert (> y 0.0)) (assert (<= y 399.0)) (assert (>= y 401.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL407 — 2D subsumption Compatible (5 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -589,7 +582,6 @@ fof(distinct, axiom, $distinct(v0, v399, v401, v599, v601)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -604,7 +596,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -648,7 +639,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800, v1200)).
 (assert (> y 0.0)) (assert (<= y 400.0))
 (assert (not (and (<= x 1200.0) (<= y 800.0))))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL408 — 4D near-miss width gap=1 (9 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -672,7 +662,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800, v1200)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -693,7 +682,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -776,34 +764,35 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v72, v300, v480, v599, v601, v1080))
 (assert (> z 0.0)) (assert (<= z 32.0))   (assert (>= z 8.0))
 (assert (> w 0.0)) (assert (<= w 300.0))  (assert (>= w 72.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL409 — 4D all open intervals — density (9 constants)
+    # v1.1: normalised dict-key indentation (was mixed 8/10-space).
+    # No density needed: chain contains a named constant in each required
+    # open interval (v300 in (v200,v800), v200 in (v100,v500),
+    # v16 in (v8,v32), v100 in (v72,v300)).
     # ──────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL409",
         "subdir":        "PolicyQuality",
         "name":          "4D all open intervals — density (9 constants)",
         "relation":      "conflict",
-          "verdict": "Compatible",
-          "status_fof": "Theorem",
-          "status_smt": "sat",
-          "difficulty": "Hard",
-          "needs_density": False,   
-          "description": (
-              "Width:  gt 200 ∩ lt 800 = (200,800) ≠ ∅ Compatible\n"
-              "Height: gt 100 ∩ lt 500 = (100,500) ≠ ∅ Compatible\n"
-              "Depth:  gt 8   ∩ lt 32  = (8,32)    ≠ ∅ Compatible\n"
-              "Alt:    gt 72  ∩ lt 300 = (72,300)  ≠ ∅ Compatible\n"
-              "Witnesses available from named-constant chain; no density required.\n"
-            ),
-  
+        "verdict":       "Compatible",
+        "status_fof":    "Theorem",
+        "status_smt":    "sat",
+        "difficulty":    "Hard",
+        "needs_density": False,
+        "description": (
+            "Width:  gt 200 ∩ lt 800 = (200,800) ≠ ∅ Compatible\n"
+            "Height: gt 100 ∩ lt 500 = (100,500) ≠ ∅ Compatible\n"
+            "Depth:  gt 8   ∩ lt 32  = (8,32)    ≠ ∅ Compatible\n"
+            "Alt:    gt 72  ∩ lt 300 = (72,300)  ≠ ∅ Compatible\n"
+            "Witnesses available from named-constant chain; no density required.\n"
+        ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -824,7 +813,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -917,7 +905,6 @@ fof(distinct, axiom, $distinct(v0, v8, v16, v32, v72, v100, v200, v300, v500, v8
 (assert (> z 0.0)) (assert (> z 8.0))   (assert (< z 32.0))
 (assert (> w 0.0)) (assert (> w 72.0))  (assert (< w 300.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL410 — 4D subsumption Compatible — scaling (8 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -943,7 +930,6 @@ fof(distinct, axiom, $distinct(v0, v8, v16, v32, v72, v100, v200, v300, v500, v8
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -964,7 +950,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1037,7 +1022,6 @@ fof(distinct, axiom, $distinct(v0, v16, v48, v150, v400, v600, v1080, v1920)).
 (assert (> w 0.0)) (assert (<= w 150.0))
 (assert (not (and (<= x 1920.0) (<= y 1080.0) (<= z 48.0) (<= w 600.0))))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL411 — 3D eq conflict via distinctness (7 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -1062,7 +1046,6 @@ fof(distinct, axiom, $distinct(v0, v16, v48, v150, v400, v600, v1080, v1920)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1080,7 +1063,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1141,7 +1123,6 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v300, v500, v600, v601)).
 (assert (> y 0.0)) (assert (> y 300.0)) (assert (< y 500.0))
 (assert (> z 0.0)) (assert (<= z 32.0)) (assert (>= z 16.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL412 — 4D fractional bounds Conflict (12 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -1166,7 +1147,6 @@ fof(distinct, axiom, $distinct(v0, v16, v32, v300, v500, v600, v601)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1187,7 +1167,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1303,7 +1282,6 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v15_5, v16, v71_5, v72, v479_5, v
 (assert (> z 3.0))   (assert (> z 15.5))   (assert (< z 16.0))
 (assert (> w 4.0))   (assert (< w 71.5))   (assert (>= w 72.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL413 — 4D fractional bounds Compatible (12 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -1329,7 +1307,6 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v15_5, v16, v71_5, v72, v479_5, v
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1350,7 +1327,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1466,9 +1442,9 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v16, v16_5, v72, v72_5, v480, v48
 (assert (> z 3.0)) (assert (<= z 16.5))  (assert (>= z 16.0))
 (assert (> w 4.0)) (assert (<= w 72.5))  (assert (>= w 72.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL414 — 4D fractional subsumption Conflict — alt escape (11 constants)
+    # v1.1: removed commented-out dead alternative conjecture.
     # ──────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL414",
@@ -1481,18 +1457,19 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v16, v16_5, v72, v72_5, v480, v48
         "difficulty":    "Hard",
         "needs_density": False,
         "description": (
-            "Width: {600} ∈ A_w; A_w ⊆ B_w=(1,1920] Compatible\n"
-            "Height: A_h=(300,∞) ⊄ B_h=(2,1080) via Y≥1080\n"
-            "Depth: A_d=[16,∞) ⊄ B_d=(3,48] via Z>48\n"
-            "Alt: A_w=(4,300) ⊄ B_W=[72,∞) via W<72 (escape)\n"
-            "Witness: X=600, Y=1080, Z=72, W=16.\n"
+            "Subsumption Conflict: existential witness exists in A but not in B.\n"
+            "  A: eq 600 (width) & gt 300 (height) & gteq 16 (depth) & lt 300 (alt)\n"
+            "  B: lteq 1920 (width) & lt 1080 (height) & lteq 48 (depth) & gteq 72 (alt)\n"
+            "Witness lies in A but escapes B on multiple axes (e.g., Y near v1080,\n"
+            "Z>v48, or W<v72). Existence of such a witness establishes A ⊄ B,\n"
+            "i.e., subsumption fails.\n"
+            "55 ordering axioms.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1513,7 +1490,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1603,17 +1579,10 @@ fof(ord_v600_v1920, axiom, less(v600, v1920)).
 fof(ord_v1080_v1920, axiom, less(v1080, v1920)).
 fof(distinct, axiom, $distinct(v1, v2, v3, v4, v16, v48, v72, v300, v600, v1080, v1920)).
 """,
-"fof_conjecture": (
-    "?[X,Y,Z,W]: ((in_closed(X, v600, v600) & less(v300, Y) & leq(v16, Z) & in_open(W, v4, v300))\n"
-    "             & ~(in_lopen(X, v1, v1920) & in_open(Y, v2, v1080) & in_lopen(Z, v3, v48) & leq(v72, W)))"
-),
-#         "fof_conjecture": (
-#     "in_closed(v600, v600, v600) &\n"
-#     "    less(v300, v1080) &\n"
-#     "    leq(v16, v16) &\n"
-#     "    in_open(v16, v4, v300) &\n"
-#     "    ~in_open(v1080, v2, v1080)"
-# ),
+        "fof_conjecture": (
+            "?[X,Y,Z,W]: ((in_closed(X, v600, v600) & less(v300, Y) & leq(v16, Z) & in_open(W, v4, v300))\n"
+            "             & ~(in_lopen(X, v1, v1920) & in_open(Y, v2, v1080) & in_lopen(Z, v3, v48) & leq(v72, W)))"
+        ),
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)\n(declare-const y Real)\n(declare-const z Real)\n(declare-const w Real)",
         "smt2_asserts": """\
@@ -1622,7 +1591,6 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v16, v48, v72, v300, v600, v1080,
 (assert (>= z 16.0)) (assert (<= z 48.0))
 (assert (> w 4.0))   (assert (< w 72.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL415 — 4D fractional subsumption Compatible — maximum difficulty (12 constants, 66 orderings)
     # ──────────────────────────────────────────────────────────────────
@@ -1648,7 +1616,6 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v16, v48, v72, v300, v600, v1080,
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1669,7 +1636,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1784,7 +1750,6 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v15_5, v16_5, v71_5, v72_5, v479_
 (assert (> w 4.0)) (assert (<= w 71.5))
 (assert (not (and (> x 1.0) (<= x 600.5) (> y 2.0) (<= y 480.5) (> z 3.0) (<= z 16.5) (> w 4.0) (<= w 72.5))))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL416 — 4D all-touch single point Compatible (5 constants)
     # ──────────────────────────────────────────────────────────────────
@@ -1810,7 +1775,6 @@ fof(distinct, axiom, $distinct(v1, v2, v3, v4, v15_5, v16_5, v71_5, v72_5, v479_
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1831,7 +1795,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1884,5 +1847,4 @@ fof(distinct, axiom, $distinct(v0, v16, v72, v480, v600)).
 (assert (> z 0.0)) (assert (<= z 16.0))  (assert (>= z 16.0))
 (assert (> w 0.0)) (assert (<= w 72.0))  (assert (>= w 72.0))""",
     },
-
 ]

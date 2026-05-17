@@ -3,11 +3,13 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : 4D fractional subsumption Conflict — alt escape (11 constants)
 % Version  : 1.0
-% English  : Width: {600} ∈ A_w; A_w ⊆ B_w=(1,1920] Compatible
-%           : Height: A_h=(300,∞) ⊄ B_h=(2,1080) via Y≥1080
-%           : Depth: A_d=[16,∞) ⊄ B_d=(3,48] via Z>48
-%           : Alt: A_w=(4,300) ⊄ B_W=[72,∞) via W<72 (escape)
-%           : Witness: X=600, Y=1080, Z=72, W=16.
+% English  : Subsumption Conflict: existential witness exists in A but not in B.
+%           : A: eq 600 (width) & gt 300 (height) & gteq 16 (depth) & lt 300 (alt)
+%           : B: lteq 1920 (width) & lt 1080 (height) & lteq 48 (depth) & gteq 72 (alt)
+%           : Witness lies in A but escapes B on multiple axes (e.g., Y near v1080,
+%           : Z>v48, or W<v72). Existence of such a witness establishes A ⊄ B,
+%           : i.e., subsumption fails.
+%           : 55 ordering axioms.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
