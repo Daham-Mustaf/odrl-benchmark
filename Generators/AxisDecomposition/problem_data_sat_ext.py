@@ -3,11 +3,18 @@ problem_data_sat_ext.py
 =======================
 Additional SAT problems: ODRL755-769 (10 problems).
 Appended to problem_data_sat.py PROBLEMS list.
-
 All TTL entries now encode the actual ODRL policy structure matching
 the FOF/SMT semantics (not empty odrl:Set stubs).
-"""
 
+Fixes applied (v1.1 audit):
+  ODRL758: replaced `axis_compatible(v0, v600, v400, v800)` with
+           `~ axis_conflict(v0, v600, v400, v800)`. AXIS000 v1.1 does not
+           define `axis_compatible/4` -- the "compatible" / "overlap"
+           notion is the negation of axis_conflict. The old encoding
+           passed Satisfiable vacuously without exercising AXIS000
+           semantics (dead-predicate disease in SAT form). The fix uses
+           the defined biconditional from AXIS000 v1.1 Section D.
+"""
 PROBLEMS_EXT = [
     # ── SingleAxis ───────────────────────────────────────────────────
     {
@@ -22,7 +29,6 @@ PROBLEMS_EXT = [
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:ODRL755 a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -46,7 +52,6 @@ drk:ODRL755 a odrl:Set ;
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": "(assert (> x 0.0))\n(assert (<= x 800.0))",
     },
-
     {
         "id": "ODRL756", "subdir": "SAT",
         "name": "SAT SingleAxis: gteq constraint is satisfiable",
@@ -59,7 +64,6 @@ drk:ODRL755 a odrl:Set ;
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:ODRL756 a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -81,7 +85,6 @@ drk:ODRL756 a odrl:Set ;
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": "(assert (>= x 200.0))",
     },
-
     # ── Box2D ────────────────────────────────────────────────────────
     {
         "id": "ODRL757", "subdir": "SAT",
@@ -98,7 +101,6 @@ drk:ODRL756 a odrl:Set ;
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:ODRL757 a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -143,7 +145,8 @@ drk:ODRL757 a odrl:Set ;
             "(assert (>= y 100.0))(assert (<= y 600.0))"
         ),
     },
-
+    # ── Box2D: axis_compatible 2D ────────────────────────────────────
+    # v1.1: axis_compatible -> ~ axis_conflict (uses defined biconditional)
     {
         "id": "ODRL758", "subdir": "SAT",
         "name": "SAT Box2D: axis_compatible 2D is satisfiable",
@@ -153,13 +156,14 @@ drk:ODRL757 a odrl:Set ;
         "description": (
             "Two overlapping 1D intervals:\n"
             "policyA = [v0, v600], policyB = [v400, v800], overlap = [v400, v600] != empty.\n"
+            "Encoded as ~ axis_conflict(v0, v600, v400, v800) using AXIS000 v1.1\n"
+            "Section D biconditional.\n"
         ),
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -169,7 +173,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -188,7 +191,7 @@ drk:policyB a odrl:Set ;
             "fof(ord_v400_v600, axiom, less(v400, v600)).\n"
             "fof(ord_v600_v800, axiom, less(v600, v800)).\n"
             "fof(distinct, axiom, $distinct(v0, v400, v600, v800)).\n"
-            "fof(witness,  axiom, axis_compatible(v0, v600, v400, v800)).\n"
+            "fof(witness,  axiom, ~ axis_conflict(v0, v600, v400, v800)).\n"
         ),
         "fof_conjecture": None,
         "smt2_logic": "QF_LRA",
@@ -198,7 +201,6 @@ drk:policyB a odrl:Set ;
             "(assert (>= x 400.0))(assert (<= x 800.0))"
         ),
     },
-
     # ── Box3D ────────────────────────────────────────────────────────
     {
         "id": "ODRL759", "subdir": "SAT",
@@ -216,7 +218,6 @@ drk:policyB a odrl:Set ;
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:ODRL759 a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -276,7 +277,6 @@ drk:ODRL759 a odrl:Set ;
             "(assert (>= z 8.0))  (assert (<= z 32.0))"
         ),
     },
-
     # ── Box3D: three axis_conflict facts are consistent ──────────────
     {
         "id": "ODRL767", "subdir": "SAT",
@@ -298,7 +298,6 @@ drk:ODRL759 a odrl:Set ;
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -316,7 +315,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -360,7 +358,6 @@ drk:policyB a odrl:Set ;
             "(assert (>= z 3.0))(assert (<= z 4.0))"
         ),
     },
-
     # ── PolicyQuality: HD video ──────────────────────────────────────
     {
         "id": "ODRL768", "subdir": "SAT",
@@ -377,7 +374,6 @@ drk:policyB a odrl:Set ;
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:ODRL768 a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -423,7 +419,6 @@ drk:ODRL768 a odrl:Set ;
             "(assert (>= y 480.0))(assert (<= y 1080.0))"
         ),
     },
-
     # ── PolicyQuality: 4-axis drone ──────────────────────────────────
     {
         "id": "ODRL769", "subdir": "SAT",
@@ -440,7 +435,6 @@ drk:ODRL768 a odrl:Set ;
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:ODRL769 a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -517,7 +511,6 @@ drk:ODRL769 a odrl:Set ;
             "(assert (>= w 72.0)) (assert (<= w 300.0))"
         ),
     },
-
     # ── SemanticCore ─────────────────────────────────────────────────
     {
         "id": "ODRL763", "subdir": "SAT",
@@ -533,7 +526,6 @@ drk:ODRL769 a odrl:Set ;
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:ODRL763 a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -562,7 +554,6 @@ drk:ODRL763 a odrl:Set ;
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": "(assert (>= x 0.0))(assert (<= x 600.0))",
     },
-
     {
         "id": "ODRL764", "subdir": "SAT",
         "name": "SAT SemanticCore: verdict algebra constants are consistent",
@@ -578,7 +569,6 @@ drk:ODRL763 a odrl:Set ;
         "ttl": """\
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 # ODRL764 is a meta-level consistency check over the verdict algebra
 # (conflict, compatible, unknown). It has no per-axis policy; the Set
 # below is a placeholder satisfying odrl:Policy well-formedness.

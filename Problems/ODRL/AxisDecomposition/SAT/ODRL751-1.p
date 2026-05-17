@@ -4,7 +4,9 @@
 % Problem  : AXIS000 verdict algebra is satisfiable
 % Version  : 1.0
 % English  : The AXIS000 interval and verdict axioms are consistent.
-%           : Witness: [v0,v600] and [v400,v800] overlap at v400..v600.
+%           : Witness: [v0,v600] and [v400,v800] overlap (not conflict-disjoint).
+%           : Encoded as ~ axis_conflict(v0, v600, v400, v800) using AXIS000 v1.1
+%           : Section D biconditional axis_conflict <=> less(U1,L2) | less(U2,L1).
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -31,6 +33,6 @@ fof(ord_v0_v400,   axiom, less(v0, v400)).
 fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
-fof(compat_witness, axiom, axis_compatible(v0, v600, v400, v800)).
+fof(compat_witness, axiom, ~ axis_conflict(v0, v600, v400, v800)).
 % (No conjecture: prover refutes/satisfies the axiom set.)
 %--------------------------------------------------------------------------

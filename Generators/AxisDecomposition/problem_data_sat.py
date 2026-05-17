@@ -5,11 +5,30 @@ SAT benchmark problems: ODRL750-754 (5 problems).
 Category: SAT/
 One consistency witness per axiom layer — confirms each axiom file
 is satisfiable in isolation with ground constants.
-
 Include patterns vary per problem (one axiom layer each).
 Status: Satisfiable for all.
-"""
 
+Fixes applied (v1.1 audit):
+  ODRL751: replaced `axis_compatible(v0, v600, v400, v800)` with
+           `~ axis_conflict(v0, v600, v400, v800)`. AXIS000 v1.1 does not
+           define `axis_compatible/4` -- it defines `axis_subsumes/4`
+           (Section D) and `axis_conflict/4` (Section D, biconditional:
+           less(U1, L2) | less(U2, L1)). The "compatible" / "overlap"
+           notion is the negation of axis_conflict.
+
+           With the old encoding, the prover treated `axis_compatible` as
+           a new uninterpreted predicate and accepted any model -- passing
+           Satisfiable vacuously without exercising AXIS000 semantics.
+           This is "dead-predicate disease in SAT form": the inverse
+           symptom of Theorem-tier dead-predicate disease.
+
+           With the fix, the prover must unfold the axis_conflict
+           biconditional and check that less(v600, v400) is false (since
+           less(v400, v600) is in the chain) and less(v800, v0) is false
+           (since less(v0, v800) follows by transitivity). The
+           Satisfiable verdict now genuinely encodes "intervals
+           [v0, v600] and [v400, v800] are not disjoint".
+"""
 PROBLEMS = [
     # ─────────────────────────────────────────────────────────────────
     # ODRL750 — ORD000 strict total order is satisfiable
@@ -48,6 +67,7 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL751 — AXIS000 verdict algebra is satisfiable
+    # v1.1: axis_compatible -> ~ axis_conflict (uses defined biconditional)
     # ─────────────────────────────────────────────────────────────────
     {
         "id":          "ODRL751",
@@ -59,7 +79,9 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "difficulty":  "Easy",
         "description": (
             "The AXIS000 interval and verdict axioms are consistent.\n"
-            "Witness: [v0,v600] and [v400,v800] overlap at v400..v600.\n"
+            "Witness: [v0,v600] and [v400,v800] overlap (not conflict-disjoint).\n"
+            "Encoded as ~ axis_conflict(v0, v600, v400, v800) using AXIS000 v1.1\n"
+            "Section D biconditional axis_conflict <=> less(U1,L2) | less(U2,L1).\n"
         ),
         "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
         "ttl": """\
@@ -75,7 +97,7 @@ fof(ord_v0_v400,   axiom, less(v0, v400)).
 fof(ord_v400_v600, axiom, less(v400, v600)).
 fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
-fof(compat_witness, axiom, axis_compatible(v0, v600, v400, v800)).
+fof(compat_witness, axiom, ~ axis_conflict(v0, v600, v400, v800)).
 """,
         "fof_conjecture": None,
         "smt2_logic": "QF_LRA",

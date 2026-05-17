@@ -1,6 +1,5 @@
 @prefix odrl: <http://www.w3.org/ns/odrl/2/> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 # ODRL764 is a meta-level consistency check over the verdict algebra
 # (conflict, compatible, unknown). It has no per-axis policy; the Set
 # below is a placeholder satisfying odrl:Policy well-formedness.
