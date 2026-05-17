@@ -1,9 +1,10 @@
 %--------------------------------------------------------------------------
 % File     : ODRL508-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : thm:aabb — closed bounded interval is non-empty
+% Problem  : thm:aabb -- closed bounded interval [l,u] is non-empty
 % Version  : 1.0
-% English  : thm:aabb — closed bounded interval is non-empty
+% English  : thm:aabb closed-closed shape: bounded interval [v200, v400] is
+%           : non-empty.  Witness X = v200 (or v400, or anywhere in between).
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -21,6 +22,7 @@
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
+
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0,        axiom, val(v0)).
 fof(val_v200,      axiom, val(v200)).

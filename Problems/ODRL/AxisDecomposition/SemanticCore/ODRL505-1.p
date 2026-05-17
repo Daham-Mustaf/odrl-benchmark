@@ -1,9 +1,11 @@
 %--------------------------------------------------------------------------
 % File     : ODRL505-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : lem:normalisation — same-axis lteq intersection reduces to tighter bound
+% Problem  : lem:normalisation -- same-axis lteq intersection reduces to tighter bound
 % Version  : 1.0
-% English  : lem:normalisation — same-axis lteq intersection reduces to tighter bound
+% English  : lem:normalisation: two lteq constraints on the same axis intersect
+%           : to the tighter bound: (v0, v400] cap (v0, v600] = (v0, v400].
+%           : Witness: any X with less(v0, X) and leq(X, v400); e.g., X = v200.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -21,6 +23,7 @@
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
+
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0,        axiom, val(v0)).
 fof(val_v200,      axiom, val(v200)).

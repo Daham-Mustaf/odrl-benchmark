@@ -4,6 +4,9 @@
 @prefix drk:  <http://w3id.org/drk/ontology/> .
 drk:policyA a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
-    odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
-      odrl:operator odrl:lteq ;
-      odrl:rightOperand "600"^^xsd:decimal ] ] .
+    odrl:constraint [ odrl:and (
+      [ odrl:leftOperand oax:absoluteSizeWidth ;
+        odrl:operator odrl:lteq ; odrl:rightOperand "600"^^xsd:decimal ]
+      [ odrl:leftOperand oax:absoluteSizeHeight ;
+        odrl:operator odrl:lteq ; odrl:rightOperand "400"^^xsd:decimal ]
+    ) ] ] .

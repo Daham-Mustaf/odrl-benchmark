@@ -1,9 +1,12 @@
 %--------------------------------------------------------------------------
 % File     : ODRL506-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : lem:normalisation — conflicting same-axis constraints yield empty denotation
+% Problem  : lem:normalisation -- conflicting same-axis constraints yield empty denotation
 % Version  : 1.0
-% English  : lem:normalisation — conflicting same-axis constraints yield empty denotation
+% English  : lem:normalisation: conflicting same-axis constraints yield empty
+%           : denotation. (v0, v200] cap [v400, +inf) = empty since v200 < v400.
+%           : Closes via in_lopen unfold + leq + transitivity contradicting
+%           : less irreflexivity.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -21,6 +24,7 @@
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
+
 % ─── Named constants and ordering ─────────────────────────────────────
 fof(val_v0,        axiom, val(v0)).
 fof(val_v200,      axiom, val(v200)).
