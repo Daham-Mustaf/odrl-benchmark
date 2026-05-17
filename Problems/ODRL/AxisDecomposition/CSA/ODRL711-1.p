@@ -4,8 +4,12 @@
 % Problem  : CSA BoxContainment: claim subs_verdict conflict when subsumes (wrong)
 % Version  : 1.0
 % English  : Flip of ODRL652: [v0,v400] ⊆ [v0,v600] => subs_verdict=compatible.
-%           : Wrong claim: subs_verdict=conflict.
+%           : Wrong claim (FOL): subs_verdict=conflict.
 %           : Countermodel: axis_subsumes holds, so conflict is impossible.
+%           : SMT note: QF_LRA cannot express subs_verdict directly (UF function),
+%           : so the SMT encodes the denotation-level claim (no x in A but not
+%           : in B), which is the witness-escape form of subsumption failure.
+%           : Both encodings yield the same Conflict/unsat verdict.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

@@ -6,6 +6,7 @@
 % English  : Flip of ODRL637: ~completion_conflict(v600,v600,v0,v1200).
 %           : Wrong claim: completion_conflict(v600,v600,...) holds.
 %           : Requires less(v600,v600) — contradicts irreflexivity.
+%           : SMT (= u 600)(< u 600) is the irreflexivity-at-a-point pattern.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

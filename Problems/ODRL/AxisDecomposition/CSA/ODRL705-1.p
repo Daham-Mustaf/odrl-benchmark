@@ -3,9 +3,10 @@
 % Domain   : ODRL Policy / Axis Decomposition
 % Problem  : CSA ConflictCriterion: claim NOT disjoint cc (wrong)
 % Version  : 1.0
-% English  : Flip of ODRL605: [v0,v5] vs [v6,v10] strictly separated.
+% English  : Flip of ODRL605: [v0,v5] vs [v6,v10] strictly separated
+%           : (since less(v5, v6) in the named chain).
 %           : Wrong claim: ~disjoint(v0,v5,c,c,v6,v10,c,c).
-%           : Countermodel: less(v5,v6) => disjoint holds.
+%           : Countermodel: less(v5,v6) => disjoint holds, so its negation fails.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

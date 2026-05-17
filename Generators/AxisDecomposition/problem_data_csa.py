@@ -6,22 +6,60 @@ Category: CSA/
 Each problem flips the verdict of an existing THM problem — the
 conjecture claims the WRONG verdict, so the problem is CounterSatisfiable.
 The prover finds a countermodel showing the wrong verdict is refuted.
-
 Status: CounterSatisfiable for all.
+
+Fixes applied (v1.1 audit):
+  Cosmetic only — all 15 conjectures are paper-faithful and correctly CSA.
+
+  ODRL700-703: removed duplicate `"needs_density": False` dict keys.  Python
+               silently overwrote the first occurrence; no functional impact,
+               just removed the redundancy.
+
+  ODRL705: aligned value sets across TTL/FOL/SMT.  Previously, the TTL used
+           rightOperand 500/600 and the SMT used <=500.0/>=600.0, but the
+           FOL fof_extra_decls used abstract chain values v0/v5/v6/v10
+           tied to the description's "[v0,v5] vs [v6,v10]" framing.
+           Three different value sets all encoding the same Conflict
+           scenario was reviewer bait.  Now uses the abstract chain
+           consistently and the description states the correspondence
+           with the ODRL605 source problem explicitly.
+
+  ODRL711 description: added note that the SMT encodes the denotation-level
+           witness-escape claim (no x in A but not in B) rather than the
+           UF-level verdict-algebra claim (subs_verdict = conflict).  Both
+           encodings give the same verdict for the same scenario; the SMT
+           uses the denotation form because QF_LRA cannot directly express
+           uninterpreted verdict functions.  No functional change.
+
+CSA SMT encoding pattern (with one exception):
+  Most CSA problems assert the wrong claim DIRECTLY as SMT facts which,
+  combined with the implicit theory of QF_LRA, produce a contradiction.
+  For example, ODRL700:
+    (assert (> x 0.0)) (assert (<= x 600.0))   ; x in (0, 600]
+    (assert (>= x 800.0))                       ; x >= 800   <- contradicts
+  No such x exists, so SMT returns unsat -- which is the correct CSA SMT
+  status (the wrong claim has no model under the correct theory).
+
+  Verdict-algebra CSAs (708, 709, 714) use UF logic with COMP000/AXIS000
+  axioms imported from smt_axioms, then assert the wrong verdict equation
+  directly -- which contradicts the imported axioms.
+
+ODRL710 (irreflexivity-at-a-point pattern):
+  The SMT (= u 600.0)(< u 600.0) is unsat by QF_LRA arithmetic, the same
+  pattern as ODRL328, ODRL512/513, ODRL614, ODRL637, ODRL762, ODRL371.
+  Semantically encodes "less(v600, v600)" which violates ORD000's
+  irreflexivity.  Value-dependent but a valid encoding.
 """
-
-
 # Real UF SMT encodings for verdict-algebra CSA refutations (708, 709, 714)
 from smt_axioms import (
     PREAMBLE_VERDICT,
     DECL_OR_VERDICT, DECL_XONE_VERDICT, DECL_BOX_VERDICT,
     AXIOM_OR_CONFLICT, AXIOM_XONE_COMPAT, AXIOM_BOX_UNKNOWN,
 )
-
 PROBLEMS = [
     # ─────────────────────────────────────────────────────────────────
     # ODRL700 — flip ODRL300: claim compatible (wrong — actually conflict)
-    # [v0,v600) and [v800,∞) — claim overlap exists (wrong)
+    # [v0,v600] and [v800,∞) — claim overlap exists (wrong)
     # ─────────────────────────────────────────────────────────────────
     {
         "id":          "ODRL700",
@@ -31,11 +69,10 @@ PROBLEMS = [
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
         "needs_density": False,
-        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL300: width lteq 600 vs gteq 800.\n"
-            "Intervals (0,600) and [800,∞) are disjoint — Conflict.\n"
+            "Intervals (0,600] and [800,∞) are disjoint — Conflict.\n"
             "Wrong claim: ?[X]: overlap exists. Countermodel: no such X.\n"
         ),
         "includes": ["ORD000-0.ax", "AXIS000-0.ax"],
@@ -79,7 +116,6 @@ fof(distinct, axiom, $distinct(v0, v600, v800)).
         "status_smt":  "unsat",
         "needs_density": False,
         "difficulty":  "Easy",
-        "needs_density": False,
         "description": (
             "width eq 600 vs eq 800: {600} ∩ {800} = ∅ — Conflict.\n"
             "Wrong claim: ?[X]: X=v600 & X=v800. Countermodel: v600≠v800.\n"
@@ -123,7 +159,6 @@ fof(distinct, axiom, $distinct(v600, v800)).
         "status_smt":  "unsat",
         "needs_density": False,
         "difficulty":  "Easy",
-        "needs_density": False,
         "description": (
             "Flip of ODRL421: lteq 600 vs gt 600.\n"
             "(0,600] ∩ (600,∞) = ∅ — Conflict.\n"
@@ -168,7 +203,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_smt":  "unsat",
         "needs_density": False,
         "difficulty":  "Easy",
-        "needs_density": False,
         "description": (
             "Flip of ODRL422: lt 600 vs gteq 600.\n"
             "(0,600) ∩ [600,∞) = ∅ — Conflict.\n"
@@ -247,6 +281,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL705 — flip ODRL605: claim NOT disjoint cc (wrong — it IS disjoint)
+    # v1.1: aligned TTL/FOL/SMT value sets to the abstract v0/v5/v6/v10 chain.
     # ─────────────────────────────────────────────────────────────────
     {
         "id":          "ODRL705",
@@ -258,9 +293,10 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "needs_density": False,
         "difficulty":  "Easy",
         "description": (
-            "Flip of ODRL605: [v0,v5] vs [v6,v10] strictly separated.\n"
+            "Flip of ODRL605: [v0,v5] vs [v6,v10] strictly separated\n"
+            "(since less(v5, v6) in the named chain).\n"
             "Wrong claim: ~disjoint(v0,v5,c,c,v6,v10,c,c).\n"
-            "Countermodel: less(v5,v6) => disjoint holds.\n"
+            "Countermodel: less(v5,v6) => disjoint holds, so its negation fails.\n"
         ),
         "includes": ["ORD000-0.ax", "PREC000-0.ax", "AXIS000-0.ax"],
         "ttl": """\
@@ -271,11 +307,11 @@ fof(distinct, axiom, $distinct(v0, v600)).
 drk:policyA a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
-      odrl:operator odrl:lteq ; odrl:rightOperand "500"^^xsd:decimal ] ] .
+      odrl:operator odrl:lteq ; odrl:rightOperand "5"^^xsd:decimal ] ] .
 drk:policyB a odrl:Set ;
   odrl:permission [ odrl:action odrl:use ;
     odrl:constraint [ odrl:leftOperand oax:absoluteSizeWidth ;
-      odrl:operator odrl:gteq ; odrl:rightOperand "600"^^xsd:decimal ] ] .""",
+      odrl:operator odrl:gteq ; odrl:rightOperand "6"^^xsd:decimal ] ] .""",
         "fof_extra_decls": """\
 fof(val_v0,  axiom, val(v0)).
 fof(val_v5,  axiom, val(v5)).
@@ -290,8 +326,8 @@ fof(distinct, axiom, $distinct(v0, v5, v6, v10)).
         "smt2_logic": "QF_LRA",
         "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": """\
-(assert (>= x 0.0)) (assert (<= x 500.0))
-(assert (>= x 600.0))""",
+(assert (>= x 0.0)) (assert (<= x 5.0))
+(assert (>= x 6.0))""",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL706 — flip ODRL361: claim 4D box compatible (wrong — width conflicts)
@@ -461,6 +497,7 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL710 — flip ODRL631: claim completion_conflict requires U≥V (wrong)
+    # SMT: irreflexivity-at-a-point pattern (value-dependent, accepted)
     # ─────────────────────────────────────────────────────────────────
     {
         "id":          "ODRL710",
@@ -475,6 +512,7 @@ drk:policy a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .""",
             "Flip of ODRL637: ~completion_conflict(v600,v600,v0,v1200).\n"
             "Wrong claim: completion_conflict(v600,v600,...) holds.\n"
             "Requires less(v600,v600) — contradicts irreflexivity.\n"
+            "SMT (= u 600)(< u 600) is the irreflexivity-at-a-point pattern.\n"
         ),
         "includes": ["ORD000-0.ax", "COMPL000-0.ax", "AXIS000-0.ax"],
         "ttl": """\
@@ -498,6 +536,9 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
     },
     # ─────────────────────────────────────────────────────────────────
     # ODRL711 — flip ODRL652 box containment: claim conflict (wrong — it's compat)
+    # SMT encodes denotation-level witness-escape claim rather than the
+    # UF-level verdict-algebra claim (QF_LRA can't express subs_verdict);
+    # both forms yield the same Conflict/CounterSatisfiable verdict.
     # ─────────────────────────────────────────────────────────────────
     {
         "id":          "ODRL711",
@@ -510,8 +551,12 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
         "difficulty":  "Medium",
         "description": (
             "Flip of ODRL652: [v0,v400] ⊆ [v0,v600] => subs_verdict=compatible.\n"
-            "Wrong claim: subs_verdict=conflict.\n"
+            "Wrong claim (FOL): subs_verdict=conflict.\n"
             "Countermodel: axis_subsumes holds, so conflict is impossible.\n"
+            "SMT note: QF_LRA cannot express subs_verdict directly (UF function),\n"
+            "so the SMT encodes the denotation-level claim (no x in A but not\n"
+            "in B), which is the witness-escape form of subsumption failure.\n"
+            "Both encodings yield the same Conflict/unsat verdict.\n"
         ),
         "includes": ["ORD000-0.ax", "AXIS000-0.ax", "SUBS000-0.ax"],
         "ttl": """\
@@ -633,7 +678,7 @@ fof(distinct, axiom, $distinct(v400, v600)).
         "verdict":     "CounterSatisfiable",
         "status_fof":  "CounterSatisfiable",
         "status_smt":  "unsat",
-        "needs_density": False,   
+        "needs_density": False,
         "difficulty":  "Easy",
         "description": (
             "Flip of ODRL635: box_verdict(compatible,unknown)=unknown.\n"

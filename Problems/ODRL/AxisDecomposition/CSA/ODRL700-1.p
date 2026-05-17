@@ -4,7 +4,7 @@
 % Problem  : CSA SingleAxis: claim compatible for disjoint intervals (wrong)
 % Version  : 1.0
 % English  : Flip of ODRL300: width lteq 600 vs gteq 800.
-%           : Intervals (0,600) and [800,∞) are disjoint — Conflict.
+%           : Intervals (0,600] and [800,∞) are disjoint — Conflict.
 %           : Wrong claim: ?[X]: overlap exists. Countermodel: no such X.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
