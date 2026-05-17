@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : ODRL370-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : All 4 axes open intervals → box Compatible (density)
+% Problem  : All 4 axes open intervals → box Compatible
 % Version  : 1.0
 % English  : Width:  gt 200 ∩ lt 800 = (200,800) ≠ ∅  Compatible
 %           : Height: gt 100 ∩ lt 500 = (100,500) ≠ ∅  Compatible

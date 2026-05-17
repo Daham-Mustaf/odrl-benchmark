@@ -8,6 +8,8 @@
 %           : Depth:  (0,16]   ⊆ (0,32]    Compatible
 %           : Alt:    (0,150]  ⊆ (0,300]   Compatible
 %           : box_containment: A ⊆ B on all 4 axes [def:box-containment]
+%           : Encoded as universal implication; closes via in_lopen unfold
+%           : + ord chain transitivity.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -25,7 +27,6 @@
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').
 include('Axioms/AXIS000-0.ax').
-include('Axioms/SUBS000-0.ax').
 include('Axioms/COMP000-0.ax').
 
 % ─── Named constants and ordering ─────────────────────────────────────
@@ -77,5 +78,6 @@ fof(ord_v800_v1200, axiom, less(v800, v1200)).
 fof(distinct, axiom, $distinct(v0, v16, v32, v150, v300, v400, v600, v800, v1200)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl368, conjecture,
-    ![X,Y,Z,W]: ((in_lopen(X, v0, v600) & in_lopen(Y, v0, v400) & in_lopen(Z, v0, v16) & in_lopen(W, v0, v150)) =>              (in_lopen(X, v0, v1200) & in_lopen(Y, v0, v800) & in_lopen(Z, v0, v32) & in_lopen(W, v0, v300)))).
+    ![X,Y,Z,W]: ((in_lopen(X, v0, v600) & in_lopen(Y, v0, v400) & in_lopen(Z, v0, v16) & in_lopen(W, v0, v150)) =>
+             (in_lopen(X, v0, v1200) & in_lopen(Y, v0, v800) & in_lopen(Z, v0, v32) & in_lopen(W, v0, v300)))).
 %--------------------------------------------------------------------------

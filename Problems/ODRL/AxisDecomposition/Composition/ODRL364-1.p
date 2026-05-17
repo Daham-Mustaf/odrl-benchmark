@@ -7,7 +7,7 @@
 %           : Height: gt 100 ∩ lt 500  = (100,500) ≠ ∅  Compatible
 %           : Depth:  gteq 8 ∩ lteq 32 = [8,32] ≠ ∅    Compatible
 %           : Alt:    gteq 150 ∩ lteq 300 = [150,300] ≠ ∅ Compatible
-%           : Ground witnesses: X=v600, Y=v150, Z=v8, W=v150. No density needed.
+%           : Existential conjecture; prover finds witnesses in chain (e.g., X=v600, Y=v300, Z=v8, W=v300). No density needed.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
@@ -76,8 +76,8 @@ fof(ord_v600_v800, axiom, less(v600, v800)).
 fof(distinct, axiom, $distinct(v0, v8, v32, v100, v150, v300, v500, v600, v800)).
 % ─── Conjecture ────────────────────────────────────────────────────
 fof(odrl364, conjecture,
-    in_closed(v600, v600, v600) & in_lopen(v600, v0, v800) &
-    less(v100, v300) & in_open(v300, v0, v500) &
-    leq(v8, v8) & in_lopen(v8, v0, v32) &
-    in_lopen(v300, v0, v300) & leq(v150, v300)).
+    ?[X,Y,Z,W]: (in_closed(X, v600, v600) & in_lopen(X, v0, v800) &
+             less(v100, Y) & in_open(Y, v0, v500) &
+             leq(v8,   Z) & in_lopen(Z, v0, v32)  &
+             in_lopen(W, v0, v300) & leq(v150, W))).
 %--------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 ; --------------------------------------------------------------------------
 ; File     : ODRL370-1.smt2
 ; Domain   : ODRL Policy / Axis Decomposition
-; Axioms   : All 4 axes open intervals → box Compatible (density)
+; Axioms   : All 4 axes open intervals → box Compatible
 ; Version  : 1.0
 ; Authors  : Mustafa, D. & Sutcliffe, G.
 ; Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
