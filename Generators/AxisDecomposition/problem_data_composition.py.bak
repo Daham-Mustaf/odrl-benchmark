@@ -1577,5 +1577,7 @@ fof(distinct, axiom, $distinct(v0, v8, v32, v150, v200, v300, v600, v800)).
 (assert (> w 0.0)) (assert (<= w 300.0)) (assert (>= w 150.0))""",
     },
 ]
-
+# verdict-algebra coverage (added v1.1 of audit)
+from problem_data_composition_extra import PROBLEMS_EXT_VERDICT_ALGEBRA
+PROBLEMS = PROBLEMS + PROBLEMS_EXT_VERDICT_ALGEBRA
 
