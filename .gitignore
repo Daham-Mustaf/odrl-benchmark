@@ -79,3 +79,6 @@ Problems/ODRL/Axioms/WF000-0.ax
 .DS_Store
 **/.DS_Store
 .python-version
+vampire
+eprover
+*.o
