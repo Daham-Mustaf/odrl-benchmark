@@ -1,0 +1,12 @@
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix drk:  <http://w3id.org/drk/ontology/> .
+drk:policyBSB a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeHeight ;
+      odrl:operator odrl:lteq ; odrl:rightOperand "1080"^^xsd:decimal ] ] .
+drk:policyBnF a odrl:Set ;
+  odrl:permission [ odrl:action odrl:use ;
+    odrl:constraint [ odrl:leftOperand oax:absoluteSizeHeight ;
+      odrl:operator odrl:eq ; odrl:rightOperand "800"^^xsd:decimal ] ] .
