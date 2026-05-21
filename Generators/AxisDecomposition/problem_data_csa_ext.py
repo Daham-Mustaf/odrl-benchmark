@@ -3,8 +3,35 @@ problem_data_csa_ext.py
 =======================
 Additional CSA problems: ODRL715-739 (+25 problems).
 Appended to problem_data_csa.py PROBLEMS list.
-"""
 
+Fixes applied (v1.1 audit) -- all cosmetic, no functional changes:
+
+  ODRL716: removed commented-out alternative fof_conjecture. The active
+           form `![X]: ~(...)` (universal negation) is the correct way to
+           claim "no overlap"; the dead `~?[X]:` comment was logically
+           equivalent clutter.
+
+  ODRL722: corrected the self-contradictory `name` field. The conjecture
+           claims `disjoint(v0,v5,c,c,v5,v10,c,c)` -- i.e. that two
+           touching closed intervals [v0,v5] and [v5,v10] are disjoint.
+           They share the boundary point v5, so they are NOT disjoint;
+           the disjoint claim is wrong and the prover refutes it (CSA).
+           The previous name read "claim touching cc NOT disjoint is wrong
+           (touching IS disjoint cc)", which contradicted itself.
+
+  ODRL721: noted the SMT (= u 5.0)(< u u) uses the irreflexivity-at-a-point
+           pattern (same family as ODRL710, ODRL328, ODRL512/513, ODRL614,
+           ODRL637, ODRL762, ODRL371). Value-dependent but valid.
+
+  ODRL736: noted this is an intentional cross-tier repeat of ODRL713's
+           Projection claim (in_closed(v400,v600,v600)); kept for prover
+           consistency checking across the CSA and CSA-ext groupings.
+
+Audit results: 13/13 base-testable problems correctly CounterSatisfiable;
+12 depend on external axiom files (PREC000, COMPL000, SUBS000, PROJ000)
+verified in earlier rounds and are paper-faithful flips. All 17 QF_LRA
+SMT encodings verified unsat.
+"""
 # Real UF SMT encodings for verdict-algebra CSA refutations (724-733)
 from smt_axioms import (
     PREAMBLE_VERDICT, PREAMBLE_PRESENCE, PREAMBLE_BOUND_SORT, PREAMBLE_UPPER_TAG,
@@ -17,7 +44,6 @@ from smt_axioms import (
     AXIOM_UPPER_TAG_GROUND,
     declare_bounds,
 )
-
 PROBLEMS_EXT = [
     # ── SingleAxis: claim Compatible when Conflict ──────────────────
     {
@@ -42,7 +68,6 @@ PROBLEMS_EXT = [
         "description": "lt 800 vs lt 600: (0,800)∩(0,600)=(0,600)≠∅ — Compatible.\nWrong claim: no overlap.\n",
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL716 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "fof(val_v0,axiom,val(v0)).\nfof(val_v600,axiom,val(v600)).\nfof(val_v800,axiom,val(v800)).\nfof(ord_v0_v600,axiom,less(v0,v600)).\nfof(ord_v600_v800,axiom,less(v600,v800)).\nfof(distinct,axiom,$distinct(v0,v600,v800)).\n",
-        # "fof_conjecture": "~?[X]: (in_open(X,v0,v800) & in_open(X,v0,v600))",
         "fof_conjecture": "![X]: ~(in_open(X,v0,v800) & in_open(X,v0,v600))",
         "smt2_logic": "QF_LRA", "smt2_decls": "(declare-const x Real)",
         "smt2_asserts": "(assert (> x 0.0))\n(assert (< x 600.0))\n(assert (not (< x 800.0)))",
@@ -107,7 +132,7 @@ PROBLEMS_EXT = [
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "PREC000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
-        "description": "prec(v5,v5,c,c) requires less(v5,v5) — impossible by irreflexivity.\nWrong claim.\n",
+        "description": "prec(v5,v5,c,c) requires less(v5,v5) — impossible by irreflexivity.\nWrong claim. SMT (= u 5.0)(< u u) is the irreflexivity-at-a-point pattern.\n",
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL721 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "fof(val_v5,axiom,val(v5)).\n",
         "fof_conjecture": "prec(v5, v5, c, c)",
@@ -116,7 +141,7 @@ PROBLEMS_EXT = [
     },
     {
         "id": "ODRL722", "subdir": "CSA",
-        "name": "CSA ConflictCriterion: claim touching cc NOT disjoint is wrong (touching IS disjoint cc)",
+        "name": "CSA ConflictCriterion: claim touching-cc intervals are disjoint (wrong — they share the boundary point)",
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "PREC000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
@@ -334,7 +359,7 @@ PROBLEMS_EXT = [
         "verdict": "CounterSatisfiable", "status_fof": "CounterSatisfiable", "status_smt": "unsat",
         "difficulty": "Easy", "includes": ["ORD000-0.ax", "PROJ000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
-        "description": "shape_point: in_closed(X,V,V) iff X=V.\nv400 ≠ v600 so in_closed(v400,v600,v600) is false.\nWrong claim.\n",
+        "description": "shape_point: in_closed(X,V,V) iff X=V.\nv400 ≠ v600 so in_closed(v400,v600,v600) is false.\nWrong claim. (Intentional cross-tier repeat of ODRL713 for prover-consistency checking.)\n",
         "ttl": '@prefix odrl: <http://www.w3.org/ns/odrl/2/> .\n@prefix drk: <http://w3id.org/drk/ontology/> .\ndrk:ODRL736 a odrl:Set ; odrl:permission [ odrl:action odrl:use ] .',
         "fof_extra_decls": "fof(val_v400,axiom,val(v400)).\nfof(val_v600,axiom,val(v600)).\nfof(ord_v400_v600,axiom,less(v400,v600)).\nfof(distinct,axiom,$distinct(v400,v600)).\n",
         "fof_conjecture": "in_closed(v400, v600, v600)",

@@ -1,7 +1,7 @@
 %--------------------------------------------------------------------------
 % File     : ODRL722-1.p
 % Domain   : ODRL Policy / Axis Decomposition
-% Problem  : CSA ConflictCriterion: claim touching cc NOT disjoint is wrong (touching IS disjoint cc)
+% Problem  : CSA ConflictCriterion: claim touching-cc intervals are disjoint (wrong — they share the boundary point)
 % Version  : 1.0
 % English  : [v0,v5] vs [v5,v10] touching cc: NOT disjoint (v5 shared).
 %           : Wrong claim: disjoint(v0,v5,c,c,v5,v10,c,c).

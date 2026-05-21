@@ -2,10 +2,8 @@
 problem_data_boundary.py
 ========================
 Boundary benchmark problems: ODRL420-435 (16 problems).
-
 Category G: Tests all 10 operator-pair combinations at a shared boundary
 value (thm:criterion), plus 2D/3D extensions and subsumption.
-
 The 10 single-axis operator pairs (ODRL420-429):
   cc (lteq ∩ gteq):  (0,v]∩[v,∞)={v}         Compatible
   co (lteq ∩ gt):    (0,v]∩(v,∞)=∅             Conflict
@@ -17,17 +15,21 @@ The 10 single-axis operator pairs (ODRL420-429):
   eq∩gt:             {v}∩(v,∞)=∅               Conflict
   lt∩lteq:           (0,v)∩(0,v]=(0,v)≠∅       Compatible  ← density
   gt∩gteq:           (v,∞)∩[v,∞)=(v,∞)≠∅       Compatible  ← sentinel
-
 Density/sentinel notes:
   ODRL428 (lt∩lteq): witness in (0,600) — requires ORD001-0.ax.
   ODRL429 (gt∩gteq): witness above v600 — adds sentinel v1200.
-
 TTL: single odrl:constraint for 1D; odrl:and for multi-axis.
 TTL prefix: drk: <http://w3id.org/drk/ontology/>
+
+Fixes applied (v1.1 audit):
+  ODRL427: normalised indentation on `includes` key (was 9-space, now
+           8-space consistent with the rest of the dict). Cosmetic only;
+           Python accepted the previous version.
+
+All 16 problems verified to close as Theorem under ORD000+AXIS000
+(plus ORD001 for ODRL428's density requirement). No functional changes.
 """
-
 PROBLEMS = [
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL420 — cc: lteq ∩ gteq — shared boundary point Compatible
     # ──────────────────────────────────────────────────────────────────
@@ -51,7 +53,6 @@ PROBLEMS = [
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -61,7 +62,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -87,7 +87,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 (assert (<= x 600.0))
 (assert (>= x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL421 — co: lteq ∩ gt — boundary excluded on right → Conflict
     # ──────────────────────────────────────────────────────────────────
@@ -111,7 +110,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -121,7 +119,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -147,7 +144,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 (assert (<= x 600.0))
 (assert (> x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL422 — oc: lt ∩ gteq — boundary excluded on left → Conflict
     # ──────────────────────────────────────────────────────────────────
@@ -171,7 +167,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -181,7 +176,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -207,7 +201,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 (assert (< x 600.0))
 (assert (>= x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL423 — oo: lt ∩ gt — boundary excluded both sides → Conflict
     # ──────────────────────────────────────────────────────────────────
@@ -231,7 +224,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -241,7 +233,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -267,7 +258,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 (assert (< x 600.0))
 (assert (> x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL424 — eq ∩ lteq — eq value included in lteq → Compatible
     # ──────────────────────────────────────────────────────────────────
@@ -291,7 +281,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -301,7 +290,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -327,7 +315,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 (assert (= x 600.0))
 (assert (<= x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL425 — eq ∩ gteq — eq value included in gteq → Compatible
     # ──────────────────────────────────────────────────────────────────
@@ -351,7 +338,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -361,7 +347,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -387,7 +372,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 (assert (= x 600.0))
 (assert (>= x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL426 — eq ∩ lt — eq value at boundary excluded by lt → Conflict
     # ──────────────────────────────────────────────────────────────────
@@ -411,7 +395,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -421,7 +404,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -447,9 +429,9 @@ fof(distinct, axiom, $distinct(v0, v600)).
 (assert (= x 600.0))
 (assert (< x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL427 — eq ∩ gt — eq value at boundary excluded by gt → Conflict
+    # v1.1: normalised indentation on `includes` key.
     # ──────────────────────────────────────────────────────────────────
     {
         "id":            "ODRL427",
@@ -460,7 +442,7 @@ fof(distinct, axiom, $distinct(v0, v600)).
         "status_fof":    "Theorem",
         "status_smt":    "unsat",
         "difficulty":    "Easy",
-         "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
+        "includes":     ["ORD000-0.ax", "AXIS000-0.ax"],
         "needs_density": False,
         "description": (
             "thm:criterion eq∩gt: {600}∩(600,∞)=∅ Conflict\n"
@@ -471,7 +453,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -481,7 +462,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -507,7 +487,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 (assert (= x 600.0))
 (assert (> x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL428 — lt ∩ lteq — open subset of closed → Compatible (density)
     # ──────────────────────────────────────────────────────────────────
@@ -532,7 +511,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -542,7 +520,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -568,7 +545,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 (assert (< x 600.0))
 (assert (<= x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL429 — gt ∩ gteq — open superset of closed → Compatible (sentinel)
     # ──────────────────────────────────────────────────────────────────
@@ -593,7 +569,6 @@ fof(distinct, axiom, $distinct(v0, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -603,7 +578,6 @@ drk:policyA a odrl:Set ;
       odrl:rightOperand "600"^^xsd:decimal
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -632,7 +606,6 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
 (assert (> x 600.0))
 (assert (>= x 600.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL430 — 2D cc×cc — both axes touch → Compatible
     # ──────────────────────────────────────────────────────────────────
@@ -657,7 +630,6 @@ fof(distinct, axiom, $distinct(v0, v600, v1200)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -672,7 +644,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -706,7 +677,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600)).
 (assert (> x 0.0)) (assert (<= x 600.0)) (assert (>= x 600.0))
 (assert (> y 0.0)) (assert (<= y 400.0)) (assert (>= y 400.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL431 — 2D cc×oc — Y boundary excluded on left kills box → Conflict
     # ──────────────────────────────────────────────────────────────────
@@ -731,7 +701,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -746,7 +715,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -780,7 +748,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600)).
 (assert (> x 0.0)) (assert (<= x 600.0)) (assert (>= x 600.0))
 (assert (> y 0.0)) (assert (< y 400.0)) (assert (>= y 400.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL432 — 3D cc×co×cc — Y boundary excluded on right kills 3D box → Conflict
     # ──────────────────────────────────────────────────────────────────
@@ -806,7 +773,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -824,7 +790,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -867,7 +832,6 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600)).
 (assert (> y 0.0)) (assert (<= y 400.0)) (assert (> y 400.0))
 (assert (> z 0.0)) (assert (<= z 200.0)) (assert (>= z 200.0))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL433 — Subsumption: lt⊆lteq on width, lteq⊆lteq on height → Compatible
     # ──────────────────────────────────────────────────────────────────
@@ -892,7 +856,6 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -907,7 +870,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -946,7 +908,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
 (assert (> y 0.0)) (assert (<= y 400.0))
 (assert (not (and (<= x 600.0) (<= y 800.0))))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL434 — Subsumption escape: X=600∈(0,600] but X∉(0,600) → Conflict
     # ──────────────────────────────────────────────────────────────────
@@ -971,7 +932,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -986,7 +946,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1025,7 +984,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
 (assert (> y 0.0)) (assert (<= y 400.0))
 (assert (not (and (< x 600.0) (<= y 800.0))))""",
     },
-
     # ──────────────────────────────────────────────────────────────────
     # ODRL435 — 3D eq×cc×eq — all three axes touch at named constants → Compatible
     # ──────────────────────────────────────────────────────────────────
@@ -1051,7 +1009,6 @@ fof(distinct, axiom, $distinct(v0, v400, v600, v800)).
 @prefix oax:  <http://w3id.org/odrl/spatial-axis#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix drk:  <http://w3id.org/drk/ontology/> .
-
 drk:policyA a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1069,7 +1026,6 @@ drk:policyA a odrl:Set ;
       )
     ]
   ] .
-
 drk:policyB a odrl:Set ;
   odrl:permission [
     odrl:action odrl:use ;
@@ -1112,5 +1068,4 @@ fof(distinct, axiom, $distinct(v0, v200, v400, v600)).
 (assert (> y 0.0)) (assert (<= y 400.0)) (assert (>= y 400.0))
 (assert (> z 0.0)) (assert (= z 200.0)) (assert (>= z 200.0))""",
     },
-
 ]

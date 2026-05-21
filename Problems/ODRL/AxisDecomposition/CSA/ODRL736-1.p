@@ -5,7 +5,7 @@
 % Version  : 1.0
 % English  : shape_point: in_closed(X,V,V) iff X=V.
 %           : v400 ≠ v600 so in_closed(v400,v600,v600) is false.
-%           : Wrong claim.
+%           : Wrong claim. (Intentional cross-tier repeat of ODRL713 for prover-consistency checking.)
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)

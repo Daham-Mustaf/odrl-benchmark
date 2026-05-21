@@ -4,7 +4,7 @@
 % Problem  : CSA ConflictCriterion: claim prec(v5,v5,c,c) holds (wrong)
 % Version  : 1.0
 % English  : prec(v5,v5,c,c) requires less(v5,v5) — impossible by irreflexivity.
-%           : Wrong claim.
+%           : Wrong claim. SMT (= u 5.0)(< u u) is the irreflexivity-at-a-point pattern.
 %
 % Refs     : [Mus+26b] Mustafa, D., et al. Axis Decomposition for ODRL: Resolving Dimensional Ambiguity in Policy Constraints through Interval Semantics. ISWC 2026 (submitted).
 % Source   : Mustafa, D. (2026)
