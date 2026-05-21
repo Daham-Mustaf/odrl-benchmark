@@ -82,3 +82,6 @@ Problems/ODRL/Axioms/WF000-0.ax
 vampire
 eprover
 *.o
+vampire
+eprover
+/vampire/
