@@ -110,7 +110,7 @@ drk:policy-theater-read> a odrl:Agreement ;
         odrl:assigner drk:BerlinerEnsemble ;
         odrl:action   odrl:read ;
         odrl:target   drk:TheaterShowtimeDataset] .
-drk:TheaterShowtimeDataset>          a dcat:Dataset ;
+drk:TheaterShowtimeDataset          a dcat:Dataset ;
     schema:name "Berliner Ensemble Showtime Dataset" .
 drk:BerlinerEnsemble                    a schema:Organization .
 drk:UniversitaetsbibliothekMuenchen     a schema:Organization .
@@ -244,7 +244,7 @@ fof(act_e1_p1,        axiom, activates(e1, p1)).
 @prefix drk:    <http://w3id.org/drk/ontology/> .
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 @prefix schema: <https://schema.org/> .
-drk:policy-no-distribute> a odrl:Agreement ;
+drk:policy-no-distribute a odrl:Agreement ;
     odrl:prohibition [ a odrl:Prohibition ;
         odrl:assignee drk:StreamingPortalGmbH ;
         odrl:assigner drk:StaatlicheMuseenBerlin ;
@@ -464,7 +464,7 @@ fof(partof_d,         axiom, part_of(d, rho1)).
 @prefix drk:    <http://w3id.org/drk/ontology/> .
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 @prefix schema: <https://schema.org/> .
-<drk:policy-corr> a odrl:Agreement ;
+drk:policy-corr a odrl:Agreement ;
     odrl:permission [ a odrl:Permission ;
         odrl:assignee <drk:UniversitaetsbibliothekMuenchen> ;
         odrl:assigner <drk:BerlinerEnsemble> ;
@@ -655,7 +655,8 @@ fof(no_permission_modify,   axiom,
 @prefix drk:    <http://w3id.org/drk/ontology/> .
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 @prefix schema: <https://schema.org/> .
-<drk:policy-sanctioned> a odrl:Agreement ;
+
+drk:policy-sanctioned a odrl:Agreement ;
     odrl:prohibition [ a odrl:Prohibition ;
         odrl:assignee <drk:MusicMarketplaceAG> ;
         odrl:assigner <drk:PhilharmonieBerlin> ;
@@ -736,11 +737,12 @@ fof(marketplace_does,   axiom, does(marketplace, distrib, concert_ds)).
 @prefix drk:    <http://w3id.org/drk/ontology/> .
 @prefix dcat:   <http://www.w3.org/ns/dcat#> .
 @prefix schema: <https://schema.org/> .
-<drk:policy-regimented> a odrl:Agreement ;
+
+drk:policy-regimented a odrl:Agreement ;
     odrl:prohibition [ a odrl:Prohibition ;
-        odrl:assignee <drk:MusicMarketplaceAG> ;
+        odrl:assignee drk:MusicMarketplaceAG ;
         odrl:action   odrl:distribute ;
-        odrl:target   <drk:ConcertRecordingDataset> ] .
+        odrl:target   drk:ConcertRecordingDataset ] .
 drk:ConcertRecordingDataset               a dcat:Dataset .
 drk:MusicMarketplaceAG      a schema:Organization .
 # Regimented reading: does(MusicMarketplaceAG, distribute) impossible.
@@ -877,7 +879,6 @@ fof(tgt_f2,           axiom, tgt(f2, museum_api)).
     # -------------------------------------------------------------------------
     # GRND009-no-immunity — Weak permission: Permission+Duty conflict
     # Abstract constants: same as GRND009-immunity
-    # Bug 7 fix: ax_proh_relator_basic -> ax_proh_relator_conduct
     # Ax numbering fix: ax_cross_relator = Ax5.9 (not Ax5.10).
     # -------------------------------------------------------------------------
     {

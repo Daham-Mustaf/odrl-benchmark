@@ -27,7 +27,7 @@ write(f"{base}/HARD001-SAT+1.p", SEP + """\
 %
 % Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
 % Source   : Mustafa, D. (2026)
-% Authors  : Mustafa, D. & Sutcliffe, G.
+% Authors  : Mustafa, D.
 % Names    : HARD001-SAT+1.p
 %
 % Status   : Satisfiable
@@ -61,7 +61,7 @@ write(f"{base}/HARD001-SAT+1.smt2", SMT_SEP + """\
 ; Version  : 1.0
 ; Refs     : [Mus+26] Mustafa, D., et al. arXiv:2602.19878.
 ; Source   : Mustafa, D. (2026)
-; Authors  : Mustafa, D. & Sutcliffe, G.
+; Authors  : Mustafa, D.
 ; Names    : HARD001-SAT+1.smt2
 ; Status   : sat
 ; Comments : Ordering chain n0<n3<n5<n10<n20 with ninf<everything<nsup.
