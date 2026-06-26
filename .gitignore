@@ -6,3 +6,4 @@ odrl-benchmark-backup/
 build/
 *.o
 .venv/
+vampire/
