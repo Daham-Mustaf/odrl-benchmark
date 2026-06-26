@@ -7,3 +7,5 @@ build/
 *.o
 .venv/
 vampire/
+__pycache__/
+*.pyc
