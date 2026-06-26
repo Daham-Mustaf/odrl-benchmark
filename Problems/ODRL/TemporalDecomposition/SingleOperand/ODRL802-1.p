@@ -6,9 +6,9 @@
 % English  : dateTime: lt 2026-12-31 -> (-inf,t)   gt 2026-12-31 -> (t,+inf)
 %           : Strict bounds at the same instant: no X with X<t and t<X. Conflict.
 %
-% Refs     : [Anonymous26d] Anonymous. Sort-Stratified Semantics for ODRL: Resolving Temporal-Sort Ambiguity in Policy Constraints. LPAR-26 (anonymized for review).
-% Source   : anonymous
-% Authors  : anonymous
+% Refs     : [MCK+26] D. M. Mustafa, D. Collarana, S. Kirrane, C. Lange, C. Quix, S. Geisler, S. Decker, R. Haque. Sort-Stratified Semantics for Temporal Conflict Detection in ODRL Policies. arXiv:2606.23442, 2026.
+% Source   : https://github.com/Daham-Mustaf/odrl-temporal-benchmark
+% Authors  : Mustafa, D.
 % Names    : ODRL802-1.p
 %
 % Status   : Theorem
@@ -16,7 +16,7 @@
 % Relation : conflict
 % SPC      : FOF_THM_RFN
 %
-% Comments : Temporal decomposition tier. LPAR-26 (anonymized).
+% Comments : Temporal decomposition tier.
 %           : Policy source: Policies/ODRL802-policy.ttl
 %--------------------------------------------------------------------------
 include('Axioms/ORD000-0.ax').

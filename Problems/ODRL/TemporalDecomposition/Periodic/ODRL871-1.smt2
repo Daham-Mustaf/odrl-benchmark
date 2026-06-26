@@ -1,15 +1,15 @@
 ; --------------------------------------------------------------------------
-; File     : ODRL817-1.smt2
+; File     : ODRL871-1.smt2
 ; Domain   : ODRL Policy / Temporal Decomposition
-; Problem  : timeInterval eq P30D & eq P45D, offset 1 -> Conflict
+; Problem  : timeInterval eq P30D both (anchor day 0); dateTime windows [Jan1,Jan6] & [Jan4,Feb4] -> Conflict
 ; Version  : 1.0
 ; Refs     : [MCK+26] D. M. Mustafa, D. Collarana, S. Kirrane, C. Lange, C. Quix, S. Geisler, S. Decker, R. Haque. Sort-Stratified Semantics for Temporal Conflict Detection in ODRL Policies. arXiv:2606.23442, 2026.
 ; Source   : https://github.com/Daham-Mustaf/odrl-temporal-benchmark
 ; Authors  : Mustafa, D.
-; Names    : ODRL817-1.smt2
+; Names    : ODRL871-1.smt2
 ; Status   : unsat
 ; Verdict  : Conflict
-; Comments : Category: Periodic  Difficulty: Medium
+; Comments : Category: Periodic  Difficulty: Hard
 ; --------------------------------------------------------------------------
 
 (set-logic QF_LIA)
@@ -19,6 +19,10 @@
 (assert (>= k 0))
 (assert (>= m 0))
 (assert (= t (+ 0 (* 30 k))))
-(assert (= t (+ 1 (* 45 m))))
+(assert (= t (+ 0 (* 30 m))))
+(assert (>= t 0))
+(assert (<= t 5))
+(assert (>= t 3))
+(assert (<= t 34))
 (check-sat)
 (exit)
