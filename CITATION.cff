@@ -1,0 +1,65 @@
+cff-version: 1.2.0
+message: >-
+  If you use this benchmark, please cite the papers that define the semantics of
+  the families you use. The benchmark unifies three families; each corresponds to
+  one paper below.
+title: ODRL Conflict-Detection Benchmark
+type: dataset
+authors:
+  - family-names: Mustafa
+    given-names: Daham M.
+abstract: >-
+  A benchmark library for conflict detection between ODRL policies, comprising
+  three families (temporal, spatial axis-decomposition, and knowledge-base
+  grounded constraints). Each problem is encoded in both the TPTP and SMT-LIB 2
+  formats with a machine-checkable expected verdict, and validated across the
+  Vampire, E, Z3, and cvc5 reasoners.
+license: CC-BY-4.0
+repository-code: https://github.com/Daham-Mustaf/odrl-benchmark
+references:
+  - type: article
+    title: >-
+      Sort-Stratified Semantics for Temporal Conflict Detection in ODRL Policies
+    authors:
+      - family-names: Mustafa
+        given-names: Daham M.
+      - family-names: Collarana
+        given-names: Diego
+      - family-names: Kirrane
+        given-names: Sabrina
+      - family-names: Lange
+        given-names: Christoph
+      - family-names: Quix
+        given-names: Christoph
+      - family-names: Decker
+        given-names: Stefan
+      - family-names: Haque
+        given-names: Rafiqul
+    year: 2026
+    identifiers:
+      - type: other
+        value: arXiv:2606.23442
+        description: arXiv preprint (temporal family)
+  - type: article
+    title: >-
+      Axis-Aligned Semantics for ODRL Spatial Operands
+    authors:
+      - family-names: Mustafa
+        given-names: Daham M.
+    year: 2026
+    identifiers:
+      - type: other
+        value: arXiv:2602.19878
+        description: arXiv preprint (spatial axis-decomposition family)
+    notes: >-
+      TODO: confirm full author list and final title for the spatial paper.
+  - type: article
+    title: >-
+      Denotational Semantics for Externally-Grounded ODRL Policies
+    authors:
+      - family-names: Mustafa
+        given-names: Daham M.
+    year: 2026
+    notes: >-
+      TODO: add arXiv identifier and full author list for the knowledge-base /
+      externally-grounded family paper.

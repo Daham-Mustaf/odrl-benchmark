@@ -1,0 +1,14 @@
+ODRL Conflict-Detection Benchmark
+Copyright 2026 Daham M. Mustafa and contributors
+
+This product includes software developed for the ODRL conflict-detection
+benchmark (the generators, the validation harness check_benchmark.py, and the
+coverage scanner), licensed under the Apache License, Version 2.0.
+
+The benchmark problems under Problems/ (the .p, .smt2, and .ttl files and the
+bundled axioms) are licensed separately under the Creative Commons Attribution
+4.0 International License (CC BY 4.0); see Problems/LICENSE.
+
+Portions of the problem set have been contributed to the Thousands of Problems
+for Theorem Provers (TPTP) library; see https://tptp.org. The TPTP curation and
+integration of those problems is acknowledged in the accompanying papers.
